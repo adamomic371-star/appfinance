@@ -994,15 +994,18 @@ function renderGroupDetail(con){
   if(!g){curGroupId=null;renderGroups(con);return;}
   const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
   const totExp=exps.reduce((s,e)=>s+e.amount,0);
-  const members=Object.values(g.members||{});
+  // members with their Firebase key (userId)
+  const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
   const totM=members.length+1;
-  const share=(totExp/totM).toFixed(2);
+  const share=totM>0?(totExp/totM).toFixed(2):0;
   const chats=Object.entries(g.chat||{}).map(([id,d])=>({...d,id})).sort((a,b)=>a.ts-b.ts);
+  const isCreator=g.creatorId===user.id;
   con.innerHTML=`
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
     <button onclick="curGroupId=null;goTo('gruppi')" style="background:var(--s1);border:1px solid var(--b1);color:var(--tx2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif">← Gruppi</button>
     <button class="btn-a" onclick="openMo('inviteModal')"><i class="fa fa-user-plus"></i> Invita</button>
     <button class="btn-a" onclick="openMo('gExpModal')" style="background:linear-gradient(135deg,var(--re),var(--ac3))"><i class="fa fa-plus"></i> Spesa</button>
+    ${isCreator?`<button class="btn-a" onclick="deleteGroup('${g.id}')" style="background:linear-gradient(135deg,#ff4f6d,#c0392b)"><i class="fa fa-trash"></i> Elimina Gruppo</button>`:'<button class="btn-a" onclick="leaveGroup(\''+g.id+'\')" style="background:linear-gradient(135deg,#ff9f43,#e67e22)"><i class="fa fa-right-from-bracket"></i> Lascia Gruppo</button>'}
   </div>
   <div class="stat-grid">
     <div class="sc"><div class="sc-ico">💸</div><div class="sc-lbl">Totale Spese</div><div class="sc-val" style="color:var(--re)">${fmtE(totExp)}</div></div>
@@ -1018,7 +1021,12 @@ function renderGroupDetail(con){
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">👥</div>Membri</div></div>
     <div class="ir"><div class="ia">👑</div><div class="ii"><div class="in">${g.creatorName||'Admin'}</div><div class="id2">Creatore</div></div></div>
-    ${members.map(m=>`<div class="ir"><div class="ia">👤</div><div class="ii"><div class="in">${m.name}</div><div class="id2">${m.email||''}</div></div>${g.creatorId===user.id?`<button class="btn-sm bs-d" onclick="removeGMember('${m.id}')">✕</button>`:''}</div>`).join('')}
+    ${members.map(m=>`
+    <div class="ir">
+      <div class="ia">👤</div>
+      <div class="ii"><div class="in">${m.name}</div><div class="id2">${m.email||''}</div></div>
+      ${isCreator?`<button class="btn-sm bs-d" onclick="removeGMember('${m.uid}')">✕ Rimuovi</button>`:''}
+    </div>`).join('')}
   </div>
   </div>
   <div class="card">
@@ -1129,7 +1137,33 @@ function sendMsg(){
   const inp=document.getElementById('chatInp');const t=inp.value.trim();if(!t)return;
   db.ref(`groups/${curGroupId}/chat`).push({text:t,userId:user.id,userName:user.name,ts:Date.now()}).then(()=>{inp.value='';db.ref(`groups/${curGroupId}`).once('value',snap=>{const g={...snap.val(),id:curGroupId};const idx=groups.findIndex(x=>x.id===curGroupId);if(idx!==-1)groups[idx]=g;else groups.push(g);renderGroupDetail(document.getElementById('content'));});});
 }
-function removeGMember(mid){if(!confirm('Rimuovere?'))return;db.ref(`groups/${curGroupId}/members/${mid}`).remove().then(()=>{loadData(()=>goTo('gruppi'));notify('✅ Rimosso');}); }
+function removeGMember(uid){
+  if(!confirm('Rimuovere questo membro dal gruppo?'))return;
+  db.ref(`groups/${curGroupId}/members/${uid}`).remove().then(()=>{
+    loadData(()=>goTo('gruppi'));
+    notify('✅ Membro rimosso');
+  }).catch(()=>notify('❌ Errore rimozione'));
+}
+
+function deleteGroup(gid){
+  if(!confirm('Eliminare il gruppo definitivamente?\nTutti i membri perderanno l\'accesso.'))return;
+  db.ref(`groups/${gid}`).remove().then(()=>{
+    curGroupId=null;
+    groups=groups.filter(g=>g.id!==gid);
+    goTo('gruppi');
+    notify('🗑️ Gruppo eliminato');
+  }).catch(()=>notify('❌ Errore eliminazione'));
+}
+
+function leaveGroup(gid){
+  if(!confirm('Vuoi lasciare questo gruppo?'))return;
+  db.ref(`groups/${gid}/members/${user.id}`).remove().then(()=>{
+    curGroupId=null;
+    groups=groups.filter(g=>g.id!==gid);
+    goTo('gruppi');
+    notify('✅ Hai lasciato il gruppo');
+  }).catch(()=>notify('❌ Errore'));
+}
 function toggleRec(id,status){const next=status==='active'?'paused':'active';db.ref(`recurring/${id}/status`).set(next).then(()=>{loadData(()=>goTo('ricorrenti'));notify(next==='active'?'▶ Riattivata':'⏸ Messa in pausa');}); }
 
 /* ===== DELETE ===== */

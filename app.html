@@ -316,14 +316,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   /* Nascondi sidebar fissa */
   .sidebar{display:none}
 
-  /* Hamburger button nella topbar */
+  /* Hamburger visibile */
   .ham-btn{display:flex!important}
-
-  /* Drawer e overlay visibili su mobile */
-  .drawer-overlay{display:block}
-  .drawer-overlay.open{opacity:1;pointer-events:all}
-  .drawer{display:flex}
-  .drawer.open{transform:translateX(0)}
 
   /* Topbar */
   .topbar{padding:0 14px;height:54px}
@@ -332,10 +326,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   .asw span{display:none}
   .asw{padding:6px 10px}
 
-  /* Content pieno schermo */
+  /* Content */
   .content{padding:14px 12px}
 
-  /* Stats 2 colonne */
+  /* Stats 2 col */
   .stat-grid{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
   .sc{padding:13px}
   .sc-val{font-size:19px}
@@ -358,7 +352,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   .btn-a{font-size:10px;padding:5px 9px;gap:4px}
   .btn-sm{font-size:9px;padding:3px 7px}
 
-  /* Modal — sopra il drawer */
+  /* Modal sopra il drawer */
   .mo{z-index:1000}
   .ms{padding:18px 14px;border-radius:18px 18px 0 0}
 
@@ -406,25 +400,26 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 
 /* ======= DRAWER OVERLAY ======= */
 .drawer-overlay{
-  display:none;
   position:fixed;inset:0;
   background:rgba(0,0,0,.65);
   z-index:998;
-  opacity:0;pointer-events:none;
+  opacity:0;
+  pointer-events:none;
   transition:opacity .3s ease;
   backdrop-filter:blur(3px);
   -webkit-backdrop-filter:blur(3px);
+  /* Sempre nel DOM, visibile solo su mobile via JS */
 }
 .drawer-overlay.open{opacity:1;pointer-events:all}
 
 /* ======= DRAWER PANEL ======= */
 .drawer{
-  display:none;
   position:fixed;top:0;left:0;bottom:0;
   width:285px;
   background:var(--bg2);
   border-right:1px solid var(--b2);
   z-index:999;
+  display:flex;
   flex-direction:column;
   padding:0;
   transform:translateX(-100%);
@@ -433,6 +428,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   overflow-y:auto;
   overflow-x:hidden;
 }
+.drawer.open{transform:translateX(0)!important}
 .drawer-top{
   display:flex;align-items:center;justify-content:space-between;
   padding:16px 16px 12px;
@@ -1590,21 +1586,27 @@ function showChangePass(){const b=document.getElementById('changePassBox');b.sty
 /* ===== DRAWER (MOBILE) ===== */
 function toggleDrawer(){
   const d=document.getElementById('drawer');
+  if(!d)return;
+  if(d.classList.contains('open')) closeDrawer();
+  else openDrawer();
+}
+function openDrawer(){
+  const d=document.getElementById('drawer');
   const o=document.getElementById('drawerOverlay');
   const h=document.getElementById('hamBtn');
-  const isOpen=d.classList.contains('open');
-  if(isOpen){closeDrawer();}
-  else{
-    d.classList.add('open');
-    o.classList.add('open');
-    h.classList.add('open');
-    document.body.style.overflow='hidden';
-  }
+  if(!d)return;
+  d.classList.add('open');
+  if(o){o.style.display='block';setTimeout(()=>o.classList.add('open'),10);}
+  if(h)h.classList.add('open');
+  document.body.style.overflow='hidden';
 }
 function closeDrawer(){
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('drawerOverlay').classList.remove('open');
+  const d=document.getElementById('drawer');
+  const o=document.getElementById('drawerOverlay');
   const h=document.getElementById('hamBtn');
+  if(!d)return;
+  d.classList.remove('open');
+  if(o){o.classList.remove('open');setTimeout(()=>{if(!o.classList.contains('open'))o.style.display='none';},320);}
   if(h)h.classList.remove('open');
   document.body.style.overflow='';
 }

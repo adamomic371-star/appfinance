@@ -1743,21 +1743,24 @@ function renderAdmin(con){
     <div class="adm-tw"><table class="adm-t">
       <thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Accesso</th><th>Azioni</th></tr></thead>
       <tbody>${allUsers.map(u=>`
-      <tr>
+      <tr id="urow_${u.id}">
         <td style="font-weight:600">${u.name}</td>
         <td style="color:var(--tx2)">${u.email}</td>
-        <td><select class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:90px" onchange="chPlan('${u.id}',this.value)">
+        <td><select id="uplan_${u.id}" class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:90px" onchange="markDirty('${u.id}')">
           <option value="free" ${u.plan==='free'||!u.plan?'selected':''}>Free</option>
           <option value="pro" ${u.plan==='pro'?'selected':''}>Pro</option>
           <option value="premium" ${u.plan==='premium'?'selected':''}>Premium</option>
           <option value="lifetime" ${u.plan==='lifetime'?'selected':''}>Lifetime</option>
         </select></td>
-        <td><select class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:80px" onchange="chRole('${u.id}',this.value)" ${u.email==='admin'?'disabled':''}>
+        <td><select id="urole_${u.id}" class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:80px" onchange="markDirty('${u.id}')" ${u.email==='admin'?'disabled':''}>
           <option value="user" ${u.role!=='admin'?'selected':''}>👤 User</option>
           <option value="admin" ${u.role==='admin'?'selected':''}>👑 Admin</option>
         </select></td>
         <td>${u.email!=='admin'?`<button class="btn-sm bs-s" onclick="impUser('${u.id}','${u.name.replace(/'/g,"\\'")}')">👁️ Entra</button>`:'<span class="badge bp">Tu</span>'}</td>
-        <td>${u.email!=='admin'?`<button class="btn-sm bs-d" onclick="delUser('${u.id}','${u.name.replace(/'/g,"\\'")}')">🗑️</button>`:'<span class="badge bo">Protetto</span>'}</td>
+        <td style="display:flex;gap:4px;align-items:center">
+          <button id="usave_${u.id}" class="btn-sm bs-g" style="display:none" onclick="saveUserRow('${u.id}')">💾 Salva</button>
+          ${u.email!=='admin'?`<button class="btn-sm bs-d" onclick="delUser('${u.id}','${u.name.replace(/'/g,"\\'")}')">🗑️</button>`:'<span class="badge bo">Protetto</span>'}
+        </td>
       </tr>`).join('')}
       </tbody>
     </table></div>
@@ -1994,6 +1997,27 @@ function catIcon(cid){const c=CATS.find(x=>x.id===cid);return c?c.icon:'📦';}
 function catName(cid){const c=CATS.find(x=>x.id===cid);return c?c.name:'Altro';}
 function es(icon,text){return`<div class="es"><div class="es-i">${icon}</div><div class="es-t">${text}</div></div>`;}
 function showChangePass(){const b=document.getElementById('changePassBox');b.style.display=b.style.display==='none'?'block':'none';}
+
+/* ===== ADMIN USER MANAGEMENT ===== */
+function markDirty(uid){
+  const btn=document.getElementById('usave_'+uid);
+  if(btn){btn.style.display='inline-flex';btn.style.background='linear-gradient(135deg,var(--gr),#00b894)';}
+}
+function saveUserRow(uid){
+  const plan=document.getElementById('uplan_'+uid)?.value;
+  const role=document.getElementById('urole_'+uid)?.value;
+  const updates={};
+  if(plan)updates.plan=plan;
+  if(role)updates.role=role;
+  db.ref(`users/${uid}`).update(updates).then(()=>{
+    const i=allUsers.findIndex(u=>u.id===uid);
+    if(i!==-1){if(plan)allUsers[i].plan=plan;if(role)allUsers[i].role=role;}
+    const btn=document.getElementById('usave_'+uid);
+    if(btn)btn.style.display='none';
+    notify('✅ Utente aggiornato!');
+  }).catch(()=>notify('❌ Errore salvataggio'));
+}
+function delUser(uid,name){if(!confirm(`Eliminare "${name}"?`))return;db.ref(`users/${uid}`).remove().then(()=>{allUsers=allUsers.filter(u=>u.id!==uid);notify('✅ Eliminato');renderAdmin(document.getElementById('content'));});}
 
 /* ===== DRAWER (MOBILE) ===== */
 function toggleDrawer(){

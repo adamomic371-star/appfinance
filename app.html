@@ -175,7 +175,53 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .bmc{flex:1;padding:12px;background:var(--s2);border:1px solid var(--b1);border-radius:11px;color:var(--tx2);cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600}
 .wb{background:rgba(255,79,109,.08);border:1px solid rgba(255,79,109,.2);border-radius:9px;padding:9px 13px;color:var(--re);font-size:11px;margin-bottom:10px;display:none}
 
-/* ======= NOTIFICA ======= */
+/* ======= NOTIFICATION BELL ======= */
+.notif-bell{
+  position:relative;width:38px;height:38px;border-radius:10px;
+  background:var(--s1);border:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:17px;flex-shrink:0;
+  transition:all .2s;
+}
+.notif-bell:hover{background:var(--s2);border-color:var(--b2)}
+.notif-bell.has-notif{border-color:rgba(255,209,102,.4);background:rgba(255,209,102,.08);animation:bellShake .5s ease}
+@keyframes bellShake{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(8deg)}}
+.notif-badge{
+  position:absolute;top:-5px;right:-5px;
+  min-width:18px;height:18px;padding:0 4px;
+  background:var(--re);border-radius:20px;
+  font-size:9px;font-weight:800;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg2);
+}
+
+/* ======= NOTIFICHE PAGE ======= */
+.ncard{
+  background:var(--s1);border:1px solid var(--b1);
+  border-radius:13px;padding:13px 14px;
+  display:flex;align-items:flex-start;gap:12px;
+  margin-bottom:9px;transition:all .2s;
+  border-left:3px solid transparent;
+  cursor:pointer;
+}
+.ncard:hover{background:var(--s2);border-color:var(--b2)}
+.ncard.unread{border-left-color:var(--ac)}
+.ncard.type-rec{border-left-color:var(--ye)}
+.ncard.type-bill{border-left-color:var(--re)}
+.ncard.type-chat{border-left-color:var(--ac2)}
+.ncard.type-info{border-left-color:var(--gr)}
+.ncard-ico{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.ncard-body{flex:1;min-width:0}
+.ncard-title{font-size:12px;font-weight:700;margin-bottom:3px}
+.ncard-sub{font-size:11px;color:var(--tx2);line-height:1.5}
+.ncard-time{font-size:9px;color:var(--tx3);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.ncard-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:5px}
+
+/* ======= NOTIFICA TOAST ======= */
 .notif{position:fixed;bottom:24px;right:24px;background:rgba(13,18,37,.97);border:1px solid var(--b2);border-radius:13px;padding:12px 16px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,.4);animation:nIn .3s ease;max-width:280px}
 @keyframes nIn{from{opacity:0;transform:translateY(8px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 
@@ -254,67 +300,186 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   .sidebar{padding:14px 9px}
   .ub-id{display:none}
 }
-/* Mobile */
+
+/* ======= MOBILE DRAWER ======= */
 @media(max-width:600px){
-  :root{--sw:56px}
-  .sidebar{width:56px;min-width:56px;padding:12px 7px;align-items:center}
-  .sb-head{justify-content:center;padding:0;margin-bottom:14px}
-  .sb-brand,.ub,.nav-div+.out-btn span,.ni span{display:none}
-  .nav-div{width:100%}
-  .ni{padding:9px;justify-content:center;border-radius:10px}
-  .ni.active::before{display:none}
-  .ni .ni-ico{width:32px;height:32px;font-size:15px;margin:0}
-  .out-btn{padding:9px;justify-content:center}
-  .out-btn span{display:none!important}
-  /* topbar */
-  .topbar{padding:0 12px;height:52px}
-  .tb-left h1{font-size:15px}
+  /* Nascondi sidebar fissa */
+  .sidebar{display:none}
+
+  /* Hamburger button nella topbar */
+  .ham-btn{display:flex!important}
+
+  /* Overlay scuro dietro il drawer */
+  .drawer-overlay{display:block}
+  .drawer-overlay.open{opacity:1;pointer-events:all}
+
+  /* Drawer pannello */
+  .drawer{display:flex}
+  .drawer.open{transform:translateX(0)}
+
+  /* Topbar */
+  .topbar{padding:0 14px;height:54px}
+  .tb-left h1{font-size:16px}
   .tb-left p,.tb-date{display:none}
-  .asw{font-size:10px;padding:5px 9px}
-  /* content */
-  .content{padding:12px 10px}
-  /* stats */
-  .stat-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-  .sc{padding:12px}
-  .sc-val{font-size:18px}
+  .asw span{display:none}
+  .asw{padding:6px 10px}
+
+  /* Content pieno schermo */
+  .content{padding:14px 12px}
+
+  /* Stats 2 colonne */
+  .stat-grid{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+  .sc{padding:13px}
+  .sc-val{font-size:19px}
   .sc-lbl{font-size:9px}
-  .sc-ico{font-size:14px;top:10px;right:10px}
-  /* cards */
+  .sc-ico{font-size:14px;top:11px;right:11px}
+
+  /* Cards */
   .card{padding:13px;margin-bottom:11px}
   .ch{margin-bottom:10px}
   .ct{font-size:12px}
-  /* item rows */
+
+  /* Item rows */
   .ir{gap:9px;padding:8px 0}
   .ia{width:32px;height:32px;font-size:13px;border-radius:9px}
   .in{font-size:11px}
   .id2{font-size:9px}
   .iam{font-size:12px}
-  /* buttons */
+
+  /* Buttons */
   .btn-a{font-size:10px;padding:5px 9px;gap:4px}
   .btn-sm{font-size:9px;padding:3px 7px}
-  /* modal */
+
+  /* Modal */
   .ms{padding:18px 14px;border-radius:18px 18px 0 0}
-  /* notification */
+
+  /* Notification */
   .notif{bottom:14px;right:10px;left:10px;max-width:none;font-size:12px}
-  /* groups 2col */
+
+  /* Groups */
   .g2col{grid-template-columns:1fr!important}
-  /* plans */
+
+  /* Plans */
   .plan-grid{grid-template-columns:1fr 1fr}
-  /* imp bar */
-  .imp-bar{padding:5px 12px;font-size:10px}
-  /* report */
+
+  /* Imp bar */
+  .imp-bar{padding:5px 14px;font-size:10px}
+
+  /* Report */
   .cat-lbl{width:90px;font-size:10px}
   .pie-grid{grid-template-columns:1fr 1fr}
-  /* chat */
+
+  /* Chat */
   .chat-wrap{max-height:260px}
 }
 @media(max-width:380px){
-  :root{--sw:48px}
-  .sidebar{width:48px;min-width:48px}
-  .ni .ni-ico{width:28px;height:28px;font-size:13px}
   .plan-grid{grid-template-columns:1fr}
   .pie-grid{grid-template-columns:1fr 1fr}
 }
+
+/* ======= HAMBURGER BUTTON ======= */
+.ham-btn{
+  display:none;
+  width:38px;height:38px;border-radius:10px;
+  background:var(--s2);border:1px solid var(--b2);
+  align-items:center;justify-content:center;
+  cursor:pointer;flex-direction:column;gap:5px;
+  flex-shrink:0;padding:0;
+}
+.ham-btn span{
+  display:block;width:16px;height:2px;
+  background:var(--tx);border-radius:2px;
+  transition:all .25s;
+}
+.ham-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.ham-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ======= DRAWER OVERLAY ======= */
+.drawer-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:299;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+  backdrop-filter:blur(2px);
+}
+
+/* ======= DRAWER PANEL ======= */
+.drawer{
+  display:none;
+  position:fixed;top:0;left:0;bottom:0;
+  width:280px;
+  background:var(--bg2);
+  border-right:1px solid var(--b2);
+  z-index:300;
+  flex-direction:column;
+  padding:0;
+  transform:translateX(-100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:8px 0 40px rgba(0,0,0,.5);
+  overflow-y:auto;
+}
+.drawer-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 12px;
+  border-bottom:1px solid var(--b1);
+  flex-shrink:0;
+}
+.drawer-logo{display:flex;align-items:center;gap:9px}
+.drawer-close{
+  width:32px;height:32px;border-radius:9px;
+  background:var(--s2);border:1px solid var(--b1);
+  color:var(--tx2);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+}
+.drawer-user{
+  margin:12px 14px;
+  background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(0,212,255,.05));
+  border:1px solid rgba(108,99,255,.2);
+  border-radius:12px;padding:12px;
+}
+.drawer-user-name{font-size:14px;font-weight:700;margin-bottom:3px}
+.drawer-user-plan{display:inline-block;padding:2px 9px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:20px;font-size:9px;font-weight:700;color:#fff}
+.drawer-nav{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.drawer-ni{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 12px;border-radius:12px;
+  color:var(--tx2);cursor:pointer;
+  font-size:14px;font-weight:600;
+  transition:all .2s;border:1px solid transparent;
+}
+.drawer-ni:hover{background:var(--s2);color:var(--tx)}
+.drawer-ni.active{
+  background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(0,212,255,.08));
+  color:var(--tx);border-color:rgba(108,99,255,.25);
+}
+.drawer-ni-ico{
+  width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;background:var(--s1);
+}
+.drawer-ni.active .drawer-ni-ico{
+  background:linear-gradient(135deg,var(--ac),var(--ac2));
+  box-shadow:0 4px 10px rgba(108,99,255,.3);
+}
+.drawer-footer{
+  padding:12px 10px;
+  border-top:1px solid var(--b1);
+  flex-shrink:0;
+}
+.drawer-out{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 12px;border-radius:12px;
+  background:rgba(255,79,109,.05);
+  border:1px solid rgba(255,79,109,.15);
+  color:var(--re);cursor:pointer;
+  font-size:14px;font-weight:600;
+  font-family:'Outfit',sans-serif;
+  width:100%;
+}
+.drawer-out:hover{background:rgba(255,79,109,.12)}
 </style>
 </head>
 <body>
@@ -382,6 +547,29 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 
 <!-- APP -->
 <div id="app" class="hidden">
+
+  <!-- Drawer overlay (mobile) -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <!-- Drawer panel (mobile) -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-top">
+      <div class="drawer-logo">
+        <div class="sb-ico">💰</div>
+        <div class="sb-brand" style="font-size:15px;font-weight:800;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Finanza Pro</div>
+      </div>
+      <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="drawer-user">
+      <div class="drawer-user-name" id="drawerName">–</div>
+      <div style="margin-top:4px"><span class="drawer-user-plan" id="drawerPlan">Free</span></div>
+    </div>
+    <nav class="drawer-nav" id="drawerNav"></nav>
+    <div class="drawer-footer">
+      <button class="drawer-out" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i> Esci</button>
+    </div>
+  </div>
+
   <div class="sidebar">
     <div class="sb-head"><div class="sb-ico">💰</div><div class="sb-brand">Finanza Pro</div></div>
     <div class="ub"><div class="ub-name" id="sbName">–</div><div><span class="ub-plan" id="sbPlan">Free</span></div><div class="ub-id">ID: <span id="sbId">–</span></div></div>
@@ -391,8 +579,18 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   </div>
   <div class="main">
     <div class="topbar">
-      <div class="tb-left"><h1 id="pgTitle">Dashboard</h1><p id="pgSub">Panoramica</p></div>
-      <div class="tb-right" id="tbRight"><div class="tb-date" id="tbDate"></div></div>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <button class="ham-btn" id="hamBtn" onclick="toggleDrawer()">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="tb-left"><h1 id="pgTitle">Dashboard</h1><p id="pgSub">Panoramica</p></div>
+      </div>
+      <div class="tb-right" id="tbRight">
+        <div class="tb-date" id="tbDate"></div>
+        <button class="notif-bell" id="notifBell" onclick="goTo('notifiche')" title="Notifiche">
+          🔔<span class="notif-badge hidden" id="notifBadge">0</span>
+        </button>
+      </div>
     </div>
     <div class="imp-bar hidden" id="impBar"><span>👁️ Account di: <strong id="impName">–</strong></span><button onclick="stopImp()">← Torna Admin</button></div>
     <div class="content" id="content"></div>
@@ -516,7 +714,7 @@ function fillCatSelects(){
 
 /* ===== STATE ===== */
 let realUser=null,user=null,db=null;
-let allUsers=[],transactions=[],bills=[],utilities=[],trips=[],groups=[],recurring=[];
+let allUsers=[],transactions=[],bills=[],utilities=[],trips=[],groups=[],recurring=[],appNotifs=[];
 let isAdminMode=false,impersonating=false,origAdmin=null,curGroupId=null;
 
 const FB={
@@ -538,6 +736,7 @@ const NAV=[
   {id:'utenze',     icon:'🔌',label:'Utenze',       plans:['pro','premium','lifetime']},
   {id:'viaggi',     icon:'✈️',label:'Viaggi',       plans:['premium','lifetime']},
   {id:'gruppi',     icon:'👥',label:'Gruppi',       plans:['premium','lifetime']},
+  {id:'notifiche',  icon:'🔔',label:'Notifiche',    plans:['free','pro','premium','lifetime']},
   {id:'piani',      icon:'🎁',label:'Piani',        plans:['free','pro','premium','lifetime']},
   {id:'admin',      icon:'⚙️',label:'Admin',        plans:['admin']},
   {id:'profilo',    icon:'👤',label:'Profilo',      plans:['free','pro','premium','lifetime']},
@@ -664,15 +863,22 @@ function doRegister(){
 function showApp(){
   document.getElementById('app').classList.remove('hidden');
   updateUI();buildNav();
-  loadData(()=>goTo('dashboard'));
+  loadData(()=>{
+    goTo('dashboard');
+    setTimeout(()=>{checkRecurring();buildNotifs();},1500);
+    startGroupListener();
+  });
   notify('👋 Bentornato, '+user.name.split(' ')[0]+'!');
-  // check recurring
-  setTimeout(checkRecurring,2000);
 }
 function updateUI(){
   document.getElementById('sbName').textContent=user.name;
   document.getElementById('sbPlan').textContent=PLANS[user.plan]?.name||user.plan;
   document.getElementById('sbId').textContent=user.id;
+  // drawer
+  const dn=document.getElementById('drawerName');
+  const dp=document.getElementById('drawerPlan');
+  if(dn)dn.textContent=user.name;
+  if(dp)dp.textContent=PLANS[user.plan]?.name||user.plan;
   // admin button
   const tr=document.getElementById('tbRight');
   let ab=document.getElementById('aswBtn');
@@ -681,10 +887,7 @@ function updateUI(){
   }
   if(ab){
     ab.className='asw '+(isAdminMode?'am':'um');
-    ab.innerHTML=isAdminMode?'<i class="fa fa-eye-slash"></i> <span style="display:none" class="asw-lbl">Utente</span>':'<i class="fa fa-crown"></i> <span style="display:none" class="asw-lbl">Admin</span>';
-    // show label on larger screens
-    const lbl=ab.querySelector('.asw-lbl');
-    if(lbl)lbl.style.display=window.innerWidth>480?'inline':'none';
+    ab.innerHTML=isAdminMode?'<i class="fa fa-eye-slash"></i>':'<i class="fa fa-crown"></i>';
   }
 }
 function toggleAdmin(){isAdminMode=!isAdminMode;updateUI();goTo(isAdminMode?'admin':'dashboard');notify(isAdminMode?'👑 Modalità Admin':'👤 Vista utente');}
@@ -710,18 +913,31 @@ function stopImp(){
 
 /* ===== NAV ===== */
 function buildNav(){
-  const nav=document.getElementById('sideNav');nav.innerHTML='';
-  NAV.filter(item=>{
+  const sideNav=document.getElementById('sideNav');
+  const drawerNav=document.getElementById('drawerNav');
+  sideNav.innerHTML=''; drawerNav.innerHTML='';
+  const visible=NAV.filter(item=>{
     if(item.id==='admin')return realUser?.role==='admin';
     return item.plans.includes(user.plan)||user.role==='admin';
-  }).forEach(item=>{
-    const el=document.createElement('div');el.className='ni';el.dataset.p=item.id;
+  });
+  visible.forEach(item=>{
+    // sidebar (desktop)
+    const el=document.createElement('div');
+    el.className='ni'; el.dataset.p=item.id;
     el.innerHTML=`<div class="ni-ico">${item.icon}</div><span>${item.label}</span>`;
-    el.onclick=()=>goTo(item.id);nav.appendChild(el);
+    el.onclick=()=>goTo(item.id);
+    sideNav.appendChild(el);
+    // drawer (mobile)
+    const dl=document.createElement('div');
+    dl.className='drawer-ni'; dl.dataset.p=item.id;
+    dl.innerHTML=`<div class="drawer-ni-ico">${item.icon}</div><span>${item.label}</span>`;
+    dl.onclick=()=>{goTo(item.id);closeDrawer();};
+    drawerNav.appendChild(dl);
   });
 }
+
 function goTo(p){
-  document.querySelectorAll('.ni').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
+  document.querySelectorAll('.ni,.drawer-ni').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
   renderPage(p);
 }
 
@@ -737,28 +953,222 @@ function loadData(cb){
   if(realUser?.role==='admin')db.ref('users').once('value',s=>{allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));});
 }
 
-/* ===== CHECK RECURRING ===== */
+/* ===== CHECK RECURRING — scala dal saldo ===== */
 function checkRecurring(){
   const today=new Date().toISOString().split('T')[0];
-  recurring.filter(r=>r.status==='active'&&r.nextDate&&r.nextDate<=today).forEach(r=>{
-    // Auto-add transaction
-    db.ref(`transactions/${Date.now()}_rec`).set({userId:user.id,desc:r.name+' (automatica)',amount:r.amount,type:r.type,cat:r.cat||'other',createdAt:new Date().toISOString()});
-    // Update next date
-    const next=new Date(r.nextDate);
-    if(r.freq==='daily')next.setDate(next.getDate()+1);
-    else if(r.freq==='weekly')next.setDate(next.getDate()+7);
-    else if(r.freq==='monthly')next.setMonth(next.getMonth()+1);
-    else if(r.freq==='yearly')next.setFullYear(next.getFullYear()+1);
-    db.ref(`recurring/${r.id}/nextDate`).set(next.toISOString().split('T')[0]);
-    notify(`🔄 Aggiunta automatica: ${r.name} €${r.amount}`);
+  const due=recurring.filter(r=>r.status==='active'&&r.nextDate&&r.nextDate<=today);
+  if(due.length===0)return;
+  due.forEach(r=>{
+    const txKey='rec_'+r.id+'_'+r.nextDate.replace(/-/g,'');
+    // Controlla se già aggiunta (evita duplicati)
+    const alreadyDone=transactions.some(t=>t.recKey===txKey);
+    if(alreadyDone)return;
+    // Aggiunge transazione — tipo corretto (expense scala, income aggiunge)
+    const tx={
+      userId:user.id,
+      desc:r.name+' 🔄',
+      amount:parseFloat(r.amount),
+      type:r.type, // 'expense' o 'income'
+      cat:r.cat||'other',
+      recKey:txKey,
+      createdAt:new Date().toISOString()
+    };
+    db.ref(`transactions/${txKey}`).set(tx).then(()=>{
+      transactions.push({...tx,id:txKey});
+      // Calcola prossima scadenza
+      const next=new Date(r.nextDate);
+      if(r.freq==='daily')next.setDate(next.getDate()+1);
+      else if(r.freq==='weekly')next.setDate(next.getDate()+7);
+      else if(r.freq==='monthly')next.setMonth(next.getMonth()+1);
+      else if(r.freq==='yearly')next.setFullYear(next.getFullYear()+1);
+      const nextStr=next.toISOString().split('T')[0];
+      db.ref(`recurring/${r.id}/nextDate`).set(nextStr);
+      const ridx=recurring.findIndex(x=>x.id===r.id);
+      if(ridx!==-1)recurring[ridx].nextDate=nextStr;
+      // Notifica toast
+      const sign=r.type==='expense'?'-':'+';
+      notify(`🔄 ${r.name}: ${sign}€${parseFloat(r.amount).toFixed(2)} scalato automaticamente`);
+      // Aggiungi a centro notifiche
+      addNotif({
+        id:'rec_'+Date.now(),
+        type:'rec',
+        icon:'🔄',
+        title:`Ricorrente eseguita: ${r.name}`,
+        sub:`${r.type==='expense'?'Uscita':'Entrata'} di €${parseFloat(r.amount).toFixed(2)} aggiunta automaticamente`,
+        time:Date.now(),
+        read:false,
+        action:'ricorrenti'
+      });
+    });
   });
+  // Notifiche scadenze imminenti (entro 3 giorni)
+  const soon=new Date();soon.setDate(soon.getDate()+3);
+  const soonStr=soon.toISOString().split('T')[0];
+  recurring.filter(r=>r.status==='active'&&r.nextDate>today&&r.nextDate<=soonStr).forEach(r=>{
+    addNotif({
+      id:'soon_'+r.id,
+      type:'rec',
+      icon:'⏰',
+      title:`Scadenza imminente: ${r.name}`,
+      sub:`Scade il ${r.nextDate} · €${parseFloat(r.amount).toFixed(2)}`,
+      time:Date.now()-1000,
+      read:false,
+      action:'ricorrenti'
+    });
+  });
+  // Scadenze bollette
+  bills.filter(b=>b.date&&b.date<=soonStr&&b.status!=='paid').forEach(b=>{
+    addNotif({
+      id:'bill_'+b.id,
+      type:'bill',
+      icon:'📄',
+      title:`Bolletta in scadenza: ${b.name}`,
+      sub:`Scade il ${b.date} · €${parseFloat(b.amount).toFixed(2)}`,
+      time:Date.now()-2000,
+      read:false,
+      action:'bollette'
+    });
+  });
+  updateBellBadge();
+}
+
+/* ===== NOTIFICHE CENTER ===== */
+const NOTIFS_KEY=()=>`fp_notifs_${user.id}`;
+
+function loadNotifs(){
+  try{const s=localStorage.getItem(NOTIFS_KEY());appNotifs=s?JSON.parse(s):[];}
+  catch(e){appNotifs=[];}
+}
+function saveNotifs(){
+  try{localStorage.setItem(NOTIFS_KEY(),JSON.stringify(appNotifs.slice(0,80)));}
+  catch(e){}
+}
+function addNotif(n){
+  loadNotifs();
+  // evita duplicati per stesso id
+  if(appNotifs.some(x=>x.id===n.id))return;
+  appNotifs.unshift(n);
+  saveNotifs();
+  updateBellBadge();
+}
+function updateBellBadge(){
+  loadNotifs();
+  const unread=appNotifs.filter(n=>!n.read).length;
+  const badge=document.getElementById('notifBadge');
+  const bell=document.getElementById('notifBell');
+  if(!badge||!bell)return;
+  if(unread>0){
+    badge.classList.remove('hidden');
+    badge.textContent=unread>99?'99+':unread;
+    bell.classList.add('has-notif');
+  } else {
+    badge.classList.add('hidden');
+    bell.classList.remove('has-notif');
+  }
+}
+function markAllRead(){
+  loadNotifs();
+  appNotifs.forEach(n=>n.read=true);
+  saveNotifs();
+  updateBellBadge();
+  goTo('notifiche');
+}
+function clearAllNotifs(){
+  if(!confirm('Cancellare tutte le notifiche?'))return;
+  appNotifs=[];saveNotifs();updateBellBadge();goTo('notifiche');
+}
+
+/* ===== GROUP CHAT LISTENER (nuovi messaggi) ===== */
+let groupListeners=[];
+function startGroupListener(){
+  // Rimuovi vecchi listener
+  groupListeners.forEach(off=>off());groupListeners=[];
+  groups.forEach(g=>{
+    const lastKey=`fp_lastmsg_${g.id}`;
+    const lastSeen=localStorage.getItem(lastKey)||0;
+    const ref=db.ref(`groups/${g.id}/chat`).orderByChild('ts').startAfter(parseInt(lastSeen));
+    const handler=ref.on('child_added',snap=>{
+      const msg=snap.val();
+      if(!msg||msg.userId===user.id)return; // ignora i propri messaggi
+      localStorage.setItem(lastKey,msg.ts);
+      addNotif({
+        id:'chat_'+snap.key,
+        type:'chat',
+        icon:'💬',
+        title:`Nuovo messaggio in ${g.name}`,
+        sub:`${msg.userName}: ${msg.text.length>50?msg.text.slice(0,50)+'…':msg.text}`,
+        time:msg.ts,
+        read:false,
+        action:'gruppi',
+        groupId:g.id
+      });
+      notify(`💬 ${g.name}: ${msg.userName} ha scritto`);
+    });
+    groupListeners.push(()=>ref.off('child_added',handler));
+  });
+}
+
+function buildNotifs(){
+  loadNotifs();
+  updateBellBadge();
+}
+
+/* ===== RENDER NOTIFICHE PAGE ===== */
+function renderNotifiche(con){
+  loadNotifs();
+  const unread=appNotifs.filter(n=>!n.read).length;
+  const typeColors={rec:'rgba(255,209,102,.15)',bill:'rgba(255,79,109,.15)',chat:'rgba(0,212,255,.15)',info:'rgba(0,229,160,.15)'};
+  con.innerHTML=`
+  <div class="card">
+    <div class="ch">
+      <div class="ct"><div class="ct-ico">🔔</div>Notifiche ${unread>0?`<span class="badge br">${unread} nuove</span>`:''}</div>
+      <div style="display:flex;gap:7px">
+        ${unread>0?`<button class="btn-a" onclick="markAllRead()" style="background:linear-gradient(135deg,var(--gr),#00b894)"><i class="fa fa-check-double"></i> Segna lette</button>`:''}
+        ${appNotifs.length>0?`<button class="btn-a" onclick="clearAllNotifs()" style="background:linear-gradient(135deg,var(--re),#c0392b)"><i class="fa fa-trash"></i> Cancella</button>`:''}
+      </div>
+    </div>
+    ${appNotifs.length===0?es('🔔','Nessuna notifica.<br>Le scadenze e i messaggi appariranno qui.'):
+    appNotifs.map(n=>`
+    <div class="ncard ${n.read?'':'unread'} type-${n.type}" onclick="readNotif('${n.id}','${n.action||''}','${n.groupId||''}')">
+      <div class="ncard-ico" style="background:${typeColors[n.type]||'var(--s2)'}">
+        ${n.icon||'🔔'}
+      </div>
+      <div class="ncard-body">
+        <div class="ncard-title">${n.title}</div>
+        <div class="ncard-sub">${n.sub}</div>
+        <div class="ncard-time">${fmtNotifTime(n.time)}</div>
+      </div>
+      ${!n.read?'<div class="ncard-dot"></div>':''}
+    </div>`).join('')}
+  </div>`;
+}
+
+function readNotif(id,action,groupId){
+  loadNotifs();
+  const n=appNotifs.find(x=>x.id===id);
+  if(n)n.read=true;
+  saveNotifs();updateBellBadge();
+  if(action){
+    if(action==='gruppi'&&groupId){curGroupId=groupId;}
+    goTo(action);
+  } else goTo('notifiche');
+}
+
+function fmtNotifTime(ts){
+  if(!ts)return '';
+  const d=new Date(ts);const now=new Date();
+  const diff=Math.floor((now-d)/1000);
+  if(diff<60)return 'Adesso';
+  if(diff<3600)return `${Math.floor(diff/60)} min fa`;
+  if(diff<86400)return `${Math.floor(diff/3600)}h fa`;
+  return d.toLocaleDateString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 }
 
 /* ===== PAGES ===== */
 function renderPage(p){
   const con=document.getElementById('content');
-  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette',utenze:'Utenze',viaggi:'Viaggi',gruppi:'Gruppi',piani:'Piani',admin:'Admin',profilo:'Profilo'};
-  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette`,utenze:`${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,gruppi:`${groups.length} gruppi`,piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account'};
+  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette',utenze:'Utenze',viaggi:'Viaggi',gruppi:'Gruppi',notifiche:'Notifiche',piani:'Piani',admin:'Admin',profilo:'Profilo'};
+  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette`,utenze:`${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account'};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
@@ -842,6 +1252,9 @@ function renderPage(p){
       <div class="ii"><div class="in">${t.name}</div><div class="id2">📍 ${t.dest}</div></div>
       <div class="iam" style="color:var(--ac2)">${fmtE(t.budget)}</div></div>`).join('')}
     </div>`;
+
+  } else if(p==='notifiche'){
+    renderNotifiche(con);
 
   } else if(p==='gruppi'){
     renderGroups(con);
@@ -1192,6 +1605,28 @@ function catIcon(cid){const c=CATS.find(x=>x.id===cid);return c?c.icon:'📦';}
 function catName(cid){const c=CATS.find(x=>x.id===cid);return c?c.name:'Altro';}
 function es(icon,text){return`<div class="es"><div class="es-i">${icon}</div><div class="es-t">${text}</div></div>`;}
 function showChangePass(){const b=document.getElementById('changePassBox');b.style.display=b.style.display==='none'?'block':'none';}
+
+/* ===== DRAWER (MOBILE) ===== */
+function toggleDrawer(){
+  const d=document.getElementById('drawer');
+  const o=document.getElementById('drawerOverlay');
+  const h=document.getElementById('hamBtn');
+  const isOpen=d.classList.contains('open');
+  if(isOpen){closeDrawer();}
+  else{
+    d.classList.add('open');
+    o.classList.add('open');
+    h.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+  const h=document.getElementById('hamBtn');
+  if(h)h.classList.remove('open');
+  document.body.style.overflow='';
+}
 function doChangePass(){
   const old=document.getElementById('cpOld').value;
   const n1=document.getElementById('cpNew1').value;

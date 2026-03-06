@@ -6,7 +6,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Finanza Pro – App</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -345,6 +344,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
     <div class="tab-pills">
       <button class="tab-pill active" onclick="switchTab('login',this)">Accedi</button>
       <button class="tab-pill" onclick="switchTab('register',this)">Registrati</button>
+      <button class="tab-pill" onclick="switchTab('reset',this)">Password?</button>
     </div>
     <div id="loginTab">
       <div class="inp-wrap"><i class="fa fa-envelope inp-ico"></i><input type="email" id="lEmail" class="fi" placeholder="Email" autocomplete="email"></div>
@@ -356,6 +356,25 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
       <div class="inp-wrap"><i class="fa fa-envelope inp-ico"></i><input type="email" id="rEmail" class="fi" placeholder="Email" autocomplete="email"></div>
       <div class="inp-wrap"><i class="fa fa-lock inp-ico"></i><input type="password" id="rPass" class="fi" placeholder="Password (min 6 caratteri)" onkeydown="if(event.key==='Enter')doRegister()"></div>
       <button class="btn-p" id="regBtn" onclick="doRegister()">Crea Account</button>
+    </div>
+    <!-- RESET PASSWORD -->
+    <div id="resetTab" style="display:none">
+      <!-- Step 1: inserisci email -->
+      <div id="resetStep1">
+        <p style="font-size:12px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Inserisci la tua email. Se è presente nel sistema potrai scegliere subito la nuova password.</p>
+        <div class="inp-wrap"><i class="fa fa-envelope inp-ico"></i><input type="email" id="resetEmail" class="fi" placeholder="La tua email" onkeydown="if(event.key==='Enter')doResetStep1()"></div>
+        <button class="btn-p" id="resetStep1Btn" onclick="doResetStep1()">Verifica Email</button>
+      </div>
+      <!-- Step 2: scegli nuova password -->
+      <div id="resetStep2" style="display:none">
+        <div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:10px 13px;margin-bottom:14px;font-size:12px;color:var(--gr)">
+          ✅ Email trovata! Scegli la tua nuova password.
+        </div>
+        <div class="inp-wrap"><i class="fa fa-lock inp-ico"></i><input type="password" id="newPass1" class="fi" placeholder="Nuova password (min 6 caratteri)"></div>
+        <div class="inp-wrap"><i class="fa fa-lock inp-ico"></i><input type="password" id="newPass2" class="fi" placeholder="Ripeti nuova password" onkeydown="if(event.key==='Enter')doResetStep2()"></div>
+        <button class="btn-p" id="resetStep2Btn" onclick="doResetStep2()">Salva Nuova Password</button>
+        <button onclick="resetBack()" style="width:100%;padding:10px;background:transparent;border:none;color:var(--tx3);font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:4px">← Cambia email</button>
+      </div>
     </div>
     <div id="authMsg" class="auth-msg"></div>
   </div>
@@ -530,17 +549,30 @@ const dec=t=>{try{return decodeURIComponent(escape(atob(t)));}catch(e){return ''
 /* ===== INIT ===== */
 window.addEventListener('load',()=>{
   fillCatSelects();
+  // Controlla se Firebase è caricato
+  if(typeof firebase === 'undefined'){
+    document.querySelector('.spl-txt').textContent = '❌ Errore: controlla la connessione internet';
+    document.querySelector('.spl-txt').style.color = '#ff4f6d';
+    setTimeout(()=>{ document.querySelector('.spl-txt').textContent = 'Apri il file da un server web o da IONOS'; }, 2000);
+    setTimeout(exitSplash, 5000);
+    return;
+  }
   try{
     firebase.initializeApp(FB); db=firebase.database();
     db.ref('users').once('value').then(snap=>{
       const us=snap.val()||{};
       if(!Object.values(us).some(u=>u.email==='admin'))
         db.ref('users/admin_'+Date.now()).set({email:'admin',password:enc('admintest'),name:'Admin',plan:'lifetime',role:'admin',createdAt:new Date().toISOString()});
-    });
+    }).catch(e=>console.warn('Firebase check admin:',e));
     const sv=localStorage.getItem('fp_user');
-    if(sv){user=JSON.parse(sv);realUser=user;setTimeout(exitSplash,3600);return;}
-  }catch(e){console.error(e);}
-  setTimeout(exitSplash,3600);
+    if(sv){ try{ user=JSON.parse(sv); realUser=user; } catch(e){ localStorage.removeItem('fp_user'); } }
+    setTimeout(exitSplash, 3600);
+  }catch(e){
+    console.error('Firebase error:',e);
+    document.querySelector('.spl-txt').textContent = '❌ Errore connessione Firebase';
+    document.querySelector('.spl-txt').style.color = '#ff4f6d';
+    setTimeout(exitSplash, 4000);
+  }
 });
 
 function exitSplash(){
@@ -553,8 +585,53 @@ function exitSplash(){
 function switchTab(tab,btn){
   document.getElementById('loginTab').style.display=tab==='login'?'block':'none';
   document.getElementById('registerTab').style.display=tab==='register'?'block':'none';
+  document.getElementById('resetTab').style.display=tab==='reset'?'block':'none';
   document.querySelectorAll('.tab-pill').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
+  setMsg('','');
+  // reset the reset flow
+  if(tab==='reset'){ document.getElementById('resetStep1').style.display='block'; document.getElementById('resetStep2').style.display='none'; document.getElementById('resetEmail').value=''; }
+}
+
+let _resetUserId=null;
+function doResetStep1(){
+  const email=document.getElementById('resetEmail').value.trim();
+  if(!email){setMsg('❌ Inserisci la tua email','error');return;}
+  const btn=document.getElementById('resetStep1Btn');btn.disabled=true;setMsg('⏳ Verifica...','loading');
+  db.ref('users').once('value').then(snap=>{
+    const us=snap.val()||{};let found=null;
+    for(let id in us){if(us[id].email===email){found={...us[id],id};break;}}
+    btn.disabled=false;
+    if(found){
+      _resetUserId=found.id;
+      setMsg('','');
+      document.getElementById('resetStep1').style.display='none';
+      document.getElementById('resetStep2').style.display='block';
+    } else {
+      setMsg('❌ Email non trovata nel sistema','error');
+    }
+  }).catch(()=>{btn.disabled=false;setMsg('❌ Errore connessione','error');});
+}
+function doResetStep2(){
+  const p1=document.getElementById('newPass1').value;
+  const p2=document.getElementById('newPass2').value;
+  if(!p1||!p2){setMsg('❌ Compila entrambi i campi','error');return;}
+  if(p1.length<6){setMsg('❌ Password minimo 6 caratteri','error');return;}
+  if(p1!==p2){setMsg('❌ Le password non coincidono','error');return;}
+  if(!_resetUserId){setMsg('❌ Errore, riprova','error');return;}
+  const btn=document.getElementById('resetStep2Btn');btn.disabled=true;setMsg('⏳ Salvataggio...','loading');
+  db.ref(`users/${_resetUserId}/password`).set(enc(p1)).then(()=>{
+    btn.disabled=false;_resetUserId=null;
+    setMsg('✅ Password aggiornata! Accedi ora.','success');
+    setTimeout(()=>switchTab('login',document.querySelector('.tab-pill')),2000);
+  }).catch(()=>{btn.disabled=false;setMsg('❌ Errore salvataggio','error');});
+}
+function resetBack(){
+  _resetUserId=null;
+  document.getElementById('resetStep1').style.display='block';
+  document.getElementById('resetStep2').style.display='none';
+  document.getElementById('newPass1').value='';
+  document.getElementById('newPass2').value='';
   setMsg('','');
 }
 function setMsg(t,type){const e=document.getElementById('authMsg');e.textContent=t;e.className='auth-msg'+(type?' '+type:'');}
@@ -792,7 +869,21 @@ function renderPage(p){
       <div style="padding:11px 0"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">ID Account</div>
         <div style="font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;word-break:break-all;background:var(--s1);padding:8px;border-radius:8px">${user.id}</div>
       </div>
-      <div style="margin-top:12px"><button class="btn-a" onclick="navigator.clipboard.writeText('${user.id}');notify('✅ ID copiato!')"><i class="fa fa-copy"></i> Copia ID</button></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-a" onclick="navigator.clipboard.writeText('${user.id}');notify('✅ ID copiato!')"><i class="fa fa-copy"></i> Copia ID</button>
+        <button class="btn-a" onclick="showChangePass()" style="background:linear-gradient(135deg,var(--ac3),var(--re))"><i class="fa fa-key"></i> Cambia Password</button>
+      </div>
+      <div id="changePassBox" style="display:none;margin-top:16px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:16px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px">🔑 Cambia Password</div>
+        <div class="fg"><label class="fl">Password attuale</label><input type="password" id="cpOld" class="fc" placeholder="Password attuale"></div>
+        <div class="fg"><label class="fl">Nuova password</label><input type="password" id="cpNew1" class="fc" placeholder="Nuova password (min 6 caratteri)"></div>
+        <div class="fg"><label class="fl">Ripeti nuova password</label><input type="password" id="cpNew2" class="fc" placeholder="Ripeti nuova password"></div>
+        <div id="cpMsg" style="font-size:12px;min-height:16px;font-weight:500;margin-bottom:10px"></div>
+        <div style="display:flex;gap:8px">
+          <button class="bms" onclick="doChangePass()">Salva</button>
+          <button class="bmc" onclick="document.getElementById('changePassBox').style.display='none'">Annulla</button>
+        </div>
+      </div>
     </div>`;
   }
 }
@@ -1066,7 +1157,28 @@ function fmtDate(d){try{return new Date(d).toLocaleDateString('it-IT');}catch(e)
 function catIcon(cid){const c=CATS.find(x=>x.id===cid);return c?c.icon:'📦';}
 function catName(cid){const c=CATS.find(x=>x.id===cid);return c?c.name:'Altro';}
 function es(icon,text){return`<div class="es"><div class="es-i">${icon}</div><div class="es-t">${text}</div></div>`;}
-// resize: update admin button label
+function showChangePass(){const b=document.getElementById('changePassBox');b.style.display=b.style.display==='none'?'block':'none';}
+function doChangePass(){
+  const old=document.getElementById('cpOld').value;
+  const n1=document.getElementById('cpNew1').value;
+  const n2=document.getElementById('cpNew2').value;
+  const msg=document.getElementById('cpMsg');
+  const setM=(t,c)=>{msg.textContent=t;msg.style.color=c;}
+  if(!old||!n1||!n2){setM('❌ Compila tutti i campi','var(--re)');return;}
+  if(dec(user.password)!==old){setM('❌ Password attuale non corretta','var(--re)');return;}
+  if(n1.length<6){setM('❌ Nuova password minimo 6 caratteri','var(--re)');return;}
+  if(n1!==n2){setM('❌ Le password non coincidono','var(--re)');return;}
+  db.ref(`users/${user.id}/password`).set(enc(n1)).then(()=>{
+    user.password=enc(n1);realUser.password=enc(n1);
+    localStorage.setItem('fp_user',JSON.stringify(user));
+    setM('✅ Password aggiornata!','var(--gr)');
+    document.getElementById('cpOld').value='';
+    document.getElementById('cpNew1').value='';
+    document.getElementById('cpNew2').value='';
+    setTimeout(()=>{document.getElementById('changePassBox').style.display='none';notify('✅ Password aggiornata!');},1500);
+  }).catch(()=>setM('❌ Errore salvataggio','var(--re)'));
+}
+// window resize: update admin button label
 window.addEventListener('resize',updateUI);
 </script>
 </body>

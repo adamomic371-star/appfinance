@@ -1,50 +1,27 @@
 {
-  "name": "Finanza Pro - Business Edition",
+  "name": "Finanza Pro",
   "short_name": "Finanza Pro",
-  "description": "App di gestione finanze per privati e aziende - Completamente offline",
-  "start_url": "/appfinance/app_v2_complete.html",
+  "description": "Il tuo assistente finanziario personale.",
+  "start_url": "/appfinance/app.html",
   "scope": "/appfinance/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "theme_color": "#6c63ff",
+  "orientation": "any",
   "background_color": "#070b18",
+  "theme_color": "#070b18",
+  "lang": "it",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%236c63ff;stop-opacity:1' /><stop offset='100%' style='stop-color:%2300d4ff;stop-opacity:1' /></linearGradient></defs><rect width='192' height='192' fill='url(%23g)' /><text x='96' y='120' font-size='100' text-anchor='middle' dominant-baseline='middle' fill='white' font-weight='bold'>💰</text></svg>",
+      "src": "/appfinance/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%236c63ff;stop-opacity:1' /><stop offset='100%' style='stop-color:%2300d4ff;stop-opacity:1' /></linearGradient></defs><rect width='180' height='180' fill='url(%23g)' /><text x='90' y='110' font-size='90' text-anchor='middle' dominant-baseline='middle' fill='white' font-weight='bold'>💰</text></svg>",
-      "sizes": "180x180",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
+      "src": "/appfinance/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Nuova Transazione",
-      "short_name": "Transazione",
-      "description": "Aggiungi una nuova transazione",
-      "url": "/appfinance/app_v2_complete.html?page=transazioni",
-      "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text x='48' y='60' font-size='50' text-anchor='middle' fill='white'>💸</text></svg>", "sizes": "96x96"}]
-    },
-    {
-      "name": "Nuovo Preventivo",
-      "short_name": "Preventivo",
-      "description": "Crea un nuovo preventivo",
-      "url": "/appfinance/app_v2_complete.html?page=preventivi",
-      "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text x='48' y='60' font-size='50' text-anchor='middle' fill='white'>📄</text></svg>", "sizes": "96x96"}]
-    }
-  ],
-  "categories": ["finance", "business", "productivity"],
-  "screenshots": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect width='540' height='720' fill='%23070b18'/><text x='270' y='360' font-size='80' text-anchor='middle' text-anchor='middle' fill='white' font-weight='bold'>💰</text></svg>",
-      "sizes": "540x720",
-      "type": "image/svg+xml",
-      "form_factor": "narrow"
-    }
-  ]
+  "prefer_related_applications": false
 }

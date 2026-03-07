@@ -1,66 +1,31 @@
-const CACHE_NAME = 'finanza-pro-v2.0';
-const urlsToCache = [
-  '/',
-  '/appfinance/app_v2_complete.html',
-  '/appfinance/manifest.json',
+// Finanza Pro — Service Worker v1.1 (GitHub Pages)
+const CACHE = 'finanza-pro-v2';
+const BASE = '/appfinance/';
+const ASSETS = [
+  BASE + 'app.html',
+  BASE + 'manifest.json',
+  BASE + 'icon-192.png',
+  BASE + 'icon-512.png'
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache).catch(() => {});
-    })
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {})
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request).then(response => {
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseToCache);
-        });
-        return response;
-      }).catch(() => {
-        return caches.match('/appfinance/app_v2_complete.html');
-      });
-    })
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
-
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-notifications') {
-    event.waitUntil(syncNotifications());
-  }
-});
-
-async function syncNotifications() {
-  const notifs = JSON.parse(localStorage.getItem('fp_pending_notifs') || '[]');
-  notifs.forEach(notif => {
-    self.registration.showNotification(notif.title, notif.options);
-  });
-  localStorage.removeItem('fp_pending_notifs');
-}

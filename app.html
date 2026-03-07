@@ -856,26 +856,50 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
       <div class="ob-dot" id="od1"></div>
       <div class="ob-dot" id="od2"></div>
       <div class="ob-dot" id="od3"></div>
+      <div class="ob-dot" id="od4"></div>
     </div>
     <div class="ob-step active" id="os0">
       <div class="ob-ico">👋</div>
       <div class="ob-title">Benvenuto in Finanza Pro!</div>
-      <div class="ob-sub">Il tuo assistente finanziario personale. In pochi minuti capirai come tenere sotto controllo entrate, uscite e molto altro.</div>
+      <div class="ob-sub">Il tuo assistente finanziario personale e aziendale. In 5 passi ti mostriamo tutto quello che puoi fare.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <div style="background:var(--s1);border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px">💸</div><div style="font-size:10px;color:var(--tx2);margin-top:4px">Movimenti</div></div>
+        <div style="background:var(--s1);border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px">🎯</div><div style="font-size:10px;color:var(--tx2);margin-top:4px">Obiettivi</div></div>
+        <div style="background:var(--s1);border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px">🔄</div><div style="font-size:10px;color:var(--tx2);margin-top:4px">Ricorrenti</div></div>
+        <div style="background:var(--s1);border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px">💼</div><div style="font-size:10px;color:var(--tx2);margin-top:4px">Modalità Azienda</div></div>
+      </div>
     </div>
     <div class="ob-step" id="os1">
-      <div class="ob-ico">💸</div>
-      <div class="ob-title">Tieni traccia dei movimenti</div>
-      <div class="ob-sub">Aggiungi entrate e uscite dalla sezione <strong>Movimenti</strong>. Assegna una categoria per vedere i report automatici.</div>
+      <div class="ob-ico">🟢</div>
+      <div class="ob-title">Il tuo Saldo Reale</div>
+      <div class="ob-sub">La Dashboard mostra i <strong>Soldi Liberi</strong> — il tuo saldo meno le spese fisse (ricorrenti, bollette, viaggi e obiettivi di risparmio). Sai sempre quanto puoi davvero spendere.</div>
+      <div style="background:var(--s1);border-radius:12px;padding:14px;margin-top:14px;border-left:3px solid var(--gr)">
+        <div style="font-size:11px;color:var(--tx2)">💡 <strong>Consiglio:</strong> Aggiungi le tue ricorrenti subito (abbonamenti, mutuo, stipendio) per avere un calcolo preciso.</div>
+      </div>
     </div>
     <div class="ob-step" id="os2">
-      <div class="ob-ico">🔄</div>
-      <div class="ob-title">Automatizza le ricorrenti</div>
-      <div class="ob-sub">Aggiungi abbonamenti, mutuo o stipendio nella sezione <strong>Ricorrenti</strong>. L'app li registra automaticamente alla data stabilita.</div>
+      <div class="ob-ico">💸</div>
+      <div class="ob-title">Movimenti Intelligenti</div>
+      <div class="ob-sub">Aggiungi entrate e uscite con categoria. Filtra per mese, cerca, esporta o importa da CSV.</div>
+      <div style="background:var(--s1);border-radius:12px;padding:14px;margin-top:14px;border-left:3px solid var(--ac)">
+        <div style="font-size:11px;color:var(--tx2)">💡 <strong>Quando carichi un'entrata ≥ €1.000</strong> appare un popup per allocarla ai tuoi obiettivi di risparmio.</div>
+      </div>
     </div>
     <div class="ob-step" id="os3">
       <div class="ob-ico">🎯</div>
-      <div class="ob-title">Imposta i tuoi budget</div>
-      <div class="ob-sub">Dal <strong>Profilo</strong> puoi impostare un budget mensile per categoria e ricevere avvisi quando stai per superarlo. Pronto?</div>
+      <div class="ob-title">Obiettivi di Risparmio</div>
+      <div class="ob-sub">Crea obiettivi (fondo emergenza, auto, vacanze...) con un target e una scadenza. L'app calcola automaticamente quanto mettere da parte ogni mese.</div>
+      <div style="background:var(--s1);border-radius:12px;padding:14px;margin-top:14px;border-left:3px solid var(--ye)">
+        <div style="font-size:11px;color:var(--tx2)">💡 Gli obiettivi attivi vengono scalati dai tuoi <strong>Soldi Liberi</strong> in Dashboard.</div>
+      </div>
+    </div>
+    <div class="ob-step" id="os4">
+      <div class="ob-ico">💼</div>
+      <div class="ob-title">Modalità Azienda</div>
+      <div class="ob-sub">Passa alla modalità <strong>Azienda</strong> dal menu laterale per accedere a Prima Nota, Clienti, Preventivi PDF, IVA trimestrale e Scadenziario.</div>
+      <div style="background:var(--s1);border-radius:12px;padding:14px;margin-top:14px;border-left:3px solid var(--or)">
+        <div style="font-size:11px;color:var(--tx2)">💡 Hai bisogno del piano <strong>Business Starter</strong> o superiore per la modalità azienda.</div>
+      </div>
     </div>
     <div class="ob-btns">
       <button class="bmc" id="obBack" onclick="obNav(-1)" style="display:none">← Indietro</button>
@@ -904,6 +928,53 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     <div class="fg"><label class="fl">Categoria</label><select id="etCat" class="fc"></select></div>
     <input type="hidden" id="etId">
     <div class="ma"><button class="bms" onclick="saveEditTx()">Salva</button><button class="bmc" onclick="closeMo('editTxModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- EDIT BIZ TX MODAL -->
+<div id="editBizTxModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">✏️ Modifica Movimento</div><button class="mc" onclick="closeMo('editBizTxModal')">✕</button></div>
+    <input type="hidden" id="ebtId">
+    <div class="fg"><label class="fl">Descrizione</label><input type="text" id="ebtDesc" class="fc"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">Importo (€)</label><input type="number" id="ebtAmt" class="fc" step="0.01" min="0"></div>
+      <div class="fg"><label class="fl">IVA %</label><select id="ebtIva" class="fc"><option value="0">Esente</option><option value="4">4%</option><option value="10">10%</option><option value="22">22%</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Tipo</label><select id="ebtType" class="fc"><option value="income">📈 Entrata</option><option value="expense">📉 Uscita</option></select></div>
+    <div class="fg"><label class="fl">Categoria</label><select id="ebtCat" class="fc"></select></div>
+    <div class="fg"><label class="fl">Data scadenza (opz.)</label><input type="date" id="ebtDue" class="fc"></div>
+    <div class="ma"><button class="bms" onclick="saveEditBizTx()">Aggiorna</button><button class="bmc" onclick="closeMo('editBizTxModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- SCADENZA MANUALE MODAL -->
+<div id="scadenzaModal" class="mo">
+  <div class="ms">
+    <input type="hidden" id="scadEditId">
+    <div class="mh"><div class="mtt" id="scadModalTitle">📅 Nuova Scadenza</div><button class="mc" onclick="closeMo('scadenzaModal')">✕</button></div>
+    <div class="fg"><label class="fl">Titolo</label><input type="text" id="scadTitle" class="fc" placeholder="es. Rinnovo contratto, Assemblea..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">Data scadenza</label><input type="date" id="scadDate" class="fc"></div>
+      <div class="fg"><label class="fl">Categoria</label>
+        <select id="scadCat" class="fc">
+          <option value="📋">📋 Contratto</option><option value="💼">💼 Business</option>
+          <option value="🧾">🧾 Fiscale</option><option value="💰">💰 Pagamento</option>
+          <option value="📅">📅 Appuntamento</option><option value="⚖️">⚖️ Legale</option>
+          <option value="🏛️">🏛️ Amministrativo</option><option value="📌">📌 Altro</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Importo (opz. €)</label><input type="number" id="scadAmt" class="fc" placeholder="0.00" step="0.01"></div>
+    <div class="fg"><label class="fl">Note</label><textarea id="scadNotes" class="fc" rows="2" placeholder="Dettagli aggiuntivi..."></textarea></div>
+    <div class="fg"><label class="fl">Promemoria</label>
+      <select id="scadReminder" class="fc">
+        <option value="0">Nessuno</option><option value="1">1 giorno prima</option>
+        <option value="3">3 giorni prima</option><option value="7" selected>1 settimana prima</option>
+        <option value="14">2 settimane prima</option><option value="30">1 mese prima</option>
+      </select>
+    </div>
+    <div class="ma"><button class="bms" id="scadSaveBtn" onclick="saveScadenza()">Salva</button><button class="bmc" onclick="closeMo('scadenzaModal')">Annulla</button></div>
   </div>
 </div>
 
@@ -2104,46 +2175,106 @@ function renderPage(p){
     renderAdmin(con);
 
   } else if(p==='profilo'){
+    const goals=loadGoals();
+    const activeGoals=goals.filter(g=>g.status!=='completed').length;
+    const bal2=transactions.reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+    const txCount=transactions.length;
+    const recCount=recurring.filter(r=>r.status==='active').length;
+    const joinDate=user.createdAt?new Date(user.createdAt).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'}):'N/D';
+    const avatarColors=['#6c63ff','#00d4ff','#f7971e','#00e5a0','#ff4f6d'];
+    const avatarColor=avatarColors[user.name?.charCodeAt(0)%avatarColors.length]||avatarColors[0];
     con.innerHTML=`
-    <div class="card">
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:inline-flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 28px rgba(108,99,255,.4)">${user.role==='admin'?'👑':'👤'}</div>
-        <div style="font-size:17px;font-weight:800;margin-top:9px">${user.name}</div>
-        <div style="margin-top:5px"><span class="badge bp">${PLANS[user.plan]?.name||user.plan}</span></div>
+    <!-- HERO PROFILO -->
+    <div class="card" style="text-align:center;padding:28px 20px 20px">
+      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,${avatarColor},var(--ac2));display:inline-flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 0 32px ${avatarColor}55;margin-bottom:12px">${user.role==='admin'?'👑':'👤'}</div>
+      <div style="font-size:20px;font-weight:900;letter-spacing:-.3px">${user.name}</div>
+      <div style="font-size:12px;color:var(--tx2);margin-top:3px">${user.email}</div>
+      <div style="margin-top:8px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+        <span class="badge bp">${PLANS[user.plan]?.name||user.plan}</span>
+        ${user.role==='admin'?'<span class="badge bo">👑 Admin</span>':''}
       </div>
-      <div style="padding:11px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Email</div><div style="font-size:13px;font-weight:600">${user.email}</div></div>
-      <div style="padding:11px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Ruolo</div><div style="font-size:13px;font-weight:600">${user.role==='admin'?'👑 Amministratore':'👤 Utente'}</div></div>
-      <div style="padding:11px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">ID Account</div>
-        <div style="font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;word-break:break-all;background:var(--s1);padding:8px;border-radius:8px">${user.id}</div>
-      </div>
-      <!-- PAYPAL EMAIL -->
-      <div style="padding:11px 0;border-bottom:1px solid var(--b1)">
-        <div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">💙 Email PayPal (per ricevere pagamenti nei gruppi)</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="email" id="profilePaypalEmail" class="fc" placeholder="tuamail@paypal.it"
-            value="${localStorage.getItem('fp_paypal_'+user.id)||''}"
-            style="flex:1;font-size:12px;padding:8px 12px">
-          <button class="btn-a" onclick="saveProfilePaypal()" style="background:linear-gradient(135deg,#003087,#009cde);flex-shrink:0">💾 Salva</button>
+      <!-- MINI STATS -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px">
+        <div style="background:var(--s2);border-radius:12px;padding:12px 6px">
+          <div style="font-size:18px;font-weight:900;color:${bal2>=0?'var(--gr)':'var(--re)'}">${fmtE(bal2)}</div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:2px">Saldo</div>
         </div>
-        <div style="font-size:10px;color:var(--tx3);margin-top:5px">Quando sei debitore in un gruppo, gli altri vedranno il tasto "Paga con PayPal" verso di te.</div>
+        <div style="background:var(--s2);border-radius:12px;padding:12px 6px">
+          <div style="font-size:18px;font-weight:900;color:var(--ac)">${txCount}</div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:2px">Movimenti</div>
+        </div>
+        <div style="background:var(--s2);border-radius:12px;padding:12px 6px">
+          <div style="font-size:18px;font-weight:900;color:var(--ac2)">${activeGoals}</div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:2px">Obiettivi</div>
+        </div>
       </div>
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-a" onclick="navigator.clipboard.writeText('${user.id}');notify('✅ ID copiato!')"><i class="fa fa-copy"></i> Copia ID</button>
-        <button class="btn-a" onclick="showChangePass()" style="background:linear-gradient(135deg,var(--ac3),var(--re))"><i class="fa fa-key"></i> Cambia Password</button>
-        <button class="btn-a" id="profileInstallBtn" onclick="pwaInstallFromProfile()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📲 Installa App</button>
+    </div>
+    <!-- DATI ACCOUNT -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">👤</div>Dati Account</div></div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nome</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="font-size:13px;font-weight:600;flex:1" id="profileNameDisplay">${user.name}</div>
+          <button class="btn-sm bs-g" onclick="toggleEditName()">✏️</button>
+        </div>
+        <div id="editNameBox" style="display:none;margin-top:8px;display:none">
+          <input type="text" id="newNameInput" class="fc" value="${user.name}" style="margin-bottom:8px">
+          <div style="display:flex;gap:6px"><button class="bms" style="flex:1;padding:8px" onclick="saveName()">Salva</button><button class="bmc" style="padding:8px" onclick="toggleEditName()">✕</button></div>
+        </div>
       </div>
-      <div id="changePassBox" style="display:none;margin-top:16px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:16px">
+      <div style="padding:10px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Email</div><div style="font-size:13px;font-weight:600">${user.email}</div></div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Membro dal</div><div style="font-size:13px;font-weight:600">${joinDate}</div></div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ID Account</div>
+        <div style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;word-break:break-all;background:var(--s1);padding:7px 10px;border-radius:8px">${user.id}</div>
+      </div>
+    </div>
+    <!-- PAYPAL -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">💙</div>PayPal per Gruppi</div></div>
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:10px">Quando sei debitore in un gruppo, gli altri vedranno il tasto "Paga con PayPal" verso di te.</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="email" id="profilePaypalEmail" class="fc" placeholder="tuamail@paypal.it" value="${localStorage.getItem('fp_paypal_'+user.id)||''}" style="flex:1">
+        <button class="btn-a" onclick="saveProfilePaypal()" style="background:linear-gradient(135deg,#003087,#009cde);flex-shrink:0">💾 Salva</button>
+      </div>
+    </div>
+    <!-- NOTIFICHE PUSH -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">🔔</div>Notifiche Push</div></div>
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:12px">Ricevi notifiche del browser per scadenze e ricorrenti anche quando l'app è in background.</div>
+      <div id="pushNotifStatus" style="font-size:12px;color:var(--tx3);margin-bottom:10px"></div>
+      <button class="btn-a" onclick="requestPushPermission()" id="pushPermBtn">🔔 Attiva Notifiche Push</button>
+    </div>
+    <!-- SICUREZZA -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">🔒</div>Sicurezza</div></div>
+      <div style="padding:8px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--b1)">
+        <div><div style="font-size:12px;font-weight:700">Password</div><div style="font-size:10px;color:var(--tx3)">${user.password?.startsWith('sha256:')?'🔒 Protetta con SHA-256':'⚠️ Vecchio formato — aggiorna'}</div></div>
+        <button class="btn-sm bs-g" onclick="showChangePass()">✏️ Cambia</button>
+      </div>
+      <div style="padding:8px 0;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:12px;font-weight:700">Modalità corrente</div><div style="font-size:10px;color:var(--tx3)">${appMode==='business'?'💼 Azienda':'👤 Personale'}</div></div>
+        <button class="btn-sm" style="background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2)!important;color:var(--ac);font-size:10px" onclick="setMode(appMode==='business'?'personal':'business');goTo('profilo')">Switch</button>
+      </div>
+      <div id="changePassBox" style="display:none;margin-top:12px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:16px">
         <div style="font-size:13px;font-weight:700;margin-bottom:12px">🔑 Cambia Password</div>
         <div class="fg"><label class="fl">Password attuale</label><input type="password" id="cpOld" class="fc" placeholder="Password attuale"></div>
-        <div class="fg"><label class="fl">Nuova password</label><input type="password" id="cpNew1" class="fc" placeholder="Nuova password (min 6 caratteri)"></div>
-        <div class="fg"><label class="fl">Ripeti nuova password</label><input type="password" id="cpNew2" class="fc" placeholder="Ripeti nuova password"></div>
+        <div class="fg"><label class="fl">Nuova password</label><input type="password" id="cpNew1" class="fc" placeholder="Min. 6 caratteri"></div>
+        <div class="fg"><label class="fl">Ripeti</label><input type="password" id="cpNew2" class="fc" placeholder="Ripeti nuova password"></div>
         <div id="cpMsg" style="font-size:12px;min-height:16px;font-weight:500;margin-bottom:10px"></div>
-        <div style="display:flex;gap:8px">
-          <button class="bms" onclick="doChangePass()">Salva</button>
-          <button class="bmc" onclick="document.getElementById('changePassBox').style.display='none'">Annulla</button>
-        </div>
+        <div style="display:flex;gap:8px"><button class="bms" onclick="doChangePass()">Salva</button><button class="bmc" onclick="document.getElementById('changePassBox').style.display='none'">Annulla</button></div>
+      </div>
+    </div>
+    <!-- AZIONI -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">⚙️</div>Azioni</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-a" onclick="navigator.clipboard.writeText('${user.id}').then(()=>notify('✅ ID copiato!'))"><i class="fa fa-copy"></i> Copia ID</button>
+        <button class="btn-a" id="profileInstallBtn" onclick="pwaInstallFromProfile()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📲 Installa App</button>
+        <button class="btn-a" onclick="resetOnboarding()" style="background:linear-gradient(135deg,var(--ac3),var(--ac))">🎓 Rivisita Tutorial</button>
       </div>
     </div>`;
+    // init push status
+    setTimeout(updatePushStatus,100);
 
   } else if(p==='biz_dashboard'){renderBizDashboard(con);
   } else if(p==='biz_primanota'){renderBizPrimanota(con);
@@ -2233,38 +2364,110 @@ function renderBizDashboard(con){
 
 /* —— PRIMA NOTA AZIENDALE —— */
 function renderBizPrimanota(con){
+  const tab=sessionStorage.getItem('bpTab')||'movimenti';
   const totalInc=bizTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const totalExp=bizTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const search=(sessionStorage.getItem('bpSearch')||'').toLowerCase();
   const typeF=sessionStorage.getItem('bpType')||'all';
+  const monthF=sessionStorage.getItem('bpMonth')||'all';
+  const months=[...new Set(bizTx.map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
+
+  if(tab==='report'){
+    // Raggruppamento per cliente
+    const byClient={};bizTx.forEach(t=>{const c=t.clientId?clients.find(x=>x.id===t.clientId)?.name||t.clientId:'Generico';if(!byClient[c])byClient[c]={inc:0,exp:0};if(t.type==='income')byClient[c].inc+=t.amount;else byClient[c].exp+=t.amount;});
+    // Per mese
+    const byMonth={};bizTx.forEach(t=>{const m=(t.createdAt||'').slice(0,7);if(!byMonth[m])byMonth[m]={inc:0,exp:0};if(t.type==='income')byMonth[m].inc+=t.amount;else byMonth[m].exp+=t.amount;});
+    const sortedMonths=Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,12);
+    con.innerHTML=`
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="pg-btn" onclick="sessionStorage.setItem('bpTab','movimenti');goTo('biz_primanota')">← Movimenti</button>
+    </div>
+    <div class="stat-grid" style="margin-bottom:14px">
+      <div class="sc"><div class="sc-ico">💼</div><div class="sc-lbl">Cash Flow Totale</div><div class="sc-val" style="color:${(totalInc-totalExp)>=0?'var(--gr)':'var(--re)'}">${fmtE(totalInc-totalExp)}</div></div>
+      <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Tot. Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(totalInc)}</div></div>
+      <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Tot. Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(totalExp)}</div></div>
+      <div class="sc"><div class="sc-ico">📊</div><div class="sc-lbl">Margine %</div><div class="sc-val" style="color:var(--ac2)">${totalInc>0?Math.round(((totalInc-totalExp)/totalInc)*100):0}%</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">📊</div>Andamento Mensile</div></div>
+      ${sortedMonths.length===0?es('📊','Nessun dato'):sortedMonths.map(([m,v])=>{
+        const [y,mo]=m.split('-');
+        const label=new Date(y,mo-1).toLocaleDateString('it-IT',{month:'short',year:'numeric'});
+        const maxVal=Math.max(...sortedMonths.map(([,x])=>Math.max(x.inc,x.exp)),1);
+        return `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+            <span style="font-weight:700">${label}</span>
+            <span style="color:${v.inc-v.exp>=0?'var(--gr)':'var(--re)'};font-weight:700">${fmtE(v.inc-v.exp)}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="width:60px;font-size:9px;color:var(--gr)">+${fmtE(v.inc)}</div>
+              <div style="flex:1;background:var(--s2);border-radius:4px;height:8px;overflow:hidden"><div style="width:${Math.round((v.inc/maxVal)*100)}%;height:100%;background:var(--gr);border-radius:4px"></div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="width:60px;font-size:9px;color:var(--re)">-${fmtE(v.exp)}</div>
+              <div style="flex:1;background:var(--s2);border-radius:4px;height:8px;overflow:hidden"><div style="width:${Math.round((v.exp/maxVal)*100)}%;height:100%;background:var(--re);border-radius:4px"></div></div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">👤</div>Per Cliente/Fornitore</div></div>
+      ${Object.entries(byClient).length===0?es('👤','Nessun dato'):
+      Object.entries(byClient).sort((a,b)=>(b[1].inc+b[1].exp)-(a[1].inc+a[1].exp)).map(([name,v])=>`
+        <div class="ir"><div class="ia">👤</div>
+        <div class="ii"><div class="in">${name}</div>
+          <div class="id2">Entrate: ${fmtE(v.inc)} · Uscite: ${fmtE(v.exp)}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="iam ${v.inc-v.exp>=0?'ain':'aout'}">${fmtE(v.inc-v.exp)}</div>
+        </div></div>`).join('')}
+    </div>`;
+    return;
+  }
+
   let filtered=[...bizTx].reverse().filter(t=>{
     const ms=!search||t.desc.toLowerCase().includes(search);
     const mt=typeF==='all'||(typeF==='income'&&t.type==='income')||(typeF==='expense'&&t.type==='expense');
-    return ms&&mt;
+    const mm=monthF==='all'||(t.createdAt||'').startsWith(monthF);
+    return ms&&mt&&mm;
   });
+  const fInc=filtered.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const fExp=filtered.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   con.innerHTML=`
   <div class="stat-grid">
     <div class="sc"><div class="sc-ico">💼</div><div class="sc-lbl">Cash Flow</div><div class="sc-val" style="color:${(totalInc-totalExp)>=0?'var(--gr)':'var(--re)'}">${fmtE(totalInc-totalExp)}</div></div>
-    <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Tot. Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(totalInc)}</div></div>
-    <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Tot. Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(totalExp)}</div></div>
+    <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(totalInc)}</div></div>
+    <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(totalExp)}</div></div>
+    <div class="sc" onclick="sessionStorage.setItem('bpTab','report');goTo('biz_primanota')" style="cursor:pointer;border-color:rgba(108,99,255,.3)"><div class="sc-ico">📊</div><div class="sc-lbl">Report</div><div class="sc-val" style="color:var(--ac);font-size:13px">Vedi →</div></div>
   </div>
   <div class="search-bar">
     <input type="text" class="search-inp" placeholder="🔍 Cerca..." value="${search}" oninput="sessionStorage.setItem('bpSearch',this.value);goTo('biz_primanota')">
+    <select class="search-sel" onchange="sessionStorage.setItem('bpMonth',this.value);goTo('biz_primanota')">
+      <option value="all" ${monthF==='all'?'selected':''}>Tutti i mesi</option>
+      ${months.map(m=>{const[y,mo]=m.split('-');return`<option value="${m}" ${monthF===m?'selected':''}>${new Date(y,mo-1).toLocaleDateString('it-IT',{month:'long',year:'numeric'})}</option>`;}).join('')}
+    </select>
     <select class="search-sel" onchange="sessionStorage.setItem('bpType',this.value);goTo('biz_primanota')">
       <option value="all" ${typeF==='all'?'selected':''}>Tutti</option>
       <option value="income" ${typeF==='income'?'selected':''}>Entrate</option>
       <option value="expense" ${typeF==='expense'?'selected':''}>Uscite</option>
     </select>
   </div>
+  ${monthF!=='all'?`<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <div class="sc" style="flex:1;min-width:100px;padding:10px 13px"><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr);font-size:16px">${fmtE(fInc)}</div></div>
+    <div class="sc" style="flex:1;min-width:100px;padding:10px 13px"><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re);font-size:16px">${fmtE(fExp)}</div></div>
+    <div class="sc" style="flex:1;min-width:100px;padding:10px 13px"><div class="sc-lbl">Netto</div><div class="sc-val" style="color:${fInc-fExp>=0?'var(--gr)':'var(--re)'};font-size:16px">${fmtE(fInc-fExp)}</div></div>
+  </div>`:''}
   <div class="card">
     <div class="ch">
-      <div class="ct"><div class="ct-ico">💼</div>Movimenti Aziendali (${filtered.length})</div>
-      <div style="display:flex;gap:6px">
+      <div class="ct"><div class="ct-ico">💼</div>Movimenti (${filtered.length})</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="export-btn" onclick="exportBizCSV()"><i class="fa fa-download"></i> CSV</button>
         <button class="btn-a" onclick="openBizTxModal()">＋ Aggiungi</button>
       </div>
     </div>
-    ${filtered.length===0?es('💼','Nessun movimento. Aggiungi entrate e uscite aziendali.'):
+    ${filtered.length===0?es('💼','Nessun movimento trovato.'):
     filtered.map(t=>{
       const cat=BIZ_CATS[t.cat]||BIZ_CATS.altro;
       const proj=t.projectId?projects.find(p=>p.id===t.projectId):null;
@@ -2273,9 +2476,10 @@ function renderBizPrimanota(con){
         <div class="ia" style="background:${cat.color}22">${cat.icon}</div>
         <div class="ii">
           <div class="in">${t.desc}</div>
-          <div class="id2">${fmtDate(t.createdAt)} · ${cat.label}${proj?` · 📁 ${proj.name}`:''}${cli?` · 👤 ${cli.name}`:''}${t.iva&&t.iva!=='0'?` · IVA ${t.iva}%`:''}</div>
+          <div class="id2">${fmtDate(t.createdAt)}${proj?` · 📁 ${proj.name}`:''}${cli?` · 👤 ${cli.name}`:''}${t.iva&&t.iva!=='0'?` · IVA ${t.iva}%`:''}</div>
         </div>
         <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div>
+        <button class="btn-sm bs-g" onclick="openEditBizTx('${t.id}')" style="margin-right:2px">✏️</button>
         <button class="btn-sm bs-d" onclick="delBizTx('${t.id}')">🗑️</button>
       </div>`;
     }).join('')}
@@ -2502,53 +2706,76 @@ function renderBizSpese(con){
 }
 
 /* —— SCADENZIARIO —— */
+function loadManualScadenze(){try{return JSON.parse(localStorage.getItem('fp_scad_'+user.id)||'[]');}catch(e){return [];}}
+function saveManualScadenze(s){localStorage.setItem('fp_scad_'+user.id,JSON.stringify(s));}
+
 function renderBizScadenzario(con){
   const today=new Date();today.setHours(0,0,0,0);
+  const manual=loadManualScadenze();
   const items=[];
-  // Preventivi in scadenza
+  // Preventivi
   quotes.filter(q=>q.expiry&&q.status==='sent').forEach(q=>{
     const d=new Date(q.expiry+'T00:00:00');
-    const days=Math.round((d-today)/(1000*60*60*24));
-    items.push({date:d,days,icon:'📋',label:`Preventivo: ${q.title}`,sub:`Scade il ${d.toLocaleDateString('it-IT')}`,type:'quote',urgent:days<=3});
+    const days=Math.round((d-today)/(864e5));
+    items.push({date:d,days,icon:'📋',label:`Preventivo: ${q.title}`,sub:`Scade ${d.toLocaleDateString('it-IT')}`,type:'quote',urgent:days<=3});
   });
-  // Progetti in scadenza
+  // Progetti
   projects.filter(p=>p.endDate&&p.status==='active').forEach(p=>{
     const d=new Date(p.endDate+'T00:00:00');
-    const days=Math.round((d-today)/(1000*60*60*24));
-    items.push({date:d,days,icon:'📁',label:`Progetto: ${p.name}`,sub:`Scadenza prevista ${d.toLocaleDateString('it-IT')}`,type:'project',urgent:days<=7});
+    const days=Math.round((d-today)/(864e5));
+    items.push({date:d,days,icon:'📁',label:`Progetto: ${p.name}`,sub:`Scadenza ${d.toLocaleDateString('it-IT')}`,type:'project',urgent:days<=7});
   });
-  // Note spese in attesa approvazione
+  // Note spese pending
   expenseNotes.filter(e=>e.status==='pending').forEach(e=>{
-    const d=new Date(e.date||e.createdAt);
-    items.push({date:d,days:0,icon:'🧾',label:`Nota spese: ${e.desc}`,sub:`${fmtE(e.amount)} · In attesa approvazione`,type:'expense',urgent:true});
+    items.push({date:new Date(e.date||e.createdAt),days:0,icon:'🧾',label:`Nota spese: ${e.desc}`,sub:`${fmtE(e.amount)} · In attesa`,type:'expense',urgent:true});
   });
   // Movimenti con scadenza
   bizTx.filter(t=>t.dueDate).forEach(t=>{
     const d=new Date(t.dueDate+'T00:00:00');
-    const days=Math.round((d-today)/(1000*60*60*24));
-    if(days>=-7)items.push({date:d,days,icon:'💼',label:`Movimento: ${t.desc}`,sub:`${fmtE(t.amount)} · Scadenza ${d.toLocaleDateString('it-IT')}`,type:'tx',urgent:days<=3});
+    const days=Math.round((d-today)/(864e5));
+    if(days>=-7)items.push({date:d,days,icon:'💼',label:`Movimento: ${t.desc}`,sub:`${fmtE(t.amount)} · ${d.toLocaleDateString('it-IT')}`,type:'tx',urgent:days<=3});
+  });
+  // Scadenze manuali
+  manual.filter(s=>s.status!=='done').forEach(s=>{
+    const d=new Date(s.date+'T00:00:00');
+    const days=Math.round((d-today)/(864e5));
+    items.push({date:d,days,icon:s.cat||'📌',label:s.title,sub:`${s.notes||''}${s.amount?` · ${fmtE(s.amount)}`:''}`,type:'manual',id:s.id,urgent:days<=3,isManual:true});
   });
   items.sort((a,b)=>a.date-b.date);
   const overdue=items.filter(i=>i.days<0);
   const upcoming=items.filter(i=>i.days>=0&&i.days<=30);
   const future=items.filter(i=>i.days>30);
+  const renderRow=(i)=>`<div class="dead-row">
+    <div class="dead-date ${i.days<0?'dead-urgent':i.days<=3?'dead-urgent':i.days<=7?'dead-soon':'dead-ok'}">${i.days<0?Math.abs(i.days)+' gg fa':i.days===0?'Oggi':i.days===1?'Domani':'Fra '+i.days+' gg'}</div>
+    <div class="ia">${i.icon}</div>
+    <div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div>
+    ${i.isManual?`<div style="display:flex;gap:4px;flex-shrink:0">
+      <button class="btn-sm bs-g" onclick="doneScadenza('${i.id}')" title="Segna fatto">✅</button>
+      <button class="btn-sm bs-g" onclick="openEditScadenza('${i.id}')">✏️</button>
+      <button class="btn-sm bs-d" onclick="delScadenza('${i.id}')">🗑️</button>
+    </div>`:''}
+  </div>`;
   con.innerHTML=`
+  <button class="btn-a" style="margin-bottom:14px" onclick="openNewScadenza()">📅 Nuova Scadenza</button>
   ${overdue.length>0?`<div class="card" style="border-color:rgba(255,79,109,.3)">
     <div class="ch"><div class="ct"><div class="ct-ico" style="background:linear-gradient(135deg,var(--re),#c0392b)">🚨</div>Scaduti (${overdue.length})</div></div>
-    ${overdue.map(i=>`<div class="dead-row"><div class="dead-date dead-urgent">${i.days===0?'OGGI':Math.abs(i.days)+' gg fa'}</div><div class="ia">${i.icon}</div><div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div></div>`).join('')}
+    ${overdue.map(renderRow).join('')}
   </div>`:''}
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">📅</div>Prossimi 30 giorni</div></div>
-    ${upcoming.length===0?es('📅','Nessuna scadenza nei prossimi 30 giorni.'):
-    upcoming.map(i=>`<div class="dead-row">
-      <div class="dead-date ${i.days<=3?'dead-urgent':i.days<=7?'dead-soon':'dead-ok'}">${i.days===0?'Oggi':i.days===1?'Domani':'Fra '+i.days+' gg'}</div>
-      <div class="ia">${i.icon}</div>
-      <div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div>
-    </div>`).join('')}
+    ${upcoming.length===0?es('📅','Nessuna scadenza nei prossimi 30 giorni.'):upcoming.map(renderRow).join('')}
   </div>
   ${future.length>0?`<div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">🗓️</div>Oltre 30 giorni</div></div>
-    ${future.map(i=>`<div class="dead-row"><div class="dead-date dead-ok">${new Date(i.date).toLocaleDateString('it-IT',{day:'numeric',month:'short'})}</div><div class="ia">${i.icon}</div><div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div></div>`).join('')}
+    ${future.map(renderRow).join('')}
+  </div>`:''}
+  ${manual.filter(s=>s.status==='done').length>0?`<div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">✅</div>Completate</div></div>
+    ${manual.filter(s=>s.status==='done').map(s=>`<div class="ir" style="opacity:.5">
+      <div class="ia">${s.cat||'📌'}</div>
+      <div class="ii"><div class="in" style="text-decoration:line-through">${s.title}</div></div>
+      <button class="btn-sm bs-d" onclick="delScadenza('${s.id}')">🗑️</button>
+    </div>`).join('')}
   </div>`:''}`;
 }
 
@@ -3578,37 +3805,45 @@ function sendPaymentRequest(){
 /* ===== ADMIN PAGE ===== */
 function renderAdmin(con){
   if(allUsers.length===0){db.ref('users').once('value',s=>{allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));renderAdmin(con);});return;}
-  const st={t:allUsers.length,f:allUsers.filter(u=>u.plan==='free'||!u.plan).length,p:allUsers.filter(u=>u.plan==='pro').length,pm:allUsers.filter(u=>u.plan==='premium').length,l:allUsers.filter(u=>u.plan==='lifetime').length};
+  const planCounts={free:0,personal_pro:0,business_starter:0,business_pro:0,lifetime:0};
+  allUsers.forEach(u=>{const p=u.plan||'free';if(planCounts[p]!==undefined)planCounts[p]++;});
+  const search=(sessionStorage.getItem('admSearch')||'').toLowerCase();
+  const filtered=allUsers.filter(u=>!search||u.name?.toLowerCase().includes(search)||u.email?.toLowerCase().includes(search));
   con.innerHTML=`
   <div class="adm-stats">
-    <div class="adm-s"><div class="adm-n">${st.t}</div><div class="adm-l">👥 Totali</div></div>
-    <div class="adm-s"><div class="adm-n">${st.f}</div><div class="adm-l">🆓 Free</div></div>
-    <div class="adm-s"><div class="adm-n">${st.p}</div><div class="adm-l">⭐ Pro</div></div>
-    <div class="adm-s"><div class="adm-n">${st.pm}</div><div class="adm-l">💎 Premium</div></div>
-    <div class="adm-s"><div class="adm-n">${st.l}</div><div class="adm-l">👑 Lifetime</div></div>
+    <div class="adm-s"><div class="adm-n">${allUsers.length}</div><div class="adm-l">👥 Totali</div></div>
+    <div class="adm-s"><div class="adm-n">${planCounts.free}</div><div class="adm-l">🆓 Free</div></div>
+    <div class="adm-s"><div class="adm-n">${planCounts.personal_pro}</div><div class="adm-l">⭐ Pro</div></div>
+    <div class="adm-s"><div class="adm-n">${planCounts.business_starter+planCounts.business_pro}</div><div class="adm-l">💼 Business</div></div>
+    <div class="adm-s"><div class="adm-n">${planCounts.lifetime}</div><div class="adm-l">👑 Lifetime</div></div>
+  </div>
+  <div class="search-bar" style="margin-bottom:12px">
+    <input type="text" class="search-inp" placeholder="🔍 Cerca utente..." value="${search}" oninput="sessionStorage.setItem('admSearch',this.value);goTo('admin')">
   </div>
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">👥</div>Gestione Utenti</div></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">👥</div>Gestione Utenti (${filtered.length})</div></div>
     <div class="adm-tw"><table class="adm-t">
-      <thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Accesso</th><th>Azioni</th></tr></thead>
-      <tbody>${allUsers.map(u=>`
+      <thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Azioni</th></tr></thead>
+      <tbody>${filtered.map(u=>`
       <tr id="urow_${u.id}">
-        <td style="font-weight:600">${u.name}</td>
-        <td style="color:var(--tx2)">${u.email}</td>
-        <td><select id="uplan_${u.id}" class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:90px" onchange="markDirty('${u.id}')">
-          <option value="free" ${u.plan==='free'||!u.plan?'selected':''}>Free</option>
-          <option value="pro" ${u.plan==='pro'?'selected':''}>Pro</option>
-          <option value="premium" ${u.plan==='premium'?'selected':''}>Premium</option>
-          <option value="lifetime" ${u.plan==='lifetime'?'selected':''}>Lifetime</option>
+        <td style="font-weight:600">${u.name||'–'}</td>
+        <td style="color:var(--tx2);font-size:11px">${u.email}</td>
+        <td><select id="uplan_${u.id}" class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:110px" onchange="markDirty('${u.id}')">
+          <option value="free" ${(u.plan||'free')==='free'?'selected':''}>🆓 Free</option>
+          <option value="personal_pro" ${u.plan==='personal_pro'?'selected':''}>⭐ Personal Pro</option>
+          <option value="business_starter" ${u.plan==='business_starter'?'selected':''}>💼 Biz Starter</option>
+          <option value="business_pro" ${u.plan==='business_pro'?'selected':''}>💼 Biz Pro</option>
+          <option value="lifetime" ${u.plan==='lifetime'?'selected':''}>👑 Lifetime</option>
         </select></td>
         <td><select id="urole_${u.id}" class="fc" style="font-size:10px;padding:3px 6px;border-radius:7px;width:80px" onchange="markDirty('${u.id}')" ${u.email==='admin'?'disabled':''}>
           <option value="user" ${u.role!=='admin'?'selected':''}>👤 User</option>
           <option value="admin" ${u.role==='admin'?'selected':''}>👑 Admin</option>
         </select></td>
-        <td>${u.email!=='admin'?`<button class="btn-sm bs-s" onclick="impUser('${u.id}','${u.name.replace(/'/g,"\\'")}')">👁️ Entra</button>`:'<span class="badge bp">Tu</span>'}</td>
-        <td style="display:flex;gap:4px;align-items:center">
-          <button id="usave_${u.id}" class="btn-sm bs-g" style="display:none" onclick="saveUserRow('${u.id}')">💾 Salva</button>
-          ${u.email!=='admin'?`<button class="btn-sm bs-d" onclick="delUser('${u.id}','${u.name.replace(/'/g,"\\'")}')">🗑️</button>`:'<span class="badge bo">Protetto</span>'}
+        <td style="font-size:10px;color:var(--tx3)">${u.createdAt?new Date(u.createdAt).toLocaleDateString('it-IT'):'–'}</td>
+        <td style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+          <button id="usave_${u.id}" class="btn-sm bs-g" style="display:none" onclick="saveUserRow('${u.id}')">💾</button>
+          ${u.email!=='admin'?`<button class="btn-sm bs-s" onclick="impUser('${u.id}','${u.name?.replace(/'/g,"\\'")||''}')">👁️</button>`:''}
+          ${u.email!=='admin'?`<button class="btn-sm bs-d" onclick="delUser('${u.id}','${u.name?.replace(/'/g,"\\'")||''}')">🗑️</button>`:'<span class="badge bo">Protetto</span>'}
         </td>
       </tr>`).join('')}
       </tbody>
@@ -3884,8 +4119,14 @@ function applyTheme(){
 
 /* ===== ONBOARDING ===== */
 let obIdx=0;
+const OB_STEPS=5;
 function showOnboarding(){
   if(localStorage.getItem('fp_ob_done'))return;
+  document.getElementById('onboarding').classList.remove('hidden');
+  obIdx=0;renderOb();
+}
+function resetOnboarding(){
+  localStorage.removeItem('fp_ob_done');
   document.getElementById('onboarding').classList.remove('hidden');
   obIdx=0;renderOb();
 }
@@ -3893,11 +4134,11 @@ function renderOb(){
   document.querySelectorAll('.ob-step').forEach((s,i)=>s.classList.toggle('active',i===obIdx));
   document.querySelectorAll('.ob-dot').forEach((d,i)=>d.classList.toggle('active',i===obIdx));
   document.getElementById('obBack').style.display=obIdx>0?'block':'none';
-  document.getElementById('obNext').textContent=obIdx===3?'Inizia! 🚀':'Avanti →';
+  document.getElementById('obNext').textContent=obIdx===OB_STEPS-1?'Inizia! 🚀':'Avanti →';
 }
 function obNav(dir){
   obIdx+=dir;
-  if(obIdx>3){localStorage.setItem('fp_ob_done','1');document.getElementById('onboarding').classList.add('hidden');return;}
+  if(obIdx>=OB_STEPS){localStorage.setItem('fp_ob_done','1');document.getElementById('onboarding').classList.add('hidden');return;}
   if(obIdx<0)obIdx=0;
   renderOb();
 }
@@ -3998,8 +4239,6 @@ function delTx(id,name){
   db.ref(`transactions/${id}`).remove().then(()=>{loadData(()=>goTo('transazioni'));notify('🗑️ Eliminata');});
 }
 
-// window resize: update admin button label
-window.addEventListener('resize',updateUI);
 function openMo(id){document.getElementById(id).classList.add('active');}
 function closeMo(id){
   document.getElementById(id).classList.remove('active');
@@ -4251,6 +4490,124 @@ function importCSV(input){
     input.value='';
   };
   reader.readAsText(file);
+}
+
+/* ===== PUSH NOTIFICATIONS ===== */
+function updatePushStatus(){
+  const el=document.getElementById('pushNotifStatus');
+  const btn=document.getElementById('pushPermBtn');
+  if(!el)return;
+  if(!('Notification' in window)){el.textContent='❌ Browser non supporta notifiche push.';if(btn)btn.style.display='none';return;}
+  if(Notification.permission==='granted'){el.innerHTML='✅ <strong>Notifiche push attive</strong>';if(btn)btn.textContent='🔔 Attive';return;}
+  if(Notification.permission==='denied'){el.textContent='❌ Notifiche bloccate — abilitale nelle impostazioni del browser.';if(btn)btn.style.display='none';return;}
+  el.textContent='⚪ Notifiche non ancora attivate.';
+}
+function requestPushPermission(){
+  if(!('Notification' in window)){notify('❌ Browser non supportato');return;}
+  if(Notification.permission==='granted'){notify('✅ Notifiche già attive!');return;}
+  Notification.requestPermission().then(p=>{
+    updatePushStatus();
+    if(p==='granted'){notify('✅ Notifiche push attivate!');setTimeout(()=>new Notification('Finanza Pro 💰',{body:'Notifiche attivate! Riceverai avvisi per scadenze e ricorrenti.'}),500);}
+    else notify('❌ Permesso negato');
+  });
+}
+function sendPushIfGranted(title,body){
+  if(Notification.permission==='granted'){try{new Notification(title,{body});}catch(e){}}
+}
+
+/* ===== PROFILO: modifica nome ===== */
+function toggleEditName(){
+  const box=document.getElementById('editNameBox');if(!box)return;
+  box.style.display=box.style.display==='block'?'none':'block';
+}
+function saveName(){
+  const v=document.getElementById('newNameInput')?.value.trim();
+  if(!v){notify('❌ Nome vuoto');return;}
+  db.ref(`users/${user.id}/name`).set(v).then(()=>{
+    user.name=v;realUser.name=v;localStorage.setItem('fp_user',JSON.stringify(user));
+    notify('✅ Nome aggiornato!');goTo('profilo');
+  });
+}
+function resetOnboarding(){
+  localStorage.removeItem('fp_ob_done');
+  document.getElementById('onboarding').classList.remove('hidden');
+  obIdx=0;renderOb();
+}
+
+/* ===== EDIT BIZ TX ===== */
+function openEditBizTx(id){
+  const t=bizTx.find(x=>x.id===id);if(!t)return;
+  document.getElementById('ebtId').value=id;
+  document.getElementById('ebtDesc').value=t.desc||'';
+  document.getElementById('ebtAmt').value=t.amount||'';
+  document.getElementById('ebtType').value=t.type||'expense';
+  document.getElementById('ebtIva').value=t.iva||'0';
+  document.getElementById('ebtDue').value=t.dueDate||'';
+  const catSel=document.getElementById('ebtCat');
+  catSel.innerHTML=Object.entries(BIZ_CATS).map(([k,v])=>`<option value="${k}" ${t.cat===k?'selected':''}>${v.icon} ${v.label}</option>`).join('');
+  openMo('editBizTxModal');
+}
+function saveEditBizTx(){
+  const id=document.getElementById('ebtId').value;if(!id)return;
+  const desc=document.getElementById('ebtDesc').value.trim();
+  const amt=parseFloat(document.getElementById('ebtAmt').value);
+  if(!desc||!amt){notify('❌ Compila descrizione e importo');return;}
+  db.ref(`biz/${user.id}/transactions/${id}`).update({
+    desc,amount:amt,
+    type:document.getElementById('ebtType').value,
+    cat:document.getElementById('ebtCat').value,
+    iva:document.getElementById('ebtIva').value,
+    dueDate:document.getElementById('ebtDue').value||null
+  }).then(()=>{closeMo('editBizTxModal');loadData(()=>goTo('biz_primanota'));notify('✅ Aggiornato!');});
+}
+
+/* ===== SCADENZE MANUALI ===== */
+function loadManualScadenze(){try{return JSON.parse(localStorage.getItem('fp_scad_'+user.id)||'[]');}catch(e){return [];}}
+function saveManualScadenze(s){localStorage.setItem('fp_scad_'+user.id,JSON.stringify(s));}
+function openNewScadenza(){
+  document.getElementById('scadEditId').value='';
+  document.getElementById('scadModalTitle').textContent='📅 Nuova Scadenza';
+  document.getElementById('scadSaveBtn').textContent='Salva';
+  ['scadTitle','scadNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('scadDate').value='';
+  document.getElementById('scadAmt').value='';
+  document.getElementById('scadCat').value='📌';
+  document.getElementById('scadReminder').value='7';
+  openMo('scadenzaModal');
+}
+function openEditScadenza(id){
+  const s=loadManualScadenze().find(x=>x.id===id);if(!s)return;
+  document.getElementById('scadEditId').value=id;
+  document.getElementById('scadModalTitle').textContent='✏️ Modifica Scadenza';
+  document.getElementById('scadSaveBtn').textContent='Aggiorna';
+  document.getElementById('scadTitle').value=s.title||'';
+  document.getElementById('scadDate').value=s.date||'';
+  document.getElementById('scadAmt').value=s.amount||'';
+  document.getElementById('scadNotes').value=s.notes||'';
+  document.getElementById('scadCat').value=s.cat||'📌';
+  document.getElementById('scadReminder').value=s.reminder||'7';
+  openMo('scadenzaModal');
+}
+function saveScadenza(){
+  const title=document.getElementById('scadTitle').value.trim();
+  const date=document.getElementById('scadDate').value;
+  if(!title||!date){notify('❌ Inserisci titolo e data');return;}
+  const all=loadManualScadenze();
+  const editId=document.getElementById('scadEditId').value;
+  const data={title,date,cat:document.getElementById('scadCat').value,amount:parseFloat(document.getElementById('scadAmt').value)||0,notes:document.getElementById('scadNotes').value.trim(),reminder:parseInt(document.getElementById('scadReminder').value)||0,status:'pending'};
+  if(editId){const idx=all.findIndex(s=>s.id===editId);if(idx>=0)all[idx]={...all[idx],...data};}
+  else all.push({id:'scad_'+Date.now(),...data,createdAt:new Date().toISOString()});
+  saveManualScadenze(all);closeMo('scadenzaModal');goTo('biz_scadenzario');notify('✅ Scadenza salvata!');
+}
+function doneScadenza(id){
+  const all=loadManualScadenze();const idx=all.findIndex(s=>s.id===id);
+  if(idx>=0)all[idx].status='done';
+  saveManualScadenze(all);goTo('biz_scadenzario');notify('✅ Scadenza completata!');
+}
+function delScadenza(id){
+  if(!confirm('Eliminare questa scadenza?'))return;
+  saveManualScadenze(loadManualScadenze().filter(s=>s.id!==id));
+  goTo('biz_scadenzario');notify('🗑️ Eliminata');
 }
 
 // window resize: update admin button label

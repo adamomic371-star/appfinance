@@ -546,6 +546,79 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   width:100%;
 }
 .drawer-out:hover{background:rgba(255,79,109,.12)}
+
+/* ======= MODE SWITCHER ======= */
+.mode-sw{
+  display:flex;align-items:center;
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:11px;padding:3px;gap:2px;
+  flex-shrink:0;
+}
+.mode-btn{
+  padding:5px 11px;border-radius:8px;font-size:11px;font-weight:700;
+  cursor:pointer;border:none;font-family:'Outfit',sans-serif;
+  color:var(--tx3);background:transparent;transition:all .22s;white-space:nowrap;
+}
+.mode-btn.active{
+  background:linear-gradient(135deg,var(--ac),var(--ac2));
+  color:#fff;box-shadow:0 3px 10px rgba(108,99,255,.35);
+}
+.mode-btn.biz.active{
+  background:linear-gradient(135deg,#f7971e,#ffd200);
+  color:#1a1200;box-shadow:0 3px 10px rgba(247,151,30,.35);
+}
+
+/* ======= BUSINESS COLORS ======= */
+body.biz-mode .ni.active{background:linear-gradient(135deg,rgba(247,151,30,.15),rgba(255,210,0,.08));border-color:rgba(247,151,30,.3)}
+body.biz-mode .ni.active .ni-ico{background:linear-gradient(135deg,#f7971e,#ffd200)}
+body.biz-mode .ni.active::before{background:linear-gradient(#f7971e,#ffd200)}
+body.biz-mode .ct-ico{background:linear-gradient(135deg,#f7971e,#ffd200)}
+body.biz-mode .btn-a{background:linear-gradient(135deg,#f7971e,#ffd200);color:#1a1200}
+body.biz-mode .bms{background:linear-gradient(135deg,#f7971e,#ffd200)}
+body.biz-mode .ub{background:linear-gradient(135deg,rgba(247,151,30,.1),rgba(255,210,0,.05));border-color:rgba(247,151,30,.2)}
+body.biz-mode .topbar{border-bottom-color:rgba(247,151,30,.2)}
+/* Business top accent line */
+body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#f7971e,#ffd200,#f7971e);opacity:.4}
+.topbar{position:relative}
+
+/* ======= KANBAN / STATUS CARDS ======= */
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700}
+.sp-draft{background:rgba(138,138,138,.12);color:#888;border:1px solid rgba(138,138,138,.2)}
+.sp-sent{background:rgba(0,212,255,.12);color:var(--ac2);border:1px solid rgba(0,212,255,.2)}
+.sp-accepted{background:rgba(0,229,160,.12);color:var(--gr);border:1px solid rgba(0,229,160,.2)}
+.sp-rejected{background:rgba(255,79,109,.12);color:var(--re);border:1px solid rgba(255,79,109,.2)}
+.sp-paid{background:rgba(0,229,160,.12);color:var(--gr);border:1px solid rgba(0,229,160,.2)}
+.sp-overdue{background:rgba(255,79,109,.15);color:var(--re);border:1px solid rgba(255,79,109,.3)}
+.sp-pending{background:rgba(255,209,102,.12);color:var(--ye);border:1px solid rgba(255,209,102,.2)}
+.sp-approved{background:rgba(0,229,160,.12);color:var(--gr);border:1px solid rgba(0,229,160,.2)}
+.sp-reimbursed{background:rgba(108,99,255,.12);color:var(--ac);border:1px solid rgba(108,99,255,.2)}
+
+/* ======= PROJECT CARD ======= */
+.proj-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:14px;margin-bottom:10px;transition:all .2s}
+.proj-card:hover{border-color:var(--b2);transform:translateY(-1px)}
+.proj-progress{height:6px;background:var(--s2);border-radius:10px;overflow:hidden;margin:8px 0 4px}
+.proj-fill{height:100%;border-radius:10px;transition:width .5s ease}
+
+/* ======= CLIENT CARD ======= */
+.cli-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:13px;cursor:pointer;transition:all .2s}
+.cli-card:hover{border-color:rgba(247,151,30,.3);background:rgba(247,151,30,.04);transform:translateY(-1px)}
+.cli-av{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#f7971e,#ffd200);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#1a1200;flex-shrink:0}
+
+/* ======= SCADENZIARIO ======= */
+.dead-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1)}
+.dead-row:last-child{border-bottom:none}
+.dead-date{font-size:10px;font-family:'JetBrains Mono',monospace;width:70px;flex-shrink:0;font-weight:700}
+.dead-urgent{color:var(--re)}
+.dead-soon{color:var(--ye)}
+.dead-ok{color:var(--gr)}
+
+/* ======= IVA TRACKER ======= */
+.iva-box{background:linear-gradient(135deg,rgba(247,151,30,.1),rgba(255,210,0,.05));border:1px solid rgba(247,151,30,.25);border-radius:14px;padding:16px;margin-bottom:12px}
+.iva-num{font-size:28px;font-weight:900;font-family:'JetBrains Mono',monospace}
+
+/* ======= NOTE SPESE ======= */
+.expense-note-card{background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:13px;margin-bottom:9px;transition:all .2s}
+.expense-note-card:hover{border-color:var(--b2)}
 </style>
 </head>
 <body>
@@ -653,6 +726,11 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
       </div>
       <div class="tb-right" id="tbRight">
         <div class="tb-date" id="tbDate"></div>
+        <!-- MODE SWITCHER -->
+        <div class="mode-sw" id="modeSw">
+          <button class="mode-btn active" id="modePersonal" onclick="setMode('personal')">👤 Personale</button>
+          <button class="mode-btn biz" id="modeBiz" onclick="setMode('business')">🏢 Azienda</button>
+        </div>
         <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Tema">🌙</button>
         <button class="notif-bell" id="notifBell" onclick="goTo('notifiche')" title="Notifiche">
           🔔<span class="notif-badge hidden" id="notifBadge">0</span>
@@ -724,6 +802,89 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 </div>
 
 <!-- MODALS -->
+<!-- BUSINESS MODALS -->
+<div id="clientModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">👤 Nuovo Cliente/Fornitore</div><button class="mc" onclick="closeMo('clientModal')">✕</button></div>
+    <div class="fg"><label class="fl">Tipo</label><select id="cliType" class="fc"><option value="client">👤 Cliente</option><option value="supplier">🏭 Fornitore</option></select></div>
+    <div class="fg"><label class="fl">Nome / Ragione Sociale</label><input type="text" id="cliName" class="fc" placeholder="es. Mario Rossi / Acme Srl"></div>
+    <div class="fg"><label class="fl">Email</label><input type="email" id="cliEmail" class="fc" placeholder="email@esempio.it"></div>
+    <div class="fg"><label class="fl">Telefono</label><input type="tel" id="cliPhone" class="fc" placeholder="+39..."></div>
+    <div class="fg"><label class="fl">P.IVA / CF</label><input type="text" id="cliVat" class="fc" placeholder="IT12345678901"></div>
+    <div class="fg"><label class="fl">Indirizzo</label><input type="text" id="cliAddr" class="fc" placeholder="Via Roma 1, Milano"></div>
+    <div class="fg"><label class="fl">Note</label><textarea id="cliNote" class="fc" rows="2" placeholder="Note opzionali..."></textarea></div>
+    <div class="ma"><button class="bms" onclick="saveClient()">Salva</button><button class="bmc" onclick="closeMo('clientModal')">Annulla</button></div>
+  </div>
+</div>
+<div id="quoteModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">📋 Nuovo Preventivo</div><button class="mc" onclick="closeMo('quoteModal')">✕</button></div>
+    <div class="fg"><label class="fl">Titolo</label><input type="text" id="qtTitle" class="fc" placeholder="es. Sviluppo sito web"></div>
+    <div class="fg"><label class="fl">Cliente</label><select id="qtClient" class="fc"><option value="">— Seleziona cliente —</option></select></div>
+    <div class="fg"><label class="fl">Importo Totale (€)</label><input type="number" id="qtAmt" class="fc" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="fg"><label class="fl">Scadenza preventivo</label><input type="date" id="qtExpiry" class="fc"></div>
+    <div class="fg"><label class="fl">Descrizione / Voci</label><textarea id="qtDesc" class="fc" rows="4" placeholder="Descrivi le voci del preventivo..."></textarea></div>
+    <div class="fg"><label class="fl">Stato</label><select id="qtStatus" class="fc"><option value="draft">📝 Bozza</option><option value="sent">📤 Inviato</option><option value="accepted">✅ Accettato</option><option value="rejected">❌ Rifiutato</option></select></div>
+    <div class="ma"><button class="bms" onclick="saveQuote()">Salva</button><button class="bmc" onclick="closeMo('quoteModal')">Annulla</button></div>
+  </div>
+</div>
+<div id="projModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">📁 Nuovo Progetto</div><button class="mc" onclick="closeMo('projModal')">✕</button></div>
+    <div class="fg"><label class="fl">Nome Progetto</label><input type="text" id="prName" class="fc" placeholder="es. Sito Web Cliente X"></div>
+    <div class="fg"><label class="fl">Cliente</label><select id="prClient" class="fc"><option value="">— Nessun cliente —</option></select></div>
+    <div class="fg"><label class="fl">Budget (€)</label><input type="number" id="prBudget" class="fc" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="fg"><label class="fl">Data Inizio</label><input type="date" id="prStart" class="fc"></div>
+    <div class="fg"><label class="fl">Data Fine Prevista</label><input type="date" id="prEnd" class="fc"></div>
+    <div class="fg"><label class="fl">Descrizione</label><textarea id="prDesc" class="fc" rows="2" placeholder="Descrizione progetto..."></textarea></div>
+    <div class="fg"><label class="fl">Stato</label><select id="prStatus" class="fc"><option value="active">🟢 Attivo</option><option value="paused">🟡 In Pausa</option><option value="completed">✅ Completato</option></select></div>
+    <div class="ma"><button class="bms" onclick="saveProject()">Salva</button><button class="bmc" onclick="closeMo('projModal')">Annulla</button></div>
+  </div>
+</div>
+<div id="bizTxModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">💼 Movimento Aziendale</div><button class="mc" onclick="closeMo('bizTxModal')">✕</button></div>
+    <div class="fg"><label class="fl">Descrizione</label><input type="text" id="btDesc" class="fc" placeholder="es. Pagamento cliente, Acquisto PC..."></div>
+    <div class="fg"><label class="fl">Importo (€)</label><input type="number" id="btAmt" class="fc" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="fg"><label class="fl">Tipo</label><select id="btType" class="fc"><option value="income">📈 Entrata</option><option value="expense">📉 Uscita</option></select></div>
+    <div class="fg"><label class="fl">Categoria</label><select id="btCat" class="fc">
+      <option value="vendite">💰 Vendite / Compensi</option>
+      <option value="acquisti">🛒 Acquisti / Forniture</option>
+      <option value="personale">👥 Personale / Consulenti</option>
+      <option value="affitti">🏢 Affitti / Locazioni</option>
+      <option value="marketing">📣 Marketing / Pubblicità</option>
+      <option value="software">💻 Software / SaaS</option>
+      <option value="trasferte">✈️ Trasferte / Spese Viaggio</option>
+      <option value="banche">🏦 Banche / Interessi</option>
+      <option value="tasse">🧾 Imposte / Contributi</option>
+      <option value="altro">📦 Altro</option>
+    </select></div>
+    <div class="fg"><label class="fl">Progetto (opzionale)</label><select id="btProj" class="fc"><option value="">— Nessun progetto —</option></select></div>
+    <div class="fg"><label class="fl">Cliente/Fornitore (opz.)</label><select id="btClient" class="fc"><option value="">— Nessuno —</option></select></div>
+    <div class="fg"><label class="fl">IVA %</label><select id="btIva" class="fc"><option value="0">0% (esente)</option><option value="4">4%</option><option value="5">5%</option><option value="10">10%</option><option value="22" selected>22%</option></select></div>
+    <div class="ma"><button class="bms" onclick="saveBizTx()">Salva</button><button class="bmc" onclick="closeMo('bizTxModal')">Annulla</button></div>
+  </div>
+</div>
+<div id="expenseNoteModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">🧾 Nuova Nota Spese</div><button class="mc" onclick="closeMo('expenseNoteModal')">✕</button></div>
+    <div class="fg"><label class="fl">Descrizione</label><input type="text" id="enDesc" class="fc" placeholder="es. Pranzo con cliente, Carburante..."></div>
+    <div class="fg"><label class="fl">Importo (€)</label><input type="number" id="enAmt" class="fc" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="fg"><label class="fl">Categoria</label><select id="enCat" class="fc">
+      <option value="pasto">🍽️ Pasto / Ristorazione</option>
+      <option value="trasporto">🚗 Trasporto / Carburante</option>
+      <option value="alloggio">🏨 Alloggio</option>
+      <option value="materiali">📦 Materiali / Forniture</option>
+      <option value="rappresentanza">🤝 Rappresentanza</option>
+      <option value="altro">📋 Altro</option>
+    </select></div>
+    <div class="fg"><label class="fl">Data</label><input type="date" id="enDate" class="fc"></div>
+    <div class="fg"><label class="fl">Progetto (opzionale)</label><select id="enProj" class="fc"><option value="">— Nessuno —</option></select></div>
+    <div class="ma"><button class="bms" onclick="saveExpenseNote()">Salva</button><button class="bmc" onclick="closeMo('expenseNoteModal')">Annulla</button></div>
+  </div>
+</div>
+<!-- END BUSINESS MODALS -->
+
 <div id="txModal" class="mo">
   <div class="ms">
     <div class="mh"><div class="mtt">💸 Nuova Transazione</div><button class="mc" onclick="closeMo('txModal')">✕</button></div>
@@ -842,6 +1003,10 @@ function fillCatSelects(){
 let realUser=null,user=null,db=null;
 let allUsers=[],transactions=[],bills=[],utilities=[],trips=[],groups=[],recurring=[],appNotifs=[];
 let isAdminMode=false,impersonating=false,origAdmin=null,curGroupId=null;
+// BUSINESS state
+let appMode='personal'; // 'personal' | 'business'
+let bizTx=[],clients=[],quotes=[],projects=[],expenseNotes=[];
+let curProjectId=null,curClientId=null;
 
 const FB={
   apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
@@ -852,20 +1017,44 @@ const FB={
   messagingSenderId:"181987533980",
   appId:"1:181987533980:web:41c5032990ccede17eb959"
 };
-const PLANS={free:{name:'Free',price:'Gratis',features:['Transazioni & Report']},pro:{name:'Pro',price:'€3/mese',features:['Transazioni','Bollette','Utenze','Ricorrenti']},premium:{name:'Premium',price:'€9/mese',features:['Tutto Pro','Viaggi','Gruppi','Ricorrenti avanzate']},lifetime:{name:'Lifetime',price:'€99',features:['Tutto incluso','Per sempre']}};
-const NAV=[
-  {id:'dashboard',  icon:'📊',label:'Dashboard',   plans:['free','pro','premium','lifetime']},
-  {id:'transazioni',icon:'💸',label:'Movimenti',   plans:['free','pro','premium','lifetime']},
-  {id:'report',     icon:'📈',label:'Report',       plans:['free','pro','premium','lifetime']},
-  {id:'ricorrenti', icon:'🔄',label:'Ricorrenti',   plans:['pro','premium','lifetime']},
-  {id:'bollette',   icon:'📄',label:'Bollette & Utenze', plans:['pro','premium','lifetime']},
-  {id:'viaggi',     icon:'✈️',label:'Viaggi',       plans:['premium','lifetime']},
-  {id:'gruppi',     icon:'👥',label:'Gruppi',       plans:['premium','lifetime']},
-  {id:'notifiche',  icon:'🔔',label:'Notifiche',    plans:['free','pro','premium','lifetime']},
-  {id:'piani',      icon:'🎁',label:'Piani',        plans:['free','pro','premium','lifetime']},
+
+const PLANS={
+  free:{name:'Free',price:'Gratis',biz:false,features:['Dashboard personale','Movimenti (max 50)','Report base']},
+  personal_pro:{name:'Personal Pro',price:'€3/mese',biz:false,features:['Tutto Free illimitato','Ricorrenti & Bollette','Budget mensile','Export CSV','Viaggi & Gruppi']},
+  business_starter:{name:'Business Starter',price:'€9/mese',biz:true,features:['Tutto Personal Pro','Vista Azienda','Clienti & Fornitori','Preventivi','Prima Nota aziendale','Progetti (max 5)']},
+  business_pro:{name:'Business Pro',price:'€19/mese',biz:true,features:['Tutto Business Starter','Progetti illimitati','Note Spese + approvazione','IVA Tracker','Scadenziario avanzato','Multi-utente (presto)']},
+  lifetime:{name:'Lifetime',price:'€149',biz:true,features:['Tutto Business Pro per sempre','Priorità supporto','Accesso anticipato nuove funzioni']},
+};
+
+const NAV_PERSONAL=[
+  {id:'dashboard',  icon:'📊',label:'Dashboard',   plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'transazioni',icon:'💸',label:'Movimenti',   plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'report',     icon:'📈',label:'Report',       plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'ricorrenti', icon:'🔄',label:'Ricorrenti',   plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'bollette',   icon:'📄',label:'Bollette & Utenze',plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'viaggi',     icon:'✈️',label:'Viaggi',       plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'gruppi',     icon:'👥',label:'Gruppi',       plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'notifiche',  icon:'🔔',label:'Notifiche',    plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'piani',      icon:'🎁',label:'Piani',        plans:['free','personal_pro','business_starter','business_pro','lifetime']},
   {id:'admin',      icon:'⚙️',label:'Admin',        plans:['admin']},
-  {id:'profilo',    icon:'👤',label:'Profilo',      plans:['free','pro','premium','lifetime']},
+  {id:'profilo',    icon:'👤',label:'Profilo',      plans:['free','personal_pro','business_starter','business_pro','lifetime']},
 ];
+const NAV_BUSINESS=[
+  {id:'biz_dashboard', icon:'📊',label:'Dashboard',      plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_primanota', icon:'💼',label:'Prima Nota',      plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_clienti',   icon:'👥',label:'Clienti & Fornitori',plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_preventivi',icon:'📋',label:'Preventivi',      plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_progetti',  icon:'📁',label:'Progetti',        plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_spese',     icon:'🧾',label:'Note Spese',      plans:['business_pro','lifetime']},
+  {id:'biz_scadenzario',icon:'📅',label:'Scadenziario',   plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_iva',       icon:'🧮',label:'IVA Tracker',     plans:['business_pro','lifetime']},
+  {id:'notifiche',     icon:'🔔',label:'Notifiche',       plans:['business_starter','business_pro','lifetime']},
+  {id:'piani',         icon:'🎁',label:'Piani',           plans:['business_starter','business_pro','lifetime']},
+  {id:'admin',         icon:'⚙️',label:'Admin',           plans:['admin']},
+  {id:'profilo',       icon:'👤',label:'Profilo',         plans:['business_starter','business_pro','lifetime']},
+];
+// Alias for current NAV
+let NAV=NAV_PERSONAL;
 
 const enc=t=>btoa(unescape(encodeURIComponent(t)));
 const dec=t=>{try{return decodeURIComponent(escape(atob(t)));}catch(e){return '';}};
@@ -988,14 +1177,45 @@ function doRegister(){
 function showApp(){
   document.getElementById('app').classList.remove('hidden');
   applyTheme();
+  // Restore last mode
+  const savedMode=localStorage.getItem('fp_mode_'+user.id)||'personal';
+  appMode=savedMode;
+  applyMode();
   updateUI();buildNav();
   loadData(()=>{
-    goTo('dashboard');
+    goTo(appMode==='business'?'biz_dashboard':'dashboard');
     setTimeout(()=>{checkRecurring();buildNotifs();checkBudgetAlerts();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
   notify('👋 Bentornato, '+user.name.split(' ')[0]+'!');
+}
+
+/* ===== MODE SWITCHER ===== */
+function setMode(mode){
+  const hasBiz=PLANS[user.plan]?.biz;
+  if(mode==='business'&&!hasBiz){
+    notify('⭐ Passa a Business Starter per accedere alla vista aziendale!');
+    goTo('piani');return;
+  }
+  appMode=mode;
+  localStorage.setItem('fp_mode_'+user.id,mode);
+  applyMode();
+  buildNav();
+  loadData(()=>goTo(mode==='business'?'biz_dashboard':'dashboard'));
+}
+function applyMode(){
+  const isBiz=appMode==='business';
+  document.body.classList.toggle('biz-mode',isBiz);
+  const bp=document.getElementById('modePersonal');
+  const bb=document.getElementById('modeBiz');
+  if(bp){bp.classList.toggle('active',!isBiz);}
+  if(bb){bb.classList.toggle('active',isBiz);}
+  NAV=isBiz?NAV_BUSINESS:NAV_PERSONAL;
+  // Update sidebar user badge
+  const modeLabel=isBiz?'🏢 Azienda':'👤 Personale';
+  const md=document.getElementById('modeLabel');
+  if(md)md.textContent=modeLabel;
 }
 function updateUI(){
   document.getElementById('sbName').textContent=user.name;
@@ -1070,14 +1290,31 @@ function goTo(p){
 
 /* ===== DATA ===== */
 function loadData(cb){
-  let done=0;const need=6;const chk=()=>{if(++done>=need&&cb)cb();};
-  db.ref('transactions').once('value',s=>{transactions=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===user.id);chk();});
-  db.ref('bills').once('value',s=>{bills=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(b=>b.userId===user.id);chk();});
-  db.ref('utilities').once('value',s=>{utilities=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(u=>u.userId===user.id);chk();});
-  db.ref('trips').once('value',s=>{trips=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===user.id);chk();});
-  db.ref('groups').once('value',s=>{const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));groups=all.filter(g=>g.creatorId===user.id||(g.members&&g.members[user.id]));chk();});
-  db.ref('recurring').once('value',s=>{recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===user.id);chk();});
+  const uid=user.id;
+  let done=0;
+  const personalNeeds=6;
+  const bizNeeds=appMode==='business'?4:0;
+  const total=personalNeeds+bizNeeds;
+  const chk=()=>{if(++done>=total&&cb)cb();};
+
+  // Personal data
+  db.ref('transactions').once('value',s=>{transactions=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);chk();});
+  db.ref('bills').once('value',s=>{bills=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(b=>b.userId===uid);chk();});
+  db.ref('utilities').once('value',s=>{utilities=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(u=>u.userId===uid);chk();});
+  db.ref('trips').once('value',s=>{trips=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);chk();});
+  db.ref('groups').once('value',s=>{const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));groups=all.filter(g=>g.creatorId===uid||(g.members&&g.members[uid]));chk();});
+  db.ref('recurring').once('value',s=>{recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===uid);chk();});
   if(realUser?.role==='admin')db.ref('users').once('value',s=>{allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));});
+
+  // Business data (only when in biz mode)
+  if(appMode==='business'){
+    db.ref(`biz/${uid}/transactions`).once('value',s=>{bizTx=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));chk();});
+    db.ref(`biz/${uid}/clients`).once('value',s=>{clients=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));chk();});
+    db.ref(`biz/${uid}/quotes`).once('value',s=>{quotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));chk();});
+    db.ref(`biz/${uid}/projects`).once('value',s=>{projects=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+      db.ref(`biz/${uid}/expenseNotes`).once('value',s2=>{expenseNotes=Object.entries(s2.val()||{}).map(([id,d])=>({...d,id}));chk();});
+    });
+  }
 }
 
 /* ===== CHECK RECURRING — scala dal saldo ===== */
@@ -1309,8 +1546,8 @@ function formatDateIt(dateStr){
 /* ===== PAGES ===== */
 function renderPage(p){
   const con=document.getElementById('content');
-  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette & Utenze',viaggi:'Viaggi',gruppi:'Gruppi',notifiche:'Notifiche',piani:'Piani',admin:'Admin',profilo:'Profilo'};
-  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette · ${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account'};
+  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette & Utenze',viaggi:'Viaggi',gruppi:'Gruppi',notifiche:'Notifiche',piani:'Piani',admin:'Admin',profilo:'Profilo',biz_dashboard:'Dashboard Aziendale',biz_primanota:'Prima Nota',biz_clienti:'Clienti & Fornitori',biz_preventivi:'Preventivi',biz_progetti:'Progetti',biz_spese:'Note Spese',biz_scadenzario:'Scadenziario',biz_iva:'IVA Tracker'};
+  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette · ${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account',biz_dashboard:'Panoramica aziendale',biz_primanota:`${bizTx.length} movimenti`,biz_clienti:`${clients.length} contatti`,biz_preventivi:`${quotes.length} preventivi`,biz_progetti:`${projects.length} progetti`,biz_spese:`${expenseNotes.length} note`,biz_scadenzario:'Tutte le scadenze',biz_iva:'Calcolo IVA trimestrale'};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
@@ -1498,7 +1735,546 @@ function renderPage(p){
         </div>
       </div>
     </div>`;
+
+  } else if(p==='biz_dashboard'){renderBizDashboard(con);
+  } else if(p==='biz_primanota'){renderBizPrimanota(con);
+  } else if(p==='biz_clienti'){renderBizClienti(con);
+  } else if(p==='biz_preventivi'){renderBizPreventivi(con);
+  } else if(p==='biz_progetti'){renderBizProgetti(con);
+  } else if(p==='biz_spese'){renderBizSpese(con);
+  } else if(p==='biz_scadenzario'){renderBizScadenzario(con);
+  } else if(p==='biz_iva'){renderBizIva(con);
   }
+}
+
+/* ══════════════════════════════════════════════
+   BUSINESS RENDER FUNCTIONS
+══════════════════════════════════════════════ */
+
+const BIZ_CATS={vendite:{icon:'💰',label:'Vendite/Compensi',color:'var(--gr)'},acquisti:{icon:'🛒',label:'Acquisti',color:'var(--re)'},personale:{icon:'👥',label:'Personale',color:'var(--ac)'},affitti:{icon:'🏢',label:'Affitti',color:'var(--or)'},marketing:{icon:'📣',label:'Marketing',color:'var(--ac3)'},software:{icon:'💻',label:'Software/SaaS',color:'var(--ac2)'},trasferte:{icon:'✈️',label:'Trasferte',color:'var(--ye)'},banche:{icon:'🏦',label:'Banche',color:'var(--tx2)'},tasse:{icon:'🧾',label:'Imposte',color:'var(--re)'},altro:{icon:'📦',label:'Altro',color:'var(--tx3)'}};
+const STATUS_LABELS={draft:'📝 Bozza',sent:'📤 Inviato',accepted:'✅ Accettato',rejected:'❌ Rifiutato',active:'🟢 Attivo',paused:'🟡 In pausa',completed:'✅ Completato',pending:'⏳ In attesa',approved:'✅ Approvata',reimbursed:'💳 Rimborsata'};
+const STATUS_CSS={draft:'sp-draft',sent:'sp-sent',accepted:'sp-accepted',rejected:'sp-rejected',active:'sp-accepted',paused:'sp-pending',completed:'sp-paid',pending:'sp-pending',approved:'sp-approved',reimbursed:'sp-reimbursed'};
+function statusPill(s){return `<span class="status-pill ${STATUS_CSS[s]||'sp-draft'}">${STATUS_LABELS[s]||s}</span>`;}
+
+/* —— BIZ DASHBOARD —— */
+function renderBizDashboard(con){
+  const uid=user.id;
+  const totalInc=bizTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const totalExp=bizTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const cashFlow=totalInc-totalExp;
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const monthInc=bizTx.filter(t=>t.type==='income'&&t.createdAt.startsWith(thisMonth)).reduce((s,t)=>s+t.amount,0);
+  const monthExp=bizTx.filter(t=>t.type==='expense'&&t.createdAt.startsWith(thisMonth)).reduce((s,t)=>s+t.amount,0);
+  const openQuotes=quotes.filter(q=>q.status==='sent').reduce((s,q)=>s+q.amount,0);
+  const activeProj=projects.filter(p=>p.status==='active').length;
+  // top clients by revenue
+  const byClient={};bizTx.filter(t=>t.type==='income'&&t.clientId).forEach(t=>{byClient[t.clientId]=(byClient[t.clientId]||0)+t.amount;});
+  const topClients=Object.entries(byClient).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([cid,amt])=>{const c=clients.find(x=>x.id===cid);return{name:c?c.name:'Cliente',amt};});
+  // monthly chart last 6m
+  const months=[];for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleDateString('it-IT',{month:'short'})});}
+  const maxM=Math.max(...months.map(m=>Math.max(bizTx.filter(t=>t.type==='income'&&t.createdAt.startsWith(m.key)).reduce((s,t)=>s+t.amount,0),bizTx.filter(t=>t.type==='expense'&&t.createdAt.startsWith(m.key)).reduce((s,t)=>s+t.amount,0))),1);
+
+  con.innerHTML=`
+  <div class="stat-grid">
+    <div class="sc" style="border-color:rgba(247,151,30,.2)"><div class="sc-ico">💼</div><div class="sc-lbl">Cash Flow</div><div class="sc-val" style="color:${cashFlow>=0?'var(--gr)':'var(--re)'}">${fmtE(cashFlow)}</div></div>
+    <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate mese</div><div class="sc-val" style="color:var(--gr)">${fmtE(monthInc)}</div></div>
+    <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite mese</div><div class="sc-val" style="color:var(--re)">${fmtE(monthExp)}</div></div>
+    <div class="sc"><div class="sc-ico">📋</div><div class="sc-lbl">Preventivi aperti</div><div class="sc-val" style="color:var(--ac2)">${fmtE(openQuotes)}</div></div>
+    <div class="sc"><div class="sc-ico">📁</div><div class="sc-lbl">Progetti attivi</div><div class="sc-val" style="color:var(--or)">${activeProj}</div></div>
+    <div class="sc"><div class="sc-ico">👥</div><div class="sc-lbl">Clienti</div><div class="sc-val">${clients.filter(c=>c.type==='client').length}</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">💼</div>Ultimi movimenti</div><button class="btn-a" onclick="goTo('biz_primanota')">Vedi tutti</button></div>
+    ${bizTx.length===0?es('💼','Nessun movimento aziendale'):[...bizTx].reverse().slice(0,4).map(t=>`
+    <div class="ir"><div class="ia">${BIZ_CATS[t.cat]?.icon||'💼'}</div>
+    <div class="ii"><div class="in">${t.desc}</div><div class="id2">${fmtDate(t.createdAt)}</div></div>
+    <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📋</div>Preventivi recenti</div><button class="btn-a" onclick="goTo('biz_preventivi')">Vedi tutti</button></div>
+    ${quotes.length===0?es('📋','Nessun preventivo'):[...quotes].reverse().slice(0,4).map(q=>`
+    <div class="ir"><div class="ia">📋</div>
+    <div class="ii"><div class="in">${q.title}</div><div class="id2">${statusPill(q.status)}</div></div>
+    <div class="iam" style="color:var(--or)">${fmtE(q.amount)}</div></div>`).join('')}
+  </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📅</div>Trend Entrate vs Uscite</div></div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:90px;padding:0 4px">
+      ${months.map(m=>{
+        const inc=bizTx.filter(t=>t.type==='income'&&t.createdAt.startsWith(m.key)).reduce((s,t)=>s+t.amount,0);
+        const exp=bizTx.filter(t=>t.type==='expense'&&t.createdAt.startsWith(m.key)).reduce((s,t)=>s+t.amount,0);
+        const hI=Math.max(4,Math.round(inc/maxM*82));const hE=Math.max(4,Math.round(exp/maxM*82));
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;display:flex;gap:1px;align-items:flex-end;justify-content:center">
+            <div style="flex:1;height:${hI}px;background:linear-gradient(180deg,var(--gr),rgba(0,229,160,.3));border-radius:3px 3px 0 0"></div>
+            <div style="flex:1;height:${hE}px;background:linear-gradient(180deg,#f7971e,rgba(247,151,30,.3));border-radius:3px 3px 0 0"></div>
+          </div>
+          <div style="font-size:9px;color:var(--tx3)">${m.label}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${topClients.length>0?`<div style="margin-top:12px;border-top:1px solid var(--b1);padding-top:10px">
+      <div style="font-size:10px;font-weight:700;color:var(--tx2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">🏆 Top Clienti</div>
+      ${topClients.map(c=>`<div class="ir" style="padding:5px 0"><div class="ii"><div class="in">${c.name}</div></div><div class="iam ain">${fmtE(c.amt)}</div></div>`).join('')}
+    </div>`:''}
+  </div>`;
+}
+
+/* —— PRIMA NOTA AZIENDALE —— */
+function renderBizPrimanota(con){
+  const totalInc=bizTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const totalExp=bizTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const search=(sessionStorage.getItem('bpSearch')||'').toLowerCase();
+  const typeF=sessionStorage.getItem('bpType')||'all';
+  let filtered=[...bizTx].reverse().filter(t=>{
+    const ms=!search||t.desc.toLowerCase().includes(search);
+    const mt=typeF==='all'||(typeF==='income'&&t.type==='income')||(typeF==='expense'&&t.type==='expense');
+    return ms&&mt;
+  });
+  con.innerHTML=`
+  <div class="stat-grid">
+    <div class="sc"><div class="sc-ico">💼</div><div class="sc-lbl">Cash Flow</div><div class="sc-val" style="color:${(totalInc-totalExp)>=0?'var(--gr)':'var(--re)'}">${fmtE(totalInc-totalExp)}</div></div>
+    <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Tot. Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(totalInc)}</div></div>
+    <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Tot. Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(totalExp)}</div></div>
+  </div>
+  <div class="search-bar">
+    <input type="text" class="search-inp" placeholder="🔍 Cerca..." value="${search}" oninput="sessionStorage.setItem('bpSearch',this.value);goTo('biz_primanota')">
+    <select class="search-sel" onchange="sessionStorage.setItem('bpType',this.value);goTo('biz_primanota')">
+      <option value="all" ${typeF==='all'?'selected':''}>Tutti</option>
+      <option value="income" ${typeF==='income'?'selected':''}>Entrate</option>
+      <option value="expense" ${typeF==='expense'?'selected':''}>Uscite</option>
+    </select>
+  </div>
+  <div class="card">
+    <div class="ch">
+      <div class="ct"><div class="ct-ico">💼</div>Movimenti Aziendali (${filtered.length})</div>
+      <div style="display:flex;gap:6px">
+        <button class="export-btn" onclick="exportBizCSV()"><i class="fa fa-download"></i> CSV</button>
+        <button class="btn-a" onclick="openBizTxModal()">＋ Aggiungi</button>
+      </div>
+    </div>
+    ${filtered.length===0?es('💼','Nessun movimento. Aggiungi entrate e uscite aziendali.'):
+    filtered.map(t=>{
+      const cat=BIZ_CATS[t.cat]||BIZ_CATS.altro;
+      const proj=t.projectId?projects.find(p=>p.id===t.projectId):null;
+      const cli=t.clientId?clients.find(c=>c.id===t.clientId):null;
+      return `<div class="ir">
+        <div class="ia" style="background:${cat.color}22">${cat.icon}</div>
+        <div class="ii">
+          <div class="in">${t.desc}</div>
+          <div class="id2">${fmtDate(t.createdAt)} · ${cat.label}${proj?` · 📁 ${proj.name}`:''}${cli?` · 👤 ${cli.name}`:''}${t.iva&&t.iva!=='0'?` · IVA ${t.iva}%`:''}</div>
+        </div>
+        <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div>
+        <button class="btn-sm bs-d" onclick="delBizTx('${t.id}')">🗑️</button>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* —— CLIENTI & FORNITORI —— */
+function renderBizClienti(con){
+  const tab=sessionStorage.getItem('cliTab')||'client';
+  const list=clients.filter(c=>c.type===tab);
+  con.innerHTML=`
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button class="pg-btn ${tab==='client'?'cur':''}" onclick="sessionStorage.setItem('cliTab','client');goTo('biz_clienti')">👤 Clienti (${clients.filter(c=>c.type==='client').length})</button>
+    <button class="pg-btn ${tab==='supplier'?'cur':''}" onclick="sessionStorage.setItem('cliTab','supplier');goTo('biz_clienti')">🏭 Fornitori (${clients.filter(c=>c.type==='supplier').length})</button>
+  </div>
+  <div class="card">
+    <div class="ch">
+      <div class="ct"><div class="ct-ico">${tab==='client'?'👤':'🏭'}</div>${tab==='client'?'Clienti':'Fornitori'}</div>
+      <button class="btn-a" onclick="openClientModal('${tab}')">＋ Aggiungi</button>
+    </div>
+    ${list.length===0?es(tab==='client'?'👤':'🏭',`Nessun ${tab==='client'?'cliente':'fornitore'} ancora.`):
+    `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+    ${list.map(c=>{
+      const revenue=bizTx.filter(t=>t.clientId===c.id&&t.type==='income').reduce((s,t)=>s+t.amount,0);
+      const spend=bizTx.filter(t=>t.clientId===c.id&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+      return `<div class="cli-card" onclick="showClientDetail('${c.id}')">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div class="cli-av">${(c.name||'?')[0].toUpperCase()}</div>
+          <div style="flex:1;min-width:0"><div class="in">${c.name}</div><div class="id2">${c.vat||c.email||''}</div></div>
+        </div>
+        ${c.email?`<div style="font-size:10px;color:var(--tx2);margin-bottom:3px">📧 ${c.email}</div>`:''}
+        ${c.phone?`<div style="font-size:10px;color:var(--tx2);margin-bottom:3px">📞 ${c.phone}</div>`:''}
+        <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--b1)">
+          ${tab==='client'?`<span style="font-size:11px;color:var(--gr);font-weight:700">${fmtE(revenue)}</span><span style="font-size:9px;color:var(--tx3)">fatturato</span>`:`<span style="font-size:11px;color:var(--re);font-weight:700">${fmtE(spend)}</span><span style="font-size:9px;color:var(--tx3)">spesa</span>`}
+        </div>
+        <button class="btn-sm bs-d" style="margin-top:8px;width:100%" onclick="event.stopPropagation();delClient('${c.id}')">🗑️ Elimina</button>
+      </div>`;
+    }).join('')}</div>`}
+  </div>`;
+}
+
+function showClientDetail(cid){
+  const c=clients.find(x=>x.id===cid);if(!c)return;
+  const cliTx=bizTx.filter(t=>t.clientId===cid);
+  const cliQuotes=quotes.filter(q=>q.clientId===cid);
+  const cliProj=projects.filter(p=>p.clientId===cid);
+  const total=cliTx.reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+  const con=document.getElementById('content');
+  con.innerHTML=`
+  <button onclick="goTo('biz_clienti')" style="background:var(--s1);border:1px solid var(--b1);color:var(--tx2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif;margin-bottom:14px">← Torna ai clienti</button>
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px">
+      <div class="cli-av" style="width:52px;height:52px;font-size:22px">${(c.name||'?')[0].toUpperCase()}</div>
+      <div style="flex:1">
+        <div style="font-size:17px;font-weight:800">${c.name}</div>
+        <div style="font-size:11px;color:var(--tx2);margin-top:3px">${c.type==='client'?'👤 Cliente':'🏭 Fornitore'}${c.vat?' · P.IVA '+c.vat:''}</div>
+        ${c.email?`<div style="font-size:11px;color:var(--tx2);margin-top:2px">📧 ${c.email}</div>`:''}
+        ${c.phone?`<div style="font-size:11px;color:var(--tx2);margin-top:2px">📞 ${c.phone}</div>`:''}
+        ${c.addr?`<div style="font-size:11px;color:var(--tx2);margin-top:2px">📍 ${c.addr}</div>`:''}
+      </div>
+      <div style="text-align:right"><div style="font-size:20px;font-weight:900;color:${total>=0?'var(--gr)':'var(--re)'}">${fmtE(Math.abs(total))}</div><div style="font-size:9px;color:var(--tx3)">saldo totale</div></div>
+    </div>
+    ${c.note?`<div style="background:var(--s1);border-radius:9px;padding:10px;font-size:12px;color:var(--tx2);margin-bottom:12px">📝 ${c.note}</div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-a" onclick="openBizTxModal('${cid}')">＋ Movimento</button>
+      ${c.type==='client'?`<button class="btn-a" onclick="openQuoteModal('${cid}')">📋 Preventivo</button>`:''}
+    </div>
+  </div>
+  ${cliTx.length>0?`<div class="card"><div class="ch"><div class="ct"><div class="ct-ico">💼</div>Movimenti</div></div>${[...cliTx].reverse().map(t=>`<div class="ir"><div class="ia">${BIZ_CATS[t.cat]?.icon||'💼'}</div><div class="ii"><div class="in">${t.desc}</div><div class="id2">${fmtDate(t.createdAt)}</div></div><div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}</div>`:''}
+  ${cliQuotes.length>0?`<div class="card"><div class="ch"><div class="ct"><div class="ct-ico">📋</div>Preventivi</div></div>${cliQuotes.map(q=>`<div class="ir"><div class="ia">📋</div><div class="ii"><div class="in">${q.title}</div><div class="id2">${fmtDate(q.createdAt)}</div></div><div style="display:flex;align-items:center;gap:8px">${statusPill(q.status)}<span class="iam" style="color:var(--or)">${fmtE(q.amount)}</span></div></div>`).join('')}</div>`:''}
+  ${cliProj.length>0?`<div class="card"><div class="ch"><div class="ct"><div class="ct-ico">📁</div>Progetti</div></div>${cliProj.map(p=>`<div class="ir"><div class="ia">📁</div><div class="ii"><div class="in">${p.name}</div><div class="id2">${fmtDate(p.startDate||p.createdAt)}</div></div>${statusPill(p.status||'active')}</div>`).join('')}</div>`:''}`;
+}
+
+/* —— PREVENTIVI —— */
+function renderBizPreventivi(con){
+  const tot=quotes.reduce((s,q)=>s+q.amount,0);
+  const accepted=quotes.filter(q=>q.status==='accepted').reduce((s,q)=>s+q.amount,0);
+  const pending=quotes.filter(q=>q.status==='sent').reduce((s,q)=>s+q.amount,0);
+  con.innerHTML=`
+  <div class="stat-grid">
+    <div class="sc"><div class="sc-ico">📋</div><div class="sc-lbl">Totale</div><div class="sc-val">${quotes.length}</div></div>
+    <div class="sc"><div class="sc-ico">✅</div><div class="sc-lbl">Accettati</div><div class="sc-val" style="color:var(--gr)">${fmtE(accepted)}</div></div>
+    <div class="sc"><div class="sc-ico">📤</div><div class="sc-lbl">In attesa</div><div class="sc-val" style="color:var(--ye)">${fmtE(pending)}</div></div>
+    <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Valore totale</div><div class="sc-val" style="color:var(--or)">${fmtE(tot)}</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📋</div>Preventivi</div><button class="btn-a" onclick="openQuoteModal()">＋ Nuovo</button></div>
+    ${quotes.length===0?es('📋','Nessun preventivo ancora. Crea il tuo primo preventivo da inviare ai clienti.'):
+    [...quotes].reverse().map(q=>{
+      const cli=clients.find(c=>c.id===q.clientId);
+      const expDays=q.expiry?Math.round((new Date(q.expiry)-new Date())/(1000*60*60*24)):null;
+      return `<div class="ir">
+        <div class="ia">📋</div>
+        <div class="ii">
+          <div class="in">${q.title} ${statusPill(q.status)}</div>
+          <div class="id2">${cli?'👤 '+cli.name:''}${q.expiry?` · Scade: ${new Date(q.expiry+'T00:00:00').toLocaleDateString('it-IT')}${expDays!==null&&expDays<=3?` <strong style="color:var(--re)">(${expDays<=0?'Scaduto':'tra '+expDays+' gg'})</strong>`:''}`:''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="iam" style="color:var(--or)">${fmtE(q.amount)}</span>
+          <select class="fc" style="font-size:10px;padding:3px 7px;border-radius:7px;width:110px" onchange="updateQuoteStatus('${q.id}',this.value)">
+            <option value="draft" ${q.status==='draft'?'selected':''}>📝 Bozza</option>
+            <option value="sent" ${q.status==='sent'?'selected':''}>📤 Inviato</option>
+            <option value="accepted" ${q.status==='accepted'?'selected':''}>✅ Accettato</option>
+            <option value="rejected" ${q.status==='rejected'?'selected':''}>❌ Rifiutato</option>
+          </select>
+          <button class="btn-sm bs-d" onclick="delQuote('${q.id}')">🗑️</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* —— PROGETTI —— */
+function renderBizProgetti(con){
+  const active=projects.filter(p=>p.status==='active');
+  const totBudget=active.reduce((s,p)=>s+p.budget,0);
+  con.innerHTML=`
+  <div class="stat-grid">
+    <div class="sc"><div class="sc-ico">📁</div><div class="sc-lbl">Attivi</div><div class="sc-val" style="color:var(--gr)">${active.length}</div></div>
+    <div class="sc"><div class="sc-ico">✅</div><div class="sc-lbl">Completati</div><div class="sc-val" style="color:var(--ac)">${projects.filter(p=>p.status==='completed').length}</div></div>
+    <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Budget attivi</div><div class="sc-val" style="color:var(--or)">${fmtE(totBudget)}</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📁</div>Progetti & Commesse</div><button class="btn-a" onclick="openProjModal()">＋ Nuovo</button></div>
+    ${projects.length===0?es('📁','Nessun progetto ancora. Organizza il lavoro per commesse.'):
+    projects.map(p=>{
+      const cli=clients.find(c=>c.id===p.clientId);
+      const spent=bizTx.filter(t=>t.projectId===p.id&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+      const earned=bizTx.filter(t=>t.projectId===p.id&&t.type==='income').reduce((s,t)=>s+t.amount,0);
+      const pct=p.budget>0?Math.min(100,Math.round(spent/p.budget*100)):0;
+      const col=pct>=100?'var(--re)':pct>=75?'var(--ye)':'var(--gr)';
+      return `<div class="proj-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:700">${p.name} ${statusPill(p.status||'active')}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--or)">${fmtE(p.budget)}</div>
+        </div>
+        ${cli?`<div style="font-size:10px;color:var(--tx2);margin-bottom:4px">👤 ${cli.name}</div>`:''}
+        ${p.endDate?`<div style="font-size:10px;color:var(--tx3);margin-bottom:4px">📅 Scadenza: ${new Date(p.endDate+'T00:00:00').toLocaleDateString('it-IT')}</div>`:''}
+        <div class="proj-progress"><div class="proj-fill" style="width:${pct}%;background:${col}"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx2)">
+          <span>Speso: ${fmtE(spent)} (${pct}%)</span>
+          <span style="color:var(--gr)">Incassato: ${fmtE(earned)}</span>
+        </div>
+        ${p.desc?`<div style="font-size:10px;color:var(--tx3);margin-top:6px">${p.desc}</div>`:''}
+        <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn-a" style="font-size:10px;padding:4px 9px" onclick="openBizTxModal(null,'${p.id}')">＋ Movimento</button>
+          <select class="fc" style="font-size:10px;padding:3px 7px;border-radius:7px;width:120px" onchange="updateProjStatus('${p.id}',this.value)">
+            <option value="active" ${(p.status||'active')==='active'?'selected':''}>🟢 Attivo</option>
+            <option value="paused" ${p.status==='paused'?'selected':''}>🟡 In Pausa</option>
+            <option value="completed" ${p.status==='completed'?'selected':''}>✅ Completato</option>
+          </select>
+          <button class="btn-sm bs-d" onclick="delProject('${p.id}')">🗑️</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* —— NOTE SPESE —— */
+function renderBizSpese(con){
+  const pending=expenseNotes.filter(e=>e.status==='pending');
+  const totPending=pending.reduce((s,e)=>s+e.amount,0);
+  const totApproved=expenseNotes.filter(e=>e.status==='approved').reduce((s,e)=>s+e.amount,0);
+  const totReimbursed=expenseNotes.filter(e=>e.status==='reimbursed').reduce((s,e)=>s+e.amount,0);
+  const ECAT={pasto:'🍽️',trasporto:'🚗',alloggio:'🏨',materiali:'📦',rappresentanza:'🤝',altro:'📋'};
+  con.innerHTML=`
+  <div class="stat-grid">
+    <div class="sc"><div class="sc-ico">⏳</div><div class="sc-lbl">Da approvare</div><div class="sc-val" style="color:var(--ye)">${fmtE(totPending)}</div></div>
+    <div class="sc"><div class="sc-ico">✅</div><div class="sc-lbl">Approvate</div><div class="sc-val" style="color:var(--gr)">${fmtE(totApproved)}</div></div>
+    <div class="sc"><div class="sc-ico">💳</div><div class="sc-lbl">Rimborsate</div><div class="sc-val" style="color:var(--ac)">${fmtE(totReimbursed)}</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">🧾</div>Note Spese</div><button class="btn-a" onclick="openExpenseNoteModal()">＋ Aggiungi</button></div>
+    ${expenseNotes.length===0?es('🧾','Nessuna nota spese. Registra pranzi, trasferte e altri costi da rimborsare.'):
+    [...expenseNotes].reverse().map(e=>{
+      const proj=e.projectId?projects.find(p=>p.id===e.projectId):null;
+      return `<div class="expense-note-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px">${ECAT[e.cat]||'📋'}</span>
+            <div>
+              <div style="font-size:12px;font-weight:700">${e.desc}</div>
+              <div style="font-size:10px;color:var(--tx2)">${fmtDate(e.date||e.createdAt)}${proj?` · 📁 ${proj.name}`:''}</div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:800;color:var(--re)">${fmtE(e.amount)}</div>
+            ${statusPill(e.status||'pending')}
+          </div>
+        </div>
+        <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
+          ${e.status==='pending'?`<button class="btn-sm bs-s" onclick="updateExpenseStatus('${e.id}','approved')">✅ Approva</button>`:''}
+          ${e.status==='approved'?`<button class="btn-sm" style="background:rgba(108,99,255,.1);color:var(--ac);border:1px solid rgba(108,99,255,.2)!important;font-size:10px;padding:3px 8px;border-radius:7px;cursor:pointer" onclick="updateExpenseStatus('${e.id}','reimbursed')">💳 Rimborsata</button>`:''}
+          ${e.status!=='pending'?`<button class="btn-sm bs-g" onclick="updateExpenseStatus('${e.id}','pending')">↩ Riporta in attesa</button>`:''}
+          <button class="btn-sm bs-d" onclick="delExpenseNote('${e.id}')">🗑️</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* —— SCADENZIARIO —— */
+function renderBizScadenzario(con){
+  const today=new Date();today.setHours(0,0,0,0);
+  const items=[];
+  // Preventivi in scadenza
+  quotes.filter(q=>q.expiry&&q.status==='sent').forEach(q=>{
+    const d=new Date(q.expiry+'T00:00:00');
+    const days=Math.round((d-today)/(1000*60*60*24));
+    items.push({date:d,days,icon:'📋',label:`Preventivo: ${q.title}`,sub:`Scade il ${d.toLocaleDateString('it-IT')}`,type:'quote',urgent:days<=3});
+  });
+  // Progetti in scadenza
+  projects.filter(p=>p.endDate&&p.status==='active').forEach(p=>{
+    const d=new Date(p.endDate+'T00:00:00');
+    const days=Math.round((d-today)/(1000*60*60*24));
+    items.push({date:d,days,icon:'📁',label:`Progetto: ${p.name}`,sub:`Scadenza prevista ${d.toLocaleDateString('it-IT')}`,type:'project',urgent:days<=7});
+  });
+  // Note spese in attesa approvazione
+  expenseNotes.filter(e=>e.status==='pending').forEach(e=>{
+    const d=new Date(e.date||e.createdAt);
+    items.push({date:d,days:0,icon:'🧾',label:`Nota spese: ${e.desc}`,sub:`${fmtE(e.amount)} · In attesa approvazione`,type:'expense',urgent:true});
+  });
+  // Movimenti con scadenza
+  bizTx.filter(t=>t.dueDate).forEach(t=>{
+    const d=new Date(t.dueDate+'T00:00:00');
+    const days=Math.round((d-today)/(1000*60*60*24));
+    if(days>=-7)items.push({date:d,days,icon:'💼',label:`Movimento: ${t.desc}`,sub:`${fmtE(t.amount)} · Scadenza ${d.toLocaleDateString('it-IT')}`,type:'tx',urgent:days<=3});
+  });
+  items.sort((a,b)=>a.date-b.date);
+  const overdue=items.filter(i=>i.days<0);
+  const upcoming=items.filter(i=>i.days>=0&&i.days<=30);
+  const future=items.filter(i=>i.days>30);
+  con.innerHTML=`
+  ${overdue.length>0?`<div class="card" style="border-color:rgba(255,79,109,.3)">
+    <div class="ch"><div class="ct"><div class="ct-ico" style="background:linear-gradient(135deg,var(--re),#c0392b)">🚨</div>Scaduti (${overdue.length})</div></div>
+    ${overdue.map(i=>`<div class="dead-row"><div class="dead-date dead-urgent">${i.days===0?'OGGI':Math.abs(i.days)+' gg fa'}</div><div class="ia">${i.icon}</div><div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div></div>`).join('')}
+  </div>`:''}
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📅</div>Prossimi 30 giorni</div></div>
+    ${upcoming.length===0?es('📅','Nessuna scadenza nei prossimi 30 giorni.'):
+    upcoming.map(i=>`<div class="dead-row">
+      <div class="dead-date ${i.days<=3?'dead-urgent':i.days<=7?'dead-soon':'dead-ok'}">${i.days===0?'Oggi':i.days===1?'Domani':'Fra '+i.days+' gg'}</div>
+      <div class="ia">${i.icon}</div>
+      <div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div>
+    </div>`).join('')}
+  </div>
+  ${future.length>0?`<div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">🗓️</div>Oltre 30 giorni</div></div>
+    ${future.map(i=>`<div class="dead-row"><div class="dead-date dead-ok">${new Date(i.date).toLocaleDateString('it-IT',{day:'numeric',month:'short'})}</div><div class="ia">${i.icon}</div><div class="ii"><div class="in">${i.label}</div><div class="id2">${i.sub}</div></div></div>`).join('')}
+  </div>`:''}`;
+}
+
+/* —— IVA TRACKER —— */
+function renderBizIva(con){
+  const thisQ=getQuarter(new Date());
+  const prevQ=getPrevQuarter(new Date());
+  function getQuarter(d){const q=Math.floor(d.getMonth()/3);return{q:q+1,year:d.getFullYear(),start:new Date(d.getFullYear(),q*3,1),end:new Date(d.getFullYear(),q*3+3,0)};}
+  function getPrevQuarter(d){const q=Math.floor(d.getMonth()/3);const pq=q===0?3:q;const py=q===0?d.getFullYear()-1:d.getFullYear();return{q:pq,year:py,start:new Date(py,(pq-1)*3,1),end:new Date(py,(pq-1)*3+3,0)};}
+  function calcIva(period){
+    const txInPeriod=bizTx.filter(t=>{const d=new Date(t.createdAt);return d>=period.start&&d<=period.end;});
+    const ivaDebito=txInPeriod.filter(t=>t.type==='income'&&t.iva&&t.iva!=='0').reduce((s,t)=>s+t.amount*(parseInt(t.iva)/100),0);
+    const ivaCredito=txInPeriod.filter(t=>t.type==='expense'&&t.iva&&t.iva!=='0').reduce((s,t)=>s+t.amount*(parseInt(t.iva)/100),0);
+    return{debito:ivaDebito,credito:ivaCredito,netta:ivaDebito-ivaCredito};
+  }
+  const curIva=calcIva(thisQ);const prevIva=calcIva(prevQ);
+  const deadlines=[{q:1,deadline:'30 Aprile'},{q:2,deadline:'31 Luglio'},{q:3,deadline:'31 Ottobre'},{q:4,deadline:'31 Gennaio'+('+1')}];
+  const curDead=deadlines.find(d=>d.q===thisQ.q);
+  con.innerHTML=`
+  <div style="background:rgba(255,159,0,.07);border:1px solid rgba(255,159,0,.25);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:11px;color:var(--ye)">
+    ⚠️ <strong>Nota:</strong> Questi calcoli sono <strong>indicativi</strong> e non sostituiscono la consulenza di un commercialista. Verificare sempre con il proprio consulente fiscale.
+  </div>
+  <div class="iva-box">
+    <div style="font-size:11px;color:var(--or);font-weight:700;margin-bottom:8px">Q${thisQ.q} ${thisQ.year} — Trimestre corrente${curDead?` · Versamento entro ${curDead.deadline}`:''}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div><div style="font-size:10px;color:var(--tx2);margin-bottom:4px">IVA a Debito</div><div class="iva-num" style="color:var(--re)">${fmtE(curIva.debito)}</div><div style="font-size:9px;color:var(--tx3)">sulle entrate</div></div>
+      <div><div style="font-size:10px;color:var(--tx2);margin-bottom:4px">IVA a Credito</div><div class="iva-num" style="color:var(--gr)">${fmtE(curIva.credito)}</div><div style="font-size:9px;color:var(--tx3)">sugli acquisti</div></div>
+      <div><div style="font-size:10px;color:var(--tx2);margin-bottom:4px">IVA Netta</div><div class="iva-num" style="color:${curIva.netta>=0?'var(--re)':'var(--gr)'}">${fmtE(Math.abs(curIva.netta))}</div><div style="font-size:9px;color:var(--tx3)">${curIva.netta>=0?'da versare':'a credito'}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📅</div>Trimestre precedente — Q${prevQ.q} ${prevQ.year}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 0">
+      <div style="text-align:center"><div style="font-size:10px;color:var(--tx2);margin-bottom:4px">IVA Debito</div><div style="font-size:16px;font-weight:800;color:var(--re)">${fmtE(prevIva.debito)}</div></div>
+      <div style="text-align:center"><div style="font-size:10px;color:var(--tx2);margin-bottom:4px">IVA Credito</div><div style="font-size:16px;font-weight:800;color:var(--gr)">${fmtE(prevIva.credito)}</div></div>
+      <div style="text-align:center"><div style="font-size:10px;color:var(--tx2);margin-bottom:4px">Netta</div><div style="font-size:16px;font-weight:800;color:${prevIva.netta>=0?'var(--re)':'var(--gr)'}">${fmtE(Math.abs(prevIva.netta))}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">💡</div>Come funziona</div></div>
+    <div style="font-size:12px;color:var(--tx2);line-height:1.7">
+      I calcoli si basano sui movimenti della Prima Nota che hanno un'aliquota IVA impostata.<br>
+      <strong style="color:var(--tx)">IVA a debito</strong> = IVA sulle tue <em>entrate</em> (devi versarla allo Stato)<br>
+      <strong style="color:var(--tx)">IVA a credito</strong> = IVA sulle tue <em>uscite</em> (puoi detrarla)<br>
+      <strong style="color:var(--or)">IVA netta</strong> = Debito − Credito = quanto devi versare (o recuperare)
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════
+   BUSINESS CRUD FUNCTIONS
+══════════════════════════════════════════════ */
+
+function openClientModal(defaultType){
+  document.getElementById('cliType').value=defaultType||'client';
+  openMo('clientModal');
+}
+function saveClient(){
+  const type=document.getElementById('cliType').value;
+  const name=document.getElementById('cliName').value.trim();
+  const email=document.getElementById('cliEmail').value.trim();
+  const phone=document.getElementById('cliPhone').value.trim();
+  const vat=document.getElementById('cliVat').value.trim();
+  const addr=document.getElementById('cliAddr').value.trim();
+  const note=document.getElementById('cliNote').value.trim();
+  if(!name){notify('❌ Inserisci almeno il nome');return;}
+  db.ref(`biz/${user.id}/clients`).push({type,name,email,phone,vat,addr,note,createdAt:new Date().toISOString()}).then(()=>{closeMo('clientModal');loadData(()=>goTo('biz_clienti'));notify('✅ '+(type==='client'?'Cliente':'Fornitore')+' aggiunto!');});
+}
+function delClient(id){if(!confirm('Eliminare questo contatto?'))return;db.ref(`biz/${user.id}/clients/${id}`).remove().then(()=>{loadData(()=>goTo('biz_clienti'));notify('🗑️ Eliminato');});}
+
+function openQuoteModal(clientId){
+  // populate client select
+  const sel=document.getElementById('qtClient');
+  sel.innerHTML='<option value="">— Seleziona cliente —</option>'+clients.filter(c=>c.type==='client').map(c=>`<option value="${c.id}" ${clientId===c.id?'selected':''}>${c.name}</option>`).join('');
+  document.getElementById('qtExpiry').value=new Date(Date.now()+30*864e5).toISOString().split('T')[0];
+  openMo('quoteModal');
+}
+function saveQuote(){
+  const title=document.getElementById('qtTitle').value.trim();
+  const clientId=document.getElementById('qtClient').value;
+  const amt=parseFloat(document.getElementById('qtAmt').value);
+  const expiry=document.getElementById('qtExpiry').value;
+  const desc=document.getElementById('qtDesc').value.trim();
+  const status=document.getElementById('qtStatus').value;
+  if(!title||!amt){notify('❌ Compila titolo e importo');return;}
+  db.ref(`biz/${user.id}/quotes`).push({title,clientId,amount:amt,expiry,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('quoteModal');loadData(()=>goTo('biz_preventivi'));notify('✅ Preventivo creato!');});
+}
+function updateQuoteStatus(id,status){db.ref(`biz/${user.id}/quotes/${id}/status`).set(status).then(()=>{const q=quotes.find(x=>x.id===id);if(q)q.status=status;goTo('biz_preventivi');notify('✅ Stato aggiornato');});}
+function delQuote(id){if(!confirm('Eliminare questo preventivo?'))return;db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{loadData(()=>goTo('biz_preventivi'));notify('🗑️ Eliminato');});}
+
+function openProjModal(){
+  const sel=document.getElementById('prClient');
+  sel.innerHTML='<option value="">— Nessun cliente —</option>'+clients.filter(c=>c.type==='client').map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('prStart').value=new Date().toISOString().split('T')[0];
+  openMo('projModal');
+}
+function saveProject(){
+  const name=document.getElementById('prName').value.trim();
+  const clientId=document.getElementById('prClient').value;
+  const budget=parseFloat(document.getElementById('prBudget').value)||0;
+  const startDate=document.getElementById('prStart').value;
+  const endDate=document.getElementById('prEnd').value;
+  const desc=document.getElementById('prDesc').value.trim();
+  const status=document.getElementById('prStatus').value;
+  if(!name){notify('❌ Inserisci il nome del progetto');return;}
+  db.ref(`biz/${user.id}/projects`).push({name,clientId,budget,startDate,endDate,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('projModal');loadData(()=>goTo('biz_progetti'));notify('✅ Progetto creato!');});
+}
+function updateProjStatus(id,status){db.ref(`biz/${user.id}/projects/${id}/status`).set(status).then(()=>{const p=projects.find(x=>x.id===id);if(p)p.status=status;goTo('biz_progetti');notify('✅ Stato aggiornato');});}
+function delProject(id){if(!confirm('Eliminare questo progetto?'))return;db.ref(`biz/${user.id}/projects/${id}`).remove().then(()=>{loadData(()=>goTo('biz_progetti'));notify('🗑️ Eliminato');});}
+
+function openBizTxModal(clientId,projectId){
+  const sc=document.getElementById('btClient');
+  sc.innerHTML='<option value="">— Nessuno —</option>'+clients.map(c=>`<option value="${c.id}" ${clientId===c.id?'selected':''}>${c.type==='client'?'👤':'🏭'} ${c.name}</option>`).join('');
+  const sp=document.getElementById('btProj');
+  sp.innerHTML='<option value="">— Nessun progetto —</option>'+projects.filter(p=>p.status==='active').map(p=>`<option value="${p.id}" ${projectId===p.id?'selected':''}>${p.name}</option>`).join('');
+  openMo('bizTxModal');
+}
+function saveBizTx(){
+  const desc=document.getElementById('btDesc').value.trim();
+  const amt=parseFloat(document.getElementById('btAmt').value);
+  const type=document.getElementById('btType').value;
+  const cat=document.getElementById('btCat').value;
+  const projectId=document.getElementById('btProj').value;
+  const clientId=document.getElementById('btClient').value;
+  const iva=document.getElementById('btIva').value;
+  if(!desc||!amt||amt<=0){notify('❌ Compila descrizione e importo');return;}
+  db.ref(`biz/${user.id}/transactions`).push({desc,amount:amt,type,cat,projectId,clientId,iva,createdAt:new Date().toISOString()}).then(()=>{closeMo('bizTxModal');loadData(()=>goTo('biz_primanota'));notify('✅ Movimento aggiunto!');});
+}
+function delBizTx(id){if(!confirm('Eliminare questo movimento?'))return;db.ref(`biz/${user.id}/transactions/${id}`).remove().then(()=>{loadData(()=>goTo('biz_primanota'));notify('🗑️ Eliminato');});}
+
+function openExpenseNoteModal(){
+  const sel=document.getElementById('enProj');
+  sel.innerHTML='<option value="">— Nessuno —</option>'+projects.filter(p=>p.status==='active').map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('enDate').value=new Date().toISOString().split('T')[0];
+  openMo('expenseNoteModal');
+}
+function saveExpenseNote(){
+  const desc=document.getElementById('enDesc').value.trim();
+  const amt=parseFloat(document.getElementById('enAmt').value);
+  const cat=document.getElementById('enCat').value;
+  const date=document.getElementById('enDate').value;
+  const projectId=document.getElementById('enProj').value;
+  if(!desc||!amt){notify('❌ Compila descrizione e importo');return;}
+  db.ref(`biz/${user.id}/expenseNotes`).push({desc,amount:amt,cat,date,projectId,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('expenseNoteModal');loadData(()=>goTo('biz_spese'));notify('✅ Nota spese aggiunta!');});
+}
+function updateExpenseStatus(id,status){db.ref(`biz/${user.id}/expenseNotes/${id}/status`).set(status).then(()=>{const e=expenseNotes.find(x=>x.id===id);if(e)e.status=status;goTo('biz_spese');notify('✅ Stato aggiornato');});}
+function delExpenseNote(id){if(!confirm('Eliminare questa nota spese?'))return;db.ref(`biz/${user.id}/expenseNotes/${id}`).remove().then(()=>{loadData(()=>goTo('biz_spese'));notify('🗑️ Eliminata');});}
+
+function exportBizCSV(){
+  const rows=[['Data','Descrizione','Tipo','Categoria','IVA%','Cliente/Fornitore','Progetto','Importo (€)']];
+  [...bizTx].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(t=>{
+    const cli=t.clientId?clients.find(c=>c.id===t.clientId)?.name||'':'' ;
+    const proj=t.projectId?projects.find(p=>p.id===t.projectId)?.name||'':'';
+    rows.push([fmtDate(t.createdAt),'"'+t.desc.replace(/"/g,'""')+'"',t.type==='income'?'Entrata':'Uscita',BIZ_CATS[t.cat]?.label||t.cat,t.iva||'0',cli,proj,(t.type==='income'?'+':'-')+t.amount.toFixed(2)]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`finanza-pro-business-${new Date().toISOString().split('T')[0]}.csv`;a.click();
+  notify('📥 CSV Business scaricato!');
 }
 
 /* ===== REPORT PAGE ===== */

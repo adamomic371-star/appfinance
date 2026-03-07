@@ -406,6 +406,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   .tb-left p,.tb-date{display:none}
   .asw span{display:none}
   .asw{padding:7px 11px}
+  /* Nascondi switch modalità dalla topbar su mobile — è nel drawer */
+  #modeSw{display:none!important}
 
   /* Content — più respiro */
   .content{padding:16px 14px 80px}
@@ -616,6 +618,26 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   background:linear-gradient(135deg,#f7971e,#ffd200);
   color:#1a1200;box-shadow:0 3px 10px rgba(247,151,30,.35);
 }
+/* Switch nel drawer (mobile) */
+.drawer-mode-sw{
+  display:flex;align-items:center;
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:12px;padding:3px;gap:2px;
+  margin-bottom:8px;
+}
+.drawer-mode-btn{
+  flex:1;padding:9px 8px;border-radius:9px;font-size:12px;font-weight:700;
+  cursor:pointer;border:none;font-family:'Outfit',sans-serif;
+  color:var(--tx3);background:transparent;transition:all .22s;text-align:center;
+}
+.drawer-mode-btn.active{
+  background:linear-gradient(135deg,var(--ac),var(--ac2));
+  color:#fff;box-shadow:0 3px 10px rgba(108,99,255,.35);
+}
+.drawer-mode-btn.biz.active{
+  background:linear-gradient(135deg,#f7971e,#ffd200);
+  color:#1a1200;
+}
 
 /* ======= BUSINESS COLORS ======= */
 body.biz-mode .ni.active{background:linear-gradient(135deg,rgba(247,151,30,.15),rgba(255,210,0,.08));border-color:rgba(247,151,30,.3)}
@@ -784,6 +806,11 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     </div>
     <nav class="drawer-nav" id="drawerNav"></nav>
     <div class="drawer-footer">
+      <!-- Switch Personale / Azienda nel drawer -->
+      <div class="drawer-mode-sw" id="drawerModeSw">
+        <button class="drawer-mode-btn active" id="drawerModePersonal" onclick="setMode('personal');closeDrawer()">👤 Personale</button>
+        <button class="drawer-mode-btn biz" id="drawerModeBiz" onclick="setMode('business');closeDrawer()">🏢 Azienda</button>
+      </div>
       <button class="drawer-out" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i> Esci</button>
     </div>
   </div>
@@ -982,6 +1009,15 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     <div class="mh"><div class="mtt">✅ Gestisci Pagamento</div><button class="mc" onclick="closeMo('gMarkPaidModal')">✕</button></div>
     <div id="gMarkPaidContent"></div>
     <div class="ma"><button class="bms" id="gMarkPaidBtn">Conferma</button><button class="bmc" onclick="closeMo('gMarkPaidModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- SALDA DEBITO MODAL -->
+<div id="saldaDebitoModal" class="mo">
+  <div class="ms" style="max-height:85vh;overflow-y:auto">
+    <div class="mh"><div class="mtt">💙 Salda Debiti</div><button class="mc" onclick="closeMo('saldaDebitoModal')">✕</button></div>
+    <div id="saldaDebitoContent"></div>
+    <div class="ma"><button class="bmc" onclick="closeMo('saldaDebitoModal')">Chiudi</button></div>
   </div>
 </div>
 
@@ -1389,10 +1425,16 @@ function setMode(mode){
 function applyMode(){
   const isBiz=appMode==='business';
   document.body.classList.toggle('biz-mode',isBiz);
+  // Topbar buttons
   const bp=document.getElementById('modePersonal');
   const bb=document.getElementById('modeBiz');
   if(bp){bp.classList.toggle('active',!isBiz);}
   if(bb){bb.classList.toggle('active',isBiz);}
+  // Drawer buttons
+  const dp=document.getElementById('drawerModePersonal');
+  const db=document.getElementById('drawerModeBiz');
+  if(dp){dp.classList.toggle('active',!isBiz);}
+  if(db){db.classList.toggle('active',isBiz);}
   NAV=isBiz?NAV_BUSINESS:NAV_PERSONAL;
   // Update sidebar user badge
   const modeLabel=isBiz?'🏢 Azienda':'👤 Personale';
@@ -1484,7 +1526,23 @@ function loadData(cb){
   db.ref('bills').once('value',s=>{bills=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(b=>b.userId===uid);chk();});
   db.ref('utilities').once('value',s=>{utilities=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(u=>u.userId===uid);chk();});
   db.ref('trips').once('value',s=>{trips=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);chk();});
-  db.ref('groups').once('value',s=>{const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));groups=all.filter(g=>g.creatorId===uid||(g.members&&g.members[uid]));chk();});
+  db.ref('groups').once('value',s=>{
+    const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+    groups=all.filter(g=>g.creatorId===uid||(g.members&&g.members[uid]));
+    // Load paypal emails for all group members
+    const memberUids=new Set();
+    groups.forEach(g=>{
+      memberUids.add(g.creatorId);
+      Object.keys(g.members||{}).forEach(mid=>memberUids.add(mid));
+    });
+    memberUids.forEach(mid=>{
+      db.ref(`users/${mid}/paypalEmail`).once('value',ps=>{
+        const email=ps.val();
+        if(email) localStorage.setItem('fp_paypal_'+mid, email);
+      });
+    });
+    chk();
+  });
   db.ref('recurring').once('value',s=>{recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===uid);chk();});
   if(realUser?.role==='admin')db.ref('users').once('value',s=>{allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));});
 
@@ -3060,12 +3118,22 @@ function renderGroupDetail(con){
 
   const totExp=exps.reduce((s,e)=>s+e.amount,0);
 
+  // Calcola debiti miei verso altri (per mostrare il pulsante)
+  const myDebts=[];
+  allMembers.forEach(creditor=>{
+    if(creditor.uid===user.id) return;
+    const owed=(net[user.id]?.[creditor.uid])||0;
+    if(owed>=0.01) myDebts.push({uid:creditor.uid, name:creditor.name, amount:owed});
+  });
+  const myTotalDebt=myDebts.reduce((s,d)=>s+d.amount,0);
+
   con.innerHTML=`
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
     <button onclick="curGroupId=null;goTo('gruppi')" style="background:var(--s1);border:1px solid var(--b1);color:var(--tx2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif">← Gruppi</button>
     <button class="btn-a" onclick="openMo('inviteModal')"><i class="fa fa-user-plus"></i> Invita</button>
     <button class="btn-a" onclick="openGExpModal()" style="background:linear-gradient(135deg,var(--re),var(--ac3))"><i class="fa fa-plus"></i> Spesa</button>
-    ${isCreator?`<button class="btn-a" onclick="openGroupPayRequestModal()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📨 Richiedi pagamenti</button>`:''}
+    ${myDebts.length>0?`<button class="btn-a" onclick="openSaldaDebito()" style="background:linear-gradient(135deg,#003087,#009cde)">💙 Salda Debito${myDebts.length>1?` (${fmtE(myTotalDebt)})`:''}</button>`:''}
+    ${isCreator?`<button class="btn-a" onclick="openGroupPayRequestModal()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📨 Richiedi</button>`:''}
     ${isCreator?`<button class="btn-a" onclick="deleteGroup('${g.id}')" style="background:linear-gradient(135deg,#ff4f6d,#c0392b)"><i class="fa fa-trash"></i> Elimina</button>`:`<button class="btn-a" onclick="leaveGroup('${g.id}')" style="background:linear-gradient(135deg,#ff9f43,#e67e22)"><i class="fa fa-right-from-bracket"></i> Lascia</button>`}
   </div>
   <div class="stat-grid">
@@ -3124,8 +3192,6 @@ function renderGroupDetail(con){
 }
 
 function buildPaypalUrl(amount,email,note){
-  // PayPal's working send-money URL (works on both mobile and desktop)
-  // paypal.com/send is the correct endpoint that pre-fills recipient + amount
   if(!email||!email.includes('@')) return 'https://www.paypal.com';
   const params=new URLSearchParams({
     recipient: email,
@@ -3134,6 +3200,130 @@ function buildPaypalUrl(amount,email,note){
     note: note||'Pagamento Finanza Pro'
   });
   return `https://www.paypal.com/send?${params.toString()}`;
+}
+
+function openSaldaDebito(){
+  const g=groups.find(x=>x.id===curGroupId);if(!g)return;
+  const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
+  const allM=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...members];
+  const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
+  const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
+
+  // Ricalcola net
+  const net={};
+  allM.forEach(m=>{net[m.uid]={};allM.forEach(n=>{if(m.uid!==n.uid)net[m.uid][n.uid]=0;});});
+  exps.forEach(e=>{
+    const payer=e.paidByUid||e.userId||g.creatorId;
+    const parts=e.participants||allM.map(m=>m.uid);
+    const share=e.share||(e.amount/parts.length);
+    parts.forEach(pUid=>{
+      if(pUid!==payer){
+        if(!net[pUid]) net[pUid]={};
+        net[pUid][payer]=(net[pUid][payer]||0)+share;
+      }
+    });
+  });
+  payments.filter(p=>p.status==='confirmed').forEach(p=>{
+    if(net[p.fromUid]?.[p.toUid]!==undefined)
+      net[p.fromUid][p.toUid]=Math.max(0,(net[p.fromUid][p.toUid]||0)-p.amount);
+  });
+
+  // Debiti miei
+  const myDebts=[];
+  allM.forEach(creditor=>{
+    if(creditor.uid===user.id) return;
+    const owed=(net[user.id]?.[creditor.uid])||0;
+    if(owed<0.01) return;
+    const paypal=localStorage.getItem('fp_paypal_'+creditor.uid)||'';
+    const isPending=payments.some(p=>p.fromUid===user.id&&p.toUid===creditor.uid&&p.status==='pending');
+    myDebts.push({uid:creditor.uid, name:creditor.name, amount:owed, paypal, isPending});
+  });
+  const totalDevo=myDebts.reduce((s,d)=>s+d.amount,0);
+
+  // Crediti miei (chi mi deve)
+  const myCredits=[];
+  allM.forEach(debtor=>{
+    if(debtor.uid===user.id) return;
+    const owed=(net[debtor.uid]?.[user.id])||0;
+    if(owed<0.01) return;
+    myCredits.push({uid:debtor.uid, name:debtor.name, amount:owed});
+  });
+  const totalMiDeve=myCredits.reduce((s,d)=>s+d.amount,0);
+
+  let html='';
+
+  // ── Sezione: devo io ──
+  if(myDebts.length>0){
+    html+=`
+    <div style="background:rgba(255,79,109,.07);border:1px solid rgba(255,79,109,.2);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:800;color:var(--re)">💸 Devo pagare</div>
+        <div style="font-size:18px;font-weight:900;color:var(--re)">${fmtE(totalDevo)}</div>
+      </div>
+      ${myDebts.map(d=>{
+        const paypalUrl=d.paypal?buildPaypalUrl(d.amount,d.paypal,'Quota '+g.name):'';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,79,109,.1)">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${d.name}</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${fmtE(d.amount)}</div>
+            ${d.isPending?`<div style="font-size:10px;color:var(--ye);margin-top:2px">⏳ Pagamento già segnalato</div>`:''}
+            ${!d.paypal?`<div style="font-size:10px;color:var(--tx3);margin-top:2px">ℹ️ ${d.name} non ha impostato PayPal</div>`:''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            ${paypalUrl?`<a href="${paypalUrl}" target="_blank"
+              style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;
+              background:linear-gradient(135deg,#003087,#009cde);color:#fff;border-radius:11px;
+              font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;
+              box-shadow:0 4px 14px rgba(0,48,135,.4)">
+              💙 Paga con PayPal
+            </a>`:''}
+            ${!d.isPending?`<button class="btn-sm" style="background:rgba(0,229,160,.1);color:var(--gr);border:1px solid rgba(0,229,160,.2)!important;font-size:10px"
+              onclick="closeMo('saldaDebitoModal');markPaidBySelf('${user.id}','${user.name}','${d.uid}','${d.name}',${d.amount.toFixed(2)})">
+              💰 Ho pagato
+            </button>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // ── Sezione: mi devono ──
+  if(myCredits.length>0){
+    html+=`
+    <div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.18);border-radius:14px;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:800;color:var(--gr)">✅ Mi devono</div>
+        <div style="font-size:18px;font-weight:900;color:var(--gr)">${fmtE(totalMiDeve)}</div>
+      </div>
+      ${myCredits.map(d=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(0,229,160,.1)">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${d.name}</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${fmtE(d.amount)}</div>
+          </div>
+          <button class="btn-sm bs-g" style="font-size:10px;white-space:nowrap"
+            onclick="closeMo('saldaDebitoModal');confirmMemberPaid('${d.uid}','${d.name}','${user.id}','${user.name}',${d.amount.toFixed(2)})">
+            ✅ Conferma ricevuto
+          </button>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if(!myDebts.length&&!myCredits.length){
+    html=`<div style="text-align:center;padding:28px;color:var(--gr);font-size:14px;font-weight:700">🎉 Sei in pari! Nessun debito o credito attivo.</div>`;
+  }
+
+  // Saldo netto
+  if(myDebts.length>0||myCredits.length>0){
+    const netto=totalMiDeve-totalDevo;
+    html+=`<div style="margin-top:14px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--tx2);font-weight:600">Saldo netto nel gruppo</span>
+      <span style="font-size:16px;font-weight:900;color:${netto>=0?'var(--gr)':'var(--re)'}">${netto>=0?'+':''}${fmtE(netto)}</span>
+    </div>`;
+  }
+
+  document.getElementById('saldaDebitoContent').innerHTML=html;
+  openMo('saldaDebitoModal');
 }
 
 function markPaidBySelf(uid,name,toUid,toName,amount){

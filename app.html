@@ -619,6 +619,36 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 /* ======= NOTE SPESE ======= */
 .expense-note-card{background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:13px;margin-bottom:9px;transition:all .2s}
 .expense-note-card:hover{border-color:var(--b2)}
+
+/* ======= QUOTE LINE ITEMS ======= */
+.qt-line{display:grid;grid-template-columns:1fr 70px 70px 60px 28px;gap:6px;align-items:center;background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:8px 10px}
+.qt-line input,
+.qt-line select{padding:6px 8px;background:var(--s2);border:1px solid var(--b1);border-radius:7px;color:var(--tx);font-size:11px;font-family:'Outfit',sans-serif;width:100%}
+.qt-line input:focus,
+.qt-line select:focus{outline:none;border-color:var(--ac)}
+.qt-line-del{width:26px;height:26px;border-radius:7px;background:rgba(255,79,109,.1);border:1px solid rgba(255,79,109,.2);color:var(--re);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ======= GROUP PAYMENTS ======= */
+.pay-member-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--b1)}
+.pay-member-row:last-child{border-bottom:none}
+.pmr-check{width:16px;height:16px;accent-color:var(--ac);cursor:pointer;flex-shrink:0}
+.debt-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.debt-owed{background:rgba(255,79,109,.12);color:var(--re);border:1px solid rgba(255,79,109,.2)}
+.debt-paid{background:rgba(0,229,160,.12);color:var(--gr);border:1px solid rgba(0,229,160,.2)}
+.debt-pending{background:rgba(255,209,102,.12);color:var(--ye);border:1px solid rgba(255,209,102,.2)}
+
+/* ======= QUOTE PREVIEW (light content area) ======= */
+#quotePreviewContent{font-family:'Segoe UI',sans-serif}
+#quotePreviewContent table{width:100%;border-collapse:collapse;margin:12px 0}
+#quotePreviewContent th{background:#f0f2f8;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;color:#444;border:1px solid #ddd}
+#quotePreviewContent td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
+#quotePreviewContent .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #6c63ff}
+#quotePreviewContent .qt-totals{float:right;width:260px;margin-top:8px}
+#quotePreviewContent .qt-totals table td{border:none;padding:4px 8px}
+
+@media(max-width:600px){
+  .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
+}
 </style>
 </head>
 <body>
@@ -817,17 +847,95 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   </div>
 </div>
 <div id="quoteModal" class="mo">
-  <div class="ms">
+  <div class="ms" style="max-width:600px">
     <div class="mh"><div class="mtt">📋 Nuovo Preventivo</div><button class="mc" onclick="closeMo('quoteModal')">✕</button></div>
-    <div class="fg"><label class="fl">Titolo</label><input type="text" id="qtTitle" class="fc" placeholder="es. Sviluppo sito web"></div>
+    <div class="fg"><label class="fl">Titolo preventivo</label><input type="text" id="qtTitle" class="fc" placeholder="es. Sviluppo sito web"></div>
     <div class="fg"><label class="fl">Cliente</label><select id="qtClient" class="fc"><option value="">— Seleziona cliente —</option></select></div>
-    <div class="fg"><label class="fl">Importo Totale (€)</label><input type="number" id="qtAmt" class="fc" placeholder="0.00" step="0.01" min="0"></div>
     <div class="fg"><label class="fl">Scadenza preventivo</label><input type="date" id="qtExpiry" class="fc"></div>
-    <div class="fg"><label class="fl">Descrizione / Voci</label><textarea id="qtDesc" class="fc" rows="4" placeholder="Descrivi le voci del preventivo..."></textarea></div>
-    <div class="fg"><label class="fl">Stato</label><select id="qtStatus" class="fc"><option value="draft">📝 Bozza</option><option value="sent">📤 Inviato</option><option value="accepted">✅ Accettato</option><option value="rejected">❌ Rifiutato</option></select></div>
-    <div class="ma"><button class="bms" onclick="saveQuote()">Salva</button><button class="bmc" onclick="closeMo('quoteModal')">Annulla</button></div>
+    <div class="fg"><label class="fl">Note / Condizioni</label><textarea id="qtDesc" class="fc" rows="2" placeholder="es. Validità 30 giorni, modalità di consegna..."></textarea></div>
+    <div class="fg"><label class="fl">Metodo di pagamento</label>
+      <select id="qtPayMethod" class="fc">
+        <option value="bonifico">🏦 Bonifico Bancario</option>
+        <option value="paypal">💙 PayPal</option>
+        <option value="carta">💳 Carta di Credito/Debito</option>
+        <option value="contanti">💵 Contanti</option>
+        <option value="assegno">📝 Assegno</option>
+        <option value="rid">🔄 RID/SDD Bancario</option>
+      </select>
+    </div>
+    <div id="qtPayDetails" style="margin-top:-6px;margin-bottom:10px"></div>
+    <div class="fg"><label class="fl">Aliquota IVA predefinita</label>
+      <select id="qtDefaultIva" class="fc" onchange="updateQtIva()">
+        <option value="0">0% (esente / forfettario)</option>
+        <option value="4">4%</option>
+        <option value="10">10%</option>
+        <option value="22" selected>22%</option>
+      </select>
+    </div>
+    <!-- RIGHE PREVENTIVO -->
+    <div style="margin:12px 0 6px;font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.4px">Righe preventivo</div>
+    <div id="qtLines" style="display:flex;flex-direction:column;gap:7px"></div>
+    <button onclick="addQtLine()" style="margin-top:8px;padding:7px 14px;background:var(--s2);border:1px dashed var(--b2);border-radius:9px;color:var(--ac);font-size:11px;font-weight:700;cursor:pointer;width:100%;font-family:'Outfit',sans-serif">＋ Aggiungi riga</button>
+    <!-- TOTALI -->
+    <div style="margin-top:14px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:13px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:var(--tx2)">Imponibile</span><span id="qtImponibile" style="font-weight:700">€0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:var(--tx2)">IVA</span><span id="qtIvaAmt" style="font-weight:700;color:var(--ye)">€0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;border-top:1px solid var(--b1);padding-top:8px;margin-top:5px"><span style="font-weight:700">Totale</span><span id="qtTotale" style="font-weight:900;color:var(--gr)">€0.00</span></div>
+    </div>
+    <div class="fg" style="margin-top:10px"><label class="fl">Stato</label><select id="qtStatus" class="fc"><option value="draft">📝 Bozza</option><option value="sent">📤 Inviato</option><option value="accepted">✅ Accettato</option><option value="rejected">❌ Rifiutato</option></select></div>
+    <div class="ma"><button class="bms" onclick="saveQuote()">💾 Salva Preventivo</button><button class="bmc" onclick="closeMo('quoteModal')">Annulla</button></div>
   </div>
 </div>
+
+<!-- LOGO AZIENDALE MODAL -->
+<div id="bizLogoModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">🏢 Logo & Dati Azienda</div><button class="mc" onclick="closeMo('bizLogoModal')">✕</button></div>
+    <p style="font-size:12px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Carica il logo aziendale (max 500KB, PNG/JPG). Verrà usato nei preventivi esportati.</p>
+    <div id="bizLogoPreview" style="text-align:center;margin-bottom:14px"></div>
+    <div class="fg"><label class="fl">Logo (clicca per caricare)</label><input type="file" id="bizLogoFile" class="fc" accept="image/png,image/jpeg,image/gif,image/webp" onchange="previewBizLogo(this)" style="cursor:pointer"></div>
+    <div class="fg"><label class="fl">Nome Azienda</label><input type="text" id="bizCompanyName" class="fc" placeholder="es. Acme Srl"></div>
+    <div class="fg"><label class="fl">P.IVA</label><input type="text" id="bizVat" class="fc" placeholder="IT12345678901"></div>
+    <div class="fg"><label class="fl">Indirizzo</label><input type="text" id="bizAddr" class="fc" placeholder="Via Roma 1, 20100 Milano"></div>
+    <div class="fg"><label class="fl">Email / Contatto</label><input type="text" id="bizContact" class="fc" placeholder="info@azienda.it | +39 02 1234567"></div>
+    <div class="ma"><button class="bms" onclick="saveBizLogo()">💾 Salva</button><button class="bmc" onclick="closeMo('bizLogoModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- ANTEPRIMA PREVENTIVO PDF MODAL -->
+<div id="quotePreviewModal" class="mo">
+  <div class="ms" style="max-width:700px;padding:0">
+    <div style="padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="font-size:14px;font-weight:700">📄 Anteprima Preventivo</div>
+      <div style="display:flex;gap:8px">
+        <button class="bms" onclick="exportQuotePDF()" style="font-size:11px;padding:6px 14px">⬇️ Scarica PDF</button>
+        <button class="mc" onclick="closeMo('quotePreviewModal')">✕</button>
+      </div>
+    </div>
+    <div id="quotePreviewContent" style="padding:20px;overflow-y:auto;max-height:72vh;background:#fff;color:#111"></div>
+  </div>
+</div>
+
+<!-- GROUP PAYMENT REQUEST MODAL -->
+<div id="gPayRequestModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">💸 Richiedi Pagamento</div><button class="mc" onclick="closeMo('gPayRequestModal')">✕</button></div>
+    <p style="font-size:12px;color:var(--tx2);margin-bottom:14px">Seleziona i membri che non hanno ancora saldato.</p>
+    <div id="gPayRequestList"></div>
+    <div class="fg" style="margin-top:10px"><label class="fl">Nota (opzionale)</label><input type="text" id="gPayNote" class="fc" placeholder="es. Porta i contanti stasera!"></div>
+    <div class="ma"><button class="bms" onclick="sendPaymentRequest()">📨 Invia Richiesta</button><button class="bmc" onclick="closeMo('gPayRequestModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- MARK PAID MODAL -->
+<div id="gMarkPaidModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">✅ Gestisci Pagamento</div><button class="mc" onclick="closeMo('gMarkPaidModal')">✕</button></div>
+    <div id="gMarkPaidContent"></div>
+    <div class="ma"><button class="bms" id="gMarkPaidBtn">Conferma</button><button class="bmc" onclick="closeMo('gMarkPaidModal')">Annulla</button></div>
+  </div>
+</div>
+
 <div id="projModal" class="mo">
   <div class="ms">
     <div class="mh"><div class="mtt">📁 Nuovo Progetto</div><button class="mc" onclick="closeMo('projModal')">✕</button></div>
@@ -1184,7 +1292,7 @@ function showApp(){
   updateUI();buildNav();
   loadData(()=>{
     goTo(appMode==='business'?'biz_dashboard':'dashboard');
-    setTimeout(()=>{checkRecurring();buildNotifs();checkBudgetAlerts();},1500);
+    setTimeout(()=>{checkRecurring();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
@@ -1942,6 +2050,7 @@ function showClientDetail(cid){
 
 /* —— PREVENTIVI —— */
 function renderBizPreventivi(con){
+  const biz=getBizSettings();
   const tot=quotes.reduce((s,q)=>s+q.amount,0);
   const accepted=quotes.filter(q=>q.status==='accepted').reduce((s,q)=>s+q.amount,0);
   const pending=quotes.filter(q=>q.status==='sent').reduce((s,q)=>s+q.amount,0);
@@ -1952,26 +2061,49 @@ function renderBizPreventivi(con){
     <div class="sc"><div class="sc-ico">📤</div><div class="sc-lbl">In attesa</div><div class="sc-val" style="color:var(--ye)">${fmtE(pending)}</div></div>
     <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Valore totale</div><div class="sc-val" style="color:var(--or)">${fmtE(tot)}</div></div>
   </div>
+  ${!biz.name?`<div style="background:rgba(247,151,30,.08);border:1px solid rgba(247,151,30,.25);border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:12px;color:var(--ye);display:flex;justify-content:space-between;align-items:center">
+    <span>⚠️ Configura il logo e i dati aziendali per preventivi personalizzati</span>
+    <button class="btn-sm" style="background:rgba(247,151,30,.15);border:1px solid rgba(247,151,30,.3);color:var(--ye)" onclick="openBizLogoModal()">🏢 Configura</button>
+  </div>`:''}
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">📋</div>Preventivi</div><button class="btn-a" onclick="openQuoteModal()">＋ Nuovo</button></div>
-    ${quotes.length===0?es('📋','Nessun preventivo ancora. Crea il tuo primo preventivo da inviare ai clienti.'):
+    <div class="ch">
+      <div class="ct"><div class="ct-ico">📋</div>Preventivi</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-a" style="background:linear-gradient(135deg,#f7971e,#ffd200);color:#1a1200" onclick="openBizLogoModal()">🏢 Dati Azienda</button>
+        <button class="btn-a" onclick="openQuoteModal()">＋ Nuovo</button>
+      </div>
+    </div>
+    ${quotes.length===0?es('📋','Nessun preventivo ancora.'):
     [...quotes].reverse().map(q=>{
       const cli=clients.find(c=>c.id===q.clientId);
       const expDays=q.expiry?Math.round((new Date(q.expiry)-new Date())/(1000*60*60*24)):null;
-      return `<div class="ir">
-        <div class="ia">📋</div>
-        <div class="ii">
-          <div class="in">${q.title} ${statusPill(q.status)}</div>
-          <div class="id2">${cli?'👤 '+cli.name:''}${q.expiry?` · Scade: ${new Date(q.expiry+'T00:00:00').toLocaleDateString('it-IT')}${expDays!==null&&expDays<=3?` <strong style="color:var(--re)">(${expDays<=0?'Scaduto':'tra '+expDays+' gg'})</strong>`:''}`:''}</div>
+      const daysSent=Math.floor((Date.now()-new Date(q.createdAt).getTime())/(24*60*60*1000));
+      return `<div style="background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:13px;margin-bottom:9px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700">${q.title} ${statusPill(q.status)}</div>
+            <div style="font-size:10px;color:var(--tx2);margin-top:3px">
+              ${cli?'👤 '+cli.name+' · ':''}
+              ${q.expiry?`Scade: ${new Date(q.expiry+'T00:00:00').toLocaleDateString('it-IT')}`:''}
+              ${expDays!==null&&expDays<=3?`<strong style="color:var(--re)"> (${expDays<=0?'Scaduto':'tra '+expDays+' gg'})</strong>`:''}
+              ${q.status==='sent'&&daysSent>=15?`<span style="color:var(--ye)"> · ⚠️ Inviato ${daysSent}gg fa</span>`:''}
+            </div>
+            ${q.lines?.length?`<div style="font-size:10px;color:var(--tx3);margin-top:2px">${q.lines.length} riga/e · Imponibile: ${fmtE(q.imponibile||0)} · IVA: ${fmtE(q.ivaAmt||0)}</div>`:''}
+          </div>
+          <div style="text-align:right;flex-shrink:0;margin-left:10px">
+            <div style="font-size:16px;font-weight:900;color:var(--or)">${fmtE(q.amount)}</div>
+            <div style="font-size:9px;color:var(--tx3)">totale IVA inclusa</div>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:7px">
-          <span class="iam" style="color:var(--or)">${fmtE(q.amount)}</span>
-          <select class="fc" style="font-size:10px;padding:3px 7px;border-radius:7px;width:110px" onchange="updateQuoteStatus('${q.id}',this.value)">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <select class="fc" style="font-size:10px;padding:4px 7px;border-radius:7px;width:120px" onchange="updateQuoteStatus('${q.id}',this.value)">
             <option value="draft" ${q.status==='draft'?'selected':''}>📝 Bozza</option>
             <option value="sent" ${q.status==='sent'?'selected':''}>📤 Inviato</option>
             <option value="accepted" ${q.status==='accepted'?'selected':''}>✅ Accettato</option>
             <option value="rejected" ${q.status==='rejected'?'selected':''}>❌ Rifiutato</option>
           </select>
+          <button class="btn-sm bs-s" onclick="openQuotePreview('${q.id}')">👁️ Anteprima</button>
+          <button class="btn-sm" style="background:rgba(0,184,148,.1);border:1px solid rgba(0,184,148,.2)!important;color:var(--gr);font-size:10px;padding:3px 8px;border-radius:7px;cursor:pointer" onclick="window._currentPreviewQuoteId='${q.id}';openQuotePreview('${q.id}');setTimeout(exportQuotePDF,400)">📄 PDF</button>
           <button class="btn-sm bs-d" onclick="delQuote('${q.id}')">🗑️</button>
         </div>
       </div>`;
@@ -2191,19 +2323,161 @@ function openQuoteModal(clientId){
   const sel=document.getElementById('qtClient');
   sel.innerHTML='<option value="">— Seleziona cliente —</option>'+clients.filter(c=>c.type==='client').map(c=>`<option value="${c.id}" ${clientId===c.id?'selected':''}>${c.name}</option>`).join('');
   document.getElementById('qtExpiry').value=new Date(Date.now()+30*864e5).toISOString().split('T')[0];
+  document.getElementById('qtLines').innerHTML='';
+  qtLineCount=0;
+  addQtLine();
+  addQtLine();
+  updateQtTotals();
   openMo('quoteModal');
+  document.getElementById('qtPayMethod').onchange=updateQtPayDetails;
+  updateQtPayDetails();
 }
+
+let qtLineCount=0;
+function addQtLine(){
+  qtLineCount++;
+  const iva=document.getElementById('qtDefaultIva')?.value||'22';
+  const id='qtl_'+Date.now()+'_'+qtLineCount;
+  const div=document.createElement('div');
+  div.className='qt-line';
+  div.id=id;
+  div.innerHTML=`
+    <input type="text" placeholder="Descrizione voce" oninput="updateQtTotals()">
+    <input type="number" placeholder="Qtà" value="1" min="0.01" step="0.01" oninput="updateQtTotals()">
+    <input type="number" placeholder="€ unitario" value="" min="0" step="0.01" oninput="updateQtTotals()">
+    <select onchange="updateQtTotals()">
+      <option value="0">0%</option>
+      <option value="4">4%</option>
+      <option value="10">10%</option>
+      <option value="22" ${iva==='22'?'selected':''}>22%</option>
+    </select>
+    <button class="qt-line-del" onclick="document.getElementById('${id}').remove();updateQtTotals()">✕</button>`;
+  // set iva
+  div.querySelector('select').value=iva;
+  document.getElementById('qtLines').appendChild(div);
+  updateQtTotals();
+}
+
+function updateQtIva(){
+  const iva=document.getElementById('qtDefaultIva').value;
+  document.querySelectorAll('#qtLines .qt-line select').forEach(s=>s.value=iva);
+  updateQtTotals();
+}
+
+function getQtLines(){
+  const lines=[];
+  document.querySelectorAll('#qtLines .qt-line').forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const sel=row.querySelector('select');
+    const desc=inputs[0].value.trim();
+    const qty=parseFloat(inputs[1].value)||1;
+    const unit=parseFloat(inputs[2].value)||0;
+    const iva=parseFloat(sel?.value)||0;
+    if(desc||unit>0)lines.push({desc,qty,unit,iva,subtotal:qty*unit,ivaAmt:qty*unit*(iva/100)});
+  });
+  return lines;
+}
+
+function updateQtTotals(){
+  const lines=getQtLines();
+  const imp=lines.reduce((s,l)=>s+l.subtotal,0);
+  const iva=lines.reduce((s,l)=>s+l.ivaAmt,0);
+  document.getElementById('qtImponibile').textContent=fmtE(imp);
+  document.getElementById('qtIvaAmt').textContent=fmtE(iva);
+  document.getElementById('qtTotale').textContent=fmtE(imp+iva);
+}
+
+function updateQtPayDetails(){
+  const m=document.getElementById('qtPayMethod')?.value;
+  const div=document.getElementById('qtPayDetails');
+  if(!div)return;
+  const biz=getBizSettings();
+  if(m==='bonifico'){
+    div.innerHTML=`<div class="fg"><label class="fl">IBAN</label><input type="text" id="qtIban" class="fc" placeholder="IT60 X054 2811 1010 0000 0123 456" value="${biz.iban||''}"></div>`;
+  } else if(m==='paypal'){
+    div.innerHTML=`<div class="fg"><label class="fl">Email PayPal</label><input type="text" id="qtPaypalEmail" class="fc" placeholder="pagamenti@azienda.it" value="${biz.paypalEmail||''}"></div>`;
+  } else {
+    div.innerHTML='';
+  }
+}
+
 function saveQuote(){
   const title=document.getElementById('qtTitle').value.trim();
   const clientId=document.getElementById('qtClient').value;
-  const amt=parseFloat(document.getElementById('qtAmt').value);
   const expiry=document.getElementById('qtExpiry').value;
   const desc=document.getElementById('qtDesc').value.trim();
   const status=document.getElementById('qtStatus').value;
-  if(!title||!amt){notify('❌ Compila titolo e importo');return;}
-  db.ref(`biz/${user.id}/quotes`).push({title,clientId,amount:amt,expiry,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('quoteModal');loadData(()=>goTo('biz_preventivi'));notify('✅ Preventivo creato!');});
+  const payMethod=document.getElementById('qtPayMethod').value;
+  const lines=getQtLines();
+  if(!title||lines.length===0){notify('❌ Inserisci titolo e almeno una riga');return;}
+  const imp=lines.reduce((s,l)=>s+l.subtotal,0);
+  const ivaAmt=lines.reduce((s,l)=>s+l.ivaAmt,0);
+  const amount=imp+ivaAmt;
+  // extra pay details
+  const ibanEl=document.getElementById('qtIban');
+  const ppEl=document.getElementById('qtPaypalEmail');
+  const payDetails={iban:ibanEl?.value||'',paypalEmail:ppEl?.value||''};
+  const bizSettings=getBizSettings();
+  db.ref(`biz/${user.id}/quotes`).push({
+    title,clientId,amount,imponibile:imp,ivaAmt,lines,expiry,desc,status,payMethod,payDetails,
+    companySnapshot:{...bizSettings},
+    createdAt:new Date().toISOString(),
+    quoteNumber:Date.now()
+  }).then(()=>{
+    closeMo('quoteModal');
+    loadData(()=>goTo('biz_preventivi'));
+    notify('✅ Preventivo creato!');
+  });
 }
-function updateQuoteStatus(id,status){db.ref(`biz/${user.id}/quotes/${id}/status`).set(status).then(()=>{const q=quotes.find(x=>x.id===id);if(q)q.status=status;goTo('biz_preventivi');notify('✅ Stato aggiornato');});}
+function updateQuoteStatus(id,status){
+  const q=quotes.find(x=>x.id===id);
+  if(!q){notify('❌ Preventivo non trovato');return;}
+
+  if(status==='rejected'){
+    if(!confirm('Sei sicuro? Il preventivo verrà eliminato perché rifiutato.'))return;
+    db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{
+      quotes=quotes.filter(x=>x.id!==id);
+      goTo('biz_preventivi');
+      notify('🗑️ Preventivo rifiutato ed eliminato');
+    });
+    return;
+  }
+
+  if(status==='accepted' && q.status!=='accepted'){
+    const cli=clients.find(c=>c.id===q.clientId);
+    const causeNum='PRE-'+String(q.quoteNumber||q.id).slice(-6).toUpperCase();
+    const causale=`${causeNum} - ${cli?cli.name:'Cliente'}`;
+    db.ref(`biz/${user.id}/quotes/${id}/status`).set('accepted').then(()=>{
+      // Crea movimento in prima nota
+      db.ref(`biz/${user.id}/transactions`).push({
+        desc:causale,
+        amount:q.amount,
+        type:'income',
+        cat:'vendite',
+        clientId:q.clientId||'',
+        iva:'0',
+        fromQuoteId:id,
+        createdAt:new Date().toISOString()
+      }).then(()=>{
+        if(q)q.status='accepted';
+        loadData(()=>goTo('biz_preventivi'));
+        notify(`✅ Preventivo accettato! Entrata creata: ${causale}`);
+        // Remove the quote from list (optional: keep as archive)
+        setTimeout(()=>db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{
+          quotes=quotes.filter(x=>x.id!==id);
+          goTo('biz_preventivi');
+        }),1500);
+      });
+    });
+    return;
+  }
+
+  db.ref(`biz/${user.id}/quotes/${id}/status`).set(status).then(()=>{
+    if(q)q.status=status;
+    goTo('biz_preventivi');
+    notify('✅ Stato aggiornato');
+  });
+}
 function delQuote(id){if(!confirm('Eliminare questo preventivo?'))return;db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{loadData(()=>goTo('biz_preventivi'));notify('🗑️ Eliminato');});}
 
 function openProjModal(){
@@ -2263,6 +2537,171 @@ function saveExpenseNote(){
 }
 function updateExpenseStatus(id,status){db.ref(`biz/${user.id}/expenseNotes/${id}/status`).set(status).then(()=>{const e=expenseNotes.find(x=>x.id===id);if(e)e.status=status;goTo('biz_spese');notify('✅ Stato aggiornato');});}
 function delExpenseNote(id){if(!confirm('Eliminare questa nota spese?'))return;db.ref(`biz/${user.id}/expenseNotes/${id}`).remove().then(()=>{loadData(()=>goTo('biz_spese'));notify('🗑️ Eliminata');});}
+
+/* ——— BIZ SETTINGS / LOGO ——— */
+function getBizSettings(){
+  try{return JSON.parse(localStorage.getItem('fp_biz_settings_'+user.id)||'{}');}catch(e){return {};}
+}
+function saveBizLogo(){
+  const name=document.getElementById('bizCompanyName').value.trim();
+  const vat=document.getElementById('bizVat').value.trim();
+  const addr=document.getElementById('bizAddr').value.trim();
+  const contact=document.getElementById('bizContact').value.trim();
+  const biz=getBizSettings();
+  const settings={...biz,name,vat,addr,contact};
+  // Logo is already stored by previewBizLogo
+  localStorage.setItem('fp_biz_settings_'+user.id,JSON.stringify(settings));
+  closeMo('bizLogoModal');
+  notify('✅ Dati azienda salvati!');
+}
+function openBizLogoModal(){
+  const biz=getBizSettings();
+  document.getElementById('bizCompanyName').value=biz.name||'';
+  document.getElementById('bizVat').value=biz.vat||'';
+  document.getElementById('bizAddr').value=biz.addr||'';
+  document.getElementById('bizContact').value=biz.contact||'';
+  const prev=document.getElementById('bizLogoPreview');
+  if(biz.logo){
+    prev.innerHTML=`<img src="${biz.logo}" style="max-height:70px;max-width:180px;border-radius:8px;border:1px solid var(--b2)">`;
+  } else {
+    prev.innerHTML=`<div style="font-size:11px;color:var(--tx3)">Nessun logo caricato</div>`;
+  }
+  openMo('bizLogoModal');
+}
+function previewBizLogo(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>600*1024){notify('❌ Immagine troppo grande (max 500KB)');input.value='';return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    const logo=e.target.result;
+    document.getElementById('bizLogoPreview').innerHTML=`<img src="${logo}" style="max-height:70px;max-width:180px;border-radius:8px;border:1px solid var(--b2)">`;
+    const biz=getBizSettings();
+    biz.logo=logo;
+    localStorage.setItem('fp_biz_settings_'+user.id,JSON.stringify(biz));
+  };
+  r.readAsDataURL(file);
+}
+
+/* ——— QUOTE PREVIEW & PDF ——— */
+function openQuotePreview(qid){
+  const q=quotes.find(x=>x.id===qid);if(!q)return;
+  const cli=clients.find(c=>c.id===q.clientId);
+  const biz=q.companySnapshot||getBizSettings();
+  const lines=q.lines||[];
+  const now=new Date().toLocaleDateString('it-IT');
+  const expDate=q.expiry?new Date(q.expiry+'T00:00:00').toLocaleDateString('it-IT'):'—';
+  const quoteNum='PRE-'+String(q.quoteNumber||q.id).slice(-6).toUpperCase();
+
+  const payLabel={bonifico:'Bonifico Bancario',paypal:'PayPal',carta:'Carta di Credito',contanti:'Contanti',assegno:'Assegno',rid:'RID/SDD'};
+  let payInfo='';
+  if(q.payMethod==='bonifico'&&q.payDetails?.iban) payInfo=`<br><strong>IBAN:</strong> ${q.payDetails.iban}`;
+  if(q.payMethod==='paypal'&&q.payDetails?.paypalEmail) payInfo=`<br><strong>PayPal:</strong> ${q.payDetails.paypalEmail}`;
+
+  const html=`
+  <div id="quotePrintArea" style="font-family:'Segoe UI',Arial,sans-serif;color:#111;background:#fff;padding:8px">
+    <div class="qt-header">
+      <div>
+        ${biz.logo?`<img src="${biz.logo}" style="max-height:60px;max-width:160px;margin-bottom:8px;display:block">`:''}
+        <div style="font-size:16px;font-weight:800;color:#1a1f3a">${biz.name||'Azienda'}</div>
+        ${biz.vat?`<div style="font-size:11px;color:#555">P.IVA: ${biz.vat}</div>`:''}
+        ${biz.addr?`<div style="font-size:11px;color:#555">${biz.addr}</div>`:''}
+        ${biz.contact?`<div style="font-size:11px;color:#555">${biz.contact}</div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:22px;font-weight:900;color:#6c63ff">PREVENTIVO</div>
+        <div style="font-size:13px;font-weight:700;color:#444">${quoteNum}</div>
+        <div style="font-size:11px;color:#777;margin-top:4px">Data: ${now}</div>
+        <div style="font-size:11px;color:#777">Scadenza: ${expDate}</div>
+      </div>
+    </div>
+    ${cli?`<div style="background:#f7f8fc;border:1px solid #e0e4f0;border-radius:10px;padding:12px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:5px">Destinatario</div>
+      <div style="font-size:14px;font-weight:700">${cli.name}</div>
+      ${cli.vat?`<div style="font-size:11px;color:#555">P.IVA: ${cli.vat}</div>`:''}
+      ${cli.email?`<div style="font-size:11px;color:#555">📧 ${cli.email}</div>`:''}
+      ${cli.addr?`<div style="font-size:11px;color:#555">📍 ${cli.addr}</div>`:''}
+    </div>`:''}
+    <table>
+      <thead><tr>
+        <th style="width:40%">Descrizione</th>
+        <th style="width:10%;text-align:center">Qtà</th>
+        <th style="width:15%;text-align:right">Prezzo unit.</th>
+        <th style="width:10%;text-align:center">IVA %</th>
+        <th style="width:12%;text-align:right">IVA €</th>
+        <th style="width:13%;text-align:right">Totale</th>
+      </tr></thead>
+      <tbody>
+        ${lines.map(l=>`<tr>
+          <td>${l.desc||'—'}</td>
+          <td style="text-align:center">${l.qty}</td>
+          <td style="text-align:right">${fmtE(l.unit)}</td>
+          <td style="text-align:center">${l.iva}%</td>
+          <td style="text-align:right">${fmtE(l.ivaAmt)}</td>
+          <td style="text-align:right;font-weight:700">${fmtE(l.subtotal+l.ivaAmt)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end">
+      <div style="width:260px;background:#f7f8fc;border:1px solid #e0e4f0;border-radius:10px;padding:12px;margin-top:4px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:#666">Imponibile</span><strong>${fmtE(q.imponibile||0)}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:#666">IVA</span><strong style="color:#e6a000">${fmtE(q.ivaAmt||0)}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;border-top:1px solid #ddd;padding-top:7px;margin-top:5px;color:#6c63ff"><span>Totale</span><span>${fmtE(q.amount)}</span></div>
+      </div>
+    </div>
+    ${q.desc?`<div style="margin-top:16px;background:#f7f8fc;border:1px solid #e0e4f0;border-radius:10px;padding:12px;font-size:12px;color:#555"><strong>Note:</strong> ${q.desc}</div>`:''}
+    ${q.payMethod?`<div style="margin-top:12px;font-size:11px;color:#555"><strong>Metodo di pagamento:</strong> ${payLabel[q.payMethod]||q.payMethod}${payInfo}</div>`:''}
+    <div style="margin-top:24px;border-top:1px solid #eee;padding-top:10px;font-size:10px;color:#aaa;text-align:center">
+      Preventivo generato da Finanza Pro · ${biz.name||''} ${biz.vat?'· P.IVA '+biz.vat:''}
+    </div>
+  </div>`;
+  document.getElementById('quotePreviewContent').innerHTML=html;
+  openMo('quotePreviewModal');
+  window._currentPreviewQuoteId=qid;
+}
+
+function exportQuotePDF(){
+  const area=document.getElementById('quotePrintArea');
+  if(!area){notify('❌ Nessun preventivo aperto');return;}
+  const q=quotes.find(x=>x.id===window._currentPreviewQuoteId)||{};
+  const quoteNum='PRE-'+String(q.quoteNumber||q.id||Date.now()).slice(-6).toUpperCase();
+  const printWin=window.open('','_blank','width=800,height=900');
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Preventivo ${quoteNum}</title>
+  <style>
+    body{font-family:'Segoe UI',Arial,sans-serif;color:#111;margin:0;padding:24px;background:#fff}
+    table{width:100%;border-collapse:collapse;margin:12px 0}
+    th{background:#f0f2f8;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;color:#444;border:1px solid #ddd}
+    td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
+    .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
+    @media print{body{padding:0}}
+  </style></head><body>`);
+  printWin.document.write(area.outerHTML);
+  printWin.document.write(`</body></html>`);
+  printWin.document.close();
+  setTimeout(()=>printWin.print(),400);
+  notify('📄 Apertura finestra di stampa...');
+}
+
+/* ——— QUOTE FOLLOW-UP ALERTS ——— */
+function checkQuoteAlerts(){
+  const now=Date.now();
+  const fifteenDays=15*24*60*60*1000;
+  quotes.filter(q=>q.status==='sent').forEach(q=>{
+    const created=new Date(q.createdAt).getTime();
+    const daysSent=Math.floor((now-created)/(24*60*60*1000));
+    if(daysSent>=15){
+      const alertKey='qt_followup_'+q.id+'_'+Math.floor(daysSent/15);
+      if(!localStorage.getItem(alertKey)){
+        localStorage.setItem(alertKey,'1');
+        pushNotif({
+          id:alertKey,type:'rec',icon:'📋',
+          title:`Follow-up preventivo: ${q.title}`,
+          sub:`Inviato ${daysSent} giorni fa — ci sono novità? Aggiorna lo stato.`,
+          time:now,read:false,action:'biz_preventivi'
+        });
+      }
+    }
+  });
+}
 
 function exportBizCSV(){
   const rows=[['Data','Descrizione','Tipo','Categoria','IVA%','Cliente/Fornitore','Progetto','Importo (€)']];
@@ -2451,41 +2890,100 @@ function renderGroupDetail(con){
   if(!g){curGroupId=null;renderGroups(con);return;}
   const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
   const totExp=exps.reduce((s,e)=>s+e.amount,0);
-  // members with their Firebase key (userId)
   const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
-  const totM=members.length+1;
-  const share=totM>0?(totExp/totM).toFixed(2):0;
+  const allMembers=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...members];
+  const totM=allMembers.length;
+  const share=totM>0?totExp/totM:0;
   const chats=Object.entries(g.chat||{}).map(([id,d])=>({...d,id})).sort((a,b)=>a.ts-b.ts);
   const isCreator=g.creatorId===user.id;
+
+  // Payments tracking
+  const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
+
+  // Per ogni membro (non creatore) calcola se ha pagato
+  function memberPaidStatus(uid){
+    const paid=payments.filter(p=>p.fromUid===uid&&p.status==='confirmed');
+    const paidAmt=paid.reduce((s,p)=>s+p.amount,0);
+    return {paidAmt,settled:paidAmt>=share-0.01,pendingRequest:payments.some(p=>p.fromUid===uid&&p.status==='pending')};
+  }
+
+  // PayPal link builder
+  function paypalLink(amount,toEmail,note){
+    const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
+    const desc=encodeURIComponent(note||'Quota gruppo '+g.name);
+    if(isMobile){
+      return `paypal://paypalme/${encodeURIComponent(toEmail||'')}&amount=${amount.toFixed(2)}&note=${desc}`;
+    }
+    if(toEmail&&toEmail.includes('@')){
+      return `https://www.paypal.com/send?recipient=${encodeURIComponent(toEmail)}&amount=${amount.toFixed(2)}&currencyCode=EUR&note=${desc}`;
+    }
+    return `https://www.paypal.com/paypalme/${encodeURIComponent(toEmail||'')}&amount=${amount.toFixed(2)}&note=${desc}`;
+  }
+
+  const creatorPaypalEmail=g.creatorPaypal||'';
+
+  const debtSummary=members.map(m=>{
+    const st=memberPaidStatus(m.uid);
+    return `<div class="pay-member-row">
+      <div style="display:flex;align-items:center;gap:9px;flex:1">
+        <div class="ia" style="width:32px;height:32px;font-size:12px">👤</div>
+        <div>
+          <div style="font-size:12px;font-weight:700">${m.name}</div>
+          <div style="font-size:10px;color:var(--tx2)">Quota: ${fmtE(share)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+        ${st.settled
+          ?`<span class="debt-badge debt-paid">✅ Saldato</span>`
+          :st.pendingRequest
+            ?`<span class="debt-badge debt-pending">⏳ Richiesta inviata</span>`
+            :`<span class="debt-badge debt-owed">Deve ${fmtE(share-st.paidAmt)}</span>`}
+        ${!st.settled&&creatorPaypalEmail&&m.uid===user.id
+          ?`<a href="${paypalLink(share-st.paidAmt,creatorPaypalEmail,'Quota '+g.name)}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:linear-gradient(135deg,#003087,#009cde);color:#fff;border-radius:8px;font-size:10px;font-weight:700;text-decoration:none">💙 Paga con PayPal</a>`:''}
+        ${!st.settled&&m.uid===user.id
+          ?`<button class="btn-sm" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2)!important;color:var(--gr);font-size:10px;cursor:pointer;padding:3px 8px;border-radius:7px" onclick="markPaidBySelf('${m.uid}','${m.name}',${(share-st.paidAmt).toFixed(2)})">💰 Ho pagato</button>`:''}
+        ${isCreator&&!st.settled
+          ?`<button class="btn-sm bs-g" onclick="confirmMemberPaid('${m.uid}','${m.name}',${(share-st.paidAmt).toFixed(2)})">✅ Segna pagato</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
   con.innerHTML=`
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
     <button onclick="curGroupId=null;goTo('gruppi')" style="background:var(--s1);border:1px solid var(--b1);color:var(--tx2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif">← Gruppi</button>
     <button class="btn-a" onclick="openMo('inviteModal')"><i class="fa fa-user-plus"></i> Invita</button>
     <button class="btn-a" onclick="openMo('gExpModal')" style="background:linear-gradient(135deg,var(--re),var(--ac3))"><i class="fa fa-plus"></i> Spesa</button>
-    ${isCreator?`<button class="btn-a" onclick="deleteGroup('${g.id}')" style="background:linear-gradient(135deg,#ff4f6d,#c0392b)"><i class="fa fa-trash"></i> Elimina Gruppo</button>`:'<button class="btn-a" onclick="leaveGroup(\''+g.id+'\')" style="background:linear-gradient(135deg,#ff9f43,#e67e22)"><i class="fa fa-right-from-bracket"></i> Lascia Gruppo</button>'}
+    ${isCreator?`<button class="btn-a" onclick="openGroupPayRequestModal()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📨 Richiedi pagamenti</button>`:''}
+    ${isCreator?`<button class="btn-a" onclick="openGroupPaypalSetup()" style="background:linear-gradient(135deg,#003087,#009cde)">💙 PayPal Gruppo</button>`:''}
+    ${isCreator?`<button class="btn-a" onclick="deleteGroup('${g.id}')" style="background:linear-gradient(135deg,#ff4f6d,#c0392b)"><i class="fa fa-trash"></i> Elimina</button>`:`<button class="btn-a" onclick="leaveGroup('${g.id}')" style="background:linear-gradient(135deg,#ff9f43,#e67e22)"><i class="fa fa-right-from-bracket"></i> Lascia</button>`}
   </div>
   <div class="stat-grid">
     <div class="sc"><div class="sc-ico">💸</div><div class="sc-lbl">Totale Spese</div><div class="sc-val" style="color:var(--re)">${fmtE(totExp)}</div></div>
-    <div class="sc"><div class="sc-ico">👤</div><div class="sc-lbl">Tua Quota</div><div class="sc-val" style="color:var(--ye)">${fmtE(parseFloat(share))}</div></div>
+    <div class="sc"><div class="sc-ico">👤</div><div class="sc-lbl">Quota a testa</div><div class="sc-val" style="color:var(--ye)">${fmtE(share)}</div></div>
     <div class="sc"><div class="sc-ico">👥</div><div class="sc-lbl">Membri</div><div class="sc-val">${totM}</div></div>
   </div>
   <div class="g2col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">💸</div>Spese</div></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">💸</div>Spese (${exps.length})</div></div>
     ${exps.length===0?es('💸','Nessuna spesa'):
     exps.map(e=>`<div class="ir"><div class="ia">💸</div><div class="ii"><div class="in">${e.desc}</div><div class="id2">${e.addedBy}</div></div><div class="iam aout">${fmtE(e.amount)}</div></div>`).join('')}
   </div>
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">👥</div>Membri</div></div>
-    <div class="ir"><div class="ia">👑</div><div class="ii"><div class="in">${g.creatorName||'Admin'}</div><div class="id2">Creatore</div></div></div>
+    <div class="ir"><div class="ia">👑</div><div class="ii"><div class="in">${g.creatorName||'Admin'}</div><div class="id2">Creatore</div></div><span class="debt-badge debt-paid" style="font-size:9px">✅</span></div>
     ${members.map(m=>`
     <div class="ir">
       <div class="ia">👤</div>
       <div class="ii"><div class="in">${m.name}</div><div class="id2">${m.email||''}</div></div>
-      ${isCreator?`<button class="btn-sm bs-d" onclick="removeGMember('${m.uid}')">✕ Rimuovi</button>`:''}
+      ${isCreator?`<button class="btn-sm bs-d" onclick="removeGMember('${m.uid}')">✕</button>`:''}
     </div>`).join('')}
   </div>
   </div>
+  ${members.length>0?`<div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">💰</div>Riepilogo Pagamenti</div></div>
+    ${debtSummary||es('💰','Nessun membro da saldare')}
+    ${!creatorPaypalEmail&&isCreator?`<div style="margin-top:10px;background:rgba(0,156,222,.08);border:1px solid rgba(0,156,222,.2);border-radius:10px;padding:10px;font-size:11px;color:var(--ac2)">💙 Aggiungi la tua email PayPal per permettere ai membri di pagare direttamente online.</div>`:''}
+  </div>`:''}
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">💬</div>Chat Gruppo</div></div>
     <div class="chat-wrap">
@@ -2500,6 +2998,104 @@ function renderGroupDetail(con){
     </div>
   </div>`;
   setTimeout(()=>{const cm=document.getElementById('chatMsgs');if(cm)cm.scrollTop=cm.scrollHeight;},50);
+}
+
+/* —— GROUP PAYMENT FUNCTIONS —— */
+function openGroupPaypalSetup(){
+  const g=groups.find(x=>x.id===curGroupId);if(!g)return;
+  const current=g.creatorPaypal||'';
+  const email=prompt('Inserisci la tua email PayPal (es. tuamail@paypal.it):\nSarà usata dal gruppo per ricevere i pagamenti.',current);
+  if(email===null)return;
+  db.ref(`groups/${curGroupId}/creatorPaypal`).set(email.trim()).then(()=>{
+    const idx=groups.findIndex(x=>x.id===curGroupId);
+    if(idx!==-1)groups[idx].creatorPaypal=email.trim();
+    renderGroupDetail(document.getElementById('content'));
+    notify('✅ Email PayPal salvata!');
+  });
+}
+
+function markPaidBySelf(uid,name,amount){
+  const div=document.getElementById('gMarkPaidContent');
+  div.innerHTML=`<p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Stai segnalando di aver pagato <strong>${fmtE(amount)}</strong> al creatore del gruppo.</p>
+  <p style="font-size:11px;color:var(--tx3)">Il creatore riceverà una notifica e potrà confermare il pagamento.</p>`;
+  const btn=document.getElementById('gMarkPaidBtn');
+  btn.onclick=()=>{
+    db.ref(`groups/${curGroupId}/payments`).push({
+      fromUid:uid,fromName:name,amount,status:'pending',ts:Date.now(),createdAt:new Date().toISOString()
+    }).then(()=>{
+      // Notify in chat
+      db.ref(`groups/${curGroupId}/chat`).push({text:`💰 ${name} ha segnalato il pagamento di ${fmtE(amount)}. In attesa di conferma.`,userId:'system',userName:'Sistema',ts:Date.now()});
+      // Push notification
+      pushNotif({id:'pay_pending_'+uid+'_'+Date.now(),type:'info',icon:'💰',title:`${name} ha pagato nel gruppo ${groups.find(x=>x.id===curGroupId)?.name}`,sub:`${fmtE(amount)} — conferma il pagamento`,time:Date.now(),read:false,action:'gruppi'});
+      closeMo('gMarkPaidModal');
+      loadData(()=>goTo('gruppi'));
+      notify('✅ Pagamento segnalato! Il creatore riceverà notifica.');
+    });
+  };
+  openMo('gMarkPaidModal');
+}
+
+function confirmMemberPaid(uid,name,amount){
+  const div=document.getElementById('gMarkPaidContent');
+  div.innerHTML=`<p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Confermi che <strong>${name}</strong> ha pagato <strong>${fmtE(amount)}</strong>?</p>`;
+  const btn=document.getElementById('gMarkPaidBtn');
+  btn.onclick=()=>{
+    // Find pending payment or create confirmed one
+    const g=groups.find(x=>x.id===curGroupId);
+    const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
+    const pending=payments.find(p=>p.fromUid===uid&&p.status==='pending');
+    if(pending){
+      db.ref(`groups/${curGroupId}/payments/${pending.id}/status`).set('confirmed');
+    } else {
+      db.ref(`groups/${curGroupId}/payments`).push({fromUid:uid,fromName:name,amount,status:'confirmed',ts:Date.now(),createdAt:new Date().toISOString()});
+    }
+    db.ref(`groups/${curGroupId}/chat`).push({text:`✅ Pagamento di ${name} (${fmtE(amount)}) confermato dal creatore.`,userId:'system',userName:'Sistema',ts:Date.now()});
+    closeMo('gMarkPaidModal');
+    loadData(()=>goTo('gruppi'));
+    notify(`✅ Pagamento di ${name} confermato!`);
+  };
+  openMo('gMarkPaidModal');
+}
+
+function openGroupPayRequestModal(){
+  const g=groups.find(x=>x.id===curGroupId);if(!g)return;
+  const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
+  const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
+  const totExp=exps.reduce((s,e)=>s+e.amount,0);
+  const share=members.length>0?totExp/(members.length+1):0;
+  const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
+
+  const list=members.map(m=>{
+    const paid=payments.filter(p=>p.fromUid===m.uid&&p.status==='confirmed').reduce((s,p)=>s+p.amount,0);
+    const settled=paid>=share-0.01;
+    if(settled)return '';
+    return `<div class="pay-member-row">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1">
+        <input type="checkbox" class="pmr-check" value="${m.uid}" data-name="${m.name}" data-amount="${(share-paid).toFixed(2)}" checked>
+        <div><div style="font-size:12px;font-weight:700">${m.name}</div><div style="font-size:10px;color:var(--tx2)">Deve ancora: ${fmtE(share-paid)}</div></div>
+      </label>
+    </div>`;
+  }).join('');
+
+  document.getElementById('gPayRequestList').innerHTML=list||`<div style="font-size:12px;color:var(--tx2);padding:10px">🎉 Tutti hanno già saldato!</div>`;
+  openMo('gPayRequestModal');
+}
+
+function sendPaymentRequest(){
+  const note=document.getElementById('gPayNote').value.trim();
+  const checks=document.querySelectorAll('#gPayRequestList .pmr-check:checked');
+  if(!checks.length){notify('❌ Seleziona almeno un membro');return;}
+  const g=groups.find(x=>x.id===curGroupId);
+  checks.forEach(cb=>{
+    const name=cb.dataset.name;
+    const amount=parseFloat(cb.dataset.amount);
+    const chatMsg=`📨 Richiesta pagamento a ${name}: ${fmtE(amount)}${note?' — '+note:''}`;
+    db.ref(`groups/${curGroupId}/chat`).push({text:chatMsg,userId:g.creatorId,userName:g.creatorName||'Creatore',ts:Date.now()});
+    pushNotif({id:'pay_req_'+cb.value+'_'+Date.now(),type:'bill',icon:'💸',title:`Richiesta pagamento: ${g.name}`,sub:`Devi pagare ${fmtE(amount)}${note?' — '+note:''}`,time:Date.now(),read:false,action:'gruppi'});
+  });
+  closeMo('gPayRequestModal');
+  loadData(()=>goTo('gruppi'));
+  notify(`📨 Richiesta inviata a ${checks.length} membro/i!`);
 }
 
 /* ===== ADMIN PAGE ===== */

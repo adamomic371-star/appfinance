@@ -38,13 +38,12 @@ body.light{
   --tx:#1a1f3a;--tx2:#5a6080;--tx3:#9aa0bc;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;height:-webkit-fill-available;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow:hidden}
-/* Safari browser (non-PWA): usa sempre safe-area per la topbar */
-.topbar { padding-top: env(safe-area-inset-top, 0px); height: calc(54px + env(safe-area-inset-top, 0px)); }
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow:hidden}
 /* PWA standalone: account for status bar on iOS */
 @media all and (display-mode: standalone) {
+  .topbar { padding-top: var(--sat) !important; height: calc(54px + var(--sat)) !important; }
   .sidebar { padding-top: calc(var(--sat) + 18px) !important; }
-  .drawer { padding-top: calc(var(--sat) + 0px) !important; }
+  .drawer { padding-top: var(--sat) !important; }
   #splash { padding-top: var(--sat); }
   #loginScreen { padding-top: var(--sat); }
   .content { padding-bottom: calc(var(--sab) + 14px) !important; }
@@ -103,7 +102,7 @@ html,body{height:100%;height:-webkit-fill-available;background:var(--bg);color:v
 .auth-msg.error{color:var(--re)}.auth-msg.success{color:var(--gr)}.auth-msg.loading{color:var(--tx2)}
 
 /* ======= APP SHELL ======= */
-#app{display:flex;height:100vh;height:-webkit-fill-available;width:100vw;overflow:hidden}
+#app{display:flex;height:100vh;height:100dvh;width:100vw;overflow:hidden}
 
 /* ======= SIDEBAR ======= */
 .sidebar{width:var(--sw);min-width:var(--sw);background:var(--bg2);border-right:1px solid var(--b1);padding:18px 12px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:width .25s,min-width .25s}
@@ -2294,9 +2293,10 @@ function renderPage(p){
     <!-- PAYPAL -->
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">💙</div>PayPal per Gruppi</div></div>
-      <div style="font-size:11px;color:var(--tx2);margin-bottom:10px">Quando sei debitore in un gruppo, gli altri vedranno il tasto "Paga con PayPal" verso di te.</div>
+      <div style="font-size:11px;color:var(--tx2);margin-bottom:6px">Inserisci il tuo link <strong style="color:#009cde">paypal.me/tuonome</strong> oppure la tua email PayPal. Gli altri membri del gruppo vedranno il tasto "Paga con PayPal".</div>
+      <div style="font-size:10px;color:var(--gr);margin-bottom:10px">💡 Il link paypal.me funziona meglio — con l'email potrebbe non aprirsi correttamente.</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <input type="email" id="profilePaypalEmail" class="fc" placeholder="tuamail@paypal.it" value="${localStorage.getItem('fp_paypal_'+user.id)||''}" style="flex:1">
+        <input type="text" id="profilePaypalEmail" class="fc" placeholder="paypal.me/tuonome oppure email@paypal.it" value="${localStorage.getItem('fp_paypal_'+user.id)||''}" style="flex:1">
         <button class="btn-a" onclick="saveProfilePaypal()" style="background:linear-gradient(135deg,#003087,#009cde);flex-shrink:0">💾 Salva</button>
       </div>
     </div>
@@ -3639,16 +3639,14 @@ function renderGroupDetail(con){
 }
 
 function buildPaypalUrl(amount,email,note){
-  if(!email||!email.includes('@')) return 'https://www.paypal.com/myaccount/transfer/send';
-  // paypal.me non richiede login aggiuntivo se l'email è registrata
-  // usiamo il link diretto di invio denaro
-  const params=new URLSearchParams({
-    recipient: email,
-    amount: amount.toFixed(2),
-    currencyCode: 'EUR',
-    note: note||'Pagamento Finanza Pro'
-  });
-  return `https://www.paypal.com/pay?${params.toString()}`;
+  if(!email) return 'https://www.paypal.com/myaccount/transfer/send';
+  // Se è un link paypal.me diretto, aggiunge l'importo
+  if(email.includes('paypal.me/')){
+    const base=email.replace(/\/$/, '');
+    return `${base}/${amount.toFixed(2)}EUR`;
+  }
+  // Se è un'email, apre la pagina di invio generico (utente inserisce manualmente)
+  return `https://www.paypal.com/myaccount/transfer/send?recipient=${encodeURIComponent(email)}`;
 }
 
 function openSaldaDebito(){
@@ -4062,11 +4060,15 @@ function doInvite(){
   });
 }
 function saveProfilePaypal(){
-  const email=document.getElementById('profilePaypalEmail')?.value.trim();
-  if(!email){notify('❌ Inserisci un\'email PayPal');return;}
-  localStorage.setItem('fp_paypal_'+user.id, email);
-  // Also save to Firebase so other group members can read it
-  db.ref(`users/${user.id}/paypalEmail`).set(email).then(()=>notify('✅ Email PayPal salvata!'));
+  const val=document.getElementById('profilePaypalEmail')?.value.trim();
+  if(!val){notify('❌ Inserisci un link paypal.me o email PayPal');return;}
+  const isPaypalMe=val.toLowerCase().includes('paypal.me/');
+  const isEmail=val.includes('@');
+  if(!isPaypalMe&&!isEmail){notify('❌ Inserisci un link paypal.me/tuonome o un\'email valida');return;}
+  // Normalize paypal.me: ensure https://
+  const stored=isPaypalMe&&!val.startsWith('http')?'https://'+val:val;
+  localStorage.setItem('fp_paypal_'+user.id, stored);
+  db.ref(`users/${user.id}/paypalEmail`).set(stored).then(()=>notify('✅ PayPal salvato!'));
 }
 
 function openGExpModal(){

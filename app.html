@@ -6,15 +6,15 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Finanza Pro">
-<meta name="application-name" content="Finanza Pro">
+<meta name="apple-mobile-web-app-title" content="Kazka">
+<meta name="application-name" content="Kazka">
 <meta name="theme-color" content="#070b18">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<title>Finanza Pro – App</title>
+<title>Kazka – Finance</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#070b18;--bg2:#0d1225;--bg3:#111827;
@@ -31,6 +31,15 @@
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
 }
+
+/* ===== KAZKA BRAND ===== */
+.kz-logo-mark{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.kz-brand-name{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* lang switcher */
+.lang-pill{display:flex;gap:5px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--b1);margin-top:6px}
+.lang-btn{width:34px;height:30px;border-radius:7px;border:1px solid var(--b1);background:var(--s1);font-size:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.lang-btn.active{border-color:var(--ac);background:rgba(108,99,255,.18);box-shadow:0 0 8px rgba(108,99,255,.3)}
+.lang-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);padding:8px 14px 4px;display:block}
 body.light{
   --bg:#f0f2f8;--bg2:#ffffff;--bg3:#e8eaf2;
   --s1:rgba(0,0,0,.03);--s2:rgba(0,0,0,.06);--s3:rgba(0,0,0,.1);
@@ -68,7 +77,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .spl-title{font-size:30px;font-weight:800;margin:14px 0 6px;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fUp .5s ease .5s both}
 .spl-sub{font-size:15px;color:var(--tx2);animation:fUp .5s ease .7s both}
 .spl-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:28px;animation:fUp .5s ease .9s both}
-.spl-li{width:46px;height:46px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 28px rgba(108,99,255,.5)}
+.spl-li{width:48px;height:48px;display:flex;align-items:center;justify-content:center}
 .spl-lt{font-size:21px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .spl-bar{margin-top:36px;width:180px;animation:fUp .5s ease 1.1s both}
 .spl-track{height:3px;background:var(--s2);border-radius:10px;overflow:hidden}
@@ -83,7 +92,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .lg-card{position:relative;background:rgba(13,18,37,.92);border:1px solid var(--b2);border-radius:22px;padding:36px 30px;width:100%;max-width:400px;backdrop-filter:blur(20px);box-shadow:0 40px 80px rgba(0,0,0,.5),var(--glow);animation:cardIn .5s ease both}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .lg-logo{text-align:center;margin-bottom:28px}
-.lg-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:17px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px;box-shadow:0 0 36px rgba(108,99,255,.4);animation:iPulse 3s ease infinite}
+.lg-icon{width:64px;height:64px;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 10px}
 @keyframes iPulse{0%,100%{box-shadow:0 0 36px rgba(108,99,255,.4)}50%{box-shadow:0 0 56px rgba(108,99,255,.7),0 0 90px rgba(0,212,255,.2)}}
 .lg-name{font-size:20px;font-weight:900;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .lg-sub{font-size:12px;color:var(--tx2);margin-top:3px}
@@ -423,7 +432,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   /* Desktop title: nascosto su mobile */
   .tb-left-desk{display:none!important}
 
-  /* Centro: "Finanza Pro" + nome sezione — posizionato in mezzo */
+  /* Centro: "Kazka" + nome sezione — posizionato in mezzo */
   .tb-center{
     display:flex!important;flex-direction:column;align-items:center;gap:1px;
     position:absolute;left:50%;transform:translateX(-50%);
@@ -643,6 +652,12 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   width:100%;
 }
 .drawer-out:hover{background:rgba(255,79,109,.12)}
+/* drawer lang pill */
+.lang-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);padding:10px 16px 4px;display:block}
+.lang-pill{display:flex;gap:5px;flex-wrap:wrap;padding:4px 14px 12px}
+.lang-btn{width:34px;height:30px;border-radius:7px;border:1px solid var(--b1);background:var(--s1);font-size:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.lang-btn.active{border-color:var(--ac);background:rgba(108,99,255,.18);box-shadow:0 0 8px rgba(108,99,255,.25)}
+
 
 /* ======= MODE SWITCHER ======= */
 .mode-sw{
@@ -777,7 +792,7 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     <div class="wave">👋</div>
     <div class="spl-title">Ciao! Bentornato</div>
     <div class="spl-sub">Il tuo assistente finanziario personale</div>
-    <div class="spl-logo"><div class="spl-li">💰</div><div class="spl-lt">Finanza Pro</div></div>
+    <div class="spl-logo" style="display:flex;align-items:center;gap:12px"><div id="splLogoMark" class="spl-li"></div><div class="spl-lt" style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</div></div>
     <div class="spl-bar"><div class="spl-track"><div class="spl-fill"></div></div><div class="spl-txt">Caricamento...</div></div>
   </div>
 </div>
@@ -787,8 +802,8 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   <div class="lg-bg"></div><div class="lg-grid"></div>
   <div class="lg-card">
     <div class="lg-logo">
-      <div class="lg-icon">💰</div>
-      <div class="lg-name">Finanza Pro</div>
+      <div class="lg-icon" id="loginLogoMark" style="background:none;box-shadow:none;animation:none;display:flex;align-items:center;justify-content:center"></div>
+      <div class="lg-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:24px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</div>
       <div class="lg-sub">Gestisci le tue finanze con stile</div>
     </div>
     <div class="tab-pills">
@@ -839,9 +854,9 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   <!-- Drawer panel (mobile) -->
   <div class="drawer" id="drawer">
     <div class="drawer-top">
-      <div class="drawer-logo">
-        <div class="sb-ico">💰</div>
-        <div class="sb-brand" style="font-size:15px;font-weight:800;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Finanza Pro</div>
+      <div class="drawer-logo" id="drawerLogo">
+        <div class="kz-logo-mark" id="drawerLogoMark"></div>
+        <div class="kz-brand-name" style="font-size:16px">Kazka</div>
       </div>
       <button class="drawer-close" onclick="closeDrawer()">✕</button>
     </div>
@@ -856,12 +871,20 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
         <button class="drawer-mode-btn active" id="drawerModePersonal" onclick="setMode('personal');closeDrawer()">👤 Personale</button>
         <button class="drawer-mode-btn biz" id="drawerModeBiz" onclick="setMode('business');closeDrawer()">🏢 Azienda</button>
       </div>
-      <button class="drawer-out" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i> Esci</button>
+      <span class="lang-label" id="langLabel">Lingua</span>
+      <div class="lang-pill" id="langPill">
+        <button class="lang-btn active" data-lang="it" onclick="setLang('it')" title="Italiano">🇮🇹</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')" title="English">🇬🇧</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')" title="Español">🇪🇸</button>
+        <button class="lang-btn" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</button>
+        <button class="lang-btn" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</button>
+      </div>
+      <button class="drawer-out" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i> <span id="drawerOutLabel">Esci</span></button>
     </div>
   </div>
 
   <div class="sidebar">
-    <div class="sb-head"><div class="sb-ico">💰</div><div class="sb-brand">Finanza Pro</div></div>
+    <div class="sb-head"><div class="kz-logo-mark" id="sideLogoMark"></div><div class="kz-brand-name" style="font-size:15px;margin-left:8px">Kazka</div></div>
     <div class="ub"><div class="ub-name" id="sbName">–</div><div><span class="ub-plan" id="sbPlan">Free</span></div><div class="ub-id">ID: <span id="sbId">–</span></div></div>
     <nav class="nav" id="sideNav"></nav>
     <div class="nav-div"></div>
@@ -874,7 +897,7 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
       </button>
       <!-- Centro: titolo pagina (desktop) / nome app + sezione (mobile) -->
       <div class="tb-center">
-        <div class="tb-app-name">Finanza Pro</div>
+        <div class="tb-app-name" style="display:flex;align-items:center;gap:6px"><span id="topbarLogoMark"></span><span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</span></div>
         <div class="tb-page-name" id="pgTitle">Dashboard</div>
       </div>
       <!-- Desktop: titolo esteso -->
@@ -911,7 +934,7 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     </div>
     <div class="ob-step active" id="os0">
       <div class="ob-ico">👋</div>
-      <div class="ob-title">Benvenuto in Finanza Pro!</div>
+      <div class="ob-title" id="obWelcomeTitle">Benvenuto in Kazka!</div>
       <div class="ob-sub">Il tuo assistente finanziario personale e aziendale. In 5 passi ti mostriamo tutto quello che puoi fare.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
         <div style="background:var(--s1);border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px">💸</div><div style="font-size:10px;color:var(--tx2);margin-top:4px">Movimenti</div></div>
@@ -1419,32 +1442,32 @@ const PLANS={
 };
 
 const NAV_PERSONAL=[
-  {id:'dashboard',  icon:'📊',label:'Dashboard',   plans:['free','personal_pro','business_starter','business_pro','lifetime']},
-  {id:'transazioni',icon:'💸',label:'Movimenti',   plans:['free','personal_pro','business_starter','business_pro','lifetime']},
-  {id:'report',     icon:'📈',label:'Report',       plans:['free','personal_pro','business_starter','business_pro','lifetime']},
-  {id:'ricorrenti', icon:'🔄',label:'Ricorrenti',   plans:['personal_pro','business_starter','business_pro','lifetime']},
-  {id:'bollette',   icon:'📄',label:'Bollette & Utenze',plans:['personal_pro','business_starter','business_pro','lifetime']},
-  {id:'viaggi',     icon:'✈️',label:'Viaggi',       plans:['personal_pro','business_starter','business_pro','lifetime']},
-  {id:'obiettivi',  icon:'🎯',label:'Obiettivi',    plans:['personal_pro','business_starter','business_pro','lifetime']},
-  {id:'gruppi',     icon:'👥',label:'Gruppi',       plans:['personal_pro','business_starter','business_pro','lifetime']},
-  {id:'notifiche',  icon:'🔔',label:'Notifiche',    plans:['free','personal_pro','business_starter','business_pro','lifetime']},
-  {id:'piani',      icon:'🎁',label:'Piani',        plans:['free','personal_pro','business_starter','business_pro','lifetime']},
-  {id:'admin',      icon:'⚙️',label:'Admin',        plans:['admin']},
-  {id:'profilo',    icon:'👤',label:'Profilo',      plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'dashboard',  icon:'📊',lkey:'nav_dashboard',   plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'transazioni',icon:'💸',lkey:'nav_transazioni',  plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'report',     icon:'📈',lkey:'nav_report',        plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'ricorrenti', icon:'🔄',lkey:'nav_ricorrenti',    plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'bollette',   icon:'📄',lkey:'nav_bollette',      plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'viaggi',     icon:'✈️',lkey:'nav_viaggi',        plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'obiettivi',  icon:'🎯',lkey:'nav_obiettivi',     plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'gruppi',     icon:'👥',lkey:'nav_gruppi',        plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'notifiche',  icon:'🔔',lkey:'nav_notifiche',     plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'piani',      icon:'🎁',lkey:'nav_piani',         plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'admin',      icon:'⚙️',lkey:'nav_admin',         plans:['admin']},
+  {id:'profilo',    icon:'👤',lkey:'nav_profilo',       plans:['free','personal_pro','business_starter','business_pro','lifetime']},
 ];
 const NAV_BUSINESS=[
-  {id:'biz_dashboard', icon:'📊',label:'Dashboard',      plans:['business_starter','business_pro','lifetime']},
-  {id:'biz_primanota', icon:'💼',label:'Prima Nota',      plans:['business_starter','business_pro','lifetime']},
-  {id:'biz_clienti',   icon:'👥',label:'Clienti & Fornitori',plans:['business_starter','business_pro','lifetime']},
-  {id:'biz_preventivi',icon:'📋',label:'Preventivi',      plans:['business_starter','business_pro','lifetime']},
-  {id:'biz_progetti',  icon:'📁',label:'Progetti',        plans:['business_starter','business_pro','lifetime']},
-  {id:'biz_spese',     icon:'🧾',label:'Note Spese',      plans:['business_pro','lifetime']},
-  {id:'biz_scadenzario',icon:'📅',label:'Scadenziario',   plans:['business_starter','business_pro','lifetime']},
-  {id:'biz_iva',       icon:'🧮',label:'IVA Tracker',     plans:['business_pro','lifetime']},
-  {id:'notifiche',     icon:'🔔',label:'Notifiche',       plans:['business_starter','business_pro','lifetime']},
-  {id:'piani',         icon:'🎁',label:'Piani',           plans:['business_starter','business_pro','lifetime']},
-  {id:'admin',         icon:'⚙️',label:'Admin',           plans:['admin']},
-  {id:'profilo',       icon:'👤',label:'Profilo',         plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_dashboard', icon:'📊',lkey:'nav_biz_dashboard', plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_primanota', icon:'💼',lkey:'nav_biz_primanota',  plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_clienti',   icon:'👥',lkey:'nav_biz_clienti',    plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_preventivi',icon:'📋',lkey:'nav_biz_preventivi', plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_progetti',  icon:'📁',lkey:'nav_biz_progetti',   plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_spese',     icon:'🧾',lkey:'nav_biz_spese',      plans:['business_pro','lifetime']},
+  {id:'biz_scadenzario',icon:'📅',lkey:'nav_biz_scadenzario',plans:['business_starter','business_pro','lifetime']},
+  {id:'biz_iva',       icon:'🧮',lkey:'nav_biz_iva',        plans:['business_pro','lifetime']},
+  {id:'notifiche',     icon:'🔔',lkey:'nav_notifiche',      plans:['business_starter','business_pro','lifetime']},
+  {id:'piani',         icon:'🎁',lkey:'nav_piani',          plans:['business_starter','business_pro','lifetime']},
+  {id:'admin',         icon:'⚙️',lkey:'nav_admin',          plans:['admin']},
+  {id:'profilo',       icon:'👤',lkey:'nav_profilo',        plans:['business_starter','business_pro','lifetime']},
 ];
 // Alias for current NAV
 let NAV=NAV_PERSONAL;
@@ -1553,6 +1576,57 @@ function resetBack(){
   setMsg('','');
 }
 function setMsg(t,type){const e=document.getElementById('authMsg');e.textContent=t;e.className='auth-msg'+(type?' '+type:'');}
+
+/* ===== I18N ===== */
+var LANGS={
+  it:{nav_dashboard:'Dashboard',nav_transazioni:'Movimenti',nav_report:'Report',nav_ricorrenti:'Ricorrenti',nav_bollette:'Bollette',nav_viaggi:'Viaggi',nav_obiettivi:'Obiettivi',nav_gruppi:'Gruppi',nav_notifiche:'Notifiche',nav_piani:'Piani',nav_admin:'Admin',nav_profilo:'Profilo',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Prima Nota',nav_biz_clienti:'Clienti',nav_biz_preventivi:'Preventivi',nav_biz_progetti:'Progetti',nav_biz_spese:'Note Spese',nav_biz_scadenzario:'Scadenziario',nav_biz_iva:'IVA',title_dashboard:'Dashboard',title_transazioni:'Movimenti',title_report:'Report & Analisi',title_ricorrenti:'Ricorrenti',title_bollette:'Bollette & Utenze',title_viaggi:'Viaggi',title_obiettivi:'Obiettivi di Risparmio',title_gruppi:'Gruppi',title_notifiche:'Notifiche',title_piani:'Piani',title_admin:'Admin',title_profilo:'Profilo',title_biz_dashboard:'Dashboard Aziendale',title_biz_primanota:'Prima Nota',title_biz_clienti:'Clienti & Fornitori',title_biz_preventivi:'Preventivi',title_biz_progetti:'Progetti',title_biz_spese:'Note Spese',title_biz_scadenzario:'Scadenziario',title_biz_iva:'IVA Tracker',sub_dashboard:'Panoramica finanziaria',sub_transazioni:'movimenti',sub_report:'Analisi per categoria',sub_ricorrenti:'operazioni',sub_bollette:'bollette',sub_viaggi:'viaggi',sub_obiettivi:'attivi',sub_gruppi:'gruppi',sub_notifiche:'Scadenze, messaggi e avvisi',sub_piani:'Scegli il piano',sub_admin:'Gestione utenti',sub_profilo:'Il tuo account',sub_biz_dashboard:'Panoramica aziendale',sub_biz_primanota:'movimenti',sub_biz_clienti:'contatti',sub_biz_preventivi:'preventivi',sub_biz_progetti:'progetti',sub_biz_spese:'note',sub_biz_scadenzario:'Tutte le scadenze',sub_biz_iva:'Calcolo IVA',logout:'Vuoi uscire?',signout:'Esci',personal:'Personale',business:'Azienda',language:'Lingua',welcome:'Benvenuto in Kazka!'},
+  en:{nav_dashboard:'Dashboard',nav_transazioni:'Transactions',nav_report:'Report',nav_ricorrenti:'Recurring',nav_bollette:'Bills',nav_viaggi:'Trips',nav_obiettivi:'Goals',nav_gruppi:'Groups',nav_notifiche:'Notifications',nav_piani:'Plans',nav_admin:'Admin',nav_profilo:'Profile',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Clients',nav_biz_preventivi:'Quotes',nav_biz_progetti:'Projects',nav_biz_spese:'Expenses',nav_biz_scadenzario:'Schedule',nav_biz_iva:'VAT',title_dashboard:'Dashboard',title_transazioni:'Transactions',title_report:'Report & Analytics',title_ricorrenti:'Recurring',title_bollette:'Bills & Utilities',title_viaggi:'Trips',title_obiettivi:'Savings Goals',title_gruppi:'Groups',title_notifiche:'Notifications',title_piani:'Plans',title_admin:'Admin',title_profilo:'Profile',title_biz_dashboard:'Business Dashboard',title_biz_primanota:'Journal',title_biz_clienti:'Clients & Suppliers',title_biz_preventivi:'Quotes',title_biz_progetti:'Projects',title_biz_spese:'Expense Notes',title_biz_scadenzario:'Schedule',title_biz_iva:'VAT Tracker',sub_dashboard:'Financial overview',sub_transazioni:'transactions',sub_report:'Category analysis',sub_ricorrenti:'operations',sub_bollette:'bills',sub_viaggi:'trips',sub_obiettivi:'active',sub_gruppi:'groups',sub_notifiche:'Deadlines, messages & alerts',sub_piani:'Choose your plan',sub_admin:'User management',sub_profilo:'Your account',sub_biz_dashboard:'Business overview',sub_biz_primanota:'entries',sub_biz_clienti:'contacts',sub_biz_preventivi:'quotes',sub_biz_progetti:'projects',sub_biz_spese:'notes',sub_biz_scadenzario:'All deadlines',sub_biz_iva:'VAT calculation',logout:'Sign out?',signout:'Sign Out',personal:'Personal',business:'Business',language:'Language',welcome:'Welcome to Kazka!'},
+  es:{nav_dashboard:'Dashboard',nav_transazioni:'Movimientos',nav_report:'Informe',nav_ricorrenti:'Recurrentes',nav_bollette:'Facturas',nav_viaggi:'Viajes',nav_obiettivi:'Objetivos',nav_gruppi:'Grupos',nav_notifiche:'Notificaciones',nav_piani:'Planes',nav_admin:'Admin',nav_profilo:'Perfil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Diario',nav_biz_clienti:'Clientes',nav_biz_preventivi:'Presupuestos',nav_biz_progetti:'Proyectos',nav_biz_spese:'Gastos',nav_biz_scadenzario:'Vencimientos',nav_biz_iva:'IVA',title_dashboard:'Dashboard',title_transazioni:'Movimientos',title_report:'Informe y Análisis',title_ricorrenti:'Recurrentes',title_bollette:'Facturas y Servicios',title_viaggi:'Viajes',title_obiettivi:'Objetivos de Ahorro',title_gruppi:'Grupos',title_notifiche:'Notificaciones',title_piani:'Planes',title_admin:'Admin',title_profilo:'Perfil',title_biz_dashboard:'Dashboard Empresarial',title_biz_primanota:'Diario',title_biz_clienti:'Clientes y Proveedores',title_biz_preventivi:'Presupuestos',title_biz_progetti:'Proyectos',title_biz_spese:'Notas de Gastos',title_biz_scadenzario:'Vencimientos',title_biz_iva:'IVA Tracker',sub_dashboard:'Resumen financiero',sub_transazioni:'movimientos',sub_report:'Análisis por categoría',sub_ricorrenti:'operaciones',sub_bollette:'facturas',sub_viaggi:'viajes',sub_obiettivi:'activos',sub_gruppi:'grupos',sub_notifiche:'Vencimientos y alertas',sub_piani:'Elige tu plan',sub_admin:'Gestión usuarios',sub_profilo:'Tu cuenta',sub_biz_dashboard:'Resumen empresarial',sub_biz_primanota:'entradas',sub_biz_clienti:'contactos',sub_biz_preventivi:'presupuestos',sub_biz_progetti:'proyectos',sub_biz_spese:'notas',sub_biz_scadenzario:'Todos los vencimientos',sub_biz_iva:'Cálculo IVA',logout:'¿Salir?',signout:'Salir',personal:'Personal',business:'Empresa',language:'Idioma',welcome:'¡Bienvenido a Kazka!'},
+  fr:{nav_dashboard:'Dashboard',nav_transazioni:'Transactions',nav_report:'Rapport',nav_ricorrenti:'Récurrents',nav_bollette:'Factures',nav_viaggi:'Voyages',nav_obiettivi:'Objectifs',nav_gruppi:'Groupes',nav_notifiche:'Notifications',nav_piani:'Plans',nav_admin:'Admin',nav_profilo:'Profil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Clients',nav_biz_preventivi:'Devis',nav_biz_progetti:'Projets',nav_biz_spese:'Dépenses',nav_biz_scadenzario:'Échéances',nav_biz_iva:'TVA',title_dashboard:'Dashboard',title_transazioni:'Transactions',title_report:'Rapport & Analyses',title_ricorrenti:'Récurrents',title_bollette:'Factures & Services',title_viaggi:'Voyages',title_obiettivi:'Objectifs Épargne',title_gruppi:'Groupes',title_notifiche:'Notifications',title_piani:'Plans',title_admin:'Admin',title_profilo:'Profil',title_biz_dashboard:'Dashboard Entreprise',title_biz_primanota:'Journal',title_biz_clienti:'Clients & Fournisseurs',title_biz_preventivi:'Devis',title_biz_progetti:'Projets',title_biz_spese:'Notes de Frais',title_biz_scadenzario:'Échéances',title_biz_iva:'Suivi TVA',sub_dashboard:'Aperçu financier',sub_transazioni:'transactions',sub_report:'Analyse par catégorie',sub_ricorrenti:'opérations',sub_bollette:'factures',sub_viaggi:'voyages',sub_obiettivi:'actifs',sub_gruppi:'groupes',sub_notifiche:'Échéances et alertes',sub_piani:'Choisir un plan',sub_admin:'Gestion utilisateurs',sub_profilo:'Votre compte',sub_biz_dashboard:'Aperçu entreprise',sub_biz_primanota:'entrées',sub_biz_clienti:'contacts',sub_biz_preventivi:'devis',sub_biz_progetti:'projets',sub_biz_spese:'notes',sub_biz_scadenzario:'Toutes les échéances',sub_biz_iva:'Calcul TVA',logout:'Se déconnecter?',signout:'Déconnexion',personal:'Personnel',business:'Entreprise',language:'Langue',welcome:'Bienvenue sur Kazka!'},
+  de:{nav_dashboard:'Dashboard',nav_transazioni:'Transaktionen',nav_report:'Bericht',nav_ricorrenti:'Wiederkehrend',nav_bollette:'Rechnungen',nav_viaggi:'Reisen',nav_obiettivi:'Ziele',nav_gruppi:'Gruppen',nav_notifiche:'Benachrichtigungen',nav_piani:'Pläne',nav_admin:'Admin',nav_profilo:'Profil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Kunden',nav_biz_preventivi:'Angebote',nav_biz_progetti:'Projekte',nav_biz_spese:'Ausgaben',nav_biz_scadenzario:'Fälligkeiten',nav_biz_iva:'MwSt',title_dashboard:'Dashboard',title_transazioni:'Transaktionen',title_report:'Bericht & Analysen',title_ricorrenti:'Wiederkehrend',title_bollette:'Rechnungen & Verträge',title_viaggi:'Reisen',title_obiettivi:'Sparziele',title_gruppi:'Gruppen',title_notifiche:'Benachrichtigungen',title_piani:'Pläne',title_admin:'Admin',title_profilo:'Profil',title_biz_dashboard:'Unternehmens-Dashboard',title_biz_primanota:'Journal',title_biz_clienti:'Kunden & Lieferanten',title_biz_preventivi:'Angebote',title_biz_progetti:'Projekte',title_biz_spese:'Ausgabennotizen',title_biz_scadenzario:'Fälligkeiten',title_biz_iva:'MwSt-Tracker',sub_dashboard:'Finanzübersicht',sub_transazioni:'Transaktionen',sub_report:'Kategorieanalyse',sub_ricorrenti:'Operationen',sub_bollette:'Rechnungen',sub_viaggi:'Reisen',sub_obiettivi:'aktiv',sub_gruppi:'Gruppen',sub_notifiche:'Fälligkeiten und Benachrichtigungen',sub_piani:'Plan wählen',sub_admin:'Benutzerverwaltung',sub_profilo:'Ihr Konto',sub_biz_dashboard:'Unternehmensübersicht',sub_biz_primanota:'Einträge',sub_biz_clienti:'Kontakte',sub_biz_preventivi:'Angebote',sub_biz_progetti:'Projekte',sub_biz_spese:'Notizen',sub_biz_scadenzario:'Alle Fälligkeiten',sub_biz_iva:'MwSt-Berechnung',logout:'Abmelden?',signout:'Abmelden',personal:'Persönlich',business:'Unternehmen',language:'Sprache',welcome:'Willkommen bei Kazka!'}
+};
+var _kzLang=localStorage.getItem('kz_lang')||(navigator.language||'it').slice(0,2);
+if(!LANGS[_kzLang])_kzLang='it';
+var currentLang=_kzLang;
+function t(k){return(LANGS[currentLang]&&LANGS[currentLang][k])||(LANGS.it&&LANGS.it[k])||k;}
+function setLang(l){
+  if(!LANGS[l])return;
+  currentLang=l;
+  localStorage.setItem('kz_lang',l);
+  document.documentElement.lang=l;
+  buildNav();
+  var active=document.querySelector('.ni.active,.drawer-ni.active');
+  goTo(active?active.dataset.p:'dashboard');
+  _updateLangBtns();
+  // update drawer labels
+  var dp=document.getElementById('drawerModePersonal');
+  var db=document.getElementById('drawerModeBiz');
+  if(dp)dp.textContent='\uD83D\uDC64 '+t('personal');
+  if(db)db.textContent='\uD83C\uDFE2 '+t('business');
+  var outBtns=document.querySelectorAll('.drawer-out,.out-btn span');
+  outBtns.forEach(function(b){if(b.tagName==='SPAN')b.textContent=t('signout');else b.innerHTML='<i class="fa fa-right-from-bracket"></i> '+t('signout');});
+}
+function _updateLangBtns(){
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    var on=b.dataset.lang===currentLang;
+    b.classList.toggle('active',on);
+  });
+}
+function kazkaLogoSVG(size,glow){
+  size=size||32;glow=(glow!==false);
+  var cx=size/2,cy=size/2,r=cx*0.9;
+  var pts='';for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';}
+  var uid='kz'+(Math.random()*99999|0);
+  var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.28|0)+'px rgba(108,77,255,0.65));':'';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
+    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
+    +'</linearGradient></defs>'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
+    +'</svg>';
+}
+
 function doLogin(){
   const email=document.getElementById('lEmail').value.trim(),pass=document.getElementById('lPass').value;
   if(!email||!pass){setMsg('❌ Compila email e password','error');return;}
@@ -1592,7 +1666,17 @@ function showApp(){
   updateUI();buildNav();
   loadData(()=>{
     goTo(appMode==='business'?'biz_dashboard':'dashboard');
-    setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
+    
+  // Render Kazka logos everywhere
+  var _lm=document.getElementById('drawerLogoMark');if(_lm)_lm.innerHTML=kazkaLogoSVG(30,true);
+  var _sm=document.getElementById('sideLogoMark');if(_sm)_sm.innerHTML=kazkaLogoSVG(30,true);
+  var _tm=document.getElementById('topbarLogoMark');if(_tm)_tm.innerHTML=kazkaLogoSVG(22,false);
+  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(46,true);
+  var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
+  // init lang buttons
+  _updateLangBtns();
+  var ll=document.getElementById('langLabel');if(ll)ll.textContent=t('language');
+  setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
@@ -1688,13 +1772,13 @@ function buildNav(){
     // sidebar (desktop)
     const el=document.createElement('div');
     el.className='ni'; el.dataset.p=item.id;
-    el.innerHTML=`<div class="ni-ico">${item.icon}</div><span>${item.label}</span>`;
+    el.innerHTML=`<div class="ni-ico">${item.icon}</div><span>${t(item.lkey)||item.lkey}</span>`;
     el.onclick=()=>goTo(item.id);
     sideNav.appendChild(el);
     // drawer (mobile)
     const dl=document.createElement('div');
     dl.className='drawer-ni'; dl.dataset.p=item.id;
-    dl.innerHTML=`<div class="drawer-ni-ico">${item.icon}</div><span>${item.label}</span>`;
+    dl.innerHTML=`<div class="drawer-ni-ico">${item.icon}</div><span>${t(item.lkey)||item.lkey}</span>`;
     dl.onclick=()=>{goTo(item.id);closeDrawer();};
     drawerNav.appendChild(dl);
   });
@@ -2047,8 +2131,9 @@ function formatDateIt(dateStr){
 /* ===== PAGES ===== */
 function renderPage(p){
   const con=document.getElementById('content');
-  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette & Utenze',viaggi:'Viaggi',obiettivi:'Obiettivi di Risparmio',gruppi:'Gruppi',notifiche:'Notifiche',piani:'Piani',admin:'Admin',profilo:'Profilo',biz_dashboard:'Dashboard Aziendale',biz_primanota:'Prima Nota',biz_clienti:'Clienti & Fornitori',biz_preventivi:'Preventivi',biz_progetti:'Progetti',biz_spese:'Note Spese',biz_scadenzario:'Scadenziario',biz_iva:'IVA Tracker'};
-  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette · ${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,obiettivi:`${loadGoals().filter(g=>g.status!=='completed').length} attivi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account',biz_dashboard:'Panoramica aziendale',biz_primanota:`${bizTx.length} movimenti`,biz_clienti:`${clients.length} contatti`,biz_preventivi:`${quotes.length} preventivi`,biz_progetti:`${projects.length} progetti`,biz_spese:`${expenseNotes.length} note`,biz_scadenzario:'Tutte le scadenze',biz_iva:'Calcolo IVA trimestrale'};
+  const _tk=id=>t('title_'+id)||t('nav_'+id)||id;
+  const TITLES={dashboard:_tk('dashboard'),transazioni:_tk('transazioni'),report:_tk('report'),ricorrenti:_tk('ricorrenti'),bollette:_tk('bollette'),viaggi:_tk('viaggi'),obiettivi:_tk('obiettivi'),gruppi:_tk('gruppi'),notifiche:_tk('notifiche'),piani:_tk('piani'),admin:_tk('admin'),profilo:_tk('profilo'),biz_dashboard:_tk('biz_dashboard'),biz_primanota:_tk('biz_primanota'),biz_clienti:_tk('biz_clienti'),biz_preventivi:_tk('biz_preventivi'),biz_progetti:_tk('biz_progetti'),biz_spese:_tk('biz_spese'),biz_scadenzario:_tk('biz_scadenzario'),biz_iva:_tk('biz_iva')};
+  const SUBS={dashboard:t('sub_dashboard'),transazioni:`${transactions.length} ${t('sub_transazioni')}`,report:t('sub_report'),ricorrenti:`${recurring.length} ${t('sub_ricorrenti')}`,bollette:`${bills.length} ${t('sub_bollette')} · ${utilities.length}`,viaggi:`${trips.length} ${t('sub_viaggi')}`,obiettivi:`${loadGoals().filter(g=>g.status!=='completed').length} ${t('sub_obiettivi')}`,gruppi:`${groups.length} ${t('sub_gruppi')}`,notifiche:t('sub_notifiche'),piani:t('sub_piani'),admin:t('sub_admin'),profilo:t('sub_profilo'),biz_dashboard:t('sub_biz_dashboard'),biz_primanota:`${bizTx.length} ${t('sub_biz_primanota')}`,biz_clienti:`${clients.length} ${t('sub_biz_clienti')}`,biz_preventivi:`${quotes.length} ${t('sub_biz_preventivi')}`,biz_progetti:`${projects.length} ${t('sub_biz_progetti')}`,biz_spese:`${expenseNotes.length} ${t('sub_biz_spese')}`,biz_scadenzario:t('sub_biz_scadenzario'),biz_iva:t('sub_biz_iva')};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
   // Desktop title
@@ -3309,7 +3394,7 @@ function openQuotePreview(qid){
     ${q.desc?`<div style="margin-top:16px;background:#f7f8fc;border:1px solid #e0e4f0;border-radius:10px;padding:12px;font-size:12px;color:#555"><strong>Note:</strong> ${q.desc}</div>`:''}
     ${q.payMethod?`<div style="margin-top:12px;font-size:11px;color:#555"><strong>Metodo di pagamento:</strong> ${payLabel[q.payMethod]||q.payMethod}${payInfo}</div>`:''}
     <div style="margin-top:24px;border-top:1px solid #eee;padding-top:10px;font-size:10px;color:#aaa;text-align:center">
-      Preventivo generato da Finanza Pro · ${biz.name||''} ${biz.vat?'· P.IVA '+biz.vat:''}
+      Preventivo generato da Kazka · ${biz.name||''} ${biz.vat?'· P.IVA '+biz.vat:''}
     </div>
   </div>`;
   document.getElementById('quotePreviewContent').innerHTML=html;
@@ -4383,7 +4468,7 @@ function closeMo(id){
 
 /* ===== UTILS ===== */
 function notify(msg){const n=document.getElementById('notif');n.textContent=msg;n.style.display='block';clearTimeout(n._t);n._t=setTimeout(()=>n.style.display='none',3200);}
-function doLogout(){if(!confirm('Vuoi uscire?'))return;user=null;realUser=null;localStorage.removeItem('fp_user');location.reload();}
+function doLogout(){if(!confirm(t('logout')))return;user=null;realUser=null;localStorage.removeItem('fp_user');location.reload();}
 function fmtE(v){return'€'+parseFloat(v||0).toFixed(2);}
 function fmtDate(d){try{return new Date(d).toLocaleDateString('it-IT');}catch(e){return d;}}
 function catIcon(cid){const c=CATS.find(x=>x.id===cid);return c?c.icon:'📦';}
@@ -4641,7 +4726,7 @@ function requestPushPermission(){
   if(Notification.permission==='granted'){notify('✅ Notifiche già attive!');return;}
   Notification.requestPermission().then(p=>{
     updatePushStatus();
-    if(p==='granted'){notify('✅ Notifiche push attivate!');setTimeout(()=>new Notification('Finanza Pro 💰',{body:'Notifiche attivate! Riceverai avvisi per scadenze e ricorrenti.'}),500);}
+    if(p==='granted'){notify('✅ Notifiche push attivate!');setTimeout(()=>new Notification('Kazka 💰',{body:'Notifiche attivate! Riceverai avvisi per scadenze e ricorrenti.'}),500);}
     else notify('❌ Permesso negato');
   });
 }
@@ -4778,7 +4863,7 @@ window.addEventListener('resize',updateUI);
           </svg>
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:900;margin-bottom:3px;letter-spacing:-.2px">Installa Finanza Pro</div>
+          <div style="font-size:14px;font-weight:900;margin-bottom:3px;letter-spacing:-.2px">Installa Kazka</div>
           <div style="font-size:12px;color:var(--tx2);line-height:1.5">Accesso rapido dalla home, nessun browser. Come un'app vera — gratis.</div>
         </div>
         <button id="pwaInstallBtn" style="padding:11px 16px;background:linear-gradient(135deg,var(--ac),var(--ac2));
@@ -4871,7 +4956,7 @@ function pwaInstallFromProfile() {
     _pwaPrompt.userChoice.then(r => {
       if (r.outcome === 'accepted') {
         localStorage.setItem('fp_pwa_installed','1');
-        notify('🎉 Finanza Pro installata!');
+        notify('🎉 Kazka installata!');
       }
       _pwaPrompt = null;
     });
@@ -4897,7 +4982,7 @@ document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
   const { outcome } = await _pwaPrompt.userChoice;
   if (outcome === 'accepted') {
     localStorage.setItem('fp_pwa_installed','1');
-    notify('🎉 Finanza Pro aggiunta alla Home!');
+    notify('🎉 Kazka aggiunta alla Home!');
   }
   _pwaPrompt = null;
   document.getElementById('pwaInstallBanner').style.display = 'none';
@@ -4914,7 +4999,7 @@ document.getElementById('pwaBannerClose').addEventListener('click', () => {
 window.addEventListener('appinstalled', () => {
   localStorage.setItem('fp_pwa_installed','1');
   document.getElementById('pwaInstallBanner').style.display = 'none';
-  notify('🎉 Finanza Pro installata con successo!');
+  notify('🎉 Kazka installata con successo!');
 });
 
 // iOS: show banner automatically if not in standalone

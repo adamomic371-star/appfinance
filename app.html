@@ -38,16 +38,15 @@ body.light{
   --tx:#1a1f3a;--tx2:#5a6080;--tx3:#9aa0bc;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow:hidden}
+html,body{height:100%;height:-webkit-fill-available;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow:hidden}
+/* Safari browser (non-PWA): usa sempre safe-area per la topbar */
+.topbar { padding-top: env(safe-area-inset-top, 0px); height: calc(54px + env(safe-area-inset-top, 0px)); }
 /* PWA standalone: account for status bar on iOS */
 @media all and (display-mode: standalone) {
-  body { padding-top: var(--sat); padding-bottom: var(--sab); }
-  .topbar { padding-top: calc(var(--sat) + 0px) !important; }
   .sidebar { padding-top: calc(var(--sat) + 18px) !important; }
   .drawer { padding-top: calc(var(--sat) + 0px) !important; }
   #splash { padding-top: var(--sat); }
   #loginScreen { padding-top: var(--sat); }
-  /* Bottom nav area safe zone */
   .content { padding-bottom: calc(var(--sab) + 14px) !important; }
   #iosInstallBanner, #androidInstallBanner { bottom: var(--sab) !important; }
 }
@@ -104,7 +103,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .auth-msg.error{color:var(--re)}.auth-msg.success{color:var(--gr)}.auth-msg.loading{color:var(--tx2)}
 
 /* ======= APP SHELL ======= */
-#app{display:flex;height:100vh;width:100vw;overflow:hidden}
+#app{display:flex;height:100vh;height:-webkit-fill-available;width:100vw;overflow:hidden}
 
 /* ======= SIDEBAR ======= */
 .sidebar{width:var(--sw);min-width:var(--sw);background:var(--bg2);border-right:1px solid var(--b1);padding:18px 12px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:width .25s,min-width .25s}
@@ -458,6 +457,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   /* Nessuna page-strip — tutto nella topbar */
   .page-strip{display:none!important}
 
+  /* Nascondi pulsante admin/corona su mobile — è ridondante */
+  #aswBtn{display:none!important}
   /* Content — più respiro */
   .content{padding:14px 13px 84px}
 
@@ -696,7 +697,6 @@ body.biz-mode .ub{background:linear-gradient(135deg,rgba(247,151,30,.1),rgba(255
 body.biz-mode .topbar{border-bottom-color:rgba(247,151,30,.2)}
 /* Business top accent line */
 body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#f7971e,#ffd200,#f7971e);opacity:.4}
-.topbar{position:relative}
 
 /* ======= KANBAN / STATUS CARDS ======= */
 .status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700}
@@ -1988,10 +1988,9 @@ function renderPage(p){
   // Desktop title
   const pgTD=document.getElementById('pgTitleDesk');
   if(pgTD)pgTD.textContent=TITLES[p]||p;
-  // Mobile tb-center: app name stays, page name updates
+  // Mobile tb-center page name
   const pgTN=document.getElementById('pgTitle');
   if(pgTN)pgTN.textContent=TITLES[p]||p;
-  // Mobile page-strip: disabled
 
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
 

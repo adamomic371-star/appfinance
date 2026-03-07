@@ -3,110 +3,571 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Finanza Pro</title>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="description" content="Finanza Pro – Il tuo assistente finanziario personale. Gestisci entrate, uscite, abbonamenti, gruppi e molto altro.">
+<title>Finanza Pro – Gestisci le tue finanze</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;padding:0;background:#070b18;color:#f0f4ff;font-family:system-ui,-apple-system,sans-serif;line-height:1.6}
-a{color:#6c63ff;text-decoration:none}
-nav{padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)}
-nav h1{margin:0;font-size:28px}
-.container{max-width:1200px;margin:0 auto;padding:40px 20px}
-.hero{text-align:center;padding:60px 20px}
-.hero h1{font-size:48px;margin:20px 0}
-.hero p{font-size:18px;color:#8892b0;margin:20px 0}
-.btn{display:inline-block;padding:12px 30px;background:linear-gradient(135deg,#6c63ff,#00d4ff);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:700;margin:10px;text-decoration:none}
-.btn:hover{transform:translateY(-2px)}
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:60px 0}
-.feature{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:30px;text-align:center}
-.feature h3{margin-top:0}
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin:60px 0}
-.plan{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:30px;text-align:center}
-.plan h3{margin-top:0;font-size:24px}
-.price{font-size:36px;font-weight:900;color:#6c63ff;margin:10px 0}
-.plan ul{text-align:left;font-size:13px;line-height:2}
-.footer{text-align:center;padding:40px;border-top:1px solid rgba(255,255,255,.1);margin-top:60px;font-size:12px;color:#8892b0}
+:root{
+  --bg:#070b18;--bg2:#0d1225;--bg3:#111827;
+  --s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);
+  --b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.15);
+  --ac:#6c63ff;--ac2:#00d4ff;--ac3:#ff6b9d;
+  --gr:#00e5a0;--re:#ff4f6d;--ye:#ffd166;
+  --tx:#f0f4ff;--tx2:#8892b0;--tx3:#4a5580;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow-x:hidden;line-height:1.6}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,11,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);transition:all .3s}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-ico{width:36px;height:36px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 18px rgba(108,99,255,.4)}
+.nav-logo-txt{font-size:17px;font-weight:900;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--tx2);text-decoration:none;font-size:14px;font-weight:600;transition:color .2s}
+.nav-links a:hover{color:var(--tx)}
+.nav-cta{padding:9px 20px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;transition:all .2s;box-shadow:0 4px 14px rgba(108,99,255,.35)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,.5)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:22px;height:2px;background:var(--tx2);border-radius:2px;transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(7,11,24,.97);border-bottom:1px solid var(--b1);padding:20px 5vw;flex-direction:column;gap:16px;z-index:99;backdrop-filter:blur(16px)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--tx2);text-decoration:none;font-size:15px;font-weight:600;padding:8px 0;border-bottom:1px solid var(--b1)}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 5vw 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(108,99,255,.18) 0%,transparent 65%),radial-gradient(ellipse 50% 40% at 90% 80%,rgba(0,212,255,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 10% 70%,rgba(255,107,157,.08) 0%,transparent 60%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:50px 50px}
+.hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hp{position:absolute;border-radius:50%;animation:hpFloat linear infinite}
+@keyframes hpFloat{0%{transform:translateY(100vh);opacity:0}10%{opacity:.5}90%{opacity:.1}100%{transform:translateY(-5vh);opacity:0}}
+.hero-content{position:relative;max-width:780px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--ac2);margin-bottom:28px;animation:fadeUp .6s ease .1s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero-title{font-size:clamp(36px,7vw,76px);font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:22px;animation:fadeUp .6s ease .2s both}
+.hero-title span{background:linear-gradient(135deg,var(--ac),var(--ac2),var(--ac3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:clamp(15px,2.5vw,20px);color:var(--tx2);max-width:560px;margin:0 auto 36px;font-weight:400;line-height:1.7;animation:fadeUp .6s ease .3s both}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s ease .4s both}
+.btn-hero{padding:14px 30px;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.btn-hero-p{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;box-shadow:0 8px 28px rgba(108,99,255,.4)}
+.btn-hero-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(108,99,255,.55)}
+.btn-hero-s{background:transparent;color:var(--tx);border:1px solid var(--b2)}
+.btn-hero-s:hover{background:var(--s2);border-color:var(--ac)}
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:52px;animation:fadeUp .6s ease .5s both}
+.hs{text-align:center}
+.hs-n{font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hs-l{font-size:12px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ===== MOCKUP ===== */
+.mockup-section{padding:40px 5vw 80px;display:flex;justify-content:center}
+.mockup{background:rgba(13,18,37,.9);border:1px solid var(--b2);border-radius:22px;padding:0;max-width:720px;width:100%;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px var(--b1);animation:fadeUp .8s ease .3s both}
+.mock-bar{background:rgba(7,11,24,.8);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--b1)}
+.mock-dots{display:flex;gap:6px}
+.mock-dot{width:11px;height:11px;border-radius:50%}
+.mock-url{flex:1;background:rgba(255,255,255,.05);border-radius:6px;padding:5px 12px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--tx3);text-align:center}
+.mock-body{padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.mock-stat{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:14px}
+.mock-stat-l{font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;margin-bottom:6px}
+.mock-stat-v{font-size:18px;font-weight:800}
+.mock-chart{grid-column:span 4;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:14px}
+.mock-chart-title{font-size:11px;font-weight:700;margin-bottom:12px;color:var(--tx2)}
+.mock-bars{display:flex;align-items:flex-end;gap:8px;height:60px}
+.mock-bar-item{flex:1;border-radius:4px 4px 0 0;min-height:6px}
+.mock-rows{grid-column:span 4;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:14px}
+.mock-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--b1)}
+.mock-row:last-child{border-bottom:none}
+.mock-row-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.mock-row-name{flex:1;font-size:11px;font-weight:600}
+.mock-row-cat{font-size:9px;color:var(--tx3)}
+.mock-row-amt{font-size:12px;font-weight:700}
+
+/* ===== SECTIONS ===== */
+section{padding:80px 5vw}
+.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac2);margin-bottom:12px}
+.section-title{font-size:clamp(26px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:16px;line-height:1.15}
+.section-sub{font-size:16px;color:var(--tx2);max-width:540px;line-height:1.7}
+.reveal{opacity:0;transform:translateY(24px);transition:all .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ===== FEATURES ===== */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:50px}
+.feat{background:var(--s1);border:1px solid var(--b1);border-radius:20px;padding:28px 24px;transition:all .3s;position:relative;overflow:hidden}
+.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--ac2));opacity:0;transition:opacity .3s}
+.feat:hover{border-color:var(--b2);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.feat:hover::before{opacity:1}
+.feat-ico{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px;box-shadow:0 8px 20px rgba(108,99,255,.3)}
+.feat-title{font-size:17px;font-weight:800;margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--tx2);line-height:1.65}
+.feat-tag{display:inline-block;margin-top:14px;padding:3px 10px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);border-radius:20px;font-size:10px;font-weight:700;color:var(--ac)}
+
+/* ===== HOW IT WORKS ===== */
+.how-section{background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin-top:50px;position:relative}
+.steps::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--ac),var(--ac2),transparent);opacity:.3}
+.step{text-align:center;position:relative}
+.step-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 16px;box-shadow:0 0 24px rgba(108,99,255,.4)}
+.step-title{font-size:15px;font-weight:800;margin-bottom:6px}
+.step-desc{font-size:12px;color:var(--tx2);line-height:1.6}
+
+/* ===== CATEGORIES SECTION ===== */
+.cats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:40px}
+.cat-item{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:16px 12px;text-align:center;transition:all .25s;cursor:default}
+.cat-item:hover{border-color:var(--b2);transform:translateY(-2px);background:var(--s2)}
+.cat-item-ico{font-size:26px;margin-bottom:8px}
+.cat-item-name{font-size:11px;font-weight:700;color:var(--tx2)}
+
+/* ===== PLANS ===== */
+.plans-section{text-align:center}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:50px;max-width:900px;margin-left:auto;margin-right:auto}
+.plan{background:var(--s1);border:1px solid var(--b1);border-radius:22px;padding:28px 22px;position:relative;overflow:hidden;transition:all .3s;text-align:left}
+.plan:hover{transform:translateY(-4px);border-color:var(--b2)}
+.plan.popular{border-color:var(--ac);background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,255,.04))}
+.plan.popular::before{content:'⭐ PIÙ SCELTO';position:absolute;top:0;left:0;right:0;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:9px;font-weight:800;text-align:center;padding:5px;letter-spacing:.8px}
+.plan.popular .plan-body{margin-top:24px}
+.plan-name{font-size:16px;font-weight:800;margin-bottom:6px}
+.plan-price{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.plan-per{font-size:12px;color:var(--tx3);margin-bottom:18px}
+.plan-feat{font-size:12px;color:var(--tx2);padding:5px 0;display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,.03)}
+.plan-feat:last-child{border-bottom:none}
+.plan-feat::before{content:'✓';color:var(--gr);font-weight:800;flex-shrink:0;margin-top:1px}
+.plan-cta{display:block;width:100%;padding:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:11px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:center;text-decoration:none;margin-top:18px;transition:all .2s}
+.plan-cta:hover{box-shadow:0 8px 20px rgba(108,99,255,.4)}
+.plan-cta.outline{background:transparent;border:1px solid var(--b2);color:var(--tx2)}
+.plan-cta.outline:hover{border-color:var(--ac);color:var(--tx)}
+
+/* ===== TESTIMONIALS ===== */
+.test-section{background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:46px}
+.tcard{background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:24px;position:relative}
+.tcard::before{content:'"';position:absolute;top:-8px;left:20px;font-size:60px;font-weight:900;color:var(--ac);opacity:.3;line-height:1}
+.ttext{font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:18px;font-style:italic}
+.tauthor{display:flex;align-items:center;gap:10px}
+.tav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.tname{font-size:13px;font-weight:700}
+.trole{font-size:11px;color:var(--tx3)}
+.stars{font-size:12px;color:var(--ye);margin-bottom:10px}
+
+/* ===== FAQ ===== */
+.faq-list{max-width:680px;margin:44px auto 0}
+.faq-item{border-bottom:1px solid var(--b1);overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 4px;cursor:pointer;font-size:15px;font-weight:700;transition:color .2s;gap:12px}
+.faq-q:hover{color:var(--ac2)}
+.faq-ico{font-size:18px;color:var(--tx3);flex-shrink:0;transition:transform .3s}
+.faq-item.open .faq-ico{transform:rotate(45deg);color:var(--ac2)}
+.faq-a{font-size:13px;color:var(--tx2);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:16px;padding-left:4px}
+
+/* ===== CTA SECTION ===== */
+.cta-section{text-align:center;padding:100px 5vw}
+.cta-box{background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(0,212,255,.06));border:1px solid rgba(108,99,255,.25);border-radius:28px;padding:60px 40px;max-width:680px;margin:0 auto;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(108,99,255,.06) 0%,transparent 60%);animation:ctaGlow 4s ease infinite alternate}
+@keyframes ctaGlow{from{transform:scale(1)}to{transform:scale(1.1)}}
+.cta-title{font-size:clamp(24px,4vw,40px);font-weight:900;letter-spacing:-1px;margin-bottom:14px}
+.cta-sub{font-size:15px;color:var(--tx2);margin-bottom:32px;max-width:440px;margin-left:auto;margin-right:auto}
+
+/* ===== FOOTER ===== */
+footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px}
+.footer-brand{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.footer-brand-ico{width:32px;height:32px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.footer-brand-txt{font-size:15px;font-weight:900;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.footer-desc{font-size:12px;color:var(--tx3);line-height:1.7;max-width:240px}
+.footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:var(--tx2);text-decoration:none;margin-bottom:8px;transition:color .2s}
+.footer-col a:hover{color:var(--tx)}
+.footer-bottom{border-top:1px solid var(--b1);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:11px;color:var(--tx3)}
+.footer-social{display:flex;gap:12px}
+.fsoc{width:32px;height:32px;border-radius:8px;background:var(--s1);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:13px;text-decoration:none;transition:all .2s}
+.fsoc:hover{color:var(--tx);border-color:var(--ac);background:rgba(108,99,255,.1)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .steps::before{display:none}
+}
+@media(max-width:640px){
+  nav .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero-stats{gap:20px}
+  .mock-body{grid-template-columns:1fr 1fr}
+  .mock-chart,.mock-rows{grid-column:span 2}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .cta-box{padding:36px 20px}
+  section{padding:60px 5vw}
+}
+@media(max-width:400px){
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-hero{width:100%;justify-content:center}
+  .plans-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <h1>💰 Finanza Pro</h1>
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-ico">💰</div>
+    <div class="nav-logo-txt">Finanza Pro</div>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Funzionalità</a>
+    <a href="#piani">Piani</a>
+    <a href="#faq">FAQ</a>
+    <a href="app.html" class="nav-cta">Entra nell'App →</a>
+  </div>
+  <div class="hamburger" onclick="toggleMenu()" id="ham">
+    <span></span><span></span><span></span>
+  </div>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features" onclick="toggleMenu()">Funzionalità</a>
+  <a href="#piani" onclick="toggleMenu()">Piani</a>
+  <a href="#faq" onclick="toggleMenu()">FAQ</a>
+  <a href="app.html" style="color:var(--ac2)">Entra nell'App →</a>
+</div>
 
-<div class="container">
-  <div class="hero">
-    <h1>Gestisci i tuoi soldi</h1>
-    <p>App completa per privati e aziende. Transazioni, preventivi, report.</p>
-    <a href="app.html" class="btn">🚀 Accedi all'App</a>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-particles" id="hpts"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span>✨</span> La finanza personale, finalmente semplice</div>
+    <h1 class="hero-title">Gestisci i tuoi soldi<br>con <span>intelligenza</span></h1>
+    <p class="hero-sub">Traccia entrate e uscite, gestisci abbonamenti ricorrenti, condividi spese con amici e analizza il tuo stile di vita finanziario con report dettagliati per categoria.</p>
+    <div class="hero-btns">
+      <a href="app.html" class="btn-hero btn-hero-p"><i class="fa fa-rocket"></i> Inizia Gratis</a>
+      <a href="#features" class="btn-hero btn-hero-s"><i class="fa fa-play"></i> Scopri le funzioni</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-n">100%</div><div class="hs-l">Gratuito per iniziare</div></div>
+      <div class="hs"><div class="hs-n">12+</div><div class="hs-l">Categorie di spesa</div></div>
+      <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Transazioni</div></div>
+      <div class="hs"><div class="hs-n">1</div><div class="hs-l">File, nessuna installazione</div></div>
+    </div>
   </div>
+</section>
 
-  <h2 style="text-align:center;margin-top:80px">Funzionalità</h2>
-  <div class="features">
-    <div class="feature">
-      <h3>💸 Transazioni</h3>
-      <p>Traccia entrate e uscite con categorie personalizzate</p>
+<!-- APP MOCKUP -->
+<div class="mockup-section reveal">
+  <div class="mockup">
+    <div class="mock-bar">
+      <div class="mock-dots">
+        <div class="mock-dot" style="background:#ff5f57"></div>
+        <div class="mock-dot" style="background:#febc2e"></div>
+        <div class="mock-dot" style="background:#28c840"></div>
+      </div>
+      <div class="mock-url">finanzapro.it/app.html</div>
     </div>
-    <div class="feature">
-      <h3>📄 Preventivi</h3>
-      <p>Crea preventivi con tabelle, IVA, PDF con logo</p>
-    </div>
-    <div class="feature">
-      <h3>📊 Report</h3>
-      <p>Analizza spese con grafici interattivi</p>
-    </div>
-    <div class="feature">
-      <h3>👤 Profilo</h3>
-      <p>Salva dati azienda e P.IVA</p>
-    </div>
-  </div>
-
-  <h2 style="text-align:center;margin-top:80px">Scegli il Piano</h2>
-  <div class="plans">
-    <div class="plan">
-      <h3>💚 Free</h3>
-      <div class="price">€0</div>
-      <ul>
-        <li>✓ Transazioni illimitate</li>
-        <li>✓ Report</li>
-        <li>✓ Cloud sync</li>
-      </ul>
-      <a href="app.html" class="btn">Inizia</a>
-    </div>
-    <div class="plan">
-      <h3>💙 Pro</h3>
-      <div class="price">€3</div>
-      <ul>
-        <li>✓ Tutto da Free</li>
-        <li>✓ Export dati</li>
-        <li>✓ Notifiche</li>
-      </ul>
-      <a href="app.html" class="btn">Upgrade</a>
-    </div>
-    <div class="plan" style="background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(0,212,255,.08));border-color:rgba(108,99,255,.3)">
-      <h3>💜 Business</h3>
-      <div class="price">€9</div>
-      <ul>
-        <li>✓ Preventivi PRO</li>
-        <li>✓ Profilo azienda</li>
-        <li>✓ Logo PDF</li>
-      </ul>
-      <a href="app.html" class="btn">Upgrade</a>
-    </div>
-    <div class="plan">
-      <h3>🔥 Enterprise</h3>
-      <div class="price">€29</div>
-      <ul>
-        <li>✓ Gruppi illimitati</li>
-        <li>✓ Admin panel</li>
-        <li>✓ Chat real-time</li>
-      </ul>
-      <a href="app.html" class="btn">Upgrade</a>
+    <div class="mock-body">
+      <div class="mock-stat"><div class="mock-stat-l">Saldo</div><div class="mock-stat-v" style="color:#00e5a0">€2.840</div></div>
+      <div class="mock-stat"><div class="mock-stat-l">Entrate</div><div class="mock-stat-v" style="color:#00e5a0">€3.200</div></div>
+      <div class="mock-stat"><div class="mock-stat-l">Uscite</div><div class="mock-stat-v" style="color:#ff4f6d">€360</div></div>
+      <div class="mock-stat"><div class="mock-stat-l">Ricorrenti</div><div class="mock-stat-v" style="color:#ffd166">€148</div></div>
+      <div class="mock-chart">
+        <div class="mock-chart-title">📊 Spese per Categoria</div>
+        <div class="mock-bars">
+          <div class="mock-bar-item" style="height:80%;background:linear-gradient(180deg,#6c63ff,rgba(108,99,255,.3))"></div>
+          <div class="mock-bar-item" style="height:55%;background:linear-gradient(180deg,#00d4ff,rgba(0,212,255,.3))"></div>
+          <div class="mock-bar-item" style="height:40%;background:linear-gradient(180deg,#ff6b9d,rgba(255,107,157,.3))"></div>
+          <div class="mock-bar-item" style="height:65%;background:linear-gradient(180deg,#ffd166,rgba(255,209,102,.3))"></div>
+          <div class="mock-bar-item" style="height:30%;background:linear-gradient(180deg,#00e5a0,rgba(0,229,160,.3))"></div>
+          <div class="mock-bar-item" style="height:20%;background:linear-gradient(180deg,#ff9f43,rgba(255,159,67,.3))"></div>
+        </div>
+      </div>
+      <div class="mock-rows">
+        <div class="mock-chart-title">💸 Ultimi Movimenti</div>
+        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(108,99,255,.2)">🍕</div><div><div class="mock-row-name">Pizzeria Da Mario</div><div class="mock-row-cat">Cibo & Ristoranti</div></div><div class="mock-row-amt" style="color:#ff4f6d">-€24</div></div>
+        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(0,229,160,.2)">💼</div><div><div class="mock-row-name">Stipendio Luglio</div><div class="mock-row-cat">Lavoro</div></div><div class="mock-row-amt" style="color:#00e5a0">+€1.600</div></div>
+        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(255,107,157,.2)">📱</div><div><div class="mock-row-name">Netflix</div><div class="mock-row-cat">Abbonamento</div></div><div class="mock-row-amt" style="color:#ff4f6d">-€18</div></div>
+      </div>
     </div>
   </div>
 </div>
 
-<footer class="footer">
-  <p>© 2026 Finanza Pro | © Michele Adamo | Beta Test</p>
+<!-- FEATURES -->
+<section id="features">
+  <div style="text-align:center;max-width:600px;margin:0 auto 0" class="reveal">
+    <div class="section-label">Funzionalità</div>
+    <h2 class="section-title">Tutto quello che ti serve, in un solo posto</h2>
+    <p class="section-sub">Nessuna installazione, nessun abbonamento obbligatorio. Un file HTML che puoi hostare ovunque.</p>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feat">
+      <div class="feat-ico">💸</div>
+      <div class="feat-title">Transazioni & Movimenti</div>
+      <div class="feat-desc">Registra entrate e uscite con categorie personalizzate. Tieni traccia di ogni spesa in modo semplice e veloce, con saldo sempre aggiornato in tempo reale.</div>
+      <span class="feat-tag">Piano Free</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">📊</div>
+      <div class="feat-title">Report per Categoria</div>
+      <div class="feat-desc">Analizza dove vanno i tuoi soldi con grafici a barre e breakdown per categoria: cibo, casa, trasporti, salute, svago e molto altro. Scopri le tue abitudini finanziarie.</div>
+      <span class="feat-tag">Piano Free</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">🔄</div>
+      <div class="feat-title">Operazioni Ricorrenti</div>
+      <div class="feat-desc">Gestisci abbonamenti (Netflix, Spotify), stipendio, rate mutuo, bollette ricorrenti e spese fisse. Aggiunta automatica alla scadenza con notifica, possibilità di mettere in pausa.</div>
+      <span class="feat-tag">Piano Pro</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">📄</div>
+      <div class="feat-title">Bollette & Utenze</div>
+      <div class="feat-desc">Archivia bollette con data di scadenza e gestisci i tuoi contratti di luce, gas, acqua e internet in un'unica schermata. Mai più una bolletta dimenticata.</div>
+      <span class="feat-tag">Piano Pro</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">✈️</div>
+      <div class="feat-title">Pianificazione Viaggi</div>
+      <div class="feat-desc">Pianifica i tuoi viaggi con destinazione e budget dedicato. Tieni separato il budget viaggio dal resto delle spese per una pianificazione accurata.</div>
+      <span class="feat-tag">Piano Premium</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">👥</div>
+      <div class="feat-title">Gruppi & Spese Condivise</div>
+      <div class="feat-desc">Crea gruppi per vacanze, casa condivisa o uscite. Dividi le spese automaticamente tra i membri, chatta in tempo reale e invita amici tramite ID o email.</div>
+      <span class="feat-tag">Piano Premium</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">👑</div>
+      <div class="feat-title">Pannello Admin</div>
+      <div class="feat-desc">Accesso completo per amministratori: gestisci utenti, modifica piani, cambia ruoli e accedi agli account dei clienti per assistenza con un click. Vista admin/utente con switch istantaneo.</div>
+      <span class="feat-tag">Solo Admin</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">📱</div>
+      <div class="feat-title">Ottimizzato Mobile</div>
+      <div class="feat-desc">Sidebar sempre visibile che si adatta ad ogni schermo: icone su mobile, testo completo su desktop. Nessuna app da installare, funziona da browser come una vera Progressive Web App.</div>
+      <span class="feat-tag">Tutti i piani</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div style="text-align:center;max-width:580px;margin:0 auto" class="reveal">
+    <div class="section-label">Come Funziona</div>
+    <h2 class="section-title">Inizia in 3 passi</h2>
+  </div>
+  <div class="steps reveal">
+    <div class="step"><div class="step-num">1</div><div class="step-title">Crea l'account</div><div class="step-desc">Registrati gratis in 30 secondi. Nessuna carta di credito richiesta per il piano Free.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-title">Aggiungi i movimenti</div><div class="step-desc">Inserisci entrate e uscite con categoria. Configura le operazioni ricorrenti una volta sola.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-title">Analizza & Risparmia</div><div class="step-desc">Consulta i report per categoria e scopri dove puoi ottimizzare le tue spese mensili.</div></div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section>
+  <div class="reveal">
+    <div class="section-label">Categorie</div>
+    <h2 class="section-title">12 categorie di spesa predefinite</h2>
+    <p class="section-sub">Ogni transazione viene classificata per generare report precisi e aiutarti a capire le tue abitudini finanziarie.</p>
+  </div>
+  <div class="cats-grid reveal">
+    <div class="cat-item"><div class="cat-item-ico">🍕</div><div class="cat-item-name">Cibo & Ristoranti</div></div>
+    <div class="cat-item"><div class="cat-item-ico">🏠</div><div class="cat-item-name">Casa & Affitto</div></div>
+    <div class="cat-item"><div class="cat-item-ico">🚗</div><div class="cat-item-name">Trasporti</div></div>
+    <div class="cat-item"><div class="cat-item-ico">💊</div><div class="cat-item-name">Salute & Farmacia</div></div>
+    <div class="cat-item"><div class="cat-item-ico">🎮</div><div class="cat-item-name">Svago & Hobby</div></div>
+    <div class="cat-item"><div class="cat-item-ico">🛍️</div><div class="cat-item-name">Shopping</div></div>
+    <div class="cat-item"><div class="cat-item-ico">💼</div><div class="cat-item-name">Lavoro & Formazione</div></div>
+    <div class="cat-item"><div class="cat-item-ico">✈️</div><div class="cat-item-name">Viaggi</div></div>
+    <div class="cat-item"><div class="cat-item-ico">🏦</div><div class="cat-item-name">Risparmi</div></div>
+    <div class="cat-item"><div class="cat-item-ico">🐾</div><div class="cat-item-name">Animali</div></div>
+    <div class="cat-item"><div class="cat-item-ico">💻</div><div class="cat-item-name">Tech & Elettronica</div></div>
+    <div class="cat-item"><div class="cat-item-ico">📦</div><div class="cat-item-name">Altro</div></div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="piani" class="plans-section" style="background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)">
+  <div class="reveal">
+    <div class="section-label">Prezzi</div>
+    <h2 class="section-title">Un piano per ogni esigenza</h2>
+    <p class="section-sub" style="margin:0 auto">Inizia gratis e scala quando ne hai bisogno. Nessun costo nascosto.</p>
+  </div>
+  <div class="plans-grid reveal">
+    <div class="plan">
+      <div class="plan-body">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">€0</div>
+        <div class="plan-per">per sempre</div>
+        <div class="plan-feat">Transazioni illimitate</div>
+        <div class="plan-feat">Report base per categoria</div>
+        <div class="plan-feat">Dashboard finanziaria</div>
+        <div class="plan-feat">Profilo personale</div>
+        <a href="app.html" class="plan-cta outline">Inizia Gratis</a>
+      </div>
+    </div>
+    <div class="plan popular">
+      <div class="plan-body">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">€3</div>
+        <div class="plan-per">al mese</div>
+        <div class="plan-feat">Tutto il piano Free</div>
+        <div class="plan-feat">Bollette & Utenze</div>
+        <div class="plan-feat">Operazioni Ricorrenti</div>
+        <div class="plan-feat">Report avanzati</div>
+        <a href="app.html" class="plan-cta">Scegli Pro</a>
+      </div>
+    </div>
+    <div class="plan">
+      <div class="plan-body">
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">€9</div>
+        <div class="plan-per">al mese</div>
+        <div class="plan-feat">Tutto il piano Pro</div>
+        <div class="plan-feat">Pianificazione Viaggi</div>
+        <div class="plan-feat">Gruppi & spese condivise</div>
+        <div class="plan-feat">Chat di gruppo</div>
+        <a href="app.html" class="plan-cta">Scegli Premium</a>
+      </div>
+    </div>
+    <div class="plan">
+      <div class="plan-body">
+        <div class="plan-name">Lifetime</div>
+        <div class="plan-price">€99</div>
+        <div class="plan-per">una volta sola</div>
+        <div class="plan-feat">Tutto Premium</div>
+        <div class="plan-feat">Accesso a vita</div>
+        <div class="plan-feat">Aggiornamenti futuri</div>
+        <div class="plan-feat">Priorità supporto</div>
+        <a href="app.html" class="plan-cta">Acquista Lifetime</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="test-section">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">Testimonianze</div>
+    <h2 class="section-title">Chi lo usa, lo ama</h2>
+  </div>
+  <div class="test-grid reveal">
+    <div class="tcard">
+      <div class="stars">★★★★★</div>
+      <div class="ttext">Finalmente un'app di finanza personale che non è complicata. In 5 minuti avevo già inserito tutte le mie spese ricorrenti e ora so esattamente quanto spendo ogni mese.</div>
+      <div class="tauthor"><div class="tav">M</div><div><div class="tname">Marco T.</div><div class="trole">Libero Professionista</div></div></div>
+    </div>
+    <div class="tcard">
+      <div class="stars">★★★★★</div>
+      <div class="ttext">La funzione dei gruppi è fantastica! Con i coinquilini dividiamo le spese della casa senza più litigi. La chat integrata è il tocco in più.</div>
+      <div class="tauthor"><div class="tav">S</div><div><div class="tname">Sara L.</div><div class="trole">Studentessa universitaria</div></div></div>
+    </div>
+    <div class="tcard">
+      <div class="stars">★★★★★</div>
+      <div class="ttext">I report per categoria mi hanno aperto gli occhi. Non sapevo di spendere così tanto in abbonamenti! Ho già risparmiato €40 al mese cancellando quelli inutilizzati.</div>
+      <div class="tauthor"><div class="tav">G</div><div><div class="tname">Giuseppe R.</div><div class="trole">Impiegato</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="max-width:800px;margin:0 auto">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Domande frequenti</h2>
+  </div>
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Devo installare qualcosa?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">No. Finanza Pro è una web app: funziona direttamente dal browser su qualsiasi dispositivo — telefono, tablet o computer. Basta aprire il link e iniziare.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>I miei dati sono al sicuro?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">I dati sono salvati su Firebase (Google) con crittografia in transito e a riposo. Le password sono criptate prima di essere salvate. Il sito usa HTTPS forzato.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Cosa sono le operazioni ricorrenti?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Sono transazioni automatiche che si ripetono: abbonamenti mensili (Netflix, Spotify), stipendio, rata del mutuo, bollette fisse. Le configuri una volta e vengono aggiunte automaticamente alla scadenza.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Come funzionano i gruppi?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Crei un gruppo, inviti i membri tramite il loro ID o email, aggiungi le spese condivise e il sistema calcola automaticamente la quota di ciascuno. C'è anche una chat di gruppo integrata.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Posso usarlo da mobile?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Assolutamente sì. L'interfaccia è completamente responsive: su mobile la sidebar si riduce a icone per lasciare più spazio al contenuto. Funziona perfettamente su iPhone e Android.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Come si aggiornano i piani degli utenti?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">L'amministratore può aggiornare il piano di qualsiasi utente direttamente dal pannello Admin con un click, senza bisogno di strumenti esterni.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box reveal">
+    <div class="hero-badge" style="margin-bottom:20px">🚀 Gratis per iniziare</div>
+    <h2 class="cta-title">Pronto a prendere il controllo<br>delle tue finanze?</h2>
+    <p class="cta-sub">Registrati gratis in 30 secondi. Nessuna carta richiesta. Inizia subito a tracciare le tue spese.</p>
+    <a href="app.html" class="btn-hero btn-hero-p" style="display:inline-flex"><i class="fa fa-rocket"></i> Inizia Gratis Ora</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand"><div class="footer-brand-ico">💰</div><div class="footer-brand-txt">Finanza Pro</div></div>
+      <div class="footer-desc">Il tuo assistente finanziario personale. Semplice, veloce e sicuro. Gestisci le tue finanze da qualsiasi dispositivo.</div>
+    </div>
+    <div class="footer-col">
+      <h4>Prodotto</h4>
+      <a href="#features">Funzionalità</a>
+      <a href="#piani">Prezzi</a>
+      <a href="app.html">Accedi</a>
+    </div>
+    <div class="footer-col">
+      <h4>Supporto</h4>
+      <a href="#faq">FAQ</a>
+      <a href="#">Contatti</a>
+      <a href="#">Privacy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Piani</h4>
+      <a href="app.html">Free</a>
+      <a href="app.html">Pro – €3/mese</a>
+      <a href="app.html">Premium – €9/mese</a>
+      <a href="app.html">Lifetime – €99</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Finanza Pro. Tutti i diritti riservati.</div>
+    <div class="footer-social">
+      <a href="#" class="fsoc"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#" class="fsoc"><i class="fa-brands fa-telegram"></i></a>
+      <a href="#" class="fsoc"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+  </div>
 </footer>
 
+<script>
+// Particles
+(()=>{
+  const c=document.getElementById('hpts'),cols=['#6c63ff','#00d4ff','#ff6b9d','#00e5a0','#ffd166'];
+  for(let i=0;i<20;i++){const p=document.createElement('div');p.className='hp';const s=Math.random()*5+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p);}
+})();
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+// Mobile menu
+function toggleMenu(){const m=document.getElementById('mobileMenu');m.classList.toggle('open');}
+// FAQ
+function toggleFaq(q){const item=q.parentElement;item.classList.toggle('open');}
+// Navbar shadow on scroll
+window.addEventListener('scroll',()=>{document.getElementById('navbar').style.boxShadow=window.scrollY>20?'0 4px 30px rgba(0,0,0,.4)':'none';});
+</script>
 </body>
 </html>

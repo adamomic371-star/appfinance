@@ -2,10 +2,16 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finanza Pro">
+<meta name="application-name" content="Finanza Pro">
+<meta name="theme-color" content="#070b18">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>Finanza Pro – App</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -19,6 +25,11 @@
   --tx:#f0f4ff;--tx2:#8892b0;--tx3:#4a5580;
   --r:14px;--glow:0 0 40px rgba(108,99,255,.15);
   --sw:240px;
+  /* Safe area insets for iPhone notch / home bar */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 }
 body.light{
   --bg:#f0f2f8;--bg2:#ffffff;--bg3:#e8eaf2;
@@ -28,6 +39,18 @@ body.light{
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow:hidden}
+/* PWA standalone: account for status bar on iOS */
+@media all and (display-mode: standalone) {
+  body { padding-top: var(--sat); padding-bottom: var(--sab); }
+  .topbar { padding-top: calc(var(--sat) + 0px) !important; }
+  .sidebar { padding-top: calc(var(--sat) + 18px) !important; }
+  .drawer { padding-top: calc(var(--sat) + 0px) !important; }
+  #splash { padding-top: var(--sat); }
+  #loginScreen { padding-top: var(--sat); }
+  /* Bottom nav area safe zone */
+  .content { padding-bottom: calc(var(--sab) + 14px) !important; }
+  #iosInstallBanner, #androidInstallBanner { bottom: var(--sab) !important; }
+}
 .hidden{display:none!important}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
@@ -1063,10 +1086,31 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 </div>
 <div id="gExpModal" class="mo">
   <div class="ms">
-    <div class="mh"><div class="mtt">💸 Spesa Gruppo</div><button class="mc" onclick="closeMo('gExpModal')">✕</button></div>
+    <div class="mh"><div class="mtt">💸 Nuova Spesa Gruppo</div><button class="mc" onclick="closeMo('gExpModal')">✕</button></div>
     <div class="fg"><label class="fl">Descrizione</label><input type="text" id="gExpDesc" class="fc" placeholder="es. Cena, Biglietti..."></div>
-    <div class="fg"><label class="fl">Importo (€)</label><input type="number" id="gExpAmt" class="fc" placeholder="0.00" step="0.01"></div>
-    <div class="ma"><button class="bms" onclick="saveGExp()">Salva</button><button class="bmc" onclick="closeMo('gExpModal')">Annulla</button></div>
+    <div class="fg"><label class="fl">Importo totale (€)</label><input type="number" id="gExpAmt" class="fc" placeholder="0.00" step="0.01" oninput="updateGExpSplit()"></div>
+    <div class="fg">
+      <label class="fl">Pagato da</label>
+      <select id="gExpPaidBy" class="fc"></select>
+    </div>
+    <div class="fg">
+      <label class="fl" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Dividi tra (seleziona i partecipanti)</span>
+        <button onclick="gExpSelectAll()" style="background:none;border:none;color:var(--ac);font-size:10px;font-weight:700;cursor:pointer;padding:0;font-family:'Outfit',sans-serif">Tutti</button>
+      </label>
+      <div id="gExpMemberList" style="display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:200px;overflow-y:auto"></div>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:10px 12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:var(--tx2)">Quota per persona</span>
+        <span id="gExpShareAmt" style="font-weight:800;color:var(--ac2)">€0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px">
+        <span style="color:var(--tx3)">Partecipanti selezionati</span>
+        <span id="gExpShareCount" style="color:var(--tx2)">0</span>
+      </div>
+    </div>
+    <div class="ma"><button class="bms" onclick="saveGExp()">💾 Salva Spesa</button><button class="bmc" onclick="closeMo('gExpModal')">Annulla</button></div>
   </div>
 </div>
 
@@ -1824,12 +1868,24 @@ function renderPage(p){
       </div>
       <div style="padding:11px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Email</div><div style="font-size:13px;font-weight:600">${user.email}</div></div>
       <div style="padding:11px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Ruolo</div><div style="font-size:13px;font-weight:600">${user.role==='admin'?'👑 Amministratore':'👤 Utente'}</div></div>
-      <div style="padding:11px 0"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">ID Account</div>
+      <div style="padding:11px 0;border-bottom:1px solid var(--b1)"><div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">ID Account</div>
         <div style="font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;word-break:break-all;background:var(--s1);padding:8px;border-radius:8px">${user.id}</div>
+      </div>
+      <!-- PAYPAL EMAIL -->
+      <div style="padding:11px 0;border-bottom:1px solid var(--b1)">
+        <div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">💙 Email PayPal (per ricevere pagamenti nei gruppi)</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="email" id="profilePaypalEmail" class="fc" placeholder="tuamail@paypal.it"
+            value="${localStorage.getItem('fp_paypal_'+user.id)||''}"
+            style="flex:1;font-size:12px;padding:8px 12px">
+          <button class="btn-a" onclick="saveProfilePaypal()" style="background:linear-gradient(135deg,#003087,#009cde);flex-shrink:0">💾 Salva</button>
+        </div>
+        <div style="font-size:10px;color:var(--tx3);margin-top:5px">Quando sei debitore in un gruppo, gli altri vedranno il tasto "Paga con PayPal" verso di te.</div>
       </div>
       <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-a" onclick="navigator.clipboard.writeText('${user.id}');notify('✅ ID copiato!')"><i class="fa fa-copy"></i> Copia ID</button>
         <button class="btn-a" onclick="showChangePass()" style="background:linear-gradient(135deg,var(--ac3),var(--re))"><i class="fa fa-key"></i> Cambia Password</button>
+        <button class="btn-a" id="profileInstallBtn" onclick="pwaInstallFromProfile()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📲 Installa App</button>
       </div>
       <div id="changePassBox" style="display:none;margin-top:16px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:16px">
         <div style="font-size:13px;font-weight:700;margin-bottom:12px">🔑 Cambia Password</div>
@@ -2889,107 +2945,131 @@ function renderGroupDetail(con){
   const g=groups.find(x=>x.id===curGroupId);
   if(!g){curGroupId=null;renderGroups(con);return;}
   const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
-  const totExp=exps.reduce((s,e)=>s+e.amount,0);
   const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
   const allMembers=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...members];
-  const totM=allMembers.length;
-  const share=totM>0?totExp/totM:0;
   const chats=Object.entries(g.chat||{}).map(([id,d])=>({...d,id})).sort((a,b)=>a.ts-b.ts);
   const isCreator=g.creatorId===user.id;
-
-  // Payments tracking
   const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
 
-  // Per ogni membro (non creatore) calcola se ha pagato
-  function memberPaidStatus(uid){
-    const paid=payments.filter(p=>p.fromUid===uid&&p.status==='confirmed');
-    const paidAmt=paid.reduce((s,p)=>s+p.amount,0);
-    return {paidAmt,settled:paidAmt>=share-0.01,pendingRequest:payments.some(p=>p.fromUid===uid&&p.status==='pending')};
-  }
+  // ── Calcolo debiti netti tra persone ──
+  // net[A][B] = quanto A deve a B (positivo = A deve a B)
+  const net={};
+  allMembers.forEach(m=>{ net[m.uid]={}; allMembers.forEach(n=>{ if(m.uid!==n.uid) net[m.uid][n.uid]=0; }); });
 
-  // PayPal link builder
-  function paypalLink(amount,toEmail,note){
-    const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
-    const desc=encodeURIComponent(note||'Quota gruppo '+g.name);
-    if(isMobile){
-      return `paypal://paypalme/${encodeURIComponent(toEmail||'')}&amount=${amount.toFixed(2)}&note=${desc}`;
+  exps.forEach(e=>{
+    const payer=e.paidByUid||e.userId||g.creatorId;
+    const parts=e.participants||allMembers.map(m=>m.uid);
+    const share=e.share||(e.amount/parts.length);
+    parts.forEach(pUid=>{
+      if(pUid!==payer){
+        if(!net[pUid]) net[pUid]={};
+        if(!net[payer]) net[payer]={};
+        net[pUid][payer]=(net[pUid][payer]||0)+share;
+        net[payer][pUid]=(net[payer][pUid]||0)-share;
+      }
+    });
+  });
+
+  // Apply confirmed payments
+  payments.filter(p=>p.status==='confirmed').forEach(p=>{
+    if(net[p.fromUid]&&net[p.fromUid][p.toUid]!==undefined){
+      net[p.fromUid][p.toUid]=Math.max(0,(net[p.fromUid][p.toUid]||0)-p.amount);
     }
-    if(toEmail&&toEmail.includes('@')){
-      return `https://www.paypal.com/send?recipient=${encodeURIComponent(toEmail)}&amount=${amount.toFixed(2)}&currencyCode=EUR&note=${desc}`;
-    }
-    return `https://www.paypal.com/paypalme/${encodeURIComponent(toEmail||'')}&amount=${amount.toFixed(2)}&note=${desc}`;
-  }
+  });
 
-  const creatorPaypalEmail=g.creatorPaypal||'';
+  // Build debt rows: only show debts > 0.01
+  let debtRows='';
+  allMembers.forEach(debtor=>{
+    allMembers.forEach(creditor=>{
+      if(debtor.uid===creditor.uid) return;
+      const owed=(net[debtor.uid]?.[creditor.uid])||0;
+      if(owed<0.01) return;
 
-  const debtSummary=members.map(m=>{
-    const st=memberPaidStatus(m.uid);
-    return `<div class="pay-member-row">
-      <div style="display:flex;align-items:center;gap:9px;flex:1">
-        <div class="ia" style="width:32px;height:32px;font-size:12px">👤</div>
-        <div>
-          <div style="font-size:12px;font-weight:700">${m.name}</div>
-          <div style="font-size:10px;color:var(--tx2)">Quota: ${fmtE(share)}</div>
+      // Get creditor's PayPal from Firebase users data
+      const creditorUser=allUsers.find(u=>u.id===creditor.uid);
+      const creditorPaypal=creditorUser?.paypalEmail||localStorage.getItem('fp_paypal_'+creditor.uid)||'';
+
+      const iAmDebtor=debtor.uid===user.id;
+      const iAmCreditor=creditor.uid===user.id;
+      const isPending=payments.some(p=>p.fromUid===debtor.uid&&p.toUid===creditor.uid&&p.status==='pending');
+
+      const paypalUrl=creditorPaypal?buildPaypalUrl(owed,creditorPaypal,'Quota '+g.name):'';
+
+      debtRows+=`<div class="pay-member-row">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700">
+            ${iAmDebtor?'<span style="color:var(--ye)">Tu</span>':debtor.name}
+            <span style="color:var(--tx3);font-weight:400"> → </span>
+            ${iAmCreditor?'<span style="color:var(--ac2)">Tu</span>':creditor.name}
+          </div>
+          <div style="font-size:14px;font-weight:900;color:var(--re);margin-top:2px">${fmtE(owed)}</div>
+          ${isPending?`<span class="debt-badge debt-pending" style="margin-top:3px">⏳ Pagamento segnalato</span>`:''}
         </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end">
-        ${st.settled
-          ?`<span class="debt-badge debt-paid">✅ Saldato</span>`
-          :st.pendingRequest
-            ?`<span class="debt-badge debt-pending">⏳ Richiesta inviata</span>`
-            :`<span class="debt-badge debt-owed">Deve ${fmtE(share-st.paidAmt)}</span>`}
-        ${!st.settled&&creatorPaypalEmail&&m.uid===user.id
-          ?`<a href="${paypalLink(share-st.paidAmt,creatorPaypalEmail,'Quota '+g.name)}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:linear-gradient(135deg,#003087,#009cde);color:#fff;border-radius:8px;font-size:10px;font-weight:700;text-decoration:none">💙 Paga con PayPal</a>`:''}
-        ${!st.settled&&m.uid===user.id
-          ?`<button class="btn-sm" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2)!important;color:var(--gr);font-size:10px;cursor:pointer;padding:3px 8px;border-radius:7px" onclick="markPaidBySelf('${m.uid}','${m.name}',${(share-st.paidAmt).toFixed(2)})">💰 Ho pagato</button>`:''}
-        ${isCreator&&!st.settled
-          ?`<button class="btn-sm bs-g" onclick="confirmMemberPaid('${m.uid}','${m.name}',${(share-st.paidAmt).toFixed(2)})">✅ Segna pagato</button>`:''}
-      </div>
-    </div>`;
-  }).join('');
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;margin-left:8px">
+          ${iAmDebtor&&paypalUrl?`<a href="${paypalUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:linear-gradient(135deg,#003087,#009cde);color:#fff;border-radius:9px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap">💙 Paga PayPal</a>`:''}
+          ${iAmDebtor&&!isPending?`<button class="btn-sm" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2)!important;color:var(--gr);font-size:10px;white-space:nowrap" onclick="markPaidBySelf('${debtor.uid}','${debtor.name}','${creditor.uid}','${creditor.name}',${owed.toFixed(2)})">💰 Ho pagato</button>`:''}
+          ${iAmCreditor&&!isPending?`<button class="btn-sm bs-g" style="font-size:10px;white-space:nowrap" onclick="confirmMemberPaid('${debtor.uid}','${debtor.name}','${creditor.uid}','${creditor.name}',${owed.toFixed(2)})">✅ Confermo pagato</button>`:''}
+          ${isPending&&iAmCreditor?`<button class="btn-sm bs-g" style="font-size:10px" onclick="confirmMemberPaid('${debtor.uid}','${debtor.name}','${creditor.uid}','${creditor.name}',${owed.toFixed(2)})">✅ Conferma</button>`:''}
+        </div>
+      </div>`;
+    });
+  });
+
+  const totExp=exps.reduce((s,e)=>s+e.amount,0);
 
   con.innerHTML=`
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
     <button onclick="curGroupId=null;goTo('gruppi')" style="background:var(--s1);border:1px solid var(--b1);color:var(--tx2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif">← Gruppi</button>
     <button class="btn-a" onclick="openMo('inviteModal')"><i class="fa fa-user-plus"></i> Invita</button>
-    <button class="btn-a" onclick="openMo('gExpModal')" style="background:linear-gradient(135deg,var(--re),var(--ac3))"><i class="fa fa-plus"></i> Spesa</button>
+    <button class="btn-a" onclick="openGExpModal()" style="background:linear-gradient(135deg,var(--re),var(--ac3))"><i class="fa fa-plus"></i> Spesa</button>
     ${isCreator?`<button class="btn-a" onclick="openGroupPayRequestModal()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📨 Richiedi pagamenti</button>`:''}
-    ${isCreator?`<button class="btn-a" onclick="openGroupPaypalSetup()" style="background:linear-gradient(135deg,#003087,#009cde)">💙 PayPal Gruppo</button>`:''}
     ${isCreator?`<button class="btn-a" onclick="deleteGroup('${g.id}')" style="background:linear-gradient(135deg,#ff4f6d,#c0392b)"><i class="fa fa-trash"></i> Elimina</button>`:`<button class="btn-a" onclick="leaveGroup('${g.id}')" style="background:linear-gradient(135deg,#ff9f43,#e67e22)"><i class="fa fa-right-from-bracket"></i> Lascia</button>`}
   </div>
   <div class="stat-grid">
     <div class="sc"><div class="sc-ico">💸</div><div class="sc-lbl">Totale Spese</div><div class="sc-val" style="color:var(--re)">${fmtE(totExp)}</div></div>
-    <div class="sc"><div class="sc-ico">👤</div><div class="sc-lbl">Quota a testa</div><div class="sc-val" style="color:var(--ye)">${fmtE(share)}</div></div>
-    <div class="sc"><div class="sc-ico">👥</div><div class="sc-lbl">Membri</div><div class="sc-val">${totM}</div></div>
+    <div class="sc"><div class="sc-ico">🧾</div><div class="sc-lbl">N° Spese</div><div class="sc-val">${exps.length}</div></div>
+    <div class="sc"><div class="sc-ico">👥</div><div class="sc-lbl">Membri</div><div class="sc-val">${allMembers.length}</div></div>
   </div>
+
+  <!-- DEBITI -->
+  ${debtRows?`<div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">💰</div>Chi deve a chi</div></div>
+    <div style="font-size:10px;color:var(--tx3);margin-bottom:10px">💡 La tua email PayPal si imposta nel <strong style="color:var(--tx)">Profilo</strong> — gli altri ti possono pagare direttamente.</div>
+    ${debtRows}
+  </div>`:`<div class="card"><div style="text-align:center;padding:16px;color:var(--gr);font-size:13px;font-weight:700">🎉 Nessun debito in sospeso!</div></div>`}
+
   <div class="g2col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">💸</div>Spese (${exps.length})</div></div>
     ${exps.length===0?es('💸','Nessuna spesa'):
-    exps.map(e=>`<div class="ir"><div class="ia">💸</div><div class="ii"><div class="in">${e.desc}</div><div class="id2">${e.addedBy}</div></div><div class="iam aout">${fmtE(e.amount)}</div></div>`).join('')}
+    [...exps].reverse().map(e=>{
+      const parts=e.participants||[];
+      return `<div class="ir">
+        <div class="ia">💸</div>
+        <div class="ii">
+          <div class="in">${e.desc}</div>
+          <div class="id2">Pagato da: ${e.paidByName||e.addedBy}${parts.length?` · ${parts.length} persone`:''}${e.share?` · ${fmtE(e.share)} a testa`:''}</div>
+        </div>
+        <div class="iam aout">${fmtE(e.amount)}</div>
+      </div>`;
+    }).join('')}
   </div>
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">👥</div>Membri</div></div>
-    <div class="ir"><div class="ia">👑</div><div class="ii"><div class="in">${g.creatorName||'Admin'}</div><div class="id2">Creatore</div></div><span class="debt-badge debt-paid" style="font-size:9px">✅</span></div>
-    ${members.map(m=>`
-    <div class="ir">
-      <div class="ia">👤</div>
-      <div class="ii"><div class="in">${m.name}</div><div class="id2">${m.email||''}</div></div>
-      ${isCreator?`<button class="btn-sm bs-d" onclick="removeGMember('${m.uid}')">✕</button>`:''}
+    ${allMembers.map(m=>`<div class="ir">
+      <div class="ia">${m.uid===g.creatorId?'👑':'👤'}</div>
+      <div class="ii"><div class="in">${m.uid===user.id?m.name+' (tu)':m.name}</div><div class="id2">${m.uid===g.creatorId?'Creatore':m.email||''}</div></div>
+      ${isCreator&&m.uid!==g.creatorId?`<button class="btn-sm bs-d" onclick="removeGMember('${m.uid}')">✕</button>`:''}
     </div>`).join('')}
   </div>
   </div>
-  ${members.length>0?`<div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">💰</div>Riepilogo Pagamenti</div></div>
-    ${debtSummary||es('💰','Nessun membro da saldare')}
-    ${!creatorPaypalEmail&&isCreator?`<div style="margin-top:10px;background:rgba(0,156,222,.08);border:1px solid rgba(0,156,222,.2);border-radius:10px;padding:10px;font-size:11px;color:var(--ac2)">💙 Aggiungi la tua email PayPal per permettere ai membri di pagare direttamente online.</div>`:''}
-  </div>`:''}
+
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">💬</div>Chat Gruppo</div></div>
     <div class="chat-wrap">
       <div class="chat-msgs" id="chatMsgs">
         ${chats.length===0?es('💬','Inizia la conversazione!'):
-        chats.map(m=>`<div class="cmsg ${m.userId===user.id?'mine':''}"><div class="cav">${m.userName?m.userName[0].toUpperCase():'?'}</div><div class="cbody">${m.userId!==user.id?`<div class="cname">${m.userName}</div>`:''}${m.text}<div class="ctime">${new Date(m.ts).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('')}
+        chats.map(m=>`<div class="cmsg ${m.userId===user.id?'mine':''}"><div class="cav">${m.userName?m.userName[0].toUpperCase():'🤖'}</div><div class="cbody">${m.userId!==user.id?`<div class="cname">${m.userName}</div>`:''}${m.text}<div class="ctime">${new Date(m.ts).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('')}
       </div>
       <div class="chat-inp-row">
         <input type="text" id="chatInp" class="chat-inp" placeholder="Scrivi..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -3000,59 +3080,54 @@ function renderGroupDetail(con){
   setTimeout(()=>{const cm=document.getElementById('chatMsgs');if(cm)cm.scrollTop=cm.scrollHeight;},50);
 }
 
-/* —— GROUP PAYMENT FUNCTIONS —— */
-function openGroupPaypalSetup(){
-  const g=groups.find(x=>x.id===curGroupId);if(!g)return;
-  const current=g.creatorPaypal||'';
-  const email=prompt('Inserisci la tua email PayPal (es. tuamail@paypal.it):\nSarà usata dal gruppo per ricevere i pagamenti.',current);
-  if(email===null)return;
-  db.ref(`groups/${curGroupId}/creatorPaypal`).set(email.trim()).then(()=>{
-    const idx=groups.findIndex(x=>x.id===curGroupId);
-    if(idx!==-1)groups[idx].creatorPaypal=email.trim();
-    renderGroupDetail(document.getElementById('content'));
-    notify('✅ Email PayPal salvata!');
-  });
+function buildPaypalUrl(amount,emailOrMe,note){
+  const desc=encodeURIComponent(note||'Pagamento gruppo');
+  const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
+  const isEmail=emailOrMe&&emailOrMe.includes('@');
+  if(isMobile&&isEmail){
+    // Try to open PayPal app, fallback to web
+    return `https://www.paypal.com/send?recipient=${encodeURIComponent(emailOrMe)}&amount=${amount.toFixed(2)}&currencyCode=EUR&note=${desc}`;
+  }
+  if(isEmail){
+    return `https://www.paypal.com/send?recipient=${encodeURIComponent(emailOrMe)}&amount=${amount.toFixed(2)}&currencyCode=EUR&note=${desc}`;
+  }
+  return `https://www.paypal.com/paypalme/${encodeURIComponent(emailOrMe)}/${amount.toFixed(2)}EUR`;
 }
 
-function markPaidBySelf(uid,name,amount){
+function markPaidBySelf(uid,name,toUid,toName,amount){
   const div=document.getElementById('gMarkPaidContent');
-  div.innerHTML=`<p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Stai segnalando di aver pagato <strong>${fmtE(amount)}</strong> al creatore del gruppo.</p>
-  <p style="font-size:11px;color:var(--tx3)">Il creatore riceverà una notifica e potrà confermare il pagamento.</p>`;
+  div.innerHTML=`<p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Stai segnalando di aver pagato <strong>${fmtE(amount)}</strong> a <strong>${toName}</strong>. Chi ha ricevuto dovrà confermare.</p>`;
   const btn=document.getElementById('gMarkPaidBtn');
   btn.onclick=()=>{
     db.ref(`groups/${curGroupId}/payments`).push({
-      fromUid:uid,fromName:name,amount,status:'pending',ts:Date.now(),createdAt:new Date().toISOString()
+      fromUid:uid,fromName:name,toUid,toName,amount,status:'pending',ts:Date.now(),createdAt:new Date().toISOString()
     }).then(()=>{
-      // Notify in chat
-      db.ref(`groups/${curGroupId}/chat`).push({text:`💰 ${name} ha segnalato il pagamento di ${fmtE(amount)}. In attesa di conferma.`,userId:'system',userName:'Sistema',ts:Date.now()});
-      // Push notification
-      pushNotif({id:'pay_pending_'+uid+'_'+Date.now(),type:'info',icon:'💰',title:`${name} ha pagato nel gruppo ${groups.find(x=>x.id===curGroupId)?.name}`,sub:`${fmtE(amount)} — conferma il pagamento`,time:Date.now(),read:false,action:'gruppi'});
+      db.ref(`groups/${curGroupId}/chat`).push({text:`💰 ${name} ha segnalato il pagamento di ${fmtE(amount)} a ${toName}. In attesa di conferma.`,userId:'system',userName:'Sistema',ts:Date.now()});
       closeMo('gMarkPaidModal');
       loadData(()=>goTo('gruppi'));
-      notify('✅ Pagamento segnalato! Il creatore riceverà notifica.');
+      notify('✅ Pagamento segnalato!');
     });
   };
   openMo('gMarkPaidModal');
 }
 
-function confirmMemberPaid(uid,name,amount){
+function confirmMemberPaid(uid,name,creditorUid,creditorName,amount){
   const div=document.getElementById('gMarkPaidContent');
-  div.innerHTML=`<p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Confermi che <strong>${name}</strong> ha pagato <strong>${fmtE(amount)}</strong>?</p>`;
+  div.innerHTML=`<p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Confermi che <strong>${name}</strong> ha pagato <strong>${fmtE(amount)}</strong> a <strong>${creditorName}</strong>?</p>`;
   const btn=document.getElementById('gMarkPaidBtn');
   btn.onclick=()=>{
-    // Find pending payment or create confirmed one
     const g=groups.find(x=>x.id===curGroupId);
     const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
-    const pending=payments.find(p=>p.fromUid===uid&&p.status==='pending');
+    const pending=payments.find(p=>p.fromUid===uid&&p.toUid===creditorUid&&p.status==='pending');
     if(pending){
       db.ref(`groups/${curGroupId}/payments/${pending.id}/status`).set('confirmed');
     } else {
-      db.ref(`groups/${curGroupId}/payments`).push({fromUid:uid,fromName:name,amount,status:'confirmed',ts:Date.now(),createdAt:new Date().toISOString()});
+      db.ref(`groups/${curGroupId}/payments`).push({fromUid:uid,fromName:name,toUid:creditorUid,toName:creditorName,amount,status:'confirmed',ts:Date.now(),createdAt:new Date().toISOString()});
     }
-    db.ref(`groups/${curGroupId}/chat`).push({text:`✅ Pagamento di ${name} (${fmtE(amount)}) confermato dal creatore.`,userId:'system',userName:'Sistema',ts:Date.now()});
+    db.ref(`groups/${curGroupId}/chat`).push({text:`✅ Pagamento di ${name} → ${creditorName} (${fmtE(amount)}) confermato.`,userId:'system',userName:'Sistema',ts:Date.now()});
     closeMo('gMarkPaidModal');
     loadData(()=>goTo('gruppi'));
-    notify(`✅ Pagamento di ${name} confermato!`);
+    notify(`✅ Pagamento confermato!`);
   };
   openMo('gMarkPaidModal');
 }
@@ -3060,24 +3135,37 @@ function confirmMemberPaid(uid,name,amount){
 function openGroupPayRequestModal(){
   const g=groups.find(x=>x.id===curGroupId);if(!g)return;
   const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
+  const allM=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...members];
   const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
-  const totExp=exps.reduce((s,e)=>s+e.amount,0);
-  const share=members.length>0?totExp/(members.length+1):0;
   const payments=Object.entries(g.payments||{}).map(([id,d])=>({...d,id}));
 
-  const list=members.map(m=>{
-    const paid=payments.filter(p=>p.fromUid===m.uid&&p.status==='confirmed').reduce((s,p)=>s+p.amount,0);
-    const settled=paid>=share-0.01;
-    if(settled)return '';
-    return `<div class="pay-member-row">
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1">
-        <input type="checkbox" class="pmr-check" value="${m.uid}" data-name="${m.name}" data-amount="${(share-paid).toFixed(2)}" checked>
-        <div><div style="font-size:12px;font-weight:700">${m.name}</div><div style="font-size:10px;color:var(--tx2)">Deve ancora: ${fmtE(share-paid)}</div></div>
-      </label>
-    </div>`;
-  }).join('');
+  // Build net debts
+  const net={};
+  allM.forEach(m=>{net[m.uid]={};allM.forEach(n=>{if(m.uid!==n.uid)net[m.uid][n.uid]=0;});});
+  exps.forEach(e=>{
+    const payer=e.paidByUid||e.userId||g.creatorId;
+    const parts=e.participants||allM.map(m=>m.uid);
+    const share=e.share||(e.amount/parts.length);
+    parts.forEach(pUid=>{if(pUid!==payer){if(!net[pUid])net[pUid]={};net[pUid][payer]=(net[pUid][payer]||0)+share;}});
+  });
+  payments.filter(p=>p.status==='confirmed').forEach(p=>{if(net[p.fromUid]?.[p.toUid])net[p.fromUid][p.toUid]=Math.max(0,net[p.fromUid][p.toUid]-p.amount);});
 
-  document.getElementById('gPayRequestList').innerHTML=list||`<div style="font-size:12px;color:var(--tx2);padding:10px">🎉 Tutti hanno già saldato!</div>`;
+  let listHtml='';
+  allM.forEach(debtor=>{
+    allM.forEach(creditor=>{
+      if(debtor.uid===creditor.uid||creditor.uid!==user.id) return;
+      const owed=net[debtor.uid]?.[creditor.uid]||0;
+      if(owed<0.01) return;
+      listHtml+=`<div class="pay-member-row">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1">
+          <input type="checkbox" class="pmr-check" value="${debtor.uid}" data-name="${debtor.name}" data-to="${creditor.uid}" data-toname="${creditor.name}" data-amount="${owed.toFixed(2)}" checked>
+          <div><div style="font-size:12px;font-weight:700">${debtor.name}</div><div style="font-size:10px;color:var(--tx2)">Deve: ${fmtE(owed)}</div></div>
+        </label>
+      </div>`;
+    });
+  });
+
+  document.getElementById('gPayRequestList').innerHTML=listHtml||`<div style="font-size:12px;color:var(--tx2);padding:10px">🎉 Nessuno ti deve nulla!</div>`;
   openMo('gPayRequestModal');
 }
 
@@ -3184,11 +3272,82 @@ function doInvite(){
     db.ref(`groups/${curGroupId}/members/${found.id}`).set({name:found.name,email:found.email,joinedAt:new Date().toISOString()}).then(()=>{closeMo('inviteModal');loadData(()=>goTo('gruppi'));notify('✅ '+found.name+' aggiunto!');});
   });
 }
+function saveProfilePaypal(){
+  const email=document.getElementById('profilePaypalEmail')?.value.trim();
+  if(!email){notify('❌ Inserisci un\'email PayPal');return;}
+  localStorage.setItem('fp_paypal_'+user.id, email);
+  // Also save to Firebase so other group members can read it
+  db.ref(`users/${user.id}/paypalEmail`).set(email).then(()=>notify('✅ Email PayPal salvata!'));
+}
+
+function openGExpModal(){
+  const g=groups.find(x=>x.id===curGroupId);if(!g)return;
+  // Build member list: creator + all members
+  const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
+  const allM=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...members];
+
+  // PaidBy select
+  const sel=document.getElementById('gExpPaidBy');
+  sel.innerHTML=allM.map(m=>`<option value="${m.uid}" ${m.uid===user.id?'selected':''}>${m.uid===user.id?'👤 Tu':m.name}</option>`).join('');
+
+  // Member checkboxes (tutti selezionati di default)
+  document.getElementById('gExpMemberList').innerHTML=allM.map(m=>`
+    <label style="display:flex;align-items:center;gap:9px;padding:7px 10px;background:var(--s1);border:1px solid var(--b1);border-radius:9px;cursor:pointer">
+      <input type="checkbox" class="pmr-check gexp-member-cb" value="${m.uid}" data-name="${m.name}" checked onchange="updateGExpSplit()">
+      <span style="font-size:12px;font-weight:600">${m.uid===user.id?'👤 Tu ('+m.name+')':m.name}</span>
+    </label>`).join('');
+
+  document.getElementById('gExpAmt').value='';
+  document.getElementById('gExpDesc').value='';
+  updateGExpSplit();
+  openMo('gExpModal');
+}
+
+function gExpSelectAll(){
+  document.querySelectorAll('.gexp-member-cb').forEach(cb=>cb.checked=true);
+  updateGExpSplit();
+}
+
+function updateGExpSplit(){
+  const amt=parseFloat(document.getElementById('gExpAmt')?.value)||0;
+  const checked=document.querySelectorAll('.gexp-member-cb:checked');
+  const count=checked.length;
+  const share=count>0?amt/count:0;
+  const el=document.getElementById('gExpShareAmt');
+  const elC=document.getElementById('gExpShareCount');
+  if(el) el.textContent=fmtE(share);
+  if(elC) elC.textContent=count+' person'+(count===1?'a':'e');
+}
+
 function saveGExp(){
-  const d=document.getElementById('gExpDesc').value.trim(),a=parseFloat(document.getElementById('gExpAmt').value);
-  if(!d||!a){notify('❌ Compila tutto');return;}
+  const d=document.getElementById('gExpDesc').value.trim();
+  const a=parseFloat(document.getElementById('gExpAmt').value);
+  const paidByUid=document.getElementById('gExpPaidBy').value;
+  const g=groups.find(x=>x.id===curGroupId);
+  if(!g)return;
+  if(!d||!a||a<=0){notify('❌ Compila descrizione e importo');return;}
+
+  // Get selected members
+  const checked=document.querySelectorAll('.gexp-member-cb:checked');
+  if(!checked.length){notify('❌ Seleziona almeno un partecipante');return;}
+  const participants=Array.from(checked).map(cb=>({uid:cb.value,name:cb.dataset.name}));
+  const share=a/participants.length;
+
+  const allM=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}))];
+  const paidByName=allM.find(m=>m.uid===paidByUid)?.name||'?';
+
   const ts=Date.now();
-  db.ref(`groups/${curGroupId}/expenses`).push({desc:d,amount:a,addedBy:user.name,userId:user.id,ts,createdAt:new Date(ts).toISOString()}).then(()=>{closeMo('gExpModal');loadData(()=>goTo('gruppi'));notify('✅ Spesa aggiunta!');});
+  db.ref(`groups/${curGroupId}/expenses`).push({
+    desc:d, amount:a, addedBy:paidByName, addedByUid:paidByUid,
+    paidByUid, paidByName,
+    participants: participants.map(p=>p.uid),
+    participantNames: participants.map(p=>p.name),
+    share, ts, createdAt:new Date(ts).toISOString()
+  }).then(()=>{
+    closeMo('gExpModal');
+    loadData(()=>goTo('gruppi'));
+    notify('✅ Spesa aggiunta!');
+  });
 }
 function sendMsg(){
   const inp=document.getElementById('chatInp');const t=inp.value.trim();if(!t)return;
@@ -3440,6 +3599,142 @@ function doChangePass(){
 }
 // window resize: update admin button label
 window.addEventListener('resize',updateUI);
+</script>
+
+<!-- ═══════════════════════════════════════════
+     PWA INSTALL BANNER (universale)
+═══════════════════════════════════════════ -->
+<div id="pwaInstallBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;
+  background:rgba(7,11,24,.97);border-top:1px solid rgba(108,99,255,.35);
+  padding:14px 16px 18px;backdrop-filter:blur(24px);
+  box-shadow:0 -8px 32px rgba(0,0,0,.5);animation:nIn .35s ease">
+  <button id="pwaBannerClose" style="position:absolute;top:10px;right:12px;background:none;border:none;
+    color:var(--tx3);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
+  <!-- Android / Chrome / Firefox / Samsung -->
+  <div id="pwaInstallChrome">
+    <div style="display:flex;align-items:center;gap:13px">
+      <img src="icon-192.png" style="width:48px;height:48px;border-radius:13px;flex-shrink:0;box-shadow:0 0 18px rgba(108,99,255,.45)">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:800;margin-bottom:2px">Installa Finanza Pro</div>
+        <div style="font-size:11px;color:var(--tx2);line-height:1.5">Aggiungila alla schermata Home: accesso rapido, nessun browser, come un'app vera.</div>
+      </div>
+      <button id="pwaInstallBtn" style="padding:10px 18px;background:linear-gradient(135deg,var(--ac),var(--ac2));
+        border:none;border-radius:11px;color:#fff;font-weight:800;font-size:13px;cursor:pointer;
+        font-family:'Outfit',sans-serif;white-space:nowrap;box-shadow:0 4px 16px rgba(108,99,255,.45);flex-shrink:0">
+        📲 Installa
+      </button>
+    </div>
+  </div>
+  <!-- iOS Safari -->
+  <div id="pwaInstallIos" style="display:none">
+    <div style="display:flex;align-items:flex-start;gap:13px">
+      <img src="icon-192.png" style="width:48px;height:48px;border-radius:13px;flex-shrink:0;box-shadow:0 0 18px rgba(108,99,255,.45)">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800;margin-bottom:6px">Aggiungi alla schermata Home</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.65">
+          1. Tocca l'icona <strong style="color:var(--tx);font-size:15px"> ⎙ </strong> (Condividi) in basso nel browser<br>
+          2. Scorri e tocca <strong style="color:var(--ac2)">"Aggiungi a Home"</strong><br>
+          3. Conferma — l'app apparirà come icona 💰
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid var(--b1)">
+      <div style="flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ac),var(--ac2))"></div>
+      <span style="font-size:10px;color:var(--tx3);white-space:nowrap">L'icona ⎙ si trova nella barra in basso di Safari</span>
+      <div style="flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ac2),var(--ac))"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   SERVICE WORKER REGISTRATION
+════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
+
+/* ════════════════════════════════════════
+   PWA INSTALL LOGIC
+════════════════════════════════════════ */
+let _pwaPrompt = null;
+const _isIos = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+const _isInStandalone = window.navigator.standalone === true ||
+  window.matchMedia('(display-mode: standalone)').matches;
+
+function _showPwaBanner() {
+  if (_isInStandalone) return; // già installata
+  if (localStorage.getItem('fp_pwa_installed')) return;
+  const banner = document.getElementById('pwaInstallBanner');
+  if (!banner) return;
+  if (_isIos) {
+    document.getElementById('pwaInstallChrome').style.display = 'none';
+    document.getElementById('pwaInstallIos').style.display = 'block';
+  }
+  banner.style.display = 'block';
+}
+
+function pwaInstallFromProfile() {
+  if (_isInStandalone) { notify('✅ App già installata!'); return; }
+  if (_pwaPrompt) {
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(r => {
+      if (r.outcome === 'accepted') {
+        localStorage.setItem('fp_pwa_installed','1');
+        notify('🎉 Finanza Pro installata!');
+      }
+      _pwaPrompt = null;
+    });
+  } else {
+    _showPwaBanner();
+    if (_isIos) notify('📲 Segui le istruzioni nel banner!');
+  }
+}
+
+// Intercept Chrome/Android/Firefox install prompt
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _pwaPrompt = e;
+  if (!localStorage.getItem('fp_pwa_installed') && !localStorage.getItem('fp_pwa_banner_dismissed')) {
+    setTimeout(_showPwaBanner, 3500);
+  }
+});
+
+// Install button click (Chrome/Android)
+document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+  if (!_pwaPrompt) return;
+  _pwaPrompt.prompt();
+  const { outcome } = await _pwaPrompt.userChoice;
+  if (outcome === 'accepted') {
+    localStorage.setItem('fp_pwa_installed','1');
+    notify('🎉 Finanza Pro aggiunta alla Home!');
+  }
+  _pwaPrompt = null;
+  document.getElementById('pwaInstallBanner').style.display = 'none';
+});
+
+// Close button
+document.getElementById('pwaBannerClose').addEventListener('click', () => {
+  document.getElementById('pwaInstallBanner').style.display = 'none';
+  localStorage.setItem('fp_pwa_banner_dismissed','1');
+  // After dismiss: show install button in profile
+});
+
+// Installed event
+window.addEventListener('appinstalled', () => {
+  localStorage.setItem('fp_pwa_installed','1');
+  document.getElementById('pwaInstallBanner').style.display = 'none';
+  notify('🎉 Finanza Pro installata con successo!');
+});
+
+// iOS: show banner automatically if not in standalone
+if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
+  setTimeout(_showPwaBanner, 3500);
+}
 </script>
 </body>
 </html>

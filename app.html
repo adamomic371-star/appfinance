@@ -1108,12 +1108,23 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   </div>
 </div>
 <div id="tripModal" class="mo">
-  <div class="ms">
-    <div class="mh"><div class="mtt">✈️ Nuovo Viaggio</div><button class="mc" onclick="closeMo('tripModal')">✕</button></div>
-    <div class="fg"><label class="fl">Nome</label><input type="text" id="trName" class="fc" placeholder="es. Vacanze Estive"></div>
-    <div class="fg"><label class="fl">Destinazione</label><input type="text" id="trDest" class="fc" placeholder="es. Barcellona..."></div>
+  <div class="ms" style="max-height:90vh;overflow-y:auto">
+    <input type="hidden" id="trEditId">
+    <div class="mh"><div class="mtt" id="tripModalTitle">✈️ Nuovo Viaggio</div><button class="mc" onclick="closeMo('tripModal')">✕</button></div>
+    <div class="fg"><label class="fl">Nome viaggio</label><input type="text" id="trName" class="fc" placeholder="es. Vacanze Estive 2025"></div>
+    <div class="fg"><label class="fl">Destinazione</label><input type="text" id="trDest" class="fc" placeholder="es. Barcellona, Spagna"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">Data partenza</label><input type="date" id="trDateFrom" class="fc"></div>
+      <div class="fg"><label class="fl">Data ritorno</label><input type="date" id="trDateTo" class="fc"></div>
+    </div>
     <div class="fg"><label class="fl">Budget (€)</label><input type="number" id="trBudget" class="fc" placeholder="0.00" step="0.01"></div>
-    <div class="ma"><button class="bms" onclick="saveTrip()">Salva</button><button class="bmc" onclick="closeMo('tripModal')">Annulla</button></div>
+    <div class="fg"><label class="fl">🏨 Alloggio</label><input type="text" id="trHotel" class="fc" placeholder="es. Hotel Barceló, Airbnb..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">✈️ Compagnia aerea</label><input type="text" id="trAirline" class="fc" placeholder="es. Ryanair"></div>
+      <div class="fg"><label class="fl">N° Volo/Prenotazione</label><input type="text" id="trFlight" class="fc" placeholder="es. FR1234"></div>
+    </div>
+    <div class="fg"><label class="fl">📝 Note</label><textarea id="trNotes" class="fc" rows="2" placeholder="Cose da fare, documenti, contatti..."></textarea></div>
+    <div class="ma"><button class="bms" id="tripSaveBtn" onclick="saveTrip()">Salva</button><button class="bmc" onclick="closeMo('tripModal')">Annulla</button></div>
   </div>
 </div>
 <div id="recModal" class="mo">
@@ -1133,6 +1144,47 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     <div class="ma"><button class="bms" onclick="saveRec()" id="recSaveBtn">Salva</button><button class="bmc" onclick="closeMo('recModal')">Annulla</button></div>
   </div>
 </div>
+
+<!-- SAVINGS GOAL MODAL -->
+<div id="goalModal" class="mo">
+  <div class="ms">
+    <input type="hidden" id="goalEditId">
+    <div class="mh"><div class="mtt" id="goalModalTitle">🎯 Nuovo Obiettivo</div><button class="mc" onclick="closeMo('goalModal')">✕</button></div>
+    <div class="fg"><label class="fl">Nome obiettivo</label><input type="text" id="goalName" class="fc" placeholder="es. Fondo emergenza, Vacanze, Auto..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">Obiettivo (€)</label><input type="number" id="goalTarget" class="fc" placeholder="5000" step="0.01"></div>
+      <div class="fg"><label class="fl">Già accantonato (€)</label><input type="number" id="goalSaved" class="fc" placeholder="0" step="0.01"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">Icona</label>
+        <select id="goalIcon" class="fc">
+          <option value="🎯">🎯 Generico</option><option value="🚗">🚗 Auto</option><option value="🏠">🏠 Casa</option>
+          <option value="✈️">✈️ Viaggio</option><option value="📚">📚 Istruzione</option><option value="🏥">🏥 Salute</option>
+          <option value="💒">💒 Matrimonio</option><option value="👶">👶 Famiglia</option><option value="📱">📱 Tech</option>
+          <option value="🆘">🆘 Emergenza</option><option value="💼">💼 Business</option><option value="🎮">🎮 Hobby</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Scadenza (opz.)</label><input type="date" id="goalDeadline" class="fc"></div>
+    </div>
+    <div class="fg"><label class="fl">Priorità</label>
+      <select id="goalPriority" class="fc">
+        <option value="high">🔴 Alta</option><option value="medium" selected>🟡 Media</option><option value="low">🟢 Bassa</option>
+      </select>
+    </div>
+    <div class="ma"><button class="bms" id="goalSaveBtn" onclick="saveGoal()">Salva</button><button class="bmc" onclick="closeMo('goalModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- INVEST MODAL (quando carichi >€1000) -->
+<div id="investModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">💡 Investire nei tuoi obiettivi?</div><button class="mc" onclick="closeMo('investModal')">✕</button></div>
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Hai appena caricato <strong id="investAmt" style="color:var(--gr)"></strong>. Vuoi destinarne una parte ai tuoi obiettivi di risparmio?</div>
+    <div id="investGoalsList"></div>
+    <div class="ma"><button class="bmc" onclick="closeMo('investModal')">Lascia disponibile</button></div>
+  </div>
+</div>
+
 <div id="groupModal" class="mo">
   <div class="ms">
     <div class="mh"><div class="mtt">👥 Nuovo Gruppo</div><button class="mc" onclick="closeMo('groupModal')">✕</button></div>
@@ -1251,6 +1303,7 @@ const NAV_PERSONAL=[
   {id:'ricorrenti', icon:'🔄',label:'Ricorrenti',   plans:['personal_pro','business_starter','business_pro','lifetime']},
   {id:'bollette',   icon:'📄',label:'Bollette & Utenze',plans:['personal_pro','business_starter','business_pro','lifetime']},
   {id:'viaggi',     icon:'✈️',label:'Viaggi',       plans:['personal_pro','business_starter','business_pro','lifetime']},
+  {id:'obiettivi',  icon:'🎯',label:'Obiettivi',    plans:['personal_pro','business_starter','business_pro','lifetime']},
   {id:'gruppi',     icon:'👥',label:'Gruppi',       plans:['personal_pro','business_starter','business_pro','lifetime']},
   {id:'notifiche',  icon:'🔔',label:'Notifiche',    plans:['free','personal_pro','business_starter','business_pro','lifetime']},
   {id:'piani',      icon:'🎁',label:'Piani',        plans:['free','personal_pro','business_starter','business_pro','lifetime']},
@@ -1274,7 +1327,19 @@ const NAV_BUSINESS=[
 // Alias for current NAV
 let NAV=NAV_PERSONAL;
 
-const enc=t=>btoa(unescape(encodeURIComponent(t)));
+// SHA-256 password hashing (sicuro) — backward compat con vecchio base64
+async function hashPass(pass){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pass));
+  return 'sha256:'+Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function checkPass(plain,stored){
+  if(stored.startsWith('sha256:')){
+    const h=await hashPass(plain);return h===stored;
+  }
+  // legacy base64
+  try{return decodeURIComponent(escape(atob(stored)))===plain;}catch(e){return false;}
+}
+const enc=t=>btoa(unescape(encodeURIComponent(t))); // kept for non-critical fields
 const dec=t=>{try{return decodeURIComponent(escape(atob(t)));}catch(e){return '';}};
 
 /* ===== INIT ===== */
@@ -1370,9 +1435,11 @@ function doLogin(){
   const email=document.getElementById('lEmail').value.trim(),pass=document.getElementById('lPass').value;
   if(!email||!pass){setMsg('❌ Compila email e password','error');return;}
   const btn=document.getElementById('loginBtn');btn.disabled=true;setMsg('⏳ Accesso...','loading');
-  db.ref('users').once('value').then(snap=>{
+  db.ref('users').once('value').then(async snap=>{
     const us=snap.val()||{};let found=null;
-    for(let id in us){if(us[id].email===email&&dec(us[id].password)===pass){found={...us[id],id};break;}}
+    for(let id in us){
+      if(us[id].email===email&&await checkPass(pass,us[id].password)){found={...us[id],id};break;}
+    }
     btn.disabled=false;
     if(found){user=found;realUser=found;localStorage.setItem('fp_user',JSON.stringify(user));setMsg('','');document.getElementById('loginScreen').classList.add('hidden');showApp();}
     else setMsg('❌ Email o password non corretti','error');
@@ -1383,11 +1450,12 @@ function doRegister(){
   if(!name||!email||!pass){setMsg('❌ Compila tutto','error');return;}
   if(pass.length<6){setMsg('❌ Password minimo 6 caratteri','error');return;}
   const btn=document.getElementById('regBtn');btn.disabled=true;setMsg('⏳ Registrazione...','loading');
-  db.ref('users').once('value').then(snap=>{
+  db.ref('users').once('value').then(async snap=>{
     const us=snap.val()||{};
     if(Object.values(us).some(u=>u.email===email)){btn.disabled=false;setMsg('❌ Email già registrata','error');return;}
     const uid='user_'+Date.now();
-    db.ref(`users/${uid}`).set({name,email,password:enc(pass),plan:'free',role:'user',createdAt:new Date().toISOString()}).then(()=>{btn.disabled=false;setMsg('✅ Account creato! Accedi ora.','success');setTimeout(()=>switchTab('login',document.querySelector('.tab-pill')),1500);}).catch(()=>{btn.disabled=false;setMsg('❌ Errore','error');});
+    const hashed=await hashPass(pass);
+    db.ref(`users/${uid}`).set({name,email,password:hashed,plan:'free',role:'user',createdAt:new Date().toISOString()}).then(()=>{btn.disabled=false;setMsg('✅ Account creato! Accedi ora.','success');setTimeout(()=>switchTab('login',document.querySelector('.tab-pill')),1500);}).catch(()=>{btn.disabled=false;setMsg('❌ Errore','error');});
   });
 }
 
@@ -1786,8 +1854,8 @@ function formatDateIt(dateStr){
 /* ===== PAGES ===== */
 function renderPage(p){
   const con=document.getElementById('content');
-  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette & Utenze',viaggi:'Viaggi',gruppi:'Gruppi',notifiche:'Notifiche',piani:'Piani',admin:'Admin',profilo:'Profilo',biz_dashboard:'Dashboard Aziendale',biz_primanota:'Prima Nota',biz_clienti:'Clienti & Fornitori',biz_preventivi:'Preventivi',biz_progetti:'Progetti',biz_spese:'Note Spese',biz_scadenzario:'Scadenziario',biz_iva:'IVA Tracker'};
-  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette · ${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account',biz_dashboard:'Panoramica aziendale',biz_primanota:`${bizTx.length} movimenti`,biz_clienti:`${clients.length} contatti`,biz_preventivi:`${quotes.length} preventivi`,biz_progetti:`${projects.length} progetti`,biz_spese:`${expenseNotes.length} note`,biz_scadenzario:'Tutte le scadenze',biz_iva:'Calcolo IVA trimestrale'};
+  const TITLES={dashboard:'Dashboard',transazioni:'Movimenti',report:'Report & Analisi',ricorrenti:'Ricorrenti',bollette:'Bollette & Utenze',viaggi:'Viaggi',obiettivi:'Obiettivi di Risparmio',gruppi:'Gruppi',notifiche:'Notifiche',piani:'Piani',admin:'Admin',profilo:'Profilo',biz_dashboard:'Dashboard Aziendale',biz_primanota:'Prima Nota',biz_clienti:'Clienti & Fornitori',biz_preventivi:'Preventivi',biz_progetti:'Progetti',biz_spese:'Note Spese',biz_scadenzario:'Scadenziario',biz_iva:'IVA Tracker'};
+  const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette · ${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,obiettivi:`${loadGoals().filter(g=>g.status!=='completed').length} attivi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account',biz_dashboard:'Panoramica aziendale',biz_primanota:`${bizTx.length} movimenti`,biz_clienti:`${clients.length} contatti`,biz_preventivi:`${quotes.length} preventivi`,biz_progetti:`${projects.length} progetti`,biz_spese:`${expenseNotes.length} note`,biz_scadenzario:'Tutte le scadenze',biz_iva:'Calcolo IVA trimestrale'};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
@@ -1796,13 +1864,56 @@ function renderPage(p){
     const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
     const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
     const recTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+r.amount,0);
+    // Soldi liberi = saldo - ricorrenti mensili - bollette attive - budget viaggi futuri - obiettivi mensili
+    const billTotal=bills.filter(b=>!b.paid).reduce((s,b)=>s+(b.amount||0),0);
+    const utilTotal=utilities.reduce((s,u)=>s+(u.monthlyFee||0),0);
+    const today2=new Date().toISOString().split('T')[0];
+    const tripTotal=trips.filter(t=>!t.dateTo||t.dateTo>=today2).reduce((s,t)=>s+(t.budget||0),0);
+    const goals=loadGoals();
+    const goalMonthly=goals.filter(g=>g.status!=='completed').reduce((s,g)=>s+(g.monthlyTarget||0),0);
+    const freeMoney=bal-recTotal-billTotal-utilTotal-tripTotal-goalMonthly;
+    const freeColor=freeMoney>=0?'var(--gr)':'var(--re)';
     con.innerHTML=`
     <div class="stat-grid">
-      <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
+      <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo Totale</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
       <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(inc)}</div></div>
       <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(exp)}</div></div>
       <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti/mese</div><div class="sc-val" style="color:var(--ye)">${fmtE(recTotal)}</div></div>
     </div>
+    <!-- SOLDI LIBERI BOX -->
+    <div class="card" style="background:linear-gradient(135deg,rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.07),rgba(${freeMoney>=0?'0,212,255':'255,107,157'},.04));border-color:rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.2)">
+      <div class="ch" style="margin-bottom:10px">
+        <div class="ct" style="font-size:14px"><div class="ct-ico">🟢</div>Soldi Liberi</div>
+        <div style="font-size:11px;color:var(--tx3)">Puoi spendere</div>
+      </div>
+      <div style="font-size:32px;font-weight:900;color:${freeColor};letter-spacing:-1px;margin-bottom:10px">${fmtE(freeMoney)}</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>💰 Saldo</span><span style="font-weight:700;color:var(--tx)">${fmtE(bal)}</span></div>
+        ${recTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔄 Ricorrenti/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(recTotal)}</span></div>`:''}
+        ${billTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>📄 Bollette da pagare</span><span style="font-weight:700;color:var(--ye)">-${fmtE(billTotal)}</span></div>`:''}
+        ${utilTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔌 Canoni utenze/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(utilTotal)}</span></div>`:''}
+        ${tripTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>✈️ Budget viaggi</span><span style="font-weight:700;color:var(--ac2)">-${fmtE(tripTotal)}</span></div>`:''}
+        ${goalMonthly>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🎯 Risparmio mensile obiettivi</span><span style="font-weight:700;color:var(--ac)">-${fmtE(goalMonthly)}</span></div>`:''}
+        <div style="border-top:1px solid var(--b1);margin-top:4px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:800"><span style="color:var(--tx)">= Disponibile</span><span style="color:${freeColor}">${fmtE(freeMoney)}</span></div>
+      </div>
+    </div>
+    ${goals.filter(g=>g.status!=='completed').length>0?`
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">🎯</div>Obiettivi di Risparmio</div><button class="btn-a" onclick="goTo('obiettivi')">Vedi tutti</button></div>
+      ${goals.filter(g=>g.status!=='completed').slice(0,3).map(g=>{
+        const pct=Math.min(100,Math.round((g.saved/g.target)*100));
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <div style="font-size:13px;font-weight:700">${g.icon} ${g.name}</div>
+            <div style="font-size:12px;color:var(--tx2)">${fmtE(g.saved)} / ${fmtE(g.target)}</div>
+          </div>
+          <div style="background:var(--s2);border-radius:6px;height:8px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width .5s"></div>
+          </div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:3px">${pct}% completato</div>
+        </div>`;
+      }).join('')}
+    </div>`:''}
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">🕐</div>Ultimi Movimenti</div><button class="btn-a" onclick="goTo('transazioni')">Vedi tutti</button></div>
       ${transactions.length===0?es('💸','Nessun movimento ancora'):
@@ -1824,19 +1935,30 @@ function renderPage(p){
     const txSearch=(sessionStorage.getItem('txSearch')||'').toLowerCase();
     const txFilter=sessionStorage.getItem('txFilter')||'all';
     const txCatFilter=sessionStorage.getItem('txCatFilter')||'all';
+    const txMonthFilter=sessionStorage.getItem('txMonthFilter')||'all';
     const PAGE_SIZE=15;
+    // Build month options
+    const months=[...new Set(transactions.map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
     let filtered=[...transactions].reverse().filter(t=>{
       const matchSearch=!txSearch||t.desc.toLowerCase().includes(txSearch)||fmtE(t.amount).includes(txSearch);
       const matchType=txFilter==='all'||(txFilter==='income'&&t.type==='income')||(txFilter==='expense'&&t.type==='expense');
       const matchCat=txCatFilter==='all'||t.cat===txCatFilter;
-      return matchSearch&&matchType&&matchCat;
+      const matchMonth=txMonthFilter==='all'||(t.createdAt||'').startsWith(txMonthFilter);
+      return matchSearch&&matchType&&matchCat&&matchMonth;
     });
     const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
     if(txPage>=totalPages)txPage=0;
     const paged=filtered.slice(txPage*PAGE_SIZE,(txPage+1)*PAGE_SIZE);
+    // Summary for filtered period
+    const fInc=filtered.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const fExp=filtered.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
     con.innerHTML=`
     <div class="search-bar">
-      <input type="text" class="search-inp" placeholder="🔍 Cerca transazione..." value="${txSearch}" oninput="sessionStorage.setItem('txSearch',this.value);sessionStorage.setItem('txPage','0');goTo('transazioni')">
+      <input type="text" class="search-inp" placeholder="🔍 Cerca..." value="${txSearch}" oninput="sessionStorage.setItem('txSearch',this.value);sessionStorage.setItem('txPage','0');goTo('transazioni')">
+      <select class="search-sel" onchange="sessionStorage.setItem('txMonthFilter',this.value);sessionStorage.setItem('txPage','0');goTo('transazioni')">
+        <option value="all" ${txMonthFilter==='all'?'selected':''}>Tutti i mesi</option>
+        ${months.map(m=>{const[y,mo]=m.split('-');const label=new Date(y,mo-1).toLocaleDateString('it-IT',{month:'long',year:'numeric'});return`<option value="${m}" ${txMonthFilter===m?'selected':''}>${label}</option>`;}).join('')}
+      </select>
       <select class="search-sel" onchange="sessionStorage.setItem('txFilter',this.value);sessionStorage.setItem('txPage','0');goTo('transazioni')">
         <option value="all" ${txFilter==='all'?'selected':''}>Tutti</option>
         <option value="income" ${txFilter==='income'?'selected':''}>Entrate</option>
@@ -1847,10 +1969,16 @@ function renderPage(p){
         ${CATS.map(c=>`<option value="${c.id}" ${txCatFilter===c.id?'selected':''}>${c.icon} ${c.name}</option>`).join('')}
       </select>
     </div>
+    ${txMonthFilter!=='all'?`<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <div class="sc" style="flex:1;min-width:120px;padding:10px 13px"><div class="sc-lbl">Entrate periodo</div><div class="sc-val" style="color:var(--gr);font-size:16px">${fmtE(fInc)}</div></div>
+      <div class="sc" style="flex:1;min-width:120px;padding:10px 13px"><div class="sc-lbl">Uscite periodo</div><div class="sc-val" style="color:var(--re);font-size:16px">${fmtE(fExp)}</div></div>
+      <div class="sc" style="flex:1;min-width:120px;padding:10px 13px"><div class="sc-lbl">Saldo periodo</div><div class="sc-val" style="color:${fInc-fExp>=0?'var(--gr)':'var(--re)'};font-size:16px">${fmtE(fInc-fExp)}</div></div>
+    </div>`:''}
     <div class="card">
       <div class="ch">
         <div class="ct"><div class="ct-ico">💸</div>Movimenti <span style="color:var(--tx3);font-weight:400;font-size:11px">(${filtered.length})</span></div>
-        <div style="display:flex;gap:7px">
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <label class="export-btn" style="cursor:pointer" title="Importa CSV"><i class="fa fa-upload"></i> CSV<input type="file" accept=".csv" style="display:none" onchange="importCSV(this)"></label>
           <button class="export-btn" onclick="exportCSV()"><i class="fa fa-download"></i> CSV</button>
           <button class="btn-a" onclick="openMo('txModal')">＋ Aggiungi</button>
         </div>
@@ -1920,15 +2048,44 @@ function renderPage(p){
     </div>`}`;
 
   } else if(p==='viaggi'){
+    const today=new Date().toISOString().split('T')[0];
+    const upcoming=trips.filter(t=>!t.dateTo||t.dateTo>=today).sort((a,b)=>(a.dateFrom||'9').localeCompare(b.dateFrom||'9'));
+    const past=trips.filter(t=>t.dateTo&&t.dateTo<today);
+    const renderTrip=(t)=>{
+      const daysLeft=t.dateFrom?Math.ceil((new Date(t.dateFrom)-new Date())/86400000):null;
+      const duration=t.dateFrom&&t.dateTo?Math.ceil((new Date(t.dateTo)-new Date(t.dateFrom))/86400000)+1:null;
+      const statusColor=daysLeft===null?'var(--tx3)':daysLeft<=7?'var(--re)':daysLeft<=30?'var(--ye)':'var(--gr)';
+      return `<div class="ir" style="align-items:flex-start;padding:13px 0">
+        <div class="ia" style="font-size:22px;width:42px;height:42px">✈️</div>
+        <div class="ii" style="flex:1">
+          <div class="in" style="font-size:14px">${t.name}</div>
+          <div class="id2" style="margin-top:3px">📍 ${t.dest}</div>
+          ${t.dateFrom?`<div class="id2" style="margin-top:2px">📅 ${formatDateIt(t.dateFrom)}${t.dateTo?' → '+formatDateIt(t.dateTo):''}${duration?' ('+duration+' gg)':''}</div>`:''}
+          ${t.hotel?`<div class="id2" style="margin-top:2px">🏨 ${t.hotel}</div>`:''}
+          ${t.airline?`<div class="id2" style="margin-top:2px">✈️ ${t.airline}${t.flight?' · '+t.flight:''}</div>`:''}
+          ${t.notes?`<div class="id2" style="margin-top:4px;color:var(--tx2)">📝 ${t.notes}</div>`:''}
+          ${daysLeft!==null&&daysLeft>0?`<div style="font-size:10px;font-weight:700;color:${statusColor};margin-top:4px">⏳ Tra ${daysLeft} giorni</div>`:''}
+          ${daysLeft===0?`<div style="font-size:10px;font-weight:700;color:var(--ac2);margin-top:4px">🛫 Oggi si parte!</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+          <div class="iam" style="color:var(--ac2)">${fmtE(t.budget)}</div>
+          <button class="btn-sm bs-g" onclick="openEditTrip('${t.id}')">✏️</button>
+          <button class="btn-sm bs-d" onclick="delTrip('${t.id}')">🗑️</button>
+        </div>
+      </div>`;
+    };
     con.innerHTML=`
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">✈️</div>Viaggi</div><button class="btn-a" onclick="openMo('tripModal')">＋ Aggiungi</button></div>
-      ${trips.length===0?es('✈️','Nessun viaggio pianificato'):
-      trips.map(t=>`
-      <div class="ir"><div class="ia">✈️</div>
-      <div class="ii"><div class="in">${t.name}</div><div class="id2">📍 ${t.dest}</div></div>
-      <div class="iam" style="color:var(--ac2)">${fmtE(t.budget)}</div></div>`).join('')}
-    </div>`;
+      <div class="ch"><div class="ct"><div class="ct-ico">✈️</div>Prossimi Viaggi</div><button class="btn-a" onclick="openNewTrip()">＋ Aggiungi</button></div>
+      ${upcoming.length===0?es('✈️','Nessun viaggio pianificato'):upcoming.map(renderTrip).join('')}
+    </div>
+    ${past.length>0?`<div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">🗺️</div>Viaggi Passati</div></div>
+      ${past.map(renderTrip).join('')}
+    </div>`:''}`;
+
+  } else if(p==='obiettivi'){
+    renderGoals(con);
 
   } else if(p==='notifiche'){
     renderNotifiche(con);
@@ -3465,7 +3622,10 @@ function saveTx(){
   if(!desc||!amt||amt<=0){notify('❌ Compila tutti i campi');return;}
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
   if(type==='expense'&&amt>bal){document.getElementById('txWarn').style.display='block';notify('❌ Saldo insufficiente!');return;}
-  db.ref(`transactions/${Date.now()}`).set({userId:user.id,desc,amount:amt,type,cat,createdAt:new Date().toISOString()}).then(()=>{closeMo('txModal');loadData(()=>goTo('transazioni'));notify('✅ Aggiunto!');});
+  db.ref(`transactions/${Date.now()}`).set({userId:user.id,desc,amount:amt,type,cat,createdAt:new Date().toISOString()}).then(()=>{
+    closeMo('txModal');
+    loadData(()=>{goTo('transazioni');notify('✅ Aggiunto!');if(type==='income'&&amt>=1000)setTimeout(()=>checkInvestModal(amt),700);});
+  });
 }
 function saveBill(){
   const n=document.getElementById('bName').value.trim(),a=parseFloat(document.getElementById('bAmt').value),d=document.getElementById('bDate').value;
@@ -3477,11 +3637,49 @@ function saveUtil(){
   if(!p||!c){notify('❌ Compila tutto');return;}
   db.ref(`utilities/${Date.now()}`).set({type:t,provider:p,contract:c,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('✅ Aggiunto!');});
 }
-function saveTrip(){
-  const n=document.getElementById('trName').value.trim(),d=document.getElementById('trDest').value.trim(),b=parseFloat(document.getElementById('trBudget').value);
-  if(!n||!d||!b){notify('❌ Compila tutto');return;}
-  db.ref(`trips/${Date.now()}`).set({name:n,dest:d,budget:b,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('tripModal');loadData(()=>goTo('viaggi'));notify('✅ Aggiunto!');});
+function openNewTrip(){
+  document.getElementById('trEditId').value='';
+  document.getElementById('tripModalTitle').textContent='✈️ Nuovo Viaggio';
+  document.getElementById('tripSaveBtn').textContent='Salva';
+  ['trName','trDest','trHotel','trAirline','trFlight','trNotes'].forEach(id=>document.getElementById(id).value='');
+  ['trDateFrom','trDateTo','trBudget'].forEach(id=>document.getElementById(id).value='');
+  openMo('tripModal');
 }
+function openEditTrip(id){
+  const t=trips.find(x=>x.id===id);if(!t)return;
+  document.getElementById('trEditId').value=id;
+  document.getElementById('tripModalTitle').textContent='✏️ Modifica Viaggio';
+  document.getElementById('tripSaveBtn').textContent='Aggiorna';
+  document.getElementById('trName').value=t.name||'';
+  document.getElementById('trDest').value=t.dest||'';
+  document.getElementById('trDateFrom').value=t.dateFrom||'';
+  document.getElementById('trDateTo').value=t.dateTo||'';
+  document.getElementById('trBudget').value=t.budget||'';
+  document.getElementById('trHotel').value=t.hotel||'';
+  document.getElementById('trAirline').value=t.airline||'';
+  document.getElementById('trFlight').value=t.flight||'';
+  document.getElementById('trNotes').value=t.notes||'';
+  openMo('tripModal');
+}
+function saveTrip(){
+  const n=document.getElementById('trName').value.trim(),d=document.getElementById('trDest').value.trim();
+  const b=parseFloat(document.getElementById('trBudget').value)||0;
+  if(!n||!d){notify('❌ Inserisci almeno nome e destinazione');return;}
+  const data={
+    name:n,dest:d,budget:b,userId:user.id,
+    dateFrom:document.getElementById('trDateFrom').value||'',
+    dateTo:document.getElementById('trDateTo').value||'',
+    hotel:document.getElementById('trHotel').value.trim(),
+    airline:document.getElementById('trAirline').value.trim(),
+    flight:document.getElementById('trFlight').value.trim(),
+    notes:document.getElementById('trNotes').value.trim(),
+    createdAt:new Date().toISOString()
+  };
+  const editId=document.getElementById('trEditId').value;
+  const ref=editId?db.ref(`trips/${editId}`):db.ref(`trips/${Date.now()}`);
+  ref.set(data).then(()=>{closeMo('tripModal');loadData(()=>goTo('viaggi'));notify(editId?'✅ Viaggio aggiornato!':'✅ Viaggio aggiunto!');});
+}
+function delTrip(id){if(!confirm('Eliminare questo viaggio?'))return;db.ref(`trips/${id}`).remove().then(()=>{loadData(()=>goTo('viaggi'));notify('🗑️ Eliminato');});}
 function openRecModal(){
   document.getElementById('recEditId').value='';
   document.getElementById('recModalTitle').textContent='🔄 Nuova Operazione Ricorrente';
@@ -3868,18 +4066,20 @@ function closeDrawer(){
   if(h)h.classList.remove('open');
   document.body.style.overflow='';
 }
-function doChangePass(){
+async function doChangePass(){
   const old=document.getElementById('cpOld').value;
   const n1=document.getElementById('cpNew1').value;
   const n2=document.getElementById('cpNew2').value;
   const msg=document.getElementById('cpMsg');
   const setM=(t,c)=>{msg.textContent=t;msg.style.color=c;}
   if(!old||!n1||!n2){setM('❌ Compila tutti i campi','var(--re)');return;}
-  if(dec(user.password)!==old){setM('❌ Password attuale non corretta','var(--re)');return;}
+  const ok=await checkPass(old,user.password);
+  if(!ok){setM('❌ Password attuale non corretta','var(--re)');return;}
   if(n1.length<6){setM('❌ Nuova password minimo 6 caratteri','var(--re)');return;}
   if(n1!==n2){setM('❌ Le password non coincidono','var(--re)');return;}
-  db.ref(`users/${user.id}/password`).set(enc(n1)).then(()=>{
-    user.password=enc(n1);realUser.password=enc(n1);
+  const hashed=await hashPass(n1);
+  db.ref(`users/${user.id}/password`).set(hashed).then(()=>{
+    user.password=hashed;realUser.password=hashed;
     localStorage.setItem('fp_user',JSON.stringify(user));
     setM('✅ Password aggiornata!','var(--gr)');
     document.getElementById('cpOld').value='';
@@ -3888,6 +4088,171 @@ function doChangePass(){
     setTimeout(()=>{document.getElementById('changePassBox').style.display='none';notify('✅ Password aggiornata!');},1500);
   }).catch(()=>setM('❌ Errore salvataggio','var(--re)'));
 }
+
+/* ===== SAVINGS GOALS ===== */
+function loadGoals(){try{return JSON.parse(localStorage.getItem('fp_goals_'+user.id)||'[]');}catch(e){return [];}}
+function saveGoals(goals){localStorage.setItem('fp_goals_'+user.id,JSON.stringify(goals));}
+function renderGoals(con){
+  const goals=loadGoals();
+  const active=goals.filter(g=>g.status!=='completed');
+  const done=goals.filter(g=>g.status==='completed');
+  const priColor={high:'var(--re)',medium:'var(--ye)',low:'var(--gr)'};
+  const renderGoalCard=(g)=>{
+    const pct=Math.min(100,Math.round((g.saved/g.target)*100));
+    const rem=Math.max(0,g.target-g.saved);
+    const today=new Date();
+    let monthsLeft=null,monthlyNeeded=null;
+    if(g.deadline){monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-today)/2592000000));monthlyNeeded=rem/monthsLeft;}
+    return `<div class="card" style="margin-bottom:12px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));width:${pct}%;transition:width .5s"></div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding-top:8px">
+        <div style="font-size:28px;flex-shrink:0">${g.icon||'🎯'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+            <div style="font-size:15px;font-weight:800">${g.name}</div>
+            <span style="font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;background:rgba(${g.priority==='high'?'255,79,109':g.priority==='low'?'0,229,160':'255,209,102'},.12);color:${priColor[g.priority]||'var(--ye)'}">${g.priority==='high'?'🔴 Alta':g.priority==='low'?'🟢 Bassa':'🟡 Media'}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+            <span style="color:var(--gr);font-weight:700">${fmtE(g.saved)}</span>
+            <span style="color:var(--tx3)">di ${fmtE(g.target)}</span>
+          </div>
+          <div style="background:var(--s2);border-radius:8px;height:10px;overflow:hidden;margin-bottom:7px">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:8px;transition:width .5s"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);flex-wrap:wrap;gap:4px">
+            <span>${pct}% — manca ${fmtE(rem)}</span>
+            ${monthlyNeeded?`<span>📅 ~${fmtE(monthlyNeeded)}/mese (${monthsLeft} mesi)</span>`:g.deadline?`<span>📅 Scad: ${formatDateIt(g.deadline)}</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn-sm bs-g" onclick="addToGoal('${g.id}')">＋ Aggiungi fondi</button>
+        <button class="btn-sm" style="background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2)!important;color:var(--ac);font-size:10px" onclick="openEditGoal('${g.id}')">✏️</button>
+        ${g.saved>=g.target?`<button class="btn-sm bs-g" onclick="completeGoal('${g.id}')">🏆 Segna completato</button>`:''}
+        <button class="btn-sm bs-d" onclick="delGoal('${g.id}')">🗑️</button>
+      </div>
+    </div>`;
+  };
+  con.innerHTML=`
+  <button class="btn-a" style="margin-bottom:14px" onclick="openNewGoal()">🎯 Nuovo Obiettivo</button>
+  ${active.length===0&&done.length===0?`<div class="card">${es('🎯','Nessun obiettivo ancora.<br>Aggiungine uno per iniziare a risparmiare con un piano!')}</div>`:''}
+  ${active.map(renderGoalCard).join('')}
+  ${done.length>0?`<div class="card"><div class="ch"><div class="ct"><div class="ct-ico">🏆</div>Completati</div></div>
+    ${done.map(g=>`<div class="ir"><div class="ia">${g.icon}</div><div class="ii"><div class="in">${g.name}</div><div class="id2">${fmtE(g.target)} 🎉</div></div><button class="btn-sm bs-d" onclick="delGoal('${g.id}')">🗑️</button></div>`).join('')}
+  </div>`:''}`;
+}
+function openNewGoal(){
+  document.getElementById('goalEditId').value='';
+  document.getElementById('goalModalTitle').textContent='🎯 Nuovo Obiettivo';
+  document.getElementById('goalSaveBtn').textContent='Salva';
+  ['goalName','goalDeadline'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('goalTarget').value='';
+  document.getElementById('goalSaved').value='0';
+  document.getElementById('goalIcon').value='🎯';
+  document.getElementById('goalPriority').value='medium';
+  openMo('goalModal');
+}
+function openEditGoal(id){
+  const goals=loadGoals();const g=goals.find(x=>x.id===id);if(!g)return;
+  document.getElementById('goalEditId').value=id;
+  document.getElementById('goalModalTitle').textContent='✏️ Modifica Obiettivo';
+  document.getElementById('goalSaveBtn').textContent='Aggiorna';
+  document.getElementById('goalName').value=g.name||'';
+  document.getElementById('goalTarget').value=g.target||'';
+  document.getElementById('goalSaved').value=g.saved||0;
+  document.getElementById('goalIcon').value=g.icon||'🎯';
+  document.getElementById('goalDeadline').value=g.deadline||'';
+  document.getElementById('goalPriority').value=g.priority||'medium';
+  openMo('goalModal');
+}
+function saveGoal(){
+  const name=document.getElementById('goalName').value.trim();
+  const target=parseFloat(document.getElementById('goalTarget').value);
+  const saved=parseFloat(document.getElementById('goalSaved').value)||0;
+  if(!name||!target){notify('❌ Inserisci nome e obiettivo');return;}
+  const goals=loadGoals();
+  const editId=document.getElementById('goalEditId').value;
+  const deadline=document.getElementById('goalDeadline').value;
+  const icon=document.getElementById('goalIcon').value;
+  const priority=document.getElementById('goalPriority').value;
+  const monthsLeft=deadline?Math.max(1,Math.ceil((new Date(deadline)-new Date())/2592000000)):null;
+  const monthlyTarget=monthsLeft?Math.max(0,target-saved)/monthsLeft:0;
+  if(editId){
+    const idx=goals.findIndex(g=>g.id===editId);
+    if(idx>=0)goals[idx]={...goals[idx],name,target,saved,icon,deadline,priority,monthlyTarget};
+  } else {
+    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,status:'active',createdAt:new Date().toISOString()});
+  }
+  saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
+}
+function addToGoal(id){
+  const amt=parseFloat(prompt('Quanti € vuoi aggiungere a questo obiettivo?'));
+  if(!amt||amt<=0)return;
+  const goals=loadGoals();const idx=goals.findIndex(g=>g.id===id);if(idx<0)return;
+  goals[idx].saved=(goals[idx].saved||0)+amt;
+  if(goals[idx].saved>=goals[idx].target){goals[idx].status='completed';notify('🏆 Obiettivo raggiunto!');}
+  saveGoals(goals);goTo('obiettivi');
+}
+function completeGoal(id){const goals=loadGoals();const idx=goals.findIndex(g=>g.id===id);if(idx<0)return;goals[idx].status='completed';saveGoals(goals);goTo('obiettivi');notify('🏆 Completato!');}
+function delGoal(id){if(!confirm('Eliminare?'))return;saveGoals(loadGoals().filter(g=>g.id!==id));goTo('obiettivi');notify('🗑️ Eliminato');}
+
+/* ===== INVEST MODAL (>€1000) ===== */
+function checkInvestModal(amount){
+  if(amount<1000)return;
+  const goals=loadGoals().filter(g=>g.status!=='completed');
+  if(goals.length===0)return;
+  document.getElementById('investAmt').textContent=fmtE(amount);
+  document.getElementById('investGoalsList').innerHTML=goals.map(g=>{
+    const rem=Math.max(0,g.target-g.saved);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1)">
+      <div style="font-size:20px">${g.icon}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">${g.name}</div><div style="font-size:11px;color:var(--tx2)">Manca ${fmtE(rem)}</div></div>
+      <input type="number" placeholder="€" step="0.01" max="${rem.toFixed(2)}" id="inv_${g.id}" style="width:80px;padding:7px 8px;background:var(--s1);border:1px solid var(--b1);border-radius:8px;color:var(--tx);font-size:12px;font-family:'Outfit',sans-serif">
+    </div>`;
+  }).join('')+`<div style="margin-top:12px"><button class="bms" style="width:100%" onclick="confirmInvest()">💙 Investi negli obiettivi</button></div>`;
+  openMo('investModal');
+}
+function confirmInvest(){
+  const goals=loadGoals();
+  goals.forEach((g,idx)=>{
+    const el=document.getElementById('inv_'+g.id);
+    const amt=parseFloat(el?.value)||0;
+    if(amt>0){goals[idx].saved=(goals[idx].saved||0)+amt;if(goals[idx].saved>=goals[idx].target)goals[idx].status='completed';}
+  });
+  saveGoals(goals);closeMo('investModal');notify('✅ Fondi aggiunti agli obiettivi!');goTo('obiettivi');
+}
+
+/* ===== IMPORT CSV ===== */
+function importCSV(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const lines=e.target.result.split('\n').filter(l=>l.trim());
+    if(lines.length<2){notify('❌ CSV vuoto o non valido');return;}
+    const header=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+    const getCol=(row,names)=>{for(const n of names){const i=header.indexOf(n);if(i>=0)return(row[i]||'').replace(/"/g,'').trim();}return '';};
+    let added=0,errors=0;const batch=[];
+    for(let i=1;i<lines.length;i++){
+      const row=lines[i].split(',');
+      const desc=getCol(row,['descrizione','desc','description','nome','name']);
+      const amtRaw=getCol(row,['importo','amount','valore','value']).replace(',','.');
+      const amt=parseFloat(amtRaw);
+      if(!desc||isNaN(amt)){errors++;continue;}
+      const typeRaw=getCol(row,['tipo','type']).toLowerCase();
+      const type=typeRaw.includes('entr')||typeRaw==='income'||amt>0?'income':'expense';
+      const cat=getCol(row,['categoria','category','cat'])||'altro';
+      const date=getCol(row,['data','date','createdat'])||new Date().toISOString();
+      batch.push({userId:user.id,desc,amount:Math.abs(amt),type,cat,createdAt:date});
+      added++;
+    }
+    if(!batch.length){notify('❌ Nessuna riga valida');return;}
+    let done2=0;
+    batch.forEach(tx=>{db.ref(`transactions/${Date.now()+'_'+Math.random().toString(36).slice(2)}`).set(tx).then(()=>{done2++;if(done2===batch.length){loadData(()=>{goTo('transazioni');notify(`✅ Importati ${added} movimenti${errors?' ('+errors+' saltati)':''}`);});}});});
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
 // window resize: update admin button label
 window.addEventListener('resize',updateUI);
 </script>

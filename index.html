@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-<meta name="description" content="Finanza Pro – Il tuo assistente finanziario personale. Gestisci entrate, uscite, abbonamenti, gruppi e molto altro.">
-<title>Finanza Pro – Gestisci le tue finanze</title>
+<meta name="description" content="Finanza Pro – Gestisci finanze personali e aziendali: transazioni, ricorrenti con scadenza, gruppi con PayPal, preventivi, IVA e molto altro.">
+<meta name="theme-color" content="#070b18">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Finanza Pro – Il tuo assistente finanziario</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -23,8 +25,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overfl
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
 
-/* ===== NAV ===== */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,11,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);transition:all .3s}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,11,24,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);transition:all .3s}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-logo-ico{width:36px;height:36px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 18px rgba(108,99,255,.4)}
 .nav-logo-txt{font-size:17px;font-weight:900;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -39,21 +41,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;di
 .mobile-menu.open{display:flex}
 .mobile-menu a{color:var(--tx2);text-decoration:none;font-size:15px;font-weight:600;padding:8px 0;border-bottom:1px solid var(--b1)}
 
-/* ===== HERO ===== */
+/* HERO */
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 5vw 60px;position:relative;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(108,99,255,.18) 0%,transparent 65%),radial-gradient(ellipse 50% 40% at 90% 80%,rgba(0,212,255,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 10% 70%,rgba(255,107,157,.08) 0%,transparent 60%)}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:50px 50px}
 .hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .hp{position:absolute;border-radius:50%;animation:hpFloat linear infinite}
 @keyframes hpFloat{0%{transform:translateY(100vh);opacity:0}10%{opacity:.5}90%{opacity:.1}100%{transform:translateY(-5vh);opacity:0}}
-.hero-content{position:relative;max-width:780px;margin:0 auto}
+.hero-content{position:relative;max-width:820px;margin:0 auto}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--ac2);margin-bottom:28px;animation:fadeUp .6s ease .1s both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.hero-title{font-size:clamp(36px,7vw,76px);font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:22px;animation:fadeUp .6s ease .2s both}
+.hero-title{font-size:clamp(34px,7vw,74px);font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:22px;animation:fadeUp .6s ease .2s both}
 .hero-title span{background:linear-gradient(135deg,var(--ac),var(--ac2),var(--ac3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:clamp(15px,2.5vw,20px);color:var(--tx2);max-width:560px;margin:0 auto 36px;font-weight:400;line-height:1.7;animation:fadeUp .6s ease .3s both}
+.hero-sub{font-size:clamp(14px,2.5vw,19px);color:var(--tx2);max-width:580px;margin:0 auto 36px;font-weight:400;line-height:1.75;animation:fadeUp .6s ease .3s both}
 .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s ease .4s both}
-.btn-hero{padding:14px 30px;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.btn-hero{padding:14px 28px;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
 .btn-hero-p{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;box-shadow:0 8px 28px rgba(108,99,255,.4)}
 .btn-hero-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(108,99,255,.55)}
 .btn-hero-s{background:transparent;color:var(--tx);border:1px solid var(--b2)}
@@ -61,10 +63,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;di
 .hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:52px;animation:fadeUp .6s ease .5s both}
 .hs{text-align:center}
 .hs-n{font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hs-l{font-size:12px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.hs-l{font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
-/* ===== MOCKUP ===== */
-.mockup-section{padding:40px 5vw 80px;display:flex;justify-content:center}
+/* PWA BADGE */
+.pwa-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--gr);margin-bottom:14px;animation:fadeUp .6s ease 0s both}
+
+/* MOCKUP */
+.mockup-section{padding:20px 5vw 60px;display:flex;justify-content:center}
 .mockup{background:rgba(13,18,37,.9);border:1px solid var(--b2);border-radius:22px;padding:0;max-width:720px;width:100%;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px var(--b1);animation:fadeUp .8s ease .3s both}
 .mock-bar{background:rgba(7,11,24,.8);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--b1)}
 .mock-dots{display:flex;gap:6px}
@@ -86,15 +91,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;di
 .mock-row-cat{font-size:9px;color:var(--tx3)}
 .mock-row-amt{font-size:12px;font-weight:700}
 
-/* ===== SECTIONS ===== */
+/* SECTIONS */
 section{padding:80px 5vw}
 .section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac2);margin-bottom:12px}
 .section-title{font-size:clamp(26px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:16px;line-height:1.15}
-.section-sub{font-size:16px;color:var(--tx2);max-width:540px;line-height:1.7}
+.section-sub{font-size:16px;color:var(--tx2);max-width:560px;line-height:1.7}
 .reveal{opacity:0;transform:translateY(24px);transition:all .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
-/* ===== FEATURES ===== */
+/* FEATURES */
 .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:50px}
 .feat{background:var(--s1);border:1px solid var(--b1);border-radius:20px;padding:28px 24px;transition:all .3s;position:relative;overflow:hidden}
 .feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--ac2));opacity:0;transition:opacity .3s}
@@ -104,8 +109,13 @@ section{padding:80px 5vw}
 .feat-title{font-size:17px;font-weight:800;margin-bottom:8px}
 .feat-desc{font-size:13px;color:var(--tx2);line-height:1.65}
 .feat-tag{display:inline-block;margin-top:14px;padding:3px 10px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);border-radius:20px;font-size:10px;font-weight:700;color:var(--ac)}
+.feat-tag.new{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.25);color:var(--gr)}
+.feat-tag.biz{background:rgba(255,209,102,.1);border-color:rgba(255,209,102,.25);color:var(--ye)}
 
-/* ===== HOW IT WORKS ===== */
+/* NEW BANNER */
+.new-banner{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:8px;padding:3px 10px;font-size:10px;font-weight:800;color:var(--gr);margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.5px}
+
+/* HOW IT WORKS */
 .how-section{background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin-top:50px;position:relative}
 .steps::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--ac),var(--ac2),transparent);opacity:.3}
@@ -114,16 +124,14 @@ section{padding:80px 5vw}
 .step-title{font-size:15px;font-weight:800;margin-bottom:6px}
 .step-desc{font-size:12px;color:var(--tx2);line-height:1.6}
 
-/* ===== CATEGORIES SECTION ===== */
-.cats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:40px}
-.cat-item{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:16px 12px;text-align:center;transition:all .25s;cursor:default}
-.cat-item:hover{border-color:var(--b2);transform:translateY(-2px);background:var(--s2)}
-.cat-item-ico{font-size:26px;margin-bottom:8px}
-.cat-item-name{font-size:11px;font-weight:700;color:var(--tx2)}
+/* MODES TABS */
+.mode-tabs{display:flex;gap:10px;justify-content:center;margin-bottom:40px;flex-wrap:wrap}
+.mode-tab{padding:10px 24px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;border:1px solid var(--b1);background:var(--s1);color:var(--tx2);font-family:'Outfit',sans-serif}
+.mode-tab.active{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent;box-shadow:0 6px 20px rgba(108,99,255,.35)}
 
-/* ===== PLANS ===== */
+/* PLANS */
 .plans-section{text-align:center}
-.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:50px;max-width:900px;margin-left:auto;margin-right:auto}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:50px;max-width:1000px;margin-left:auto;margin-right:auto}
 .plan{background:var(--s1);border:1px solid var(--b1);border-radius:22px;padding:28px 22px;position:relative;overflow:hidden;transition:all .3s;text-align:left}
 .plan:hover{transform:translateY(-4px);border-color:var(--b2)}
 .plan.popular{border-color:var(--ac);background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,255,.04))}
@@ -140,7 +148,7 @@ section{padding:80px 5vw}
 .plan-cta.outline{background:transparent;border:1px solid var(--b2);color:var(--tx2)}
 .plan-cta.outline:hover{border-color:var(--ac);color:var(--tx)}
 
-/* ===== TESTIMONIALS ===== */
+/* TESTIMONIALS */
 .test-section{background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
 .test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:46px}
 .tcard{background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:24px;position:relative}
@@ -152,7 +160,7 @@ section{padding:80px 5vw}
 .trole{font-size:11px;color:var(--tx3)}
 .stars{font-size:12px;color:var(--ye);margin-bottom:10px}
 
-/* ===== FAQ ===== */
+/* FAQ */
 .faq-list{max-width:680px;margin:44px auto 0}
 .faq-item{border-bottom:1px solid var(--b1);overflow:hidden}
 .faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 4px;cursor:pointer;font-size:15px;font-weight:700;transition:color .2s;gap:12px}
@@ -162,7 +170,7 @@ section{padding:80px 5vw}
 .faq-a{font-size:13px;color:var(--tx2);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
 .faq-item.open .faq-a{max-height:200px;padding-bottom:16px;padding-left:4px}
 
-/* ===== CTA SECTION ===== */
+/* CTA */
 .cta-section{text-align:center;padding:100px 5vw}
 .cta-box{background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(0,212,255,.06));border:1px solid rgba(108,99,255,.25);border-radius:28px;padding:60px 40px;max-width:680px;margin:0 auto;position:relative;overflow:hidden}
 .cta-box::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(108,99,255,.06) 0%,transparent 60%);animation:ctaGlow 4s ease infinite alternate}
@@ -170,7 +178,7 @@ section{padding:80px 5vw}
 .cta-title{font-size:clamp(24px,4vw,40px);font-weight:900;letter-spacing:-1px;margin-bottom:14px}
 .cta-sub{font-size:15px;color:var(--tx2);margin-bottom:32px;max-width:440px;margin-left:auto;margin-right:auto}
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28px}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px}
 .footer-brand{display:flex;align-items:center;gap:9px;margin-bottom:12px}
@@ -186,7 +194,14 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
 .fsoc{width:32px;height:32px;border-radius:8px;background:var(--s1);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:13px;text-decoration:none;transition:all .2s}
 .fsoc:hover{color:var(--tx);border-color:var(--ac);background:rgba(108,99,255,.1)}
 
-/* ===== RESPONSIVE ===== */
+/* INSTALL CTA */
+.install-strip{background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,212,255,.06));border:1px solid rgba(0,229,160,.2);border-radius:18px;padding:22px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:50px}
+.install-strip-ico{font-size:32px;flex-shrink:0}
+.install-strip-txt{flex:1;min-width:180px}
+.install-strip-title{font-size:16px;font-weight:800;margin-bottom:4px}
+.install-strip-sub{font-size:13px;color:var(--tx2)}
+
+/* RESPONSIVE */
 @media(max-width:900px){
   .footer-grid{grid-template-columns:1fr 1fr}
   .steps::before{display:none}
@@ -201,6 +216,7 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
   .footer-bottom{flex-direction:column;text-align:center}
   .cta-box{padding:36px 20px}
   section{padding:60px 5vw}
+  .install-strip{flex-direction:column;text-align:center}
 }
 @media(max-width:400px){
   .hero-btns{flex-direction:column;align-items:center}
@@ -219,6 +235,7 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
   </a>
   <div class="nav-links">
     <a href="#features">Funzionalità</a>
+    <a href="#business">Business</a>
     <a href="#piani">Piani</a>
     <a href="#faq">FAQ</a>
     <a href="app.html" class="nav-cta">Entra nell'App →</a>
@@ -229,6 +246,7 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="#features" onclick="toggleMenu()">Funzionalità</a>
+  <a href="#business" onclick="toggleMenu()">Business</a>
   <a href="#piani" onclick="toggleMenu()">Piani</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
   <a href="app.html" style="color:var(--ac2)">Entra nell'App →</a>
@@ -240,18 +258,19 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
   <div class="hero-grid"></div>
   <div class="hero-particles" id="hpts"></div>
   <div class="hero-content">
-    <div class="hero-badge"><span>✨</span> La finanza personale, finalmente semplice</div>
-    <h1 class="hero-title">Gestisci i tuoi soldi<br>con <span>intelligenza</span></h1>
-    <p class="hero-sub">Traccia entrate e uscite, gestisci abbonamenti ricorrenti, condividi spese con amici e analizza il tuo stile di vita finanziario con report dettagliati per categoria.</p>
+    <div class="pwa-badge">📲 Installabile come app su iPhone e Android</div>
+    <div class="hero-badge"><span>✨</span> Personale & Business — tutto in uno</div>
+    <h1 class="hero-title">Finanze personali<br>e aziendali con <span>stile</span></h1>
+    <p class="hero-sub">Traccia entrate e uscite, gestisci ricorrenti con scadenza, dividi spese in gruppo con pagamento PayPal integrato, crea preventivi e gestisci l'IVA — tutto da un'unica app.</p>
     <div class="hero-btns">
       <a href="app.html" class="btn-hero btn-hero-p"><i class="fa fa-rocket"></i> Inizia Gratis</a>
       <a href="#features" class="btn-hero btn-hero-s"><i class="fa fa-play"></i> Scopri le funzioni</a>
     </div>
     <div class="hero-stats">
       <div class="hs"><div class="hs-n">100%</div><div class="hs-l">Gratuito per iniziare</div></div>
-      <div class="hs"><div class="hs-n">12+</div><div class="hs-l">Categorie di spesa</div></div>
+      <div class="hs"><div class="hs-n">2</div><div class="hs-l">Modalità: personale & business</div></div>
       <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Transazioni</div></div>
-      <div class="hs"><div class="hs-n">1</div><div class="hs-l">File, nessuna installazione</div></div>
+      <div class="hs"><div class="hs-n">PWA</div><div class="hs-l">Installabile su mobile</div></div>
     </div>
   </div>
 </section>
@@ -265,15 +284,15 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
         <div class="mock-dot" style="background:#febc2e"></div>
         <div class="mock-dot" style="background:#28c840"></div>
       </div>
-      <div class="mock-url">finanzapro.it/app.html</div>
+      <div class="mock-url">adamomic371-star.github.io/appfinance/app.html</div>
     </div>
     <div class="mock-body">
       <div class="mock-stat"><div class="mock-stat-l">Saldo</div><div class="mock-stat-v" style="color:#00e5a0">€2.840</div></div>
       <div class="mock-stat"><div class="mock-stat-l">Entrate</div><div class="mock-stat-v" style="color:#00e5a0">€3.200</div></div>
       <div class="mock-stat"><div class="mock-stat-l">Uscite</div><div class="mock-stat-v" style="color:#ff4f6d">€360</div></div>
-      <div class="mock-stat"><div class="mock-stat-l">Ricorrenti</div><div class="mock-stat-v" style="color:#ffd166">€148</div></div>
+      <div class="mock-stat"><div class="mock-stat-l">Ricorrenti</div><div class="mock-stat-v" style="color:#ffd166">€148/m</div></div>
       <div class="mock-chart">
-        <div class="mock-chart-title">📊 Spese per Categoria</div>
+        <div class="mock-chart-title">📊 Spese per Categoria — Luglio</div>
         <div class="mock-bars">
           <div class="mock-bar-item" style="height:80%;background:linear-gradient(180deg,#6c63ff,rgba(108,99,255,.3))"></div>
           <div class="mock-bar-item" style="height:55%;background:linear-gradient(180deg,#00d4ff,rgba(0,212,255,.3))"></div>
@@ -286,68 +305,127 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
       <div class="mock-rows">
         <div class="mock-chart-title">💸 Ultimi Movimenti</div>
         <div class="mock-row"><div class="mock-row-ico" style="background:rgba(108,99,255,.2)">🍕</div><div><div class="mock-row-name">Pizzeria Da Mario</div><div class="mock-row-cat">Cibo & Ristoranti</div></div><div class="mock-row-amt" style="color:#ff4f6d">-€24</div></div>
-        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(0,229,160,.2)">💼</div><div><div class="mock-row-name">Stipendio Luglio</div><div class="mock-row-cat">Lavoro</div></div><div class="mock-row-amt" style="color:#00e5a0">+€1.600</div></div>
-        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(255,107,157,.2)">📱</div><div><div class="mock-row-name">Netflix</div><div class="mock-row-cat">Abbonamento</div></div><div class="mock-row-amt" style="color:#ff4f6d">-€18</div></div>
+        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(0,229,160,.2)">💼</div><div><div class="mock-row-name">Stipendio Luglio</div><div class="mock-row-cat">Lavoro · Ricorrente</div></div><div class="mock-row-amt" style="color:#00e5a0">+€1.600</div></div>
+        <div class="mock-row"><div class="mock-row-ico" style="background:rgba(255,107,157,.2)">📱</div><div><div class="mock-row-name">Netflix — scade 15/08</div><div class="mock-row-cat">Abbonamento · Ricorrente</div></div><div class="mock-row-amt" style="color:#ff4f6d">-€18</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FEATURES -->
+<!-- FEATURES PERSONALI -->
 <section id="features">
-  <div style="text-align:center;max-width:600px;margin:0 auto 0" class="reveal">
-    <div class="section-label">Funzionalità</div>
-    <h2 class="section-title">Tutto quello che ti serve, in un solo posto</h2>
-    <p class="section-sub">Nessuna installazione, nessun abbonamento obbligatorio. Un file HTML che puoi hostare ovunque.</p>
+  <div style="text-align:center;max-width:660px;margin:0 auto 0" class="reveal">
+    <div class="section-label">Modalità Personale</div>
+    <h2 class="section-title">Tutto quello che ti serve, gratis</h2>
+    <p class="section-sub">Gestisci le tue finanze quotidiane con strumenti potenti e un'interfaccia semplice.</p>
   </div>
   <div class="features-grid reveal">
     <div class="feat">
       <div class="feat-ico">💸</div>
       <div class="feat-title">Transazioni & Movimenti</div>
-      <div class="feat-desc">Registra entrate e uscite con categorie personalizzate. Tieni traccia di ogni spesa in modo semplice e veloce, con saldo sempre aggiornato in tempo reale.</div>
+      <div class="feat-desc">Registra entrate e uscite con 12 categorie predefinite. Saldo aggiornato in tempo reale, storico completo e filtri per periodo.</div>
       <span class="feat-tag">Piano Free</span>
     </div>
     <div class="feat">
       <div class="feat-ico">📊</div>
       <div class="feat-title">Report per Categoria</div>
-      <div class="feat-desc">Analizza dove vanno i tuoi soldi con grafici a barre e breakdown per categoria: cibo, casa, trasporti, salute, svago e molto altro. Scopri le tue abitudini finanziarie.</div>
+      <div class="feat-desc">Grafici a barre e breakdown dettagliato per categoria. Scopri dove finiscono i tuoi soldi ogni mese e ottimizza le spese.</div>
       <span class="feat-tag">Piano Free</span>
     </div>
     <div class="feat">
       <div class="feat-ico">🔄</div>
-      <div class="feat-title">Operazioni Ricorrenti</div>
-      <div class="feat-desc">Gestisci abbonamenti (Netflix, Spotify), stipendio, rate mutuo, bollette ricorrenti e spese fisse. Aggiunta automatica alla scadenza con notifica, possibilità di mettere in pausa.</div>
-      <span class="feat-tag">Piano Pro</span>
+      <div class="feat-title">Ricorrenti con Scadenza <span class="new-banner">Nuovo</span></div>
+      <div class="feat-desc">Abbonamenti, stipendio, rate mutuo — con data di inizio, frequenza e ora anche <strong>data di fine</strong>. Modifica e cancella quando vuoi. Alert automatici per le scadenze imminenti.</div>
+      <span class="feat-tag new">Aggiornato</span>
     </div>
     <div class="feat">
       <div class="feat-ico">📄</div>
       <div class="feat-title">Bollette & Utenze</div>
-      <div class="feat-desc">Archivia bollette con data di scadenza e gestisci i tuoi contratti di luce, gas, acqua e internet in un'unica schermata. Mai più una bolletta dimenticata.</div>
+      <div class="feat-desc">Archivia bollette con scadenza e gestisci contratti luce, gas, acqua, internet. Avvisi colorati per le bollette in scadenza o già scadute.</div>
       <span class="feat-tag">Piano Pro</span>
     </div>
     <div class="feat">
       <div class="feat-ico">✈️</div>
       <div class="feat-title">Pianificazione Viaggi</div>
-      <div class="feat-desc">Pianifica i tuoi viaggi con destinazione e budget dedicato. Tieni separato il budget viaggio dal resto delle spese per una pianificazione accurata.</div>
+      <div class="feat-desc">Budget dedicato per ogni viaggio, separato dal bilancio principale. Pianifica le tue vacanze senza perdere il controllo delle spese quotidiane.</div>
       <span class="feat-tag">Piano Premium</span>
     </div>
     <div class="feat">
       <div class="feat-ico">👥</div>
-      <div class="feat-title">Gruppi & Spese Condivise</div>
-      <div class="feat-desc">Crea gruppi per vacanze, casa condivisa o uscite. Dividi le spese automaticamente tra i membri, chatta in tempo reale e invita amici tramite ID o email.</div>
-      <span class="feat-tag">Piano Premium</span>
+      <div class="feat-title">Gruppi & Spese Condivise <span class="new-banner">Nuovo</span></div>
+      <div class="feat-desc">Aggiungi spese scegliendo <strong>chi ha pagato</strong> e <strong>quali membri coinvolgere</strong> (anche solo 5 su 10). Calcolo debiti netti per ogni coppia, pagamento diretto con PayPal, chat integrata.</div>
+      <span class="feat-tag new">Aggiornato</span>
     </div>
     <div class="feat">
-      <div class="feat-ico">👑</div>
-      <div class="feat-title">Pannello Admin</div>
-      <div class="feat-desc">Accesso completo per amministratori: gestisci utenti, modifica piani, cambia ruoli e accedi agli account dei clienti per assistenza con un click. Vista admin/utente con switch istantaneo.</div>
-      <span class="feat-tag">Solo Admin</span>
+      <div class="feat-ico">💙</div>
+      <div class="feat-title">Pagamenti PayPal Integrati <span class="new-banner">Nuovo</span></div>
+      <div class="feat-desc">Ogni membro imposta la sua email PayPal nel profilo. Chi è in debito vede il pulsante "Paga con PayPal" con importo già precompilato — pagamento in un tap.</div>
+      <span class="feat-tag new">Nuovo</span>
     </div>
     <div class="feat">
       <div class="feat-ico">📱</div>
-      <div class="feat-title">Ottimizzato Mobile</div>
-      <div class="feat-desc">Sidebar sempre visibile che si adatta ad ogni schermo: icone su mobile, testo completo su desktop. Nessuna app da installare, funziona da browser come una vera Progressive Web App.</div>
-      <span class="feat-tag">Tutti i piani</span>
+      <div class="feat-title">Installabile come App <span class="new-banner">PWA</span></div>
+      <div class="feat-desc">Aggiungi Finanza Pro alla schermata Home di iPhone o Android. Si apre senza browser, a schermo intero, come un'app nativa — senza scaricare nulla dall'App Store.</div>
+      <span class="feat-tag new">Nuovo</span>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL CTA -->
+<div style="padding:0 5vw 60px" class="reveal">
+  <div class="install-strip">
+    <div class="install-strip-ico">📲</div>
+    <div class="install-strip-txt">
+      <div class="install-strip-title">Installala sulla schermata Home</div>
+      <div class="install-strip-sub">iPhone: Condividi ⎙ → "Aggiungi a Home" &nbsp;|&nbsp; Android: banner automatico all'apertura</div>
+    </div>
+    <a href="app.html" class="btn-hero btn-hero-p" style="font-size:13px;padding:11px 22px">Apri l'App</a>
+  </div>
+</div>
+
+<!-- FEATURES BUSINESS -->
+<section id="business" style="background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)">
+  <div style="text-align:center;max-width:660px;margin:0 auto 0" class="reveal">
+    <div class="section-label" style="color:var(--ye)">Modalità Business</div>
+    <h2 class="section-title">Strumenti professionali <span style="background:linear-gradient(135deg,var(--ye),var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent">per freelance e PMI</span></h2>
+    <p class="section-sub">Passa alla modalità Business con un click e gestisci la tua attività senza confondere le finanze personali con quelle professionali.</p>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feat" style="border-color:rgba(255,209,102,.12)">
+      <div class="feat-ico" style="background:linear-gradient(135deg,var(--ye),var(--or))">📒</div>
+      <div class="feat-title">Prima Nota</div>
+      <div class="feat-desc">Registra incassi e pagamenti aziendali con causale, categoria business e IVA. Distinzione netta da movimenti personali.</div>
+      <span class="feat-tag biz">Business</span>
+    </div>
+    <div class="feat" style="border-color:rgba(255,209,102,.12)">
+      <div class="feat-ico" style="background:linear-gradient(135deg,var(--ye),var(--or))">👔</div>
+      <div class="feat-title">Clienti & Fornitori</div>
+      <div class="feat-desc">Rubrica completa con storico transazioni, preventivi e progetti per ogni contatto. Schermata dedicata per cliente con tutto il suo storico.</div>
+      <span class="feat-tag biz">Business</span>
+    </div>
+    <div class="feat" style="border-color:rgba(255,209,102,.12)">
+      <div class="feat-ico" style="background:linear-gradient(135deg,var(--ye),var(--or))">📋</div>
+      <div class="feat-title">Preventivi Avanzati <span class="new-banner">Nuovo</span></div>
+      <div class="feat-desc">Preventivi multi-riga con IVA per singola riga, metodi di pagamento (PayPal, bonifico, carta), anteprima professionale e <strong>esportazione PDF</strong>. Logo e dati azienda inclusi.</div>
+      <span class="feat-tag new">Aggiornato</span>
+    </div>
+    <div class="feat" style="border-color:rgba(255,209,102,.12)">
+      <div class="feat-ico" style="background:linear-gradient(135deg,var(--ye),var(--or))">🧾</div>
+      <div class="feat-title">IVA Tracker</div>
+      <div class="feat-desc">Calcolo automatico dell'IVA trimestrale su tutte le transazioni business. Aliquote personalizzabili per ogni riga di preventivo.</div>
+      <span class="feat-tag biz">Business</span>
+    </div>
+    <div class="feat" style="border-color:rgba(255,209,102,.12)">
+      <div class="feat-ico" style="background:linear-gradient(135deg,var(--ye),var(--or))">📁</div>
+      <div class="feat-title">Progetti & Scadenziario</div>
+      <div class="feat-desc">Gestisci progetti con clienti associati, stato avanzamento e scadenzario integrato con reminder automatici per non perdere nessuna data importante.</div>
+      <span class="feat-tag biz">Business</span>
+    </div>
+    <div class="feat" style="border-color:rgba(255,209,102,.12)">
+      <div class="feat-ico" style="background:linear-gradient(135deg,var(--ye),var(--or))">🏢</div>
+      <div class="feat-title">Logo & Dati Azienda <span class="new-banner">Nuovo</span></div>
+      <div class="feat-desc">Carica il logo aziendale, inserisci P.IVA, indirizzo e contatti. Vengono inclusi automaticamente in tutti i preventivi esportati come PDF.</div>
+      <span class="feat-tag new">Nuovo</span>
     </div>
   </div>
 </section>
@@ -359,89 +437,82 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
     <h2 class="section-title">Inizia in 3 passi</h2>
   </div>
   <div class="steps reveal">
-    <div class="step"><div class="step-num">1</div><div class="step-title">Crea l'account</div><div class="step-desc">Registrati gratis in 30 secondi. Nessuna carta di credito richiesta per il piano Free.</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-title">Aggiungi i movimenti</div><div class="step-desc">Inserisci entrate e uscite con categoria. Configura le operazioni ricorrenti una volta sola.</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-title">Analizza & Risparmia</div><div class="step-desc">Consulta i report per categoria e scopri dove puoi ottimizzare le tue spese mensili.</div></div>
-  </div>
-</section>
-
-<!-- CATEGORIES -->
-<section>
-  <div class="reveal">
-    <div class="section-label">Categorie</div>
-    <h2 class="section-title">12 categorie di spesa predefinite</h2>
-    <p class="section-sub">Ogni transazione viene classificata per generare report precisi e aiutarti a capire le tue abitudini finanziarie.</p>
-  </div>
-  <div class="cats-grid reveal">
-    <div class="cat-item"><div class="cat-item-ico">🍕</div><div class="cat-item-name">Cibo & Ristoranti</div></div>
-    <div class="cat-item"><div class="cat-item-ico">🏠</div><div class="cat-item-name">Casa & Affitto</div></div>
-    <div class="cat-item"><div class="cat-item-ico">🚗</div><div class="cat-item-name">Trasporti</div></div>
-    <div class="cat-item"><div class="cat-item-ico">💊</div><div class="cat-item-name">Salute & Farmacia</div></div>
-    <div class="cat-item"><div class="cat-item-ico">🎮</div><div class="cat-item-name">Svago & Hobby</div></div>
-    <div class="cat-item"><div class="cat-item-ico">🛍️</div><div class="cat-item-name">Shopping</div></div>
-    <div class="cat-item"><div class="cat-item-ico">💼</div><div class="cat-item-name">Lavoro & Formazione</div></div>
-    <div class="cat-item"><div class="cat-item-ico">✈️</div><div class="cat-item-name">Viaggi</div></div>
-    <div class="cat-item"><div class="cat-item-ico">🏦</div><div class="cat-item-name">Risparmi</div></div>
-    <div class="cat-item"><div class="cat-item-ico">🐾</div><div class="cat-item-name">Animali</div></div>
-    <div class="cat-item"><div class="cat-item-ico">💻</div><div class="cat-item-name">Tech & Elettronica</div></div>
-    <div class="cat-item"><div class="cat-item-ico">📦</div><div class="cat-item-name">Altro</div></div>
+    <div class="step"><div class="step-num">1</div><div class="step-title">Crea l'account</div><div class="step-desc">Registrati gratis in 30 secondi. Nessuna carta richiesta per il piano Free.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-title">Scegli la modalità</div><div class="step-desc">Personale per le finanze quotidiane, Business per la tua attività. Puoi usarle entrambe.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-title">Analizza & Risparmia</div><div class="step-desc">Report per categoria, preventivi PDF, IVA automatica e molto altro — sempre a portata di mano.</div></div>
   </div>
 </section>
 
 <!-- PLANS -->
-<section id="piani" class="plans-section" style="background:var(--bg2);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)">
+<section id="piani" class="plans-section">
   <div class="reveal">
     <div class="section-label">Prezzi</div>
     <h2 class="section-title">Un piano per ogni esigenza</h2>
-    <p class="section-sub" style="margin:0 auto">Inizia gratis e scala quando ne hai bisogno. Nessun costo nascosto.</p>
+    <p class="section-sub" style="margin:0 auto">Inizia gratis, aggiorna quando vuoi. Nessun contratto vincolante.</p>
   </div>
   <div class="plans-grid reveal">
     <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">€0</div>
+      <div class="plan-per">per sempre</div>
       <div class="plan-body">
-        <div class="plan-name">Free</div>
-        <div class="plan-price">€0</div>
-        <div class="plan-per">per sempre</div>
         <div class="plan-feat">Transazioni illimitate</div>
-        <div class="plan-feat">Report base per categoria</div>
-        <div class="plan-feat">Dashboard finanziaria</div>
-        <div class="plan-feat">Profilo personale</div>
+        <div class="plan-feat">Report & grafici base</div>
+        <div class="plan-feat">Export CSV</div>
+        <div class="plan-feat">Notifiche in-app</div>
+        <div class="plan-feat">App installabile (PWA)</div>
         <a href="app.html" class="plan-cta outline">Inizia Gratis</a>
       </div>
     </div>
     <div class="plan popular">
       <div class="plan-body">
-        <div class="plan-name">Pro</div>
+        <div class="plan-name">Personal Pro</div>
         <div class="plan-price">€3</div>
         <div class="plan-per">al mese</div>
-        <div class="plan-feat">Tutto il piano Free</div>
-        <div class="plan-feat">Bollette & Utenze</div>
-        <div class="plan-feat">Operazioni Ricorrenti</div>
-        <div class="plan-feat">Report avanzati</div>
+        <div class="plan-feat">Tutto del Free</div>
+        <div class="plan-feat">Operazioni ricorrenti + scadenza</div>
+        <div class="plan-feat">Bollette & utenze</div>
+        <div class="plan-feat">Pianificazione viaggi</div>
+        <div class="plan-feat">Gruppi con PayPal integrato</div>
         <a href="app.html" class="plan-cta">Scegli Pro</a>
       </div>
     </div>
     <div class="plan">
+      <div class="plan-name">Business Starter</div>
+      <div class="plan-price">€9</div>
+      <div class="plan-per">al mese</div>
       <div class="plan-body">
-        <div class="plan-name">Premium</div>
-        <div class="plan-price">€9</div>
-        <div class="plan-per">al mese</div>
-        <div class="plan-feat">Tutto il piano Pro</div>
-        <div class="plan-feat">Pianificazione Viaggi</div>
-        <div class="plan-feat">Gruppi & spese condivise</div>
-        <div class="plan-feat">Chat di gruppo</div>
-        <a href="app.html" class="plan-cta">Scegli Premium</a>
+        <div class="plan-feat">Tutto del Personal Pro</div>
+        <div class="plan-feat">Prima Nota aziendale</div>
+        <div class="plan-feat">Clienti & fornitori</div>
+        <div class="plan-feat">Preventivi con PDF</div>
+        <div class="plan-feat">IVA Tracker</div>
+        <a href="app.html" class="plan-cta">Scegli Business</a>
       </div>
     </div>
     <div class="plan">
+      <div class="plan-name">Business Pro</div>
+      <div class="plan-price">€19</div>
+      <div class="plan-per">al mese</div>
       <div class="plan-body">
-        <div class="plan-name">Lifetime</div>
-        <div class="plan-price">€99</div>
-        <div class="plan-per">una volta sola</div>
-        <div class="plan-feat">Tutto Premium</div>
-        <div class="plan-feat">Accesso a vita</div>
+        <div class="plan-feat">Tutto del Business Starter</div>
+        <div class="plan-feat">Progetti & scadenziario</div>
+        <div class="plan-feat">Note spese</div>
+        <div class="plan-feat">Logo & dati azienda</div>
+        <div class="plan-feat">Priorità supporto</div>
+        <a href="app.html" class="plan-cta">Scegli Business Pro</a>
+      </div>
+    </div>
+    <div class="plan" style="border-color:rgba(255,209,102,.2);background:linear-gradient(135deg,rgba(255,209,102,.05),rgba(255,159,67,.03))">
+      <div class="plan-name">Lifetime ⚡</div>
+      <div class="plan-price" style="background:linear-gradient(135deg,var(--ye),var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent">€149</div>
+      <div class="plan-per">pagamento unico</div>
+      <div class="plan-body">
+        <div class="plan-feat">Tutte le funzionalità</div>
+        <div class="plan-feat">Business Pro incluso</div>
         <div class="plan-feat">Aggiornamenti futuri</div>
         <div class="plan-feat">Priorità supporto</div>
-        <a href="app.html" class="plan-cta">Acquista Lifetime</a>
+        <a href="app.html" class="plan-cta" style="background:linear-gradient(135deg,var(--ye),var(--or))">Acquista Lifetime</a>
       </div>
     </div>
   </div>
@@ -456,18 +527,18 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
   <div class="test-grid reveal">
     <div class="tcard">
       <div class="stars">★★★★★</div>
-      <div class="ttext">Finalmente un'app di finanza personale che non è complicata. In 5 minuti avevo già inserito tutte le mie spese ricorrenti e ora so esattamente quanto spendo ogni mese.</div>
+      <div class="ttext">Finalmente un'app di finanza che non è complicata. Ho configurato tutte le spese ricorrenti con la data di fine — ora so esattamente quando smetto di pagare ogni abbonamento.</div>
       <div class="tauthor"><div class="tav">M</div><div><div class="tname">Marco T.</div><div class="trole">Libero Professionista</div></div></div>
     </div>
     <div class="tcard">
       <div class="stars">★★★★★</div>
-      <div class="ttext">La funzione dei gruppi è fantastica! Con i coinquilini dividiamo le spese della casa senza più litigi. La chat integrata è il tocco in più.</div>
+      <div class="ttext">La funzione gruppi è fantastica! Con i coinquilini dividiamo le spese della casa, ognuno segna cosa ha pagato e il sistema calcola chi deve cosa a chi. PayPal integrato è il top.</div>
       <div class="tauthor"><div class="tav">S</div><div><div class="tname">Sara L.</div><div class="trole">Studentessa universitaria</div></div></div>
     </div>
     <div class="tcard">
       <div class="stars">★★★★★</div>
-      <div class="ttext">I report per categoria mi hanno aperto gli occhi. Non sapevo di spendere così tanto in abbonamenti! Ho già risparmiato €40 al mese cancellando quelli inutilizzati.</div>
-      <div class="tauthor"><div class="tav">G</div><div><div class="tname">Giuseppe R.</div><div class="trole">Impiegato</div></div></div>
+      <div class="ttext">Uso la modalità Business per i preventivi con i clienti. Li esporto in PDF con il logo della mia azienda — professionale e veloce. L'IVA calcolata per riga è esattamente quello che cercavo.</div>
+      <div class="tauthor"><div class="tav">G</div><div><div class="tname">Giuseppe R.</div><div class="trole">Web Designer Freelance</div></div></div>
     </div>
   </div>
 </section>
@@ -481,27 +552,27 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
   <div class="faq-list reveal">
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)"><span>Devo installare qualcosa?</span><span class="faq-ico">+</span></div>
-      <div class="faq-a">No. Finanza Pro è una web app: funziona direttamente dal browser su qualsiasi dispositivo — telefono, tablet o computer. Basta aprire il link e iniziare.</div>
+      <div class="faq-a">No. Finanza Pro è una web app che funziona da browser. Puoi però aggiungerla alla schermata Home come app nativa: su iPhone tramite Safari (Condividi → Aggiungi a Home), su Android tramite Chrome (banner automatico).</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Come funzionano le operazioni ricorrenti?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Configuri la spesa o entrata ricorrente con frequenza (giornaliera, settimanale, mensile, annuale), data della prossima esecuzione e ora anche una data di fine. Vengono aggiunte automaticamente alla scadenza e ricevi una notifica. Puoi modificarle, metterle in pausa o cancellarle in qualsiasi momento.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Come funzionano i pagamenti PayPal nei gruppi?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Ogni utente imposta la propria email PayPal nella sezione Profilo. Quando sei in debito verso qualcuno nel gruppo, compare automaticamente il pulsante "Paga con PayPal" con il nome del creditore e l'importo già precompilato — clicchi e vieni mandato direttamente alla schermata di pagamento.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Posso dividere una spesa solo con alcuni membri del gruppo?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Sì. Quando aggiungi una spesa nel gruppo puoi selezionare esattamente quali membri coinvolgere. Se hai un gruppo di 10 persone ma la spesa riguarda solo 5, la dividi solo tra quei 5 e il sistema calcola i debiti di conseguenza.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Cosa include la modalità Business?</span><span class="faq-ico">+</span></div>
+      <div class="faq-a">Prima Nota aziendale, gestione clienti e fornitori, preventivi multi-riga con IVA e export PDF (con logo aziendale), tracciamento IVA trimestrale, progetti con scadenziario e note spese. Tutto separato dalle finanze personali.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)"><span>I miei dati sono al sicuro?</span><span class="faq-ico">+</span></div>
-      <div class="faq-a">I dati sono salvati su Firebase (Google) con crittografia in transito e a riposo. Le password sono criptate prima di essere salvate. Il sito usa HTTPS forzato.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)"><span>Cosa sono le operazioni ricorrenti?</span><span class="faq-ico">+</span></div>
-      <div class="faq-a">Sono transazioni automatiche che si ripetono: abbonamenti mensili (Netflix, Spotify), stipendio, rata del mutuo, bollette fisse. Le configuri una volta e vengono aggiunte automaticamente alla scadenza.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)"><span>Come funzionano i gruppi?</span><span class="faq-ico">+</span></div>
-      <div class="faq-a">Crei un gruppo, inviti i membri tramite il loro ID o email, aggiungi le spese condivise e il sistema calcola automaticamente la quota di ciascuno. C'è anche una chat di gruppo integrata.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)"><span>Posso usarlo da mobile?</span><span class="faq-ico">+</span></div>
-      <div class="faq-a">Assolutamente sì. L'interfaccia è completamente responsive: su mobile la sidebar si riduce a icone per lasciare più spazio al contenuto. Funziona perfettamente su iPhone e Android.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)"><span>Come si aggiornano i piani degli utenti?</span><span class="faq-ico">+</span></div>
-      <div class="faq-a">L'amministratore può aggiornare il piano di qualsiasi utente direttamente dal pannello Admin con un click, senza bisogno di strumenti esterni.</div>
+      <div class="faq-a">I dati sono salvati su Firebase (Google) con crittografia in transito e a riposo. Il sito usa HTTPS forzato. Le password vengono cifrate prima di essere salvate.</div>
     </div>
   </div>
 </section>
@@ -521,11 +592,12 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
   <div class="footer-grid">
     <div>
       <div class="footer-brand"><div class="footer-brand-ico">💰</div><div class="footer-brand-txt">Finanza Pro</div></div>
-      <div class="footer-desc">Il tuo assistente finanziario personale. Semplice, veloce e sicuro. Gestisci le tue finanze da qualsiasi dispositivo.</div>
+      <div class="footer-desc">Il tuo assistente finanziario personale e aziendale. Semplice, veloce e sicuro su qualsiasi dispositivo.</div>
     </div>
     <div class="footer-col">
       <h4>Prodotto</h4>
       <a href="#features">Funzionalità</a>
+      <a href="#business">Business</a>
       <a href="#piani">Prezzi</a>
       <a href="app.html">Accedi</a>
     </div>
@@ -538,9 +610,9 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
     <div class="footer-col">
       <h4>Piani</h4>
       <a href="app.html">Free</a>
-      <a href="app.html">Pro – €3/mese</a>
-      <a href="app.html">Premium – €9/mese</a>
-      <a href="app.html">Lifetime – €99</a>
+      <a href="app.html">Personal Pro – €3/m</a>
+      <a href="app.html">Business – €9/m</a>
+      <a href="app.html">Lifetime – €149</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -554,19 +626,14 @@ footer{background:var(--bg2);border-top:1px solid var(--b1);padding:50px 5vw 28p
 </footer>
 
 <script>
-// Particles
 (()=>{
   const c=document.getElementById('hpts'),cols=['#6c63ff','#00d4ff','#ff6b9d','#00e5a0','#ffd166'];
-  for(let i=0;i<20;i++){const p=document.createElement('div');p.className='hp';const s=Math.random()*5+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p);}
+  for(let i=0;i<22;i++){const p=document.createElement('div');p.className='hp';const s=Math.random()*5+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*6}s;`;c.appendChild(p);}
 })();
-// Scroll reveal
-const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.12});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-// Mobile menu
 function toggleMenu(){const m=document.getElementById('mobileMenu');m.classList.toggle('open');}
-// FAQ
 function toggleFaq(q){const item=q.parentElement;item.classList.toggle('open');}
-// Navbar shadow on scroll
 window.addEventListener('scroll',()=>{document.getElementById('navbar').style.boxShadow=window.scrollY>20?'0 4px 30px rgba(0,0,0,.4)':'none';});
 </script>
 </body>

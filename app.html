@@ -1592,7 +1592,7 @@ function showApp(){
   updateUI();buildNav();
   loadData(()=>{
     goTo(appMode==='business'?'biz_dashboard':'dashboard');
-    setTimeout(()=>{checkRecurring();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
+    setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
@@ -1754,6 +1754,9 @@ function loadData(cb){
 /* ===== CHECK RECURRING — scala dal saldo ===== */
 function checkRecurring(){
   const today=new Date().toISOString().split('T')[0];
+  const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+  const tomorrowS=tomorrow.toISOString().split('T')[0];
+
   const due=recurring.filter(r=>r.status==='active'&&r.nextDate&&r.nextDate<=today);
   due.forEach(r=>{
     const txKey='rec_'+r.id+'_'+r.nextDate.replace(/-/g,'');
@@ -1777,10 +1780,38 @@ function checkRecurring(){
     });
   });
 
-  // Scadenze imminenti ricorrenti (entro 3 gg)
+  // ── PUSH BROWSER: scadenza OGGI ──
+  recurring.filter(r=>r.status==='active'&&r.nextDate===today).forEach(r=>{
+    const pushId='push_rec_today_'+r.id+'_'+today;
+    const alreadySent=localStorage.getItem(pushId);
+    if(!alreadySent){
+      sendPushIfGranted(
+        `🔄 Scadenza oggi: ${r.name}`,
+        `${r.type==='expense'?'Uscita':'Entrata'} di €${parseFloat(r.amount).toFixed(2)} prevista per oggi`
+      );
+      localStorage.setItem(pushId,'1');
+    }
+    pushNotif({id:'rec_today_'+r.id+'_'+today,type:'rec',icon:'🔴',title:`Scade oggi: ${r.name}`,sub:`€${parseFloat(r.amount).toFixed(2)} · ${r.type==='expense'?'Uscita':'Entrata'} prevista per oggi`,time:Date.now(),read:false,action:'ricorrenti'});
+  });
+
+  // ── PUSH BROWSER: scadenza DOMANI ──
+  recurring.filter(r=>r.status==='active'&&r.nextDate===tomorrowS).forEach(r=>{
+    const pushId='push_rec_tomorrow_'+r.id+'_'+tomorrowS;
+    const alreadySent=localStorage.getItem(pushId);
+    if(!alreadySent){
+      sendPushIfGranted(
+        `⏰ Scadenza domani: ${r.name}`,
+        `${r.type==='expense'?'Uscita':'Entrata'} di €${parseFloat(r.amount).toFixed(2)} prevista per domani`
+      );
+      localStorage.setItem(pushId,'1');
+    }
+    pushNotif({id:'rec_tomorrow_'+r.id+'_'+tomorrowS,type:'rec',icon:'⏰',title:`Scade domani: ${r.name}`,sub:`€${parseFloat(r.amount).toFixed(2)} · ${r.type==='expense'?'Uscita':'Entrata'} prevista per domani`,time:Date.now()-500,read:false,action:'ricorrenti'});
+  });
+
+  // Scadenze imminenti ricorrenti (entro 3 gg) — notifica in-app
   const in3=new Date();in3.setDate(in3.getDate()+3);
   const in3s=in3.toISOString().split('T')[0];
-  recurring.filter(r=>r.status==='active'&&r.nextDate>today&&r.nextDate<=in3s).forEach(r=>{
+  recurring.filter(r=>r.status==='active'&&r.nextDate>tomorrowS&&r.nextDate<=in3s).forEach(r=>{
     pushNotif({id:'rec_soon_'+r.id+'_'+r.nextDate,type:'rec',icon:'⏰',title:`Scadenza imminente: ${r.name}`,sub:`Scade il ${formatDateIt(r.nextDate)} · €${parseFloat(r.amount).toFixed(2)}`,time:Date.now()-1000,read:false,action:'ricorrenti'});
   });
 
@@ -1793,6 +1824,42 @@ function checkRecurring(){
   });
 
   updateBellBadge();
+}
+
+/* ===== CHECK DEBITI GRUPPO (>7 giorni non saldati) ===== */
+function checkGroupDebts(){
+  if(!groups.length)return;
+  const today=new Date();
+  groups.forEach(g=>{
+    const expenses=Object.entries(g.expenses||{}).map(([id,e])=>({...e,id}));
+    expenses.forEach(exp=>{
+      if(!exp.splits||!exp.createdAt)return;
+      const expDate=new Date(exp.createdAt);
+      const daysPassed=Math.round((today-expDate)/(1000*60*60*24));
+      if(daysPassed<7)return; // Non ancora 7 giorni
+      // Controllo se io sono debitore in questa spesa
+      const myShare=exp.splits[user.id];
+      if(!myShare||myShare.paid)return; // Non sono debitore o ho già pagato
+      const amount=parseFloat(myShare.amount||0);
+      if(amount<=0)return;
+      const pushId=`push_debt_${g.id}_${exp.id}_d${Math.floor(daysPassed/7)}`; // Una notifica ogni 7 gg
+      const alreadySent=localStorage.getItem(pushId);
+      if(!alreadySent){
+        sendPushIfGranted(
+          `💸 Debito non saldato: ${g.name}`,
+          `Devi ancora €${amount.toFixed(2)} per "${exp.desc||'spesa'}" — da ${daysPassed} giorni`
+        );
+        localStorage.setItem(pushId,'1');
+      }
+      pushNotif({
+        id:`debt_reminder_${g.id}_${exp.id}_d${Math.floor(daysPassed/7)}`,
+        type:'group',icon:'💸',
+        title:`Debito in sospeso: ${g.name}`,
+        sub:`€${amount.toFixed(2)} per "${exp.desc||'spesa di gruppo'}" — ${daysPassed} giorni fa`,
+        time:Date.now()-3000,read:false,action:'gruppi'
+      });
+    });
+  });
 }
 
 /* ===== NOTIFICHE STORAGE ===== */

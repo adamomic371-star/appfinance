@@ -1056,15 +1056,19 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 </div>
 <div id="recModal" class="mo">
   <div class="ms">
-    <div class="mh"><div class="mtt">🔄 Nuova Operazione Ricorrente</div><button class="mc" onclick="closeMo('recModal')">✕</button></div>
+    <input type="hidden" id="recEditId">
+    <div class="mh"><div class="mtt" id="recModalTitle">🔄 Nuova Operazione Ricorrente</div><button class="mc" onclick="closeMo('recModal')">✕</button></div>
     <div class="fg"><label class="fl">Nome</label><input type="text" id="recName" class="fc" placeholder="es. Netflix, Stipendio..."></div>
     <div class="fg"><label class="fl">Importo (€)</label><input type="number" id="recAmt" class="fc" placeholder="0.00" step="0.01" min="0"></div>
     <div class="fg"><label class="fl">Tipo</label><select id="recType" class="fc"><option value="expense">📉 Uscita</option><option value="income">📈 Entrata</option></select></div>
     <div class="fg"><label class="fl">Categoria</label><select id="recCat" class="fc"></select></div>
     <div class="fg"><label class="fl">Frequenza</label><select id="recFreq" class="fc"><option value="daily">Giornaliera</option><option value="weekly">Settimanale</option><option value="monthly" selected>Mensile</option><option value="yearly">Annuale</option></select></div>
-    <div class="fg"><label class="fl">Prossima Scadenza</label><input type="date" id="recNext" class="fc"></div>
     <div class="fg"><label class="fl">Tipo Operazione</label><select id="recKind" class="fc"><option value="subscription">📱 Abbonamento</option><option value="salary">💼 Stipendio</option><option value="bill">📄 Bolletta</option><option value="loan">🏦 Rata Mutuo/Prestito</option><option value="other">🔄 Spesa Varia</option></select></div>
-    <div class="ma"><button class="bms" onclick="saveRec()">Salva</button><button class="bmc" onclick="closeMo('recModal')">Annulla</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label class="fl">Prossima Scadenza</label><input type="date" id="recNext" class="fc"></div>
+      <div class="fg"><label class="fl">Data Fine (opzionale)</label><input type="date" id="recExpiry" class="fc" placeholder="Nessuna scadenza"></div>
+    </div>
+    <div class="ma"><button class="bms" onclick="saveRec()" id="recSaveBtn">Salva</button><button class="bmc" onclick="closeMo('recModal')">Annulla</button></div>
   </div>
 </div>
 <div id="groupModal" class="mo">
@@ -2900,6 +2904,7 @@ function renderRecurring(con){
   const active=recurring.filter(r=>r.status==='active');
   const paused=recurring.filter(r=>r.status==='paused');
   const totalMonthly=active.filter(r=>r.freq==='monthly'&&r.type==='expense').reduce((s,r)=>s+r.amount,0);
+  const today=new Date().toISOString().split('T')[0];
   con.innerHTML=`
   <div class="stat-grid">
     <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Attive</div><div class="sc-val">${active.length}</div></div>
@@ -2907,21 +2912,33 @@ function renderRecurring(con){
     <div class="sc"><div class="sc-ico">⏸️</div><div class="sc-lbl">In pausa</div><div class="sc-val" style="color:var(--ye)">${paused.length}</div></div>
   </div>
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Operazioni Ricorrenti</div><button class="btn-a" onclick="openMo('recModal');document.getElementById('recNext').value=new Date().toISOString().split('T')[0]">＋ Aggiungi</button></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Operazioni Ricorrenti</div>
+      <button class="btn-a" onclick="openRecModal()">＋ Aggiungi</button>
+    </div>
     ${recurring.length===0?es('🔄','Nessuna operazione ricorrente.<br>Aggiungi abbonamenti, stipendio, rate...'):
-    recurring.map(r=>`
-    <div class="ir">
-      <div class="ia">${REC_KINDS[r.kind]?.icon||'🔄'}</div>
-      <div class="ii">
-        <div class="in">${r.name} <span class="badge ${r.status==='active'?'bg':'by'}">${r.status==='active'?'Attiva':'Pausa'}</span></div>
-        <div class="id2">${FREQS[r.freq]||r.freq} · <span class="rec-next">📅 ${r.nextDate||'N/D'}</span> · ${catName(r.cat)}</div>
-      </div>
-      <div class="iam ${r.type==='income'?'ain':'aout'}">${r.type==='income'?'+':'-'}${fmtE(r.amount)}</div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <button class="btn-sm ${r.status==='active'?'by':'bs-s'}" onclick="toggleRec('${r.id}','${r.status}')">${r.status==='active'?'⏸':'▶'}</button>
-        <button class="btn-sm bs-d" onclick="delRec('${r.id}')">🗑️</button>
-      </div>
-    </div>`).join('')}
+    recurring.map(r=>{
+      const isExpired=r.expiry&&r.expiry<today;
+      const expiresSOon=r.expiry&&!isExpired&&Math.round((new Date(r.expiry)-new Date(today))/(86400000))<=7;
+      return `
+      <div class="ir" style="${isExpired?'opacity:.55':''}">
+        <div class="ia">${REC_KINDS[r.kind]?.icon||'🔄'}</div>
+        <div class="ii">
+          <div class="in">${r.name}
+            <span class="badge ${r.status==='active'?'bg':'by'}">${r.status==='active'?'Attiva':'Pausa'}</span>
+            ${isExpired?`<span class="badge" style="background:rgba(255,79,109,.15);color:var(--re)">Scaduta</span>`:''}
+            ${expiresSOon?`<span class="badge" style="background:rgba(255,209,102,.15);color:var(--ye)">⚠️ Scade presto</span>`:''}
+          </div>
+          <div class="id2">${FREQS[r.freq]||r.freq} · <span class="rec-next">📅 ${r.nextDate||'N/D'}</span> · ${catName(r.cat)}</div>
+          ${r.expiry?`<div style="font-size:10px;color:${isExpired?'var(--re)':expiresSOon?'var(--ye)':'var(--tx3)'};margin-top:2px">🏁 Fine: ${new Date(r.expiry+'T00:00:00').toLocaleDateString('it-IT')}</div>`:''}
+        </div>
+        <div class="iam ${r.type==='income'?'ain':'aout'}">${r.type==='income'?'+':'-'}${fmtE(r.amount)}</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <button class="btn-sm ${r.status==='active'?'by':'bs-s'}" onclick="toggleRec('${r.id}','${r.status}')" title="${r.status==='active'?'Metti in pausa':'Riattiva'}">${r.status==='active'?'⏸':'▶'}</button>
+          <button class="btn-sm" style="background:rgba(108,99,255,.12);color:var(--ac);border:1px solid rgba(108,99,255,.2)" onclick="editRec('${r.id}')" title="Modifica">✏️</button>
+          <button class="btn-sm bs-d" onclick="delRec('${r.id}')" title="Elimina">🗑️</button>
+        </div>
+      </div>`;
+    }).join('')}
   </div>`;
 }
 
@@ -3080,18 +3097,17 @@ function renderGroupDetail(con){
   setTimeout(()=>{const cm=document.getElementById('chatMsgs');if(cm)cm.scrollTop=cm.scrollHeight;},50);
 }
 
-function buildPaypalUrl(amount,emailOrMe,note){
-  const desc=encodeURIComponent(note||'Pagamento gruppo');
-  const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
-  const isEmail=emailOrMe&&emailOrMe.includes('@');
-  if(isMobile&&isEmail){
-    // Try to open PayPal app, fallback to web
-    return `https://www.paypal.com/send?recipient=${encodeURIComponent(emailOrMe)}&amount=${amount.toFixed(2)}&currencyCode=EUR&note=${desc}`;
-  }
-  if(isEmail){
-    return `https://www.paypal.com/send?recipient=${encodeURIComponent(emailOrMe)}&amount=${amount.toFixed(2)}&currencyCode=EUR&note=${desc}`;
-  }
-  return `https://www.paypal.com/paypalme/${encodeURIComponent(emailOrMe)}/${amount.toFixed(2)}EUR`;
+function buildPaypalUrl(amount,email,note){
+  // PayPal's working send-money URL (works on both mobile and desktop)
+  // paypal.com/send is the correct endpoint that pre-fills recipient + amount
+  if(!email||!email.includes('@')) return 'https://www.paypal.com';
+  const params=new URLSearchParams({
+    recipient: email,
+    amount: amount.toFixed(2),
+    currencyCode: 'EUR',
+    note: note||'Pagamento Finanza Pro'
+  });
+  return `https://www.paypal.com/send?${params.toString()}`;
 }
 
 function markPaidBySelf(uid,name,toUid,toName,amount){
@@ -3250,10 +3266,69 @@ function saveTrip(){
   if(!n||!d||!b){notify('❌ Compila tutto');return;}
   db.ref(`trips/${Date.now()}`).set({name:n,dest:d,budget:b,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('tripModal');loadData(()=>goTo('viaggi'));notify('✅ Aggiunto!');});
 }
+function openRecModal(){
+  document.getElementById('recEditId').value='';
+  document.getElementById('recModalTitle').textContent='🔄 Nuova Operazione Ricorrente';
+  document.getElementById('recSaveBtn').textContent='Salva';
+  document.getElementById('recName').value='';
+  document.getElementById('recAmt').value='';
+  document.getElementById('recType').value='expense';
+  document.getElementById('recFreq').value='monthly';
+  document.getElementById('recKind').value='subscription';
+  document.getElementById('recNext').value=new Date().toISOString().split('T')[0];
+  document.getElementById('recExpiry').value='';
+  // reset cat
+  const cats=['casa','cibo','trasporti','salute','intrattenimento','abbonamenti','shopping','istruzione','risparmio','stipendio','altro'];
+  document.getElementById('recCat').innerHTML=cats.map(c=>`<option value="${c}">${catName(c)}</option>`).join('');
+  openMo('recModal');
+}
+
+function editRec(id){
+  const r=recurring.find(x=>x.id===id);
+  if(!r)return;
+  document.getElementById('recEditId').value=id;
+  document.getElementById('recModalTitle').textContent='✏️ Modifica Ricorrente';
+  document.getElementById('recSaveBtn').textContent='Aggiorna';
+  document.getElementById('recName').value=r.name||'';
+  document.getElementById('recAmt').value=r.amount||'';
+  document.getElementById('recType').value=r.type||'expense';
+  document.getElementById('recFreq').value=r.freq||'monthly';
+  document.getElementById('recKind').value=r.kind||'other';
+  document.getElementById('recNext').value=r.nextDate||'';
+  document.getElementById('recExpiry').value=r.expiry||'';
+  const cats=['casa','cibo','trasporti','salute','intrattenimento','abbonamenti','shopping','istruzione','risparmio','stipendio','altro'];
+  document.getElementById('recCat').innerHTML=cats.map(c=>`<option value="${c}" ${c===r.cat?'selected':''}>${catName(c)}</option>`).join('');
+  openMo('recModal');
+}
+
 function saveRec(){
-  const n=document.getElementById('recName').value.trim(),a=parseFloat(document.getElementById('recAmt').value),t=document.getElementById('recType').value,c=document.getElementById('recCat').value,f=document.getElementById('recFreq').value,nd=document.getElementById('recNext').value,k=document.getElementById('recKind').value;
-  if(!n||!a||!nd){notify('❌ Compila tutti i campi');return;}
-  db.ref(`recurring/${Date.now()}`).set({name:n,amount:a,type:t,cat:c,freq:f,nextDate:nd,kind:k,status:'active',userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiunta!');});
+  const editId=document.getElementById('recEditId').value;
+  const n=document.getElementById('recName').value.trim();
+  const a=parseFloat(document.getElementById('recAmt').value);
+  const t=document.getElementById('recType').value;
+  const c=document.getElementById('recCat').value;
+  const f=document.getElementById('recFreq').value;
+  const nd=document.getElementById('recNext').value;
+  const k=document.getElementById('recKind').value;
+  const expiry=document.getElementById('recExpiry').value||null;
+  if(!n||!a||!nd){notify('❌ Compila nome, importo e prossima scadenza');return;}
+  const data={name:n,amount:a,type:t,cat:c,freq:f,nextDate:nd,kind:k,expiry,status:'active',userId:user.id};
+  if(editId){
+    db.ref(`recurring/${editId}`).update(data).then(()=>{
+      closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiornata!');
+    });
+  } else {
+    db.ref(`recurring/${Date.now()}`).set({...data,createdAt:new Date().toISOString()}).then(()=>{
+      closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiunta!');
+    });
+  }
+}
+
+function delRec(id){
+  if(!confirm('Eliminare questa operazione ricorrente?'))return;
+  db.ref(`recurring/${id}`).remove().then(()=>{
+    loadData(()=>goTo('ricorrenti'));notify('🗑️ Ricorrente eliminata');
+  });
 }
 function saveGroup(){
   const n=document.getElementById('gName').value.trim(),d=document.getElementById('gDesc').value.trim(),i=document.getElementById('gIcon').value;

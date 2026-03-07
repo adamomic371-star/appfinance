@@ -131,9 +131,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 
 /* ======= TOPBAR ======= */
 .topbar{background:rgba(13,18,37,.92);border-bottom:1px solid var(--b1);padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);flex-shrink:0;gap:10px;position:relative}
-.tb-left{min-width:0;flex:1}
-.tb-left h1{font-size:19px;font-weight:800;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tb-left p{font-size:11px;color:var(--tx2);margin-top:1px}
+/* Desktop: titolo a sinistra */
+.tb-center{display:none}
+.tb-left-desk{min-width:0;flex:1}
+.tb-left-desk h1{font-size:19px;font-weight:800;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-left-desk p{font-size:11px;color:var(--tx2);margin-top:1px}
+/* compat: tb-left hidden on desktop since we use tb-left-desk */
+.tb-left{display:none}
 .tb-right{display:flex;gap:7px;align-items:center;flex-shrink:0}
 .tb-date{font-size:10px;color:var(--tx3);font-family:'JetBrains Mono',monospace;background:var(--s1);padding:5px 9px;border-radius:7px;border:1px solid var(--b1)}
 .asw{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;border:none;transition:all .2s}
@@ -141,8 +145,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .asw.um{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:0 4px 12px rgba(108,99,255,.3)}
 .imp-bar{background:linear-gradient(135deg,rgba(255,165,0,.15),rgba(255,100,0,.1));border-bottom:1px solid rgba(255,165,0,.3);padding:5px 20px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ye);font-weight:600;flex-shrink:0}
 .imp-bar button{background:rgba(255,165,0,.2);border:1px solid rgba(255,165,0,.3);color:var(--ye);padding:3px 9px;border-radius:6px;cursor:pointer;font-size:10px;font-weight:700;font-family:'Outfit',sans-serif}
-/* Mobile topbar logo pill */
-.tb-logo{display:none}
 
 /* ======= CONTENT ======= */
 .content{flex:1;overflow-y:auto;padding:20px}
@@ -402,50 +404,59 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   /* Hamburger visibile */
   .ham-btn{display:flex!important}
 
-  /* ── TOPBAR MOBILE ── */
+  /* ── TOPBAR MOBILE: UNICA BARRA PULITA ── */
   .topbar{
-    padding:0 12px;
-    height:56px;
-    background:rgba(10,14,30,.97);
+    padding:0 14px;
+    height:54px;
+    background:rgba(9,13,28,.97);
     border-bottom:1px solid rgba(255,255,255,.07);
-    box-shadow:0 1px 0 rgba(255,255,255,.04),0 4px 24px rgba(0,0,0,.5);
+    box-shadow:0 2px 16px rgba(0,0,0,.45);
   }
 
-  /* Ham: icona semplice */
-  .ham-btn{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)!important;flex-shrink:0}
-  .ham-btn span{width:14px!important;height:1.5px!important;background:rgba(255,255,255,.75)!important}
-
-  /* Centro: logo compatto + nome sezione sotto */
-  .tb-left{display:flex;flex-direction:column;align-items:center;position:absolute;left:50%;transform:translateX(-50%);gap:1px}
-  .tb-left h1{font-size:13px;font-weight:800;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;color:var(--tx)}
-  .tb-left p{font-size:9px;color:var(--tx3);white-space:nowrap;display:block!important;margin:0;line-height:1}
-
-  /* Logo pill nascosto — usiamo tb-left */
-  .tb-logo{display:none!important}
-
-  /* Destra: campana + tema */
-  .tb-right{gap:5px}
-  .tb-date{display:none}
-  #modeSw{display:none!important}
-  .theme-btn{width:36px;height:36px;font-size:16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
-  .notif-bell{width:36px;height:36px;font-size:16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
-
-  /* Sottobarra sezione: icona grande + titolo + sub */
-  .page-strip{
-    display:flex;align-items:center;gap:10px;
-    padding:10px 14px 10px;
-    background:rgba(255,255,255,.015);
-    border-bottom:1px solid rgba(255,255,255,.05);
+  /* Hamburger: tre lineette sottili */
+  .ham-btn{
+    width:36px;height:36px;border-radius:10px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.09)!important;
     flex-shrink:0;
   }
-  .page-strip-ico{
-    width:32px;height:32px;border-radius:9px;flex-shrink:0;
-    background:linear-gradient(135deg,var(--ac),var(--ac2));
-    display:flex;align-items:center;justify-content:center;font-size:15px;
-    box-shadow:0 2px 10px rgba(108,99,255,.3);
+  .ham-btn span{width:15px!important;height:1.5px!important;background:rgba(255,255,255,.8)!important}
+
+  /* Desktop title: nascosto su mobile */
+  .tb-left-desk{display:none!important}
+
+  /* Centro: "Finanza Pro" + nome sezione — posizionato in mezzo */
+  .tb-center{
+    display:flex!important;flex-direction:column;align-items:center;gap:1px;
+    position:absolute;left:50%;transform:translateX(-50%);
+    pointer-events:none;
   }
-  .page-strip-title{font-size:14px;font-weight:800;letter-spacing:-.3px;flex:1;line-height:1.2}
-  .page-strip-sub{font-size:10px;color:var(--tx3);white-space:nowrap}
+  .tb-app-name{
+    font-size:13px;font-weight:900;letter-spacing:-.3px;
+    background:linear-gradient(135deg,#fff,rgba(255,255,255,.75));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1.2;
+  }
+  .tb-page-name{
+    font-size:9px;font-weight:600;color:rgba(255,255,255,.35);
+    text-transform:uppercase;letter-spacing:.6px;line-height:1;
+  }
+
+  /* Destra: solo tema + campana */
+  .tb-right{gap:5px}
+  .tb-date{display:none!important}
+  #modeSw{display:none!important}
+  .theme-btn{
+    width:34px;height:34px;font-size:15px;border-radius:9px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+  }
+  .notif-bell{
+    width:34px;height:34px;font-size:15px;border-radius:9px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+  }
+
+  /* Nessuna page-strip — tutto nella topbar */
+  .page-strip{display:none!important}
 
   /* Content — più respiro */
   .content{padding:14px 13px 84px}
@@ -859,21 +870,21 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   </div>
   <div class="main">
     <div class="topbar">
-      <div style="display:flex;align-items:center;gap:10px;min-width:0">
-        <button class="ham-btn" id="hamBtn" onclick="toggleDrawer()">
-          <span></span><span></span><span></span>
-        </button>
-        <div class="tb-left"><h1 id="pgTitle">Dashboard</h1><p id="pgSub">Panoramica</p></div>
+      <button class="ham-btn" id="hamBtn" onclick="toggleDrawer()">
+        <span></span><span></span><span></span>
+      </button>
+      <!-- Centro: titolo pagina (desktop) / nome app + sezione (mobile) -->
+      <div class="tb-center">
+        <div class="tb-app-name">Finanza Pro</div>
+        <div class="tb-page-name" id="pgTitle">Dashboard</div>
       </div>
-      <!-- Logo pill centrato (solo mobile) -->
-      <div class="tb-logo" id="tbLogo">
-        <div class="tb-logo-ico">💰</div>
-        <div class="tb-logo-txt">Finanza Pro</div>
-        <div class="tb-logo-mode personal" id="tbLogoMode">👤</div>
+      <!-- Desktop: titolo esteso -->
+      <div class="tb-left-desk">
+        <h1 id="pgTitleDesk">Dashboard</h1>
+        <p id="pgSub">Panoramica</p>
       </div>
       <div class="tb-right" id="tbRight">
         <div class="tb-date" id="tbDate"></div>
-        <!-- MODE SWITCHER -->
         <div class="mode-sw" id="modeSw">
           <button class="mode-btn active" id="modePersonal" onclick="setMode('personal')">👤 Personale</button>
           <button class="mode-btn biz" id="modeBiz" onclick="setMode('business')">🏢 Azienda</button>
@@ -883,12 +894,6 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
           🔔<span class="notif-badge hidden" id="notifBadge">0</span>
         </button>
       </div>
-    </div>
-    <!-- Page strip (solo mobile) -->
-    <div class="page-strip" id="pageStrip" style="display:none">
-      <div class="page-strip-ico" id="pageStripIco">📊</div>
-      <div class="page-strip-title" id="pageStripTitle">Dashboard</div>
-      <div class="page-strip-sub" id="pageStripSub"></div>
     </div>
     <div class="imp-bar hidden" id="impBar"><span>👁️ Account di: <strong id="impName">–</strong></span><button onclick="stopImp()">← Torna Admin</button></div>
     <div class="content" id="content"></div>
@@ -1718,19 +1723,20 @@ function loadData(cb){
   db.ref('groups').once('value',s=>{
     const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
     groups=all.filter(g=>g.creatorId===uid||(g.members&&g.members[uid]));
-    // Load paypal emails for all group members
-    const memberUids=new Set();
-    groups.forEach(g=>{
-      memberUids.add(g.creatorId);
-      Object.keys(g.members||{}).forEach(mid=>memberUids.add(mid));
-    });
+    // Load paypal emails for all group members — wait for ALL before chk()
+    const memberUids=[...new Set([
+      ...groups.map(g=>g.creatorId),
+      ...groups.flatMap(g=>Object.keys(g.members||{}))
+    ])];
+    if(!memberUids.length){chk();return;}
+    let ppDone=0;
     memberUids.forEach(mid=>{
       db.ref(`users/${mid}/paypalEmail`).once('value',ps=>{
         const email=ps.val();
         if(email) localStorage.setItem('fp_paypal_'+mid, email);
+        if(++ppDone>=memberUids.length) chk();
       });
     });
-    chk();
   });
   db.ref('recurring').once('value',s=>{recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===uid);chk();});
   if(realUser?.role==='admin')db.ref('users').once('value',s=>{allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));});
@@ -1979,35 +1985,14 @@ function renderPage(p){
   const SUBS={dashboard:'Panoramica finanziaria',transazioni:`${transactions.length} movimenti`,report:'Analisi per categoria',ricorrenti:`${recurring.length} operazioni`,bollette:`${bills.length} bollette · ${utilities.length} contratti`,viaggi:`${trips.length} viaggi`,obiettivi:`${loadGoals().filter(g=>g.status!=='completed').length} attivi`,gruppi:`${groups.length} gruppi`,notifiche:'Scadenze, messaggi e avvisi',piani:'Scegli il piano',admin:'Gestione utenti',profilo:'Il tuo account',biz_dashboard:'Panoramica aziendale',biz_primanota:`${bizTx.length} movimenti`,biz_clienti:`${clients.length} contatti`,biz_preventivi:`${quotes.length} preventivi`,biz_progetti:`${projects.length} progetti`,biz_spese:`${expenseNotes.length} note`,biz_scadenzario:'Tutte le scadenze',biz_iva:'Calcolo IVA trimestrale'};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
-  // Mobile page-strip
-  const isMobile=window.innerWidth<=600;
-  const strip=document.getElementById('pageStrip');
-  if(strip){strip.style.display=isMobile?'flex':'none';}
-  if(isMobile){
-    const NAV_ICONS={dashboard:'📊',transazioni:'💸',report:'📈',ricorrenti:'🔄',bollette:'📄',viaggi:'✈️',obiettivi:'🎯',gruppi:'👥',notifiche:'🔔',piani:'🎁',admin:'⚙️',profilo:'👤',biz_dashboard:'📊',biz_primanota:'💼',biz_clienti:'👥',biz_preventivi:'📋',biz_progetti:'📁',biz_spese:'🧾',biz_scadenzario:'📅',biz_iva:'🧮'};
-    const ico=document.getElementById('pageStripIco');
-    const ttl=document.getElementById('pageStripTitle');
-    const sub=document.getElementById('pageStripSub');
-    const isBiz=appMode==='business';
-    if(ico){
-      ico.textContent=NAV_ICONS[p]||'📄';
-      ico.style.background=isBiz?'linear-gradient(135deg,#f7971e,#ffd200)':'linear-gradient(135deg,var(--ac),var(--ac2))';
-      ico.style.boxShadow=isBiz?'0 2px 10px rgba(247,151,30,.35)':'0 2px 10px rgba(108,99,255,.3)';
-    }
-    if(ttl)ttl.textContent=TITLES[p]||p;
-    if(sub)sub.textContent=SUBS[p]||'';
-    // Update topbar center (tb-left) con nome app e sezione
-    const pgT=document.getElementById('pgTitle');
-    const pgS=document.getElementById('pgSub');
-    if(pgT)pgT.textContent='Finanza Pro';
-    if(pgS)pgS.textContent=TITLES[p]||p;
-    // Update logo mode badge
-    const badge=document.getElementById('tbLogoMode');
-    if(badge){
-      badge.textContent=appMode==='business'?'🏢':'👤';
-      badge.className='tb-logo-mode '+(appMode==='business'?'biz':'personal');
-    }
-  }
+  // Desktop title
+  const pgTD=document.getElementById('pgTitleDesk');
+  if(pgTD)pgTD.textContent=TITLES[p]||p;
+  // Mobile tb-center: app name stays, page name updates
+  const pgTN=document.getElementById('pgTitle');
+  if(pgTN)pgTN.textContent=TITLES[p]||p;
+  // Mobile page-strip: disabled
+
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
 
   if(p==='dashboard'){
@@ -3655,14 +3640,16 @@ function renderGroupDetail(con){
 }
 
 function buildPaypalUrl(amount,email,note){
-  if(!email||!email.includes('@')) return 'https://www.paypal.com';
+  if(!email||!email.includes('@')) return 'https://www.paypal.com/myaccount/transfer/send';
+  // paypal.me non richiede login aggiuntivo se l'email è registrata
+  // usiamo il link diretto di invio denaro
   const params=new URLSearchParams({
     recipient: email,
     amount: amount.toFixed(2),
     currencyCode: 'EUR',
     note: note||'Pagamento Finanza Pro'
   });
-  return `https://www.paypal.com/send?${params.toString()}`;
+  return `https://www.paypal.com/pay?${params.toString()}`;
 }
 
 function openSaldaDebito(){

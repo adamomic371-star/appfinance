@@ -1552,6 +1552,9 @@ window.addEventListener('load',()=>{
 function exitSplash(){
   const s=document.getElementById('splash');
   s.classList.add('out');
+  // Inject logo anche su login screen e splash prima di nasconderlo
+  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
+  var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
   setTimeout(()=>{s.classList.add('hidden');if(user)showApp();else document.getElementById('loginScreen').classList.remove('hidden');},580);
 }
 
@@ -1633,7 +1636,7 @@ function setLang(l){
   _updateLangBtns();
   // update drawer labels
   var dp=document.getElementById('drawerModePersonal');
-  var db=document.getElementById('drawerModeBiz');
+  var _dbBtn=document.getElementById('drawerModeBiz');
   if(dp)dp.textContent='\uD83D\uDC64 '+t('personal');
   if(db)db.textContent='\uD83C\uDFE2 '+t('business');
   var outBtns=document.querySelectorAll('.drawer-out,.out-btn span');
@@ -1697,20 +1700,16 @@ function showApp(){
   appMode=savedMode;
   applyMode();
   updateUI();buildNav();
-  loadData(()=>{
-    goTo(appMode==='business'?'biz_dashboard':'dashboard');
-    
-  // Render Kazka logos everywhere
+  // Render Kazka logos
   var _lm=document.getElementById('drawerLogoMark');if(_lm)_lm.innerHTML=kazkaLogoSVG(30,true);
   var _sm=document.getElementById('sideLogoMark');if(_sm)_sm.innerHTML=kazkaLogoSVG(30,true);
   var _tm=document.getElementById('topbarLogoMark');if(_tm)_tm.innerHTML=kazkaLogoSVG(22,false);
-  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
-  var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
-  // init lang buttons
   _updateLangBtns();
   var ll=document.getElementById('langLabel');if(ll)ll.textContent=t('language');
-  setTimeout(()=>{checkRecurring();checkGroupDebts();checkGoalPayDayNotifs();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
+  loadData(()=>{
+    goTo(appMode==='business'?'biz_dashboard':'dashboard');
     startGroupListener();
+    setTimeout(()=>{checkRecurring();checkGroupDebts();checkGoalPayDayNotifs();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
     setTimeout(showOnboarding,800);
   });
   notify('👋 Bentornato, '+user.name.split(' ')[0]+'!');

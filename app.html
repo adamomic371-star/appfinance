@@ -4133,6 +4133,10 @@ function saveTx(){
     loadData(()=>{goTo('transazioni');notify('✅ Aggiunto!');if(type==='income'&&amt>=1000)setTimeout(()=>checkInvestModal(amt),700);});
   });
 }
+function delBill(id){
+  if(!confirm('Eliminare questa bolletta?'))return;
+  db.ref('bills/'+id).remove().then(()=>{loadData(()=>goTo('bollette'));notify('🗑️ Bolletta eliminata');});
+}
 function saveBill(){
   const n=document.getElementById('bName').value.trim(),a=parseFloat(document.getElementById('bAmt').value),d=document.getElementById('bDate').value;
   if(!n||!a||!d){notify('❌ Compila tutto');return;}
@@ -4642,7 +4646,7 @@ function renderGoals(con){
           </div>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);flex-wrap:wrap;gap:4px">
             <span>${pct}% — manca ${fmtE(rem)}</span>
-            ${monthlyNeeded?`<span>📅 ~${fmtE(monthlyNeeded)}/mese${monthsLeft?\` (${monthsLeft} mesi)\`:''}${g.payDay?\` · notifica il ${g.payDay}°\`:''}</span>`:g.deadline?`<span>📅 Scad: ${formatDateIt(g.deadline)}</span>`:''}
+            ${monthlyNeeded?('<span>📅 ~'+fmtE(monthlyNeeded)+'/mese'+(monthsLeft?' ('+monthsLeft+' mesi)':'')+(g.payDay?' · notifica il '+g.payDay+'°':'')+'</span>'):g.deadline?('<span>📅 Scad: '+formatDateIt(g.deadline)+'</span>'):''}
           </div>
         </div>
       </div>

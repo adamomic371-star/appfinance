@@ -1782,7 +1782,7 @@ function kazkaLogoSVG(size,glow){
 window.addEventListener('load',()=>{
   try{fillCatSelects();}catch(e){console.warn('fillCatSelects error',e);}
   // Inietta logo Kazka subito nello splash
-  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
+  try{var _spm=document.getElementById('splLogoMark');if(_spm&&typeof kazkaLogoSVG==='function')_spm.innerHTML=kazkaLogoSVG(72,true);}catch(e){console.warn('Logo splash error',e);}
   // Controlla se Firebase è caricato
   if(typeof firebase === 'undefined'){
     document.querySelector('.spl-txt').textContent = '❌ Errore: controlla la connessione internet';
@@ -1802,28 +1802,36 @@ window.addEventListener('load',()=>{
     if(sv){ try{ user=JSON.parse(sv); realUser=user; } catch(e){ localStorage.removeItem('fp_user'); } }
     // Aspetta conferma connessione Firebase prima di uscire dallo splash
     // Timeout di sicurezza 8 secondi (per reti lente/iOS Safari)
-    const _splashTimeout=setTimeout(exitSplash, 3000);
-    db.ref('.info/connected').once('value').then(()=>{
-      clearTimeout(_splashTimeout);
-      setTimeout(exitSplash, 600); // piccolo delay per animazione barra
-    }).catch(()=>{
-      clearTimeout(_splashTimeout);
-      exitSplash();
-    });
+    // Esce dallo splash SUBITO (massimo 2 secondi)
+    // Non aspetta Firebase - funziona offline anche
+    setTimeout(exitSplash, 2000);
   }catch(e){
     console.error('Firebase error:',e);
     document.querySelector('.spl-txt').textContent = '❌ Errore connessione Firebase';
     document.querySelector('.spl-txt').style.color = '#ff4f6d';
-    setTimeout(exitSplash, 4000);
+    setTimeout(exitSplash, 1500);
   }
 });
 
 function exitSplash(){
   const s=document.getElementById('splash');
+  if(!s)return; // Se splash non esiste, skip
   // Inietta logo login screen prima di mostrarlo
-  var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
+  try{
+    var _llm=document.getElementById('loginLogoMark');
+    if(_llm&&typeof kazkaLogoSVG==='function')_llm.innerHTML=kazkaLogoSVG(60,true);
+  }catch(e){console.warn('Logo error:',e)}
+  
   s.classList.add('out');
-  setTimeout(()=>{s.classList.add('hidden');if(user)showApp();else document.getElementById('loginScreen').classList.remove('hidden');},580);
+  setTimeout(()=>{
+    if(s)s.classList.add('hidden');
+    if(user){
+      try{showApp();}catch(e){console.error('showApp error:',e);}
+    }else{
+      const ls=document.getElementById('loginScreen');
+      if(ls)ls.classList.remove('hidden');
+    }
+  },580);
 }
 
 /* ===== LOGIN ===== */

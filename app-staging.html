@@ -287,8 +287,13 @@ let currentPage = "dashboard";
 let tx = [];
 let recurring = [];
 let goals = [];
+let groups = [];
+let quotes = [];
+let profile = {};
+let notifications = [];
 let isSyncing = false;
 let syncTimer = null;
+let notifSettings = {};
 
 // ===== FIREBASE CONFIG =====
 const FB = {
@@ -344,27 +349,37 @@ function loadLocal() {
   tx = JSON.parse(localStorage.getItem("stg_tx") || "[]");
   recurring = JSON.parse(localStorage.getItem("stg_recurring") || "[]");
   goals = JSON.parse(localStorage.getItem("stg_goals") || "[]");
+  groups = JSON.parse(localStorage.getItem("stg_groups") || "[]");
+  quotes = JSON.parse(localStorage.getItem("stg_quotes") || "[]");
+  profile = JSON.parse(localStorage.getItem("stg_profile") || "{}");
+  notifications = JSON.parse(localStorage.getItem("stg_notif") || "[]");
   console.log("📥 Dati locali caricati (STAGING)");
+  renderUI();
 }
 
 function saveLocal() {
   localStorage.setItem("stg_tx", JSON.stringify(tx));
   localStorage.setItem("stg_recurring", JSON.stringify(recurring));
   localStorage.setItem("stg_goals", JSON.stringify(goals));
+  localStorage.setItem("stg_groups", JSON.stringify(groups));
+  localStorage.setItem("stg_quotes", JSON.stringify(quotes));
+  localStorage.setItem("stg_profile", JSON.stringify(profile));
+  localStorage.setItem("stg_notif", JSON.stringify(notifications));
 }
 
 // ===== FIREBASE SYNC =====
 function loadFromFirebase() {
   if (!db || !user) return;
-
   const uid = user.id;
-
   db.ref("staging/" + uid).on("value", function(snap) {
     const data = snap.val();
     if (data) {
       if (data.tx) tx = data.tx;
       if (data.recurring) recurring = data.recurring;
       if (data.goals) goals = data.goals;
+      if (data.groups) groups = data.groups;
+      if (data.quotes) quotes = data.quotes;
+      if (data.profile) profile = data.profile;
       saveLocal();
       renderUI();
       console.log("📥 Caricato da Firebase (STAGING)");
@@ -376,14 +391,16 @@ function loadFromFirebase() {
 
 function syncToFirebase() {
   if (!db || !user || isSyncing) return;
-
   isSyncing = true;
   const uid = user.id;
-
   db.ref("staging/" + uid).set({
     tx: tx,
     recurring: recurring,
     goals: goals,
+    groups: groups,
+    quotes: quotes,
+    profile: profile,
+    notifications: notifications,
     lastSync: new Date().toISOString()
   }).then(function() {
     console.log("✅ Sincronizzato su Firebase (STAGING)");
@@ -408,56 +425,68 @@ function manualSync() {
   syncToFirebase();
 }
 
-// ===== UI =====
+// ===== UI RENDERING =====
+function renderUI() {
+  if (currentPage === "dashboard") renderDash();
+  else if (currentPage === "transazioni") renderTx();
+  else if (currentPage === "ricorrenti") renderRecurring();
+  else if (currentPage === "obiettivi") renderGoals();
+  else if (currentPage === "report") renderReport();
+}
+
 function goPage(p) {
   currentPage = p;
   document.querySelectorAll(".nav-btn").forEach(function(b) {
     b.classList.remove("active");
   });
   event.target.classList.add("active");
-
-  if (p === "dashboard") renderDash();
-  else if (p === "transazioni") renderTx();
-  else renderDash();
+  renderUI();
 }
 
 function renderDash() {
   const bal = tx.reduce(function(s, t) {
     return s + (t.type === "income" ? t.amt : -t.amt);
   }, 0);
+  const inc = tx.filter(t => t.type === "income").reduce((s, t) => s + t.amt, 0);
+  const exp = tx.filter(t => t.type === "expense").reduce((s, t) => s + t.amt, 0);
 
-  let html = "<div class='card'>";
-  html += "<h3>💰 Saldo: €" + bal.toFixed(2) + "</h3>";
-  html += "<p>Transazioni: " + tx.length + "</p>";
-  html += "</div>";
-  html += "<button class='btn' style='width:100%' onclick=\"openModal('Tx')\">➕ Aggiungi</button>";
-
+  let html = `
+    <div class="card">
+      <h3>💰 Saldo: €${bal.toFixed(2)}</h3>
+      <p>Entrate: €${inc.toFixed(2)} | Uscite: €${exp.toFixed(2)}</p>
+    </div>
+    <button class="btn" style="width:100%;" onclick="openModal('Tx')">➕ Aggiungi Transazione</button>
+  `;
   document.getElementById("content").innerHTML = html;
 }
 
 function renderTx() {
-  let html = "<button class='btn' style='width:100%;margin-bottom:12px' onclick=\"openModal('Tx')\">➕ Aggiungi</button>";
-  html += "<div class='card'>";
-  html += "<h3>💸 Transazioni (" + tx.length + ")</h3>";
-  
+  let html = `<button class="btn" style="width:100%;margin-bottom:12px" onclick="openModal('Tx')">➕ Aggiungi</button>`;
+  html += `<div class="card"><h3>💸 Transazioni (${tx.length})</h3>`;
   if (tx.length === 0) {
-    html += "<p style='color:var(--tx2);font-size:10px'>Nessuna transazione</p>";
+    html += `<p style="color:var(--tx2);font-size:10px">Nessuna transazione</p>`;
   } else {
     tx.slice().reverse().forEach(function(t) {
-      html += "<div style='padding:8px;border-bottom:1px solid rgba(255,255,255,.08)'>";
-      html += "<div style='font-weight:600'>" + t.desc + "</div>";
-      html += "<div style='font-size:9px;color:var(--tx2)'>" + t.date + " - " + (t.type === "income" ? "+" : "-") + "€" + t.amt.toFixed(2) + "</div>";
-      html += "</div>";
+      html += `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,.08)">
+        <div style="font-weight:600">${t.desc}</div>
+        <div style="font-size:9px;color:var(--tx2)">${t.date} - ${t.type === "income" ? "+" : "-"}€${t.amt.toFixed(2)}</div>
+      </div>`;
     });
   }
-  
-  html += "</div>";
+  html += `</div>`;
   document.getElementById("content").innerHTML = html;
 }
 
-function renderUI() {
-  if (currentPage === "dashboard") renderDash();
-  else if (currentPage === "transazioni") renderTx();
+function renderRecurring() {
+  document.getElementById("content").innerHTML = `<div class="card">🔄 Ricorrenti (${recurring.length})</div>`;
+}
+
+function renderGoals() {
+  document.getElementById("content").innerHTML = `<div class="card">🎯 Obiettivi (${goals.length})</div>`;
+}
+
+function renderReport() {
+  document.getElementById("content").innerHTML = `<div class="card">📈 Report</div>`;
 }
 
 // ===== TRANSAZIONI =====
@@ -488,6 +517,15 @@ function saveTx() {
   triggerAutoSync();
 }
 
+function delTx(id) {
+  if (!confirm("Eliminare?")) return;
+  tx = tx.filter(t => t.id !== id);
+  saveLocal();
+  renderTx();
+  triggerAutoSync();
+  notify("🗑️ Eliminata");
+}
+
 // ===== HELPERS =====
 function openModal(name) {
   document.getElementById("modal" + name).classList.add("show");
@@ -508,7 +546,7 @@ function notify(msg) {
   }, 2500);
 }
 
-console.log("✅ Staging app caricata");
+console.log("✅ Staging app con tutte le funzioni caricata");
 </script>
 
 </body>

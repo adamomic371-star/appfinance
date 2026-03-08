@@ -1835,47 +1835,57 @@ function goTo(p){
 /* ===== DATA ===== */
 function loadData(cb){
   const uid=user.id;
-  let done=0;
-  const personalNeeds=6;
-  const bizNeeds=appMode==='business'?4:0;
-  const total=personalNeeds+bizNeeds;
-  const chk=()=>{if(++done>=total&&cb)cb();};
+  // Usa Promise.all — nessun rischio di counter sbagliato
+  const p=[];
 
-  // Personal data
-  db.ref('transactions').once('value',s=>{transactions=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);chk();});
-  db.ref('bills').once('value',s=>{bills=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(b=>b.userId===uid);chk();});
-  db.ref('utilities').once('value',s=>{utilities=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(u=>u.userId===uid);chk();});
-  db.ref('trips').once('value',s=>{trips=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);chk();});
-  db.ref('groups').once('value',s=>{
+  p.push(db.ref('transactions').once('value').then(s=>{
+    transactions=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);
+  }));
+  p.push(db.ref('bills').once('value').then(s=>{
+    bills=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(b=>b.userId===uid);
+  }));
+  p.push(db.ref('utilities').once('value').then(s=>{
+    utilities=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(u=>u.userId===uid);
+  }));
+  p.push(db.ref('trips').once('value').then(s=>{
+    trips=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);
+  }));
+  p.push(db.ref('recurring').once('value').then(s=>{
+    recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===uid);
+  }));
+  p.push(db.ref('groups').once('value').then(s=>{
     const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
     groups=all.filter(g=>g.creatorId===uid||(g.members&&g.members[uid]));
-    // Load paypal emails for all group members — wait for ALL before chk()
+    // carica paypal email in background, non blocca
     const memberUids=[...new Set([
       ...groups.map(g=>g.creatorId),
       ...groups.flatMap(g=>Object.keys(g.members||{}))
     ])];
-    if(!memberUids.length){chk();return;}
-    let ppDone=0;
     memberUids.forEach(mid=>{
-      db.ref(`users/${mid}/paypalEmail`).once('value',ps=>{
+      db.ref('users/'+mid+'/paypalEmail').once('value').then(ps=>{
         const email=ps.val();
-        if(email) localStorage.setItem('fp_paypal_'+mid, email);
-        if(++ppDone>=memberUids.length) chk();
-      });
+        if(email)localStorage.setItem('fp_paypal_'+mid,email);
+      }).catch(()=>{});
     });
-  });
-  db.ref('recurring').once('value',s=>{recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===uid);chk();});
-  if(realUser?.role==='admin')db.ref('users').once('value',s=>{allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));});
+  }));
 
-  // Business data (only when in biz mode)
-  if(appMode==='business'){
-    db.ref(`biz/${uid}/transactions`).once('value',s=>{bizTx=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));chk();});
-    db.ref(`biz/${uid}/clients`).once('value',s=>{clients=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));chk();});
-    db.ref(`biz/${uid}/quotes`).once('value',s=>{quotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));chk();});
-    db.ref(`biz/${uid}/projects`).once('value',s=>{projects=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
-      db.ref(`biz/${uid}/expenseNotes`).once('value',s2=>{expenseNotes=Object.entries(s2.val()||{}).map(([id,d])=>({...d,id}));chk();});
-    });
+  if(realUser?.role==='admin'){
+    db.ref('users').once('value').then(s=>{
+      allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+    }).catch(()=>{});
   }
+
+  if(appMode==='business'){
+    p.push(db.ref('biz/'+uid+'/transactions').once('value').then(s=>{bizTx=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
+    p.push(db.ref('biz/'+uid+'/clients').once('value').then(s=>{clients=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
+    p.push(db.ref('biz/'+uid+'/quotes').once('value').then(s=>{quotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
+    p.push(db.ref('biz/'+uid+'/projects').once('value').then(s=>{projects=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
+    p.push(db.ref('biz/'+uid+'/expenseNotes').once('value').then(s=>{expenseNotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
+  }
+
+  // timeout di sicurezza: se Firebase non risponde in 10s, vai avanti comunque
+  const timeout=new Promise(res=>setTimeout(res,10000));
+  Promise.race([Promise.all(p),timeout]).then(()=>{if(cb)cb();}).catch(()=>{if(cb)cb();});
 }
 
 /* ===== CHECK RECURRING — scala dal saldo ===== */

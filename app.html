@@ -1385,7 +1385,17 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     <div class="mh"><div class="mtt">👥 Nuovo Gruppo</div><button class="mc" onclick="closeMo('groupModal')">✕</button></div>
     <div class="fg"><label class="fl">Nome</label><input type="text" id="gName" class="fc" placeholder="es. Casa, Vacanza..."></div>
     <div class="fg"><label class="fl">Descrizione</label><input type="text" id="gDesc" class="fc" placeholder="Opzionale"></div>
-    <div class="fg"><label class="fl">Icona</label><select id="gIcon" class="fc"><option value="🏠">🏠 Casa</option><option value="✈️">✈️ Viaggio</option><option value="🎉">🎉 Festa</option><option value="🍕">🍕 Cibo</option><option value="💼">💼 Lavoro</option><option value="👨‍👩‍👧">👨‍👩‍👧 Famiglia</option></select></div>
+    <div class="fg"><label class="fl">Tipo gruppo</label>
+      <select id="gType" class="fc" onchange="toggleGroupTypeUI()">
+        <option value="normal">👥 Gruppo spese (vacanza, cena...)</option>
+        <option value="couple">💑 Coppia — wallet condiviso</option>
+        <option value="family">👨‍👩‍👧 Famiglia — wallet condiviso</option>
+      </select>
+    </div>
+    <div id="gTypeInfo" style="display:none;background:rgba(108,77,255,.08);border:1px solid rgba(108,77,255,.2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--tx2);margin-bottom:10px">
+      💡 Il wallet condiviso mostra le spese di tutti i membri in <strong>tempo reale</strong> nella Dashboard. Perfetto per gestire le spese di casa insieme.
+    </div>
+    <div class="fg"><label class="fl">Icona</label><select id="gIcon" class="fc"><option value="🏠">🏠 Casa</option><option value="✈️">✈️ Viaggio</option><option value="🎉">🎉 Festa</option><option value="🍕">🍕 Cibo</option><option value="💼">💼 Lavoro</option><option value="💑">💑 Coppia</option><option value="👨‍👩‍👧">👨‍👩‍👧 Famiglia</option></select></div>
     <div class="ma"><button class="bms" onclick="saveGroup()">Crea</button><button class="bmc" onclick="closeMo('groupModal')">Annulla</button></div>
   </div>
 </div>
@@ -2255,6 +2265,20 @@ function renderPage(p){
         <div style="border-top:1px solid var(--b1);margin-top:4px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:800"><span style="color:var(--tx)">= Disponibile</span><span style="color:${freeColor}">${fmtE(freeMoney)}</span></div>
       </div>
     </div>
+    <!-- AI PREVISIONE FINE MESE -->
+    <div class="card" id="aiForecastCard" style="background:linear-gradient(135deg,rgba(108,77,255,.06),rgba(0,200,255,.04));border-color:rgba(108,77,255,.15)">
+      <div class="ch" style="margin-bottom:10px">
+        <div class="ct" style="font-size:14px"><div class="ct-ico">🔮</div>Previsione Fine Mese</div>
+        <button class="export-btn" onclick="loadAIForecast()" id="forecastRefreshBtn" style="font-size:10px">🔄 Aggiorna</button>
+      </div>
+      <div id="aiForecastContent">
+        <div style="text-align:center;padding:12px 0;color:var(--tx3);font-size:12px">
+          <div style="font-size:20px;margin-bottom:6px">🔮</div>
+          Tocca aggiorna per la previsione AI<br>basata sui tuoi ultimi 3 mesi
+        </div>
+      </div>
+    </div>
+
     ${goals.filter(g=>g.status!=='completed').length>0?`
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">🎯</div>Obiettivi di Risparmio</div><button class="btn-a" onclick="goTo('obiettivi')">Vedi tutti</button></div>
@@ -2286,7 +2310,26 @@ function renderPage(p){
       <div class="ir"><div class="ia">${REC_KINDS[r.kind]?.icon||'🔄'}</div>
       <div class="ii"><div class="in">${r.name}</div><div class="id2 rec-next">📅 ${r.nextDate||'N/D'} · ${FREQS[r.freq]||r.freq}</div></div>
       <div class="iam ${r.type==='income'?'ain':'aout'}">${r.type==='income'?'+':'-'}${fmtE(r.amount)}</div></div>`).join('')||es('🔄','Nessuna ricorrente attiva')}
-    </div>`;
+    </div>
+    ${(()=>{
+      const sharedGroups=groups.filter(g=>g.groupType==='couple'||g.groupType==='family');
+      if(!sharedGroups.length)return '';
+      return sharedGroups.map(g=>{
+        const exps=Object.entries(g.expenses||{}).map(([id,d])=>({...d,id}));
+        const totExp=exps.reduce((s,e)=>s+e.amount,0);
+        const members=Object.entries(g.members||{}).map(([uid,d])=>({...d,uid}));
+        const allM=[{uid:g.creatorId,name:g.creatorName||'Creatore'},...members];
+        const lastExps=[...exps].reverse().slice(0,3);
+        return '<div class="card" style="background:linear-gradient(135deg,rgba(108,77,255,.05),rgba(0,200,255,.03));border-color:rgba(108,77,255,.15)">'+
+          '<div class="ch"><div class="ct"><div class="ct-ico">'+(g.groupType==='couple'?'💑':'👨‍👩‍👧')+'</div>'+(g.groupType==='couple'?'Wallet Coppia':'Wallet Famiglia')+': '+g.name+'</div><button class="btn-a" onclick="curGroupId=\''+ g.id+'\';goTo(\'gruppi\')">Apri</button></div>'+
+          '<div style="display:flex;gap:10px;margin-bottom:12px">'+
+          '<div style="flex:1;text-align:center;background:var(--s2);border-radius:9px;padding:8px"><div style="font-size:10px;color:var(--tx3)">Spese totali</div><div style="font-size:16px;font-weight:900;color:var(--re)">-'+fmtE(totExp)+'</div></div>'+
+          '<div style="flex:1;text-align:center;background:var(--s2);border-radius:9px;padding:8px"><div style="font-size:10px;color:var(--tx3)">Membri</div><div style="font-size:16px;font-weight:900">'+allM.length+'</div></div>'+
+          '</div>'+
+          (lastExps.length?lastExps.map(e=>'<div class="ir" style="padding:6px 0"><div class="ia" style="font-size:16px;width:30px;height:30px">💸</div><div class="ii"><div class="in" style="font-size:12px">'+ e.desc+'</div><div class="id2" style="font-size:10px">Pagato da: '+(e.paidByName||'?')+'</div></div><div class="iam aout" style="font-size:12px">-'+fmtE(e.amount)+'</div></div>').join(''):'')+
+          '</div>';
+      }).join('');
+    })()}`;
 
   } else if(p==='transazioni'){
     let txPage=parseInt(sessionStorage.getItem('txPage')||'0');
@@ -3578,7 +3621,10 @@ function renderReport(con,bal){
   <div class="card">
     <div class="ch">
       <div class="ct"><div class="ct-ico">📊</div>Spese per Categoria</div>
-      <button class="export-btn" onclick="exportCSV()"><i class="fa fa-download"></i> Esporta CSV</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="export-btn" onclick="exportCSV()"><i class="fa fa-download"></i> CSV</button>
+        <button class="export-btn" onclick="exportFiscalePDF()" style="background:linear-gradient(135deg,rgba(255,79,109,.15),rgba(255,79,109,.05));border-color:rgba(255,79,109,.3)!important;color:var(--re)"><i class="fa fa-file-pdf"></i> PDF Fiscale</button>
+      </div>
     </div>
     ${sortedCats.length===0?es('📊','Aggiungi transazioni con categoria per vedere i report'):
     `<div class="pie-grid">${sortedCats.slice(0,6).map(([cid,val])=>{
@@ -3711,13 +3757,22 @@ function renderGroups(con){
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">👥</div>I tuoi Gruppi</div><button class="btn-a" onclick="openMo('groupModal')">＋ Crea</button></div>
     ${groups.length===0?es('👥','Nessun gruppo ancora.<br>Creane uno o aspetta un invito!'):
-    groups.map(g=>`
-    <div class="gc" onclick="curGroupId='${g.id}';goTo('gruppi')">
-      <div class="gc-h">
-        <div style="display:flex;align-items:center;gap:11px"><div class="gav">${g.icon||'👥'}</div><div><div style="font-size:14px;font-weight:700">${g.name}</div><div style="font-size:11px;color:var(--tx2)">${g.desc||''}</div></div></div>
-        <span class="badge bp">${Object.keys(g.members||{}).length+1} membri</span>
-      </div>
-    </div>`).join('')}
+    groups.map(g=>{
+      const isShared=g.groupType==='couple'||g.groupType==='family';
+      const typeLabel=g.groupType==='couple'?'💑 Coppia':g.groupType==='family'?'👨‍👩‍👧 Famiglia':'👥 Gruppo';
+      return `<div class="gc" onclick="curGroupId='${g.id}';goTo('gruppi')">
+        <div class="gc-h">
+          <div style="display:flex;align-items:center;gap:11px">
+            <div class="gav">${g.icon||'👥'}</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px">${g.name}${isShared?'<span style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(108,77,255,.15);color:var(--ac);font-weight:700">WALLET</span>':''}</div>
+              <div style="font-size:11px;color:var(--tx2)">${g.desc||typeLabel}</div>
+            </div>
+          </div>
+          <span class="badge bp">${Object.keys(g.members||{}).length+1} membri</span>
+        </div>
+      </div>`;
+    }).join('')}
   </div>`;
 }
 function renderGroupDetail(con){
@@ -3787,6 +3842,7 @@ function renderGroupDetail(con){
         <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;margin-left:8px">
           ${iAmDebtor&&paypalUrl?`<a href="${paypalUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:linear-gradient(135deg,#003087,#009cde);color:#fff;border-radius:9px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap">💙 Paga PayPal</a>`:''}
           ${iAmDebtor&&!isPending?`<button class="btn-sm" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2)!important;color:var(--gr);font-size:10px;white-space:nowrap" onclick="markPaidBySelf('${debtor.uid}','${debtor.name}','${creditor.uid}','${creditor.name}',${owed.toFixed(2)})">💰 Ho pagato</button>`:''}
+          ${iAmCreditor?`<button class="btn-sm" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.25)!important;color:#25d366;font-size:10px;white-space:nowrap" onclick="sendWhatsAppDebtRequest('${debtor.name}',${owed.toFixed(2)})">📲 WhatsApp</button>`:''}
           ${iAmCreditor&&!isPending?`<button class="btn-sm bs-g" style="font-size:10px;white-space:nowrap" onclick="confirmMemberPaid('${debtor.uid}','${debtor.name}','${creditor.uid}','${creditor.name}',${owed.toFixed(2)})">✅ Confermo pagato</button>`:''}
           ${isPending&&iAmCreditor?`<button class="btn-sm bs-g" style="font-size:10px" onclick="confirmMemberPaid('${debtor.uid}','${debtor.name}','${creditor.uid}','${creditor.name}',${owed.toFixed(2)})">✅ Conferma</button>`:''}
         </div>
@@ -3806,6 +3862,10 @@ function renderGroupDetail(con){
   const myTotalDebt=myDebts.reduce((s,d)=>s+d.amount,0);
 
   con.innerHTML=`
+  ${(g.groupType==='couple'||g.groupType==='family')?`<div style="background:linear-gradient(135deg,rgba(108,77,255,.1),rgba(0,200,255,.06));border:1px solid rgba(108,77,255,.2);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+    <div style="font-size:22px">${g.groupType==='couple'?'💑':'👨‍👩‍👧'}</div>
+    <div><div style="font-size:13px;font-weight:800;color:var(--ac)">${g.groupType==='couple'?'Wallet Coppia':'Wallet Famiglia'}</div><div style="font-size:11px;color:var(--tx2)">Le spese qui sono condivise in tempo reale tra tutti i membri</div></div>
+  </div>`:''}
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
     <button onclick="curGroupId=null;goTo('gruppi')" style="background:var(--s1);border:1px solid var(--b1);color:var(--tx2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif">← Gruppi</button>
     <button class="btn-a" onclick="openMo('inviteModal')"><i class="fa fa-user-plus"></i> Invita</button>
@@ -3879,6 +3939,234 @@ function buildPaypalUrl(amount,email,note){
   // Se è un'email, apre la pagina di invio generico (utente inserisce manualmente)
   return `https://www.paypal.com/myaccount/transfer/send?recipient=${encodeURIComponent(email)}`;
 }
+
+/* ═══════════════════════════════════════════════════════
+   GROUP TYPE UI TOGGLE
+═══════════════════════════════════════════════════════ */
+function toggleGroupTypeUI(){
+  const t=document.getElementById('gType')?.value;
+  const info=document.getElementById('gTypeInfo');
+  if(!info)return;
+  info.style.display=(t==='couple'||t==='family')?'block':'none';
+  const ico=document.getElementById('gIcon');
+  if(ico){
+    if(t==='couple')ico.value='💑';
+    else if(t==='family')ico.value='👨‍👩‍👧';
+    else ico.value='🏠';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   WHATSAPP DEBT REQUEST
+═══════════════════════════════════════════════════════ */
+function sendWhatsAppDebtRequest(debtorName, amount){
+  const g=groups.find(x=>x.id===curGroupId);
+  const gName=g?g.name:'gruppo';
+  const msg=encodeURIComponent(
+    'Ciao '+debtorName+'! 👋\n'
+    +'Ti ricordo che mi devi *'+fmtE(amount)+'* per le spese del gruppo "'+gName+'"\n'
+    +'Quando puoi saldami, grazie! 🙏'
+  );
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+/* ═══════════════════════════════════════════════════════
+   AI FORECAST — PREVISIONE FINE MESE
+═══════════════════════════════════════════════════════ */
+async function loadAIForecast(){
+  const el=document.getElementById('aiForecastContent');
+  const btn=document.getElementById('forecastRefreshBtn');
+  if(!el)return;
+  el.innerHTML='<div style="text-align:center;padding:16px 0;color:var(--tx3);font-size:12px"><div style="font-size:20px;margin-bottom:6px">⏳</div>Analizzando le tue abitudini...</div>';
+  if(btn)btn.disabled=true;
+
+  // Prepara dati ultimi 3 mesi
+  const now=new Date();
+  const months=[];
+  for(let i=2;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+  }
+  const monthlyStats=months.map(m=>{
+    const mExp=transactions.filter(t=>t.type==='expense'&&(t.createdAt||'').startsWith(m)).reduce((s,t)=>s+t.amount,0);
+    const mInc=transactions.filter(t=>t.type==='income'&&(t.createdAt||'').startsWith(m)).reduce((s,t)=>s+t.amount,0);
+    return {month:m,expenses:Math.round(mExp*100)/100,income:Math.round(mInc*100)/100};
+  });
+
+  // Spese per categoria questo mese
+  const thisMo=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const today=now.getDate();
+  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const daysLeft=daysInMonth-today;
+
+  const byCat={};
+  transactions.filter(t=>t.type==='expense'&&(t.createdAt||'').startsWith(thisMo))
+    .forEach(t=>{const cat=t.cat||'other';byCat[cat]=(byCat[cat]||0)+t.amount;});
+
+  const recTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+r.amount,0);
+  const currentBal=transactions.reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+  const thisMonthSpent=transactions.filter(t=>t.type==='expense'&&(t.createdAt||'').startsWith(thisMo)).reduce((s,t)=>s+t.amount,0);
+  const thisMonthInc=transactions.filter(t=>t.type==='income'&&(t.createdAt||'').startsWith(thisMo)).reduce((s,t)=>s+t.amount,0);
+
+  const prompt='Sei un assistente finanziario personale italiano. Analizza i dati e fai una previsione per fine mese. Rispondi SOLO con JSON valido, nessun testo extra.\n'
+    +'DATI:\n'
+    +'- Saldo attuale: '+currentBal.toFixed(2)+' EUR\n'
+    +'- Oggi: giorno '+today+' di '+daysInMonth+' (mancano '+daysLeft+' giorni)\n'
+    +'- Questo mese — speso: '+thisMonthSpent.toFixed(2)+' EUR, entrate: '+thisMonthInc.toFixed(2)+' EUR\n'
+    +'- Ultimi 3 mesi: '+JSON.stringify(monthlyStats)+'\n'
+    +'- Ricorrenti mensili attive: '+recTotal.toFixed(2)+' EUR\n'
+    +'- Spese per categoria questo mese: '+JSON.stringify(byCat)+'\n'
+    +'Formato risposta esatto: {"forecast":{"endBalance":123.45,"confidence":"alta/media/bassa","summary":"Frase breve che inizia con A fine mese avrai circa...","advice":"Consiglio pratico 1 riga","warnings":["avviso1 se serve"],"categories":[{"name":"Nome cat","trend":"up/down/stable","comment":"breve commento"}]}}\n'
+    +'Le categories devono essere max 3, solo le piu rilevanti.';
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    const text=data.content?.map(b=>b.text||'').join('');
+    const clean=text.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+    const f=parsed.forecast;
+    if(!f)throw new Error('no forecast');
+
+    const isPos=f.endBalance>=0;
+    const confColor=f.confidence==='alta'?'var(--gr)':f.confidence==='media'?'var(--ye)':'var(--re)';
+
+    el.innerHTML=
+      '<div style="margin-bottom:12px">'
+      +'<div style="font-size:28px;font-weight:900;color:'+(isPos?'var(--gr)':'var(--re)')+';letter-spacing:-1px">'+fmtE(f.endBalance)+'</div>'
+      +'<div style="font-size:12px;color:var(--tx2);margin-top:3px">'+f.summary+'</div>'
+      +'<div style="font-size:10px;margin-top:5px">Affidabilità: <span style="color:'+confColor+';font-weight:700">'+f.confidence+'</span></div>'
+      +'</div>'
+
+      +(f.advice?'<div style="background:rgba(0,200,255,.07);border-left:3px solid var(--ac2);border-radius:0 8px 8px 0;padding:8px 10px;font-size:12px;color:var(--tx2);margin-bottom:10px">💡 '+f.advice+'</div>':'')
+
+      +(f.warnings&&f.warnings.length?f.warnings.map(w=>'<div style="background:rgba(255,167,38,.07);border-left:3px solid var(--ye);border-radius:0 8px 8px 0;padding:7px 10px;font-size:11px;color:var(--tx2);margin-bottom:6px">⚠️ '+w+'</div>').join(''):'')
+
+      +(f.categories&&f.categories.length?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">'+f.categories.map(cat=>{
+        const ico=cat.trend==='up'?'📈':cat.trend==='down'?'📉':'📊';
+        const col=cat.trend==='up'?'var(--re)':cat.trend==='down'?'var(--gr)':'var(--tx2)';
+        return '<div style="flex:1;min-width:100px;background:var(--s2);border-radius:9px;padding:8px 10px"><div style="font-size:10px;font-weight:700;color:var(--tx2)">'+ico+' '+cat.name+'</div><div style="font-size:11px;color:'+col+';margin-top:3px">'+cat.comment+'</div></div>';
+      }).join('')+'</div>':'');
+
+  }catch(e){
+    el.innerHTML='<div style="font-size:12px;color:var(--tx2);text-align:center;padding:10px">'
+      +'<div style="font-size:18px;margin-bottom:5px">📡</div>'
+      +'Connettiti a internet per la previsione AI'
+      +'<br><button class="btn-sm bs-g" style="margin-top:8px" onclick="loadAIForecast()">Riprova</button>'
+      +'</div>';
+  }
+  if(btn)btn.disabled=false;
+}
+
+/* ═══════════════════════════════════════════════════════
+   EXPORT PDF FISCALE
+═══════════════════════════════════════════════════════ */
+function exportFiscalePDF(){
+  const year=new Date().getFullYear();
+  const yearSel=prompt('Anno fiscale da esportare:', year);
+  if(!yearSel)return;
+  const yr=parseInt(yearSel)||year;
+
+  const txYear=transactions.filter(t=>(t.createdAt||'').startsWith(yr+''));
+  const expenses=txYear.filter(t=>t.type==='expense');
+  const income=txYear.filter(t=>t.type==='income');
+  const totalExp=expenses.reduce((s,t)=>s+t.amount,0);
+  const totalInc=income.reduce((s,t)=>s+t.amount,0);
+
+  // Raggruppa per categoria
+  const byCat={};
+  expenses.forEach(t=>{
+    const cid=t.cat||'other';
+    if(!byCat[cid])byCat[cid]={name:catName(cid),icon:catIcon(cid),total:0,items:[]};
+    byCat[cid].total+=t.amount;
+    byCat[cid].items.push(t);
+  });
+  const sortedCats=Object.values(byCat).sort((a,b)=>b.total-a.total);
+
+  // Raggruppa entrate per categoria
+  const byIncCat={};
+  income.forEach(t=>{
+    const cid=t.cat||'other';
+    if(!byIncCat[cid])byIncCat[cid]={name:catName(cid),icon:catIcon(cid),total:0,items:[]};
+    byIncCat[cid].total+=t.amount;
+    byIncCat[cid].items.push(t);
+  });
+
+  const css=`
+    body{font-family:Arial,sans-serif;color:#1a1a2e;margin:0;padding:0;font-size:12px}
+    .header{background:linear-gradient(135deg,#6c4dff,#00c8ff);color:white;padding:30px 40px;margin-bottom:30px}
+    .header h1{margin:0 0 5px;font-size:24px;font-weight:900}
+    .header p{margin:0;opacity:.85;font-size:13px}
+    .section{margin:0 40px 24px;padding:20px;border:1px solid #e0e0ef;border-radius:12px;background:#fafafa}
+    .section h2{margin:0 0 14px;font-size:14px;font-weight:800;color:#6c4dff;display:flex;align-items:center;gap:6px}
+    .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 40px 24px}
+    .sum-box{padding:16px;border-radius:12px;border:1px solid #e0e0ef;text-align:center;background:#fff}
+    .sum-box .val{font-size:22px;font-weight:900;margin-bottom:4px}
+    .sum-box .lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.5px}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#f0f0f8;padding:7px 10px;text-align:left;font-weight:700;color:#444;border-bottom:2px solid #ddd}
+    td{padding:6px 10px;border-bottom:1px solid #eee;color:#333}
+    tr:last-child td{border-bottom:none}
+    .cat-header{background:#f5f5ff;font-weight:700;color:#6c4dff}
+    .cat-total{font-weight:800;color:#333}
+    .footer{margin:30px 40px 40px;text-align:center;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:16px}
+    .inc{color:#00b894}.exp{color:#e74c3c}
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  `;
+
+  let catRows='';
+  sortedCats.forEach(cat=>{
+    catRows+=`<tr class="cat-header"><td colspan="3">${cat.icon} ${cat.name}</td><td class="cat-total exp">-${fmtE(cat.total)}</td></tr>`;
+    [...cat.items].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(t=>{
+      catRows+=`<tr><td style="padding-left:20px">${formatDateIt(t.createdAt.slice(0,10))}</td><td colspan="2" style="color:#555">${t.desc}</td><td class="exp">-${fmtE(t.amount)}</td></tr>`;
+    });
+  });
+
+  let incRows='';
+  Object.values(byIncCat).sort((a,b)=>b.total-a.total).forEach(cat=>{
+    incRows+=`<tr class="cat-header"><td colspan="3">${cat.icon} ${cat.name}</td><td class="cat-total inc">+${fmtE(cat.total)}</td></tr>`;
+    [...cat.items].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(t=>{
+      incRows+=`<tr><td style="padding-left:20px">${formatDateIt(t.createdAt.slice(0,10))}</td><td colspan="2" style="color:#555">${t.desc}</td><td class="inc">+${fmtE(t.amount)}</td></tr>`;
+    });
+  });
+
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Report Fiscale ${yr} — ${user.name}</title>
+<style>${css}</style></head><body>
+<div class="header">
+  <h1>📊 Report Fiscale ${yr}</h1>
+  <p>${user.name} · Generato il ${new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'})} · Kazka Smart Finance</p>
+</div>
+<div class="summary-grid">
+  <div class="sum-box"><div class="val inc">+${fmtE(totalInc)}</div><div class="lbl">Totale Entrate ${yr}</div></div>
+  <div class="sum-box"><div class="val exp">-${fmtE(totalExp)}</div><div class="lbl">Totale Uscite ${yr}</div></div>
+  <div class="sum-box"><div class="val" style="color:${totalInc-totalExp>=0?'#00b894':'#e74c3c'}">${fmtE(totalInc-totalExp)}</div><div class="lbl">Saldo Netto ${yr}</div></div>
+</div>
+${expenses.length>0?`<div class="section">
+  <h2>📉 Uscite per Categoria — ${yr}</h2>
+  <table><thead><tr><th>Data</th><th colspan="2">Descrizione</th><th>Importo</th></tr></thead><tbody>${catRows}<tr style="background:#f0f0f8;font-weight:800"><td colspan="3" style="padding:8px 10px">TOTALE USCITE</td><td class="exp" style="padding:8px 10px">-${fmtE(totalExp)}</td></tr></tbody></table>
+</div>`:''}
+${income.length>0?`<div class="section">
+  <h2>📈 Entrate per Categoria — ${yr}</h2>
+  <table><thead><tr><th>Data</th><th colspan="2">Descrizione</th><th>Importo</th></tr></thead><tbody>${incRows}<tr style="background:#f0f0f8;font-weight:800"><td colspan="3" style="padding:8px 10px">TOTALE ENTRATE</td><td class="inc" style="padding:8px 10px">+${fmtE(totalInc)}</td></tr></tbody></table>
+</div>`:''}
+<div class="footer">
+  Documento generato da Kazka Smart Finance · Solo a scopo riepilogativo · Per dichiarazioni fiscali ufficiali consultare un commercialista
+</div>
+</body></html>`;
+
+  const w=window.open('','_blank','width=900,height=800');
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>{w.print();},500);
+  notify('📄 Report fiscale '+yr+' aperto per la stampa / salvataggio PDF');
+}
+
+
 
 function openSaldaDebito(){
   const g=groups.find(x=>x.id===curGroupId);if(!g)return;
@@ -4530,7 +4818,8 @@ function saveGroup(){
   const n=document.getElementById('gName').value.trim(),d=document.getElementById('gDesc').value.trim(),i=document.getElementById('gIcon').value;
   if(!n){notify('❌ Inserisci un nome');return;}
   const gid='g_'+Date.now();
-  db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');loadData(()=>{curGroupId=gid;goTo('gruppi');});notify('✅ Gruppo creato!');});
+  const gt=document.getElementById('gType')?.value||'normal';
+  db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,groupType:gt,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');loadData(()=>{curGroupId=gid;goTo('gruppi');});notify('✅ Gruppo creato!');});
 }
 function doInvite(){
   const target=document.getElementById('invTarget').value.trim();

@@ -780,6 +780,33 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 @media(max-width:600px){
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
+
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  min-height: 80px;
+  padding: 20px;
+  background: rgba(255,255,255,.02);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.logo-container img {
+  max-width: 200px;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-container.empty {
+  display: none;
+}
+</style>
 </style>
 </head>
 <body>
@@ -3416,7 +3443,34 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-  </style></head><body>`);
+  
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  min-height: 80px;
+  padding: 20px;
+  background: rgba(255,255,255,.02);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.logo-container img {
+  max-width: 200px;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-container.empty {
+  display: none;
+}
+</style>
+</style></head><body>`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`</body></html>`);
   printWin.document.close();
@@ -4623,26 +4677,78 @@ function openEditGoal(id){
   document.getElementById('goalPriority').value=g.priority||'medium';
   openMo('goalModal');
 }
-function saveGoal(){
-  const name=document.getElementById('goalName').value.trim();
-  const target=parseFloat(document.getElementById('goalTarget').value);
-  const saved=parseFloat(document.getElementById('goalSaved').value)||0;
-  if(!name||!target){notify('❌ Inserisci nome e obiettivo');return;}
-  const goals=loadGoals();
-  const editId=document.getElementById('goalEditId').value;
-  const deadline=document.getElementById('goalDeadline').value;
-  const icon=document.getElementById('goalIcon').value;
-  const priority=document.getElementById('goalPriority').value;
-  const monthsLeft=deadline?Math.max(1,Math.ceil((new Date(deadline)-new Date())/2592000000)):null;
-  const monthlyTarget=monthsLeft?Math.max(0,target-saved)/monthsLeft:0;
-  if(editId){
-    const idx=goals.findIndex(g=>g.id===editId);
-    if(idx>=0)goals[idx]={...goals[idx],name,target,saved,icon,deadline,priority,monthlyTarget};
-  } else {
-    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,status:'active',createdAt:new Date().toISOString()});
+
+// ===== OBIETTIVI CON CALCOLO =====
+function saveGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const suggested = parseFloat(document.getElementById('goalSuggested').value) || 0;
+  
+  if (!name || !target) { notify('❌ Nome e target obbligatori'); return; }
+  
+  const goals = loadGoals();
+  const goal = {
+    id: Date.now(),
+    name: name,
+    target: target,
+    suggested: suggested,
+    saved: suggested, // Deduce subito dai soldi liberi
+    status: 'active',
+    createdAt: new Date().toISOString()
+  };
+  
+  goals.push(goal);
+  saveGoals(goals);
+  
+  // DEDUCE DAI SOLDI LIBERI
+  if (suggested > 0) {
+    const freeBalance = calcFreeBalance();
+    if (suggested > freeBalance) {
+      notify('⚠️ Importo suggerito > Soldi liberi!');
+    } else {
+      notify('✅ Obiettivo creato - €' + suggested.toFixed(2) + ' detratto dai Soldi Liberi');
+    }
   }
-  saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
+  
+  syncToFirebase('goals', goals);
+  goTo('obiettivi');
+  document.getElementById('goalName').value = '';
+  document.getElementById('goalTarget').value = '';
+  document.getElementById('goalSuggested').value = '';
 }
+
+function addToGoal(id, amount) {
+  const goals = loadGoals();
+  const goal = goals.find(g => g.id === id);
+  if (!goal) return;
+  
+  goal.saved = (goal.saved || 0) + amount;
+  saveGoals(goals);
+  syncToFirebase('goals', goals);
+  notify('✅ Aggiunto €' + amount.toFixed(2) + ' a ' + goal.name);
+}
+
+function completeGoal(id) {
+  const goals = loadGoals();
+  const goal = goals.find(g => g.id === id);
+  if (!goal) return;
+  
+  goal.status = 'completed';
+  goal.completedAt = new Date().toISOString();
+  saveGoals(goals);
+  syncToFirebase('goals', goals);
+  notify('🏆 Obiettivo completato!');
+  goTo('obiettivi');
+}
+
+function calcFreeBalance() {
+  const tx = loadTx();
+  const balance = tx.reduce((s, t) => s + (t.type === 'income' ? t.amount : -t.amount), 0);
+  const goals = loadGoals();
+  const suggestedTotal = goals.reduce((s, g) => s + (g.suggested || 0), 0);
+  return balance - suggestedTotal;
+}
+
 function addToGoal(id){
   const amt=parseFloat(prompt('Quanti € vuoi aggiungere a questo obiettivo?'));
   if(!amt||amt<=0)return;

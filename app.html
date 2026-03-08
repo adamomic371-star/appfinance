@@ -780,6 +780,101 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 @media(max-width:600px){
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
+
+/* ═══════════════════════════════════════
+   KAZKA ANIMATIONS v2
+═══════════════════════════════════════ */
+
+/* Page transition */
+@keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px)}}
+.page-enter{animation:pageIn .28s cubic-bezier(.22,1,.36,1) both}
+
+/* Item rows slide in */
+@keyframes rowIn{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
+.ir{animation:rowIn .3s cubic-bezier(.22,1,.36,1) both}
+
+/* Card fade-up */
+@keyframes cardUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:cardUp .35s cubic-bezier(.22,1,.36,1) both}
+
+/* Staggered delays for lists */
+.ir:nth-child(1){animation-delay:.03s}
+.ir:nth-child(2){animation-delay:.07s}
+.ir:nth-child(3){animation-delay:.11s}
+.ir:nth-child(4){animation-delay:.15s}
+.ir:nth-child(5){animation-delay:.19s}
+.ir:nth-child(6){animation-delay:.23s}
+.ir:nth-child(7){animation-delay:.27s}
+.ir:nth-child(8){animation-delay:.31s}
+
+/* Button tap feedback */
+@keyframes tapBounce{0%{transform:scale(1)}40%{transform:scale(.91)}80%{transform:scale(1.04)}100%{transform:scale(1)}}
+.btn-tap{animation:tapBounce .28s cubic-bezier(.36,.07,.19,.97) both}
+
+/* Stat counter (numbers animate in) */
+@keyframes numPop{from{opacity:0;transform:scale(.7) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.sc-val{animation:numPop .45s cubic-bezier(.22,1,.36,1) both}
+.sc-val:nth-child(1){animation-delay:.05s}
+.sc-val:nth-child(2){animation-delay:.1s}
+
+/* Free money pulse when negative */
+@keyframes negPulse{0%,100%{opacity:1}50%{opacity:.55}}
+.money-negative{animation:negPulse 2s ease infinite}
+
+/* Bell bounce */
+@keyframes bellBounce{0%,100%{transform:rotate(0)}20%{transform:rotate(-18deg)}40%{transform:rotate(16deg)}55%{transform:rotate(-12deg)}70%{transform:rotate(8deg)}85%{transform:rotate(-4deg)}}.notif-bell.has-notif{animation:bellBounce 1.2s ease 1s 1,bellShake .5s ease 0s 1}
+
+/* Checklist tick */
+@keyframes tickIn{0%{transform:scale(0) rotate(-45deg);opacity:0}60%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.check-tick{animation:tickIn .25s cubic-bezier(.22,1,.36,1) both}
+
+/* Progress bar fill */
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+.bar-animated{animation:barGrow .8s cubic-bezier(.22,1,.36,1) .1s both}
+
+/* Confetti pieces */
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0) scale(1);opacity:1}100%{transform:translateY(100vh) rotate(720deg) scale(.5);opacity:0}}
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:9998;animation:confettiFall linear forwards}
+
+/* Logo splash breathe */
+@keyframes logoBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+#splLogoMark{animation:logoBreath 2s ease infinite}
+
+/* Saldo negativo pulse */
+@keyframes balPulse{0%,100%{text-shadow:0 0 0 transparent}50%{text-shadow:0 0 18px rgba(255,79,109,.6)}}
+
+/* New transaction slide from right */
+@keyframes txNew{from{opacity:0;transform:translateX(40px) scale(.97)}to{opacity:1;transform:translateX(0) scale(1)}}
+.tx-new{animation:txNew .35s cubic-bezier(.22,1,.36,1) both}
+
+/* Modal content stagger */
+.ms .fg:nth-child(1){animation:fUp .25s ease .05s both}
+.ms .fg:nth-child(2){animation:fUp .25s ease .1s both}
+.ms .fg:nth-child(3){animation:fUp .25s ease .15s both}
+.ms .fg:nth-child(4){animation:fUp .25s ease .2s both}
+.ms .fg:nth-child(5){animation:fUp .25s ease .25s both}
+
+/* Stat grid cards bounce in */
+@keyframes statIn{from{opacity:0;transform:scale(.85) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.sc{animation:statIn .35s cubic-bezier(.22,1,.36,1) both}
+.sc:nth-child(1){animation-delay:.04s}
+.sc:nth-child(2){animation-delay:.1s}
+.sc:nth-child(3){animation-delay:.16s}
+.sc:nth-child(4){animation-delay:.22s}
+
+/* Goal completion burst */
+@keyframes goalComplete{0%{transform:scale(1)}30%{transform:scale(1.08)}60%{transform:scale(.97)}100%{transform:scale(1)}}
+.goal-done-burst{animation:goalComplete .5s cubic-bezier(.22,1,.36,1) both}
+
+/* Hover on all clickable cards */
+.card[onclick]{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.card[onclick]:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.25)}
+.card[onclick]:active{transform:scale(.98)}
+
+/* Nav item active indicator slide */
+@keyframes navPip{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.ni.active::before,.drawer-ni.active::before{animation:navPip .2s ease both}
 </style>
 <script>
 (function(){
@@ -1759,6 +1854,12 @@ function showApp(){
 }
 
 /* ===== MODE SWITCHER ===== */
+initTapFeedback();
+
+// Bell bounce timer
+if(window._bellTimer)clearInterval(window._bellTimer);
+window._bellTimer=setInterval(()=>{const b=document.getElementById('notifBell');if(b&&b.classList.contains('has-notif')){b.style.animation='none';void b.offsetWidth;b.style.animation='bellBounce 1s ease both';}},9000);
+
 function setMode(mode){
   const hasBiz=PLANS[user.plan]?.biz;
   if(mode==='business'&&!hasBiz){
@@ -1861,7 +1962,104 @@ function buildNav(){
 
 function goTo(p){
   document.querySelectorAll('.ni,.drawer-ni').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
-  renderPage(p);
+  const con=document.getElementById('content');
+  if(con&&con.children.length>0){
+    con.style.animation='pageOut .18s ease forwards';
+    setTimeout(()=>{
+      con.style.animation='';
+      renderPage(p);
+      con.classList.remove('page-enter');
+      void con.offsetWidth; // reflow
+      con.classList.add('page-enter');
+      runCounters();
+      applyNegativePulse();
+    },160);
+  } else {
+    renderPage(p);
+    if(con){con.classList.remove('page-enter');void con.offsetWidth;con.classList.add('page-enter');runCounters();applyNegativePulse();}
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATION UTILITIES
+═══════════════════════════════════════════════════════ */
+
+// Anima un numero da 0 al valore finale
+function animateCounter(el, target, prefix, suffix, duration){
+  if(!el) return;
+  const start=performance.now();
+  const isNeg=target<0;
+  const abs=Math.abs(target);
+  function step(now){
+    const p=Math.min(1,(now-start)/duration);
+    const ease=1-Math.pow(1-p,3); // easeOutCubic
+    const cur=abs*ease;
+    el.textContent=prefix+(isNeg?'-':'')+cur.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+suffix;
+    if(p<1) requestAnimationFrame(step);
+    else el.textContent=prefix+(isNeg?'-':'')+abs.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+suffix;
+  }
+  requestAnimationFrame(step);
+}
+
+// Lancia i contatori su tutti gli elementi .sc-val visibili
+function runCounters(){
+  setTimeout(()=>{
+    document.querySelectorAll('.sc-val[data-val]').forEach(el=>{
+      const v=parseFloat(el.dataset.val)||0;
+      const pre=el.dataset.pre||'';
+      const suf=el.dataset.suf||'';
+      animateCounter(el,v,pre,suf,700);
+    });
+  },80);
+}
+
+// Aggiunge tap bounce a tutti i bottoni
+function initTapFeedback(){
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('.btn-a,.bms,.btn-sm,.pg-btn,.export-btn');
+    if(!btn) return;
+    btn.classList.remove('btn-tap');
+    void btn.offsetWidth;
+    btn.classList.add('btn-tap');
+    btn.addEventListener('animationend',()=>btn.classList.remove('btn-tap'),{once:true});
+  });
+}
+
+// Confetti explosion 🎉
+function launchConfetti(x,y){
+  const colors=['#6c4dff','#00c8ff','#00e5a0','#ffd166','#ff4f6d','#ff9f43','#a29bfe','#55efc4'];
+  const shapes=['◆','●','▲','★','■'];
+  for(let i=0;i<50;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.textContent=shapes[i%shapes.length];
+    el.style.cssText='left:'+(x||Math.random()*100)+'%;top:'+(y||20)+'px;'
+      +'color:'+colors[i%colors.length]+';font-size:'+(8+Math.random()*12)+'px;'
+      +'animation-duration:'+(1.2+Math.random()*1.8)+'s;'
+      +'animation-delay:'+(Math.random()*.5)+'s;'
+      +'left:'+(10+Math.random()*80)+'vw;';
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+// Nega pulsante rosso sul saldo negativo
+function applyNegativePulse(){
+  setTimeout(()=>{
+    document.querySelectorAll('.sc-val').forEach(el=>{
+      const v=parseFloat(el.dataset.val);
+      if(!isNaN(v)&&v<0){
+        el.style.animation='balPulse 2s ease infinite';
+        el.classList.add('money-negative');
+      }
+    });
+    // Free money box
+    const freeEl=document.querySelector('[data-freemoney]');
+    if(freeEl){
+      const v=parseFloat(freeEl.dataset.freemoney);
+      if(!isNaN(v)&&v<0) freeEl.style.animation='negPulse 2s ease infinite';
+    }
+  },500);
 }
 
 /* ===== DATA ===== */
@@ -2247,10 +2445,10 @@ function renderPage(p){
     const freeColor=freeMoney>=0?'var(--gr)':'var(--re)';
     con.innerHTML=`
     <div class="stat-grid">
-      <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo Totale</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
-      <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(inc)}</div></div>
-      <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(exp)}</div></div>
-      <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti/mese</div><div class="sc-val" style="color:var(--ye)">${fmtE(recTotal)}</div></div>
+      <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo Totale</div><div class="sc-val" data-val="${bal}" data-pre="€" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
+      <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" data-val="${inc}" data-pre="€" style="color:var(--gr)">${fmtE(inc)}</div></div>
+      <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" data-val="${exp}" data-pre="€" style="color:var(--re)">${fmtE(exp)}</div></div>
+      <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti/mese</div><div class="sc-val" data-val="${recTotal}" data-pre="€" style="color:var(--ye)">${fmtE(recTotal)}</div></div>
     </div>
     <!-- SOLDI LIBERI BOX -->
     <div class="card" style="background:linear-gradient(135deg,rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.07),rgba(${freeMoney>=0?'0,212,255':'255,107,157'},.04));border-color:rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.2)">
@@ -2258,7 +2456,7 @@ function renderPage(p){
         <div class="ct" style="font-size:14px"><div class="ct-ico">🟢</div>Soldi Liberi</div>
         <div style="font-size:11px;color:var(--tx3)">Puoi spendere</div>
       </div>
-      <div style="font-size:32px;font-weight:900;color:${freeColor};letter-spacing:-1px;margin-bottom:10px">${fmtE(freeMoney)}</div>
+      <div style="font-size:32px;font-weight:900;color:${freeColor};letter-spacing:-1px;margin-bottom:10px" data-freemoney="${freeMoney}" id="freeMoneyVal">${fmtE(freeMoney)}</div>
       <div style="display:flex;flex-direction:column;gap:5px">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>💰 Saldo</span><span style="font-weight:700;color:var(--tx)">${fmtE(bal)}</span></div>
         ${recTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔄 Ricorrenti/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(recTotal)}</span></div>`:''}
@@ -2294,7 +2492,7 @@ function renderPage(p){
             <div style="font-size:12px;color:var(--tx2)">${fmtE(g.saved)} / ${fmtE(g.target)}</div>
           </div>
           <div style="background:var(--s2);border-radius:6px;height:8px;overflow:hidden">
-            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width .5s"></div>
+            <div style="--w:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px" class="bar-animated"></div>
           </div>
           <div style="font-size:10px;color:var(--tx3);margin-top:3px">${pct}% completato</div>
         </div>`;
@@ -4159,7 +4357,7 @@ ${income.length>0?`<div class="section">
   <table><thead><tr><th>Data</th><th colspan="2">Descrizione</th><th>Importo</th></tr></thead><tbody>${incRows}<tr style="background:#f0f0f8;font-weight:800"><td colspan="3" style="padding:8px 10px">TOTALE ENTRATE</td><td class="inc" style="padding:8px 10px">+${fmtE(totalInc)}</td></tr></tbody></table>
 </div>`:''}
 <div class="footer">
-  Documento generato da Kazka Smart Finance · Solo a scopo riepilogativo · Per dichiarazioni fiscali ufficiali consultare un commercialista
+  Documento generato da Kazka Smart Finance · © 2026 Michele Adamo · Solo a scopo riepilogativo · Per dichiarazioni fiscali ufficiali consultare un commercialista
 </div>
 </body></html>`;
 
@@ -4715,7 +4913,15 @@ function togglePackItem(tripId, itemId){
   if(idx<0)return;
   list[idx].done=!list[idx].done;
   saveTripChecklist(tripId,list);
-  openTripDetail(tripId); // re-render
+  // Anima la riga prima di re-render
+  const row=document.querySelector('[data-itemid="'+itemId+'"]');
+  if(row){
+    row.style.transition='background .2s,opacity .15s';
+    row.style.background=list[idx].done?'rgba(0,229,160,.08)':'transparent';
+    setTimeout(()=>openTripDetail(tripId),120);
+  } else {
+    openTripDetail(tripId);
+  }
 }
 
 function addCustomPackItem(tripId){
@@ -5200,8 +5406,8 @@ function renderGoals(con){
       monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-today)/2592000000));
       monthlyNeeded=rem/monthsLeft;
     }
-    return `<div class="card" style="margin-bottom:12px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));width:${pct}%;transition:width .5s"></div>
+    return `<div class="card" data-goalid="${g.id}" style="margin-bottom:12px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));--w:${pct}%" class="bar-animated"></div>
       <div style="display:flex;align-items:flex-start;gap:12px;padding-top:8px">
         <div style="font-size:28px;flex-shrink:0">${g.icon||'🎯'}</div>
         <div style="flex:1;min-width:0">
@@ -5215,7 +5421,7 @@ function renderGoals(con){
             <span style="color:var(--tx3)">di ${fmtE(g.target)}</span>
           </div>
           <div style="background:var(--s2);border-radius:8px;height:10px;overflow:hidden;margin-bottom:7px">
-            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:8px;transition:width .5s"></div>
+            <div style="--w:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:8px" class="bar-animated"></div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);flex-wrap:wrap;gap:4px">
             <span>${pct}% — manca ${fmtE(rem)}</span>
@@ -5360,7 +5566,19 @@ function checkGoalPayDayNotifs(){
 }
 
 
-function completeGoal(id){const goals=loadGoals();const idx=goals.findIndex(g=>g.id===id);if(idx<0)return;goals[idx].status='completed';saveGoals(goals);goTo('obiettivi');notify('🏆 Completato!');}
+function completeGoal(id){
+  const goals=loadGoals();
+  const idx=goals.findIndex(g=>g.id===id);
+  if(idx<0)return;
+  goals[idx].status='completed';
+  saveGoals(goals);
+  // 🎉 Confetti!
+  launchConfetti();
+  // Burst sulla card
+  const card=document.querySelector('[data-goalid="'+id+'"]');
+  if(card){card.classList.add('goal-done-burst');}
+  setTimeout(()=>{goTo('obiettivi');notify('🏆 Obiettivo completato! Ottimo lavoro!');},400);
+}
 function delGoal(id){if(!confirm('Eliminare?'))return;saveGoals(loadGoals().filter(g=>g.id!==id));goTo('obiettivi');notify('🗑️ Eliminato');}
 
 /* ===== INVEST MODAL (>€1000) ===== */

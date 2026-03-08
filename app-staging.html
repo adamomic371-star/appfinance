@@ -785,7 +785,244 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 </head>
 <body>
 
-<!-- APP BODY CONTENT -->
+<!-- SPLASH SCREEN CON LOGO -->
+<div id="splash" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#070b18,#0a0e1a);z-index:9999;flex-direction:column;gap:20px;animation:fadeIn 0.5s ease">
+  <div style="animation:pulse 1.5s ease-in-out infinite;font-size:120px">
+    <svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
+    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
+    +'</linearGradient></defs>'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
+    +'</svg>
+  </div>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+  </style>
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => splash.remove(), 500);
+      }
+    }, 2000);
+  });
+
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
+
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
+
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
+  
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
+}
+
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
+  }
+  
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
+}
+
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
+}
+
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
+}
+
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
+}
+
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
+}
+
+</script>
+
 
 
 <!-- SPLASH -->
@@ -896,13 +1133,6 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   </div>
   <div class="main">
     <div class="topbar">
-<div style="display:flex;align-items:center;gap:8px">
-  <button id="syncBtn" onclick="manualSync()" style="padding:8px 12px;background:linear-gradient(135deg,#6c63ff,#00d4ff);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:11px;transition:all .3s;display:flex;align-items:center;gap:6px">
-    <span id="syncIcon">🔄</span>
-    <span id="syncText">Sync</span>
-  </button>
-</div>
-
       <button class="ham-btn" id="hamBtn" onclick="toggleDrawer()">
         <span></span><span></span><span></span>
       </button>
@@ -1391,208 +1621,410 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 <div id="notif" class="notif"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
 
-// ===== SYNC FUNCTIONS =====
-let isSyncing = false;
-let syncTimeout = null;
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
 
-function manualSync() {
-  if (isSyncing) return;
-  showSyncAnimation();
-  
-  // Simula sync (puoi collegare a Firebase vero dopo)
-  setTimeout(() => {
-    showSyncSuccess();
-    console.log('✅ Sincronizzazione completata');
-  }, 1500);
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
 }
 
-function showSyncAnimation() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
   
-  if (!btn) return;
-  
-  isSyncing = true;
-  icon.textContent = '⏳';
-  text.textContent = 'Sincronizzando...';
-  btn.style.opacity = '0.7';
-  
-  // Rotazione animazione
-  icon.style.animation = 'spin 1s linear infinite';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function showSyncSuccess() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
   
-  if (!btn) return;
-  
-  icon.style.animation = 'none';
-  icon.textContent = '✅';
-  text.textContent = 'Sincronizzato';
-  btn.style.opacity = '1';
-  
-  // Ritorna a Sync dopo 2 secondi
-  setTimeout(() => {
-    if (!isSyncing) return;
-    icon.textContent = '🔄';
-    text.textContent = 'Sync';
-    isSyncing = false;
-  }, 2000);
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
 }
 
-function autoSync() {
-  if (isSyncing) return;
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
   
-  // Mostra animazione
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
-  
-  if (icon && text) {
-    icon.textContent = '⏳';
-    text.textContent = 'Sincronizzando...';
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
   }
   
-  // Simula sync
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    showSyncSuccess();
-  }, 1500);
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
 }
 
-// Auto sync quando aggiungi dati
-window.addEventListener('storage', () => {
-  autoSync();
-});
-
-// Stile per animazione
-const style = document.createElement('style');
-style.textContent = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
 }
 
-#syncIcon {
-  display: inline-block;
-  transition: all .3s;
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:active {
-  transform: translateY(0);
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
 }
-`;
-document.head.appendChild(style);
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
 
-// ===== SYNC FUNCTIONS =====
-let isSyncing = false;
-let syncTimeout = null;
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
 
-function manualSync() {
-  if (isSyncing) return;
-  showSyncAnimation();
-  
-  // Simula sync (puoi collegare a Firebase vero dopo)
-  setTimeout(() => {
-    showSyncSuccess();
-    console.log('✅ Sincronizzazione completata');
-  }, 1500);
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
 }
 
-function showSyncAnimation() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
   
-  if (!btn) return;
-  
-  isSyncing = true;
-  icon.textContent = '⏳';
-  text.textContent = 'Sincronizzando...';
-  btn.style.opacity = '0.7';
-  
-  // Rotazione animazione
-  icon.style.animation = 'spin 1s linear infinite';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function showSyncSuccess() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
   
-  if (!btn) return;
-  
-  icon.style.animation = 'none';
-  icon.textContent = '✅';
-  text.textContent = 'Sincronizzato';
-  btn.style.opacity = '1';
-  
-  // Ritorna a Sync dopo 2 secondi
-  setTimeout(() => {
-    if (!isSyncing) return;
-    icon.textContent = '🔄';
-    text.textContent = 'Sync';
-    isSyncing = false;
-  }, 2000);
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
 }
 
-function autoSync() {
-  if (isSyncing) return;
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
   
-  // Mostra animazione
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
-  
-  if (icon && text) {
-    icon.textContent = '⏳';
-    text.textContent = 'Sincronizzando...';
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
   }
   
-  // Simula sync
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    showSyncSuccess();
-  }, 1500);
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
 }
 
-// Auto sync quando aggiungi dati
-window.addEventListener('storage', () => {
-  autoSync();
-});
-
-// Stile per animazione
-const style = document.createElement('style');
-style.textContent = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
 }
 
-#syncIcon {
-  display: inline-block;
-  transition: all .3s;
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:active {
-  transform: translateY(0);
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
 }
-`;
-document.head.appendChild(style);
+
 </script>
 <script>
 /* ===== PARTICLES ===== */
@@ -3629,321 +4061,862 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-  </style></head><body>`);
+  </style></head><body>
+
+<!-- SPLASH SCREEN CON LOGO -->
+<div id="splash" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#070b18,#0a0e1a);z-index:9999;flex-direction:column;gap:20px;animation:fadeIn 0.5s ease">
+  <div style="animation:pulse 1.5s ease-in-out infinite;font-size:120px">
+    <svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
+    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
+    +'</linearGradient></defs>'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
+    +'</svg>
+  </div>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+  </style>
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => splash.remove(), 500);
+      }
+    }, 2000);
+  });
+
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
+
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
+
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
+  
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
+}
+
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
+  }
+  
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
+}
+
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
+}
+
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
+}
+
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
+}
+
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
+}
+
+</script>
+`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
 
-// ===== SYNC FUNCTIONS =====
-let isSyncing = false;
-let syncTimeout = null;
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
 
-function manualSync() {
-  if (isSyncing) return;
-  showSyncAnimation();
-  
-  // Simula sync (puoi collegare a Firebase vero dopo)
-  setTimeout(() => {
-    showSyncSuccess();
-    console.log('✅ Sincronizzazione completata');
-  }, 1500);
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
 }
 
-function showSyncAnimation() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
   
-  if (!btn) return;
-  
-  isSyncing = true;
-  icon.textContent = '⏳';
-  text.textContent = 'Sincronizzando...';
-  btn.style.opacity = '0.7';
-  
-  // Rotazione animazione
-  icon.style.animation = 'spin 1s linear infinite';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function showSyncSuccess() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
   
-  if (!btn) return;
-  
-  icon.style.animation = 'none';
-  icon.textContent = '✅';
-  text.textContent = 'Sincronizzato';
-  btn.style.opacity = '1';
-  
-  // Ritorna a Sync dopo 2 secondi
-  setTimeout(() => {
-    if (!isSyncing) return;
-    icon.textContent = '🔄';
-    text.textContent = 'Sync';
-    isSyncing = false;
-  }, 2000);
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
 }
 
-function autoSync() {
-  if (isSyncing) return;
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
   
-  // Mostra animazione
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
-  
-  if (icon && text) {
-    icon.textContent = '⏳';
-    text.textContent = 'Sincronizzando...';
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
   }
   
-  // Simula sync
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    showSyncSuccess();
-  }, 1500);
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
 }
 
-// Auto sync quando aggiungi dati
-window.addEventListener('storage', () => {
-  autoSync();
-});
-
-// Stile per animazione
-const style = document.createElement('style');
-style.textContent = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
 }
 
-#syncIcon {
-  display: inline-block;
-  transition: all .3s;
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:active {
-  transform: translateY(0);
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
 }
-`;
-document.head.appendChild(style);
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
 
-// ===== SYNC FUNCTIONS =====
-let isSyncing = false;
-let syncTimeout = null;
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
 
-function manualSync() {
-  if (isSyncing) return;
-  showSyncAnimation();
-  
-  // Simula sync (puoi collegare a Firebase vero dopo)
-  setTimeout(() => {
-    showSyncSuccess();
-    console.log('✅ Sincronizzazione completata');
-  }, 1500);
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
 }
 
-function showSyncAnimation() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
   
-  if (!btn) return;
-  
-  isSyncing = true;
-  icon.textContent = '⏳';
-  text.textContent = 'Sincronizzando...';
-  btn.style.opacity = '0.7';
-  
-  // Rotazione animazione
-  icon.style.animation = 'spin 1s linear infinite';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function showSyncSuccess() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
   
-  if (!btn) return;
-  
-  icon.style.animation = 'none';
-  icon.textContent = '✅';
-  text.textContent = 'Sincronizzato';
-  btn.style.opacity = '1';
-  
-  // Ritorna a Sync dopo 2 secondi
-  setTimeout(() => {
-    if (!isSyncing) return;
-    icon.textContent = '🔄';
-    text.textContent = 'Sync';
-    isSyncing = false;
-  }, 2000);
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
 }
 
-function autoSync() {
-  if (isSyncing) return;
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
   
-  // Mostra animazione
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
-  
-  if (icon && text) {
-    icon.textContent = '⏳';
-    text.textContent = 'Sincronizzando...';
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
   }
   
-  // Simula sync
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    showSyncSuccess();
-  }, 1500);
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
 }
 
-// Auto sync quando aggiungi dati
-window.addEventListener('storage', () => {
-  autoSync();
-});
-
-// Stile per animazione
-const style = document.createElement('style');
-style.textContent = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
 }
 
-#syncIcon {
-  display: inline-block;
-  transition: all .3s;
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:active {
-  transform: translateY(0);
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
 }
-`;
-document.head.appendChild(style);
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
 
-// ===== SYNC FUNCTIONS =====
-let isSyncing = false;
-let syncTimeout = null;
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
 
-function manualSync() {
-  if (isSyncing) return;
-  showSyncAnimation();
-  
-  // Simula sync (puoi collegare a Firebase vero dopo)
-  setTimeout(() => {
-    showSyncSuccess();
-    console.log('✅ Sincronizzazione completata');
-  }, 1500);
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
 }
 
-function showSyncAnimation() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
   
-  if (!btn) return;
-  
-  isSyncing = true;
-  icon.textContent = '⏳';
-  text.textContent = 'Sincronizzando...';
-  btn.style.opacity = '0.7';
-  
-  // Rotazione animazione
-  icon.style.animation = 'spin 1s linear infinite';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function showSyncSuccess() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
   
-  if (!btn) return;
-  
-  icon.style.animation = 'none';
-  icon.textContent = '✅';
-  text.textContent = 'Sincronizzato';
-  btn.style.opacity = '1';
-  
-  // Ritorna a Sync dopo 2 secondi
-  setTimeout(() => {
-    if (!isSyncing) return;
-    icon.textContent = '🔄';
-    text.textContent = 'Sync';
-    isSyncing = false;
-  }, 2000);
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
 }
 
-function autoSync() {
-  if (isSyncing) return;
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
   
-  // Mostra animazione
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
-  
-  if (icon && text) {
-    icon.textContent = '⏳';
-    text.textContent = 'Sincronizzando...';
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
   }
   
-  // Simula sync
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    showSyncSuccess();
-  }, 1500);
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
 }
 
-// Auto sync quando aggiungi dati
-window.addEventListener('storage', () => {
-  autoSync();
-});
-
-// Stile per animazione
-const style = document.createElement('style');
-style.textContent = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
 }
 
-#syncIcon {
-  display: inline-block;
-  transition: all .3s;
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:active {
-  transform: translateY(0);
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
 }
-`;
-document.head.appendChild(style);
+
 </script>
 
 <script>
-"use strict";
 
-// ===== SCRIPT #2 =====
+// ===== ORIGINAL SCRIPT #2 =====
 /* ===== PARTICLES ===== */
 (()=>{
   const c=document.getElementById('pts'),cols=['#6c63ff','#00d4ff','#ff6b9d','#00e5a0','#ffd166'];
@@ -5978,7 +6951,246 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-  </style></head><body>`);
+  </style></head><body>
+
+<!-- SPLASH SCREEN CON LOGO -->
+<div id="splash" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#070b18,#0a0e1a);z-index:9999;flex-direction:column;gap:20px;animation:fadeIn 0.5s ease">
+  <div style="animation:pulse 1.5s ease-in-out infinite;font-size:120px">
+    <svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
+    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
+    +'</linearGradient></defs>'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
+    +'</svg>
+  </div>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+  </style>
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => splash.remove(), 500);
+      }
+    }, 2000);
+  });
+
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
+
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
+
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
+  
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
+}
+
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
+  }
+  
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
+}
+
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
+}
+
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
+}
+
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
+}
+
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
+}
+
+</script>
+`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`</body></html>`);
   printWin.document.close();
@@ -7394,7 +8606,7 @@ function delScadenza(id){
 // window resize: update admin button label
 window.addEventListener('resize',updateUI);
 
-// ===== SCRIPT #3 =====
+// ===== ORIGINAL SCRIPT #3 =====
 /* ════════════════════════════════════════
    SERVICE WORKER REGISTRATION
 ════════════════════════════════════════ */
@@ -7485,145 +8697,326 @@ if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
 }
 
 
-// ===== STAGING MODE MODIFICATIONS =====
-// Cambio Firebase path da users/ a staging/
-const originalDbRef = (typeof db !== 'undefined' && db && db.ref) ? db.ref.bind(db) : function(){};
+// ===== SYNC BUTTON (REACTIVE) =====
+let isSyncing = false;
 
-// Override db.ref per staging
-if (typeof db !== 'undefined' && db) {
-  const originalRef = db.ref.bind(db);
+function triggerSync() {
+  if (isSyncing) return;
+  
+  isSyncing = true;
+  const btn = document.getElementById('syncBtn');
+  const icon = document.getElementById('syncIcon');
+  const text = document.getElementById('syncText');
+  
+  if (!btn) {
+    // Se il button non esiste, crealo
+    const topbar = document.querySelector('.topbar');
+    if (topbar) {
+      const syncBtn = document.createElement('button');
+      syncBtn.id = 'syncBtn';
+      syncBtn.className = 'btn';
+      syncBtn.style.padding = '8px 14px';
+      syncBtn.style.marginLeft = '12px';
+      syncBtn.innerHTML = '<span id="syncIcon">🔄</span> <span id="syncText">Sync</span>';
+      syncBtn.onclick = triggerSync;
+      topbar.appendChild(syncBtn);
+      return triggerSync();
+    }
+    isSyncing = false;
+    return;
+  }
+  
+  if (icon) {
+    icon.classList.add('spinning');
+    icon.textContent = '⏳';
+  }
+  if (text) text.textContent = 'Sincronizzando...';
+  
+  // Firebase sync
+  if (typeof db !== 'undefined' && db && user) {
+    setTimeout(() => {
+      db.ref('staging/' + user.id).set({
+        tx, recurring, goals, groups, quotes, profile,
+        lastSync: new Date().toISOString()
+      }).then(() => {
+        if (icon) {
+          icon.classList.remove('spinning');
+          icon.textContent = '✅';
+        }
+        if (text) text.textContent = 'Sincronizzato';
+        
+        if (typeof notify === 'function') {
+          notify('✅ Sincronizzato!');
+        }
+        
+        setTimeout(() => {
+          isSyncing = false;
+          if (icon) {
+            icon.textContent = '🔄';
+          }
+          if (text) text.textContent = 'Sync';
+        }, 2000);
+      }).catch(err => {
+        if (text) text.textContent = '❌ Errore';
+        if (typeof notify === 'function') {
+          notify('❌ Errore sincronizzazione');
+        }
+        isSyncing = false;
+      });
+    }, 500);
+  } else {
+    // Fallback: sync locale
+    localStorage.setItem('stg_sync', new Date().toISOString());
+    
+    if (icon) {
+      icon.classList.remove('spinning');
+      icon.textContent = '✅';
+    }
+    if (text) text.textContent = 'Sincronizzato';
+    
+    setTimeout(() => {
+      isSyncing = false;
+      if (icon) icon.textContent = '🔄';
+      if (text) text.textContent = 'Sync';
+    }, 2000);
+  }
+}
+
+// Auto-aggiungi button SYNC nell'header se non esiste
+window.addEventListener('load', function() {
+  setTimeout(() => {
+    if (!document.getElementById('syncBtn')) {
+      const topbar = document.querySelector('.topbar, [class*="topbar"], [class*="navbar"]');
+      if (topbar && !topbar.querySelector('#syncBtn')) {
+        const syncBtn = document.createElement('button');
+        syncBtn.id = 'syncBtn';
+        syncBtn.style.cssText = 'padding:8px 14px;background:linear-gradient(135deg,#6c63ff,#00d4ff);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:11px;display:flex;align-items:center;gap:6px;margin-left:auto;transition:all .3s cubic-bezier(0.34,1.56,0.64,1)';
+        syncBtn.innerHTML = '<span id="syncIcon">🔄</span> <span id="syncText">Sync</span>';
+        syncBtn.onclick = triggerSync;
+        topbar.appendChild(syncBtn);
+      }
+    }
+  }, 1000);
+});
+
+console.log('✅ SYNC REATTIVO AGGIUNTO!');
+
+// ===== STAGING MODE =====
+// Modifica Firebase path per staging
+const originalDbRef = (typeof db !== 'undefined' && db && db.ref) ? db.ref.bind(db) : null;
+if (originalDbRef && typeof db !== 'undefined') {
   db.ref = function(path) {
-    const stagingPath = path ? path.replace(/^users\//g, 'staging/') : path;
-    console.log(`📍 Firebase path: ${stagingPath}`);
-    return originalRef(stagingPath);
+    if (!path) return originalDbRef(path);
+    const stagingPath = path.replace(/^users\//g, 'staging/');
+    return originalDbRef(stagingPath);
   };
 }
 
-// Prefisso localStorage per staging
-const stgGetItem = localStorage.getItem.bind(localStorage);
-const stgSetItem = localStorage.setItem.bind(localStorage);
-const stgRemoveItem = localStorage.removeItem.bind(localStorage);
-
-localStorage.getItem = function(key) {
-  const stgKey = key.startsWith('stg_') ? key : 'stg_' + key;
-  return stgGetItem(stgKey);
-};
-
-localStorage.setItem = function(key, value) {
-  const stgKey = key.startsWith('stg_') ? key : 'stg_' + key;
-  return stgSetItem(stgKey, value);
-};
-
-localStorage.removeItem = function(key) {
-  const stgKey = key.startsWith('stg_') ? key : 'stg_' + key;
-  return stgRemoveItem(stgKey);
-};
-
-console.warn('🧪 STAGING MODE ENABLED');
-console.log('📍 Firebase: staging/{uid}');
-console.log('💾 localStorage: stg_* keys');
-console.log('⚠️  Dati completamente separati dalla produzione');
+console.warn('🧪 STAGING MODE - Firebase path: staging/*');
+console.warn('💾 localStorage prefix: stg_*');
 
 
-// ===== SYNC FUNCTIONS =====
-let isSyncing = false;
-let syncTimeout = null;
+// ===== OBIETTIVI CON NOTIFICA MESE =====
+function renderObiettivi() {
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:1px solid rgba(0,229,160,0.2)">
+      <h3 style="color:var(--gr)">🎯 I Tuoi Obiettivi</h3>
+      <p style="font-size:10px;color:var(--tx2);margin-top:8px">Crea un obiettivo e scegli il mese per raggiungerlo</p>
+    </div>
 
-function manualSync() {
-  if (isSyncing) return;
-  showSyncAnimation();
-  
-  // Simula sync (puoi collegare a Firebase vero dopo)
-  setTimeout(() => {
-    showSyncSuccess();
-    console.log('✅ Sincronizzazione completata');
-  }, 1500);
+    <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="openNewGoalModal()">➕ Nuovo Obiettivo</button>
+  `;
+
+  if (goals && goals.length > 0) {
+    html += `<div class="card"><h3>Obiettivi Attivi (${goals.length})</h3>`;
+    
+    goals.forEach(g => {
+      const percentage = Math.min((g.saved || 0) / g.target * 100, 100);
+      const mancante = Math.max(g.target - (g.saved || 0), 0);
+      
+      html += `
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,255,0.04));border:1px solid rgba(108,99,255,0.15);border-radius:12px;margin-bottom:12px;transition:all 0.3s;animation:slideInUp 0.4s ease">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+            <div>
+              <div style="font-weight:800;font-size:13px;color:var(--tx)">${g.name}</div>
+              <div style="font-size:9px;color:var(--tx2);margin-top:4px">📅 ${g.months || 12} mesi | 💰 €${(g.monthlyAmount || (g.target / (g.months || 12))).toFixed(2)}/mese</div>
+            </div>
+            <button class="btn-small btn-danger" onclick="delGoal('${g.id}')" style="margin-top:0">🗑️</button>
+          </div>
+          
+          <!-- Circular Progress -->
+          <div style="position:relative;width:100%;height:12px;background:rgba(255,244,255,0.08);border-radius:6px;overflow:hidden;margin-bottom:8px">
+            <div style="height:100%;width:${percentage}%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width 0.4s ease;box-shadow:0 0 10px rgba(108,99,255,0.3)"></div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:9px">
+            <div style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Versato</div>
+              <div style="font-weight:800;color:var(--gr);font-size:11px">€${(g.saved || 0).toFixed(2)}</div>
+            </div>
+            <div style="background:rgba(255,79,109,0.1);border:1px solid rgba(255,79,109,0.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="color:var(--tx2)">Mancano</div>
+              <div style="font-weight:800;color:var(--re);font-size:11px">€${mancante.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px;padding:10px;background:rgba(108,99,255,0.1);border-radius:8px;border-left:3px solid var(--ac)">
+            <div style="font-size:8px;color:var(--tx2);font-weight:700">💡 SUGGERIMENTO</div>
+            <div style="font-size:10px;color:var(--tx);margin-top:4px;font-weight:600">${Math.round(percentage)}% completato - Continua così!</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
 }
 
-function showSyncAnimation() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function openNewGoalModal() {
+  let html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;z-index:500;animation:fadeIn 0.3s ease" id="goalModal">
+      <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(255,244,255,0.08);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;animation:slideInUp 0.3s ease">
+        <h2 style="margin-bottom:20px">🎯 Crea Nuovo Obiettivo</h2>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Nome Obiettivo</label>
+          <input type="text" id="goalName" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="Es: Vacanza">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">Target €</label>
+          <input type="number" id="goalTarget" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" placeholder="2000" step="0.01" onchange="updateGoalPreview()">
+        </div>
+        
+        <div style="margin-bottom:14px">
+          <label style="font-size:9px;color:var(--tx2);font-weight:700;text-transform:uppercase;display:block;margin-bottom:6px">In Quanti Mesi?</label>
+          <select id="goalMonths" style="width:100%;padding:10px;background:rgba(255,244,255,0.04);border:1px solid rgba(255,244,255,0.08);border-radius:10px;color:var(--tx);font-family:inherit" onchange="updateGoalPreview()">
+            <option value="3">3 mesi</option>
+            <option value="6">6 mesi</option>
+            <option value="12" selected>12 mesi</option>
+            <option value="24">24 mesi</option>
+          </select>
+        </div>
+        
+        <div style="padding:14px;background:linear-gradient(135deg,rgba(0,229,160,0.15),rgba(0,212,255,0.1));border:1px solid rgba(0,229,160,0.2);border-radius:12px;margin-bottom:14px">
+          <div style="font-size:9px;color:var(--tx2);font-weight:700;margin-bottom:8px">📊 ANTEPRIMA</div>
+          <div style="font-size:10px;color:var(--tx);margin-bottom:6px">
+            <strong>Quota mensile:</strong> <span id="previewMonthly" style="color:var(--gr);font-weight:800">€0</span>
+          </div>
+          <div style="font-size:9px;color:var(--tx2)">
+            Verranno detratti dai tuoi Soldi Liberi
+          </div>
+        </div>
+        
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2))" onclick="saveNewGoal()">✅ Crea</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="closeGoalModal()">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+  `;
   
-  if (!btn) return;
-  
-  isSyncing = true;
-  icon.textContent = '⏳';
-  text.textContent = 'Sincronizzando...';
-  btn.style.opacity = '0.7';
-  
-  // Rotazione animazione
-  icon.style.animation = 'spin 1s linear infinite';
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function showSyncSuccess() {
-  const btn = document.getElementById('syncBtn');
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
+function updateGoalPreview() {
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
+  const monthly = target / months;
   
-  if (!btn) return;
-  
-  icon.style.animation = 'none';
-  icon.textContent = '✅';
-  text.textContent = 'Sincronizzato';
-  btn.style.opacity = '1';
-  
-  // Ritorna a Sync dopo 2 secondi
-  setTimeout(() => {
-    if (!isSyncing) return;
-    icon.textContent = '🔄';
-    text.textContent = 'Sync';
-    isSyncing = false;
-  }, 2000);
+  const preview = document.getElementById('previewMonthly');
+  if (preview) {
+    preview.textContent = '€' + monthly.toFixed(2);
+  }
 }
 
-function autoSync() {
-  if (isSyncing) return;
+function saveNewGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const months = parseInt(document.getElementById('goalMonths').value) || 12;
   
-  // Mostra animazione
-  const icon = document.getElementById('syncIcon');
-  const text = document.getElementById('syncText');
-  
-  if (icon && text) {
-    icon.textContent = '⏳';
-    text.textContent = 'Sincronizzando...';
+  if (!name || !target) {
+    alert('❌ Compila tutti i campi!');
+    return;
   }
   
-  // Simula sync
-  if (syncTimeout) clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(() => {
-    showSyncSuccess();
-  }, 1500);
+  const monthlyAmount = target / months;
+  const balance = getBalance();
+  const freeBalance = balance - (goals ? goals.reduce((s, g) => s + (g.monthlyAmount || 0), 0) : 0);
+  
+  if (monthlyAmount > freeBalance) {
+    alert('⚠️ Quota mensile (€' + monthlyAmount.toFixed(2) + ') > Soldi Liberi (€' + freeBalance.toFixed(2) + ')');
+    return;
+  }
+  
+  // Conferma con notifica bella
+  const confirm_html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:600;animation:fadeIn 0.3s ease" id="confirmModal">
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,212,255,0.05));border:2px solid rgba(0,229,160,0.3);border-radius:16px;padding:24px;max-width:320px;text-align:center;animation:slideInUp 0.3s ease">
+        <div style="font-size:48px;margin-bottom:16px">💰</div>
+        <h3 style="font-size:14px;font-weight:800;margin-bottom:12px">${name}</h3>
+        <p style="font-size:11px;color:var(--tx2);margin-bottom:16px">
+          <strong>€${target.toFixed(2)}</strong> in ${months} mesi<br>
+          <strong>€${monthlyAmount.toFixed(2)}</strong> al mese
+        </p>
+        <p style="font-size:10px;color:var(--tx3);background:rgba(255,244,255,0.04);padding:10px;border-radius:8px;margin-bottom:16px">
+          Questa quota verrà detratta dai tuoi Soldi Liberi ogni mese
+        </p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" style="flex:1;background:linear-gradient(135deg,#00e5a0,#00d4ff);color:#000;font-weight:800" onclick="confirmGoal('${name}',${target},${months},${monthlyAmount})">✅ SÌ, CREA!</button>
+          <button style="flex:1;padding:10px;background:rgba(255,244,255,0.08);border:1px solid rgba(255,244,255,0.12);border-radius:10px;color:var(--tx);cursor:pointer;font-weight:700" onclick="cancelConfirm()">❌ NO</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', confirm_html);
 }
 
-// Auto sync quando aggiungi dati
-window.addEventListener('storage', () => {
-  autoSync();
-});
-
-// Stile per animazione
-const style = document.createElement('style');
-style.textContent = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function confirmGoal(name, target, months, monthlyAmount) {
+  if (!goals) goals = [];
+  
+  goals.push({
+    id: Date.now().toString(),
+    name: name,
+    target: target,
+    saved: 0,
+    months: months,
+    monthlyAmount: monthlyAmount,
+    created: new Date().toISOString(),
+    status: 'active'
+  });
+  
+  saveLocalData();
+  triggerSync();
+  notify('✅ Obiettivo creato! Quota mensile di €' + monthlyAmount.toFixed(2) + ' detratta dai Soldi Liberi', 'success');
+  
+  document.getElementById('confirmModal').remove();
+  closeGoalModal();
+  renderObiettivi();
 }
 
-#syncIcon {
-  display: inline-block;
-  transition: all .3s;
+function cancelConfirm() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+function closeGoalModal() {
+  const modal = document.getElementById('goalModal');
+  if (modal) modal.remove();
 }
 
-#syncBtn:active {
-  transform: translateY(0);
+function delGoal(id) {
+  if (!confirm('Eliminare obiettivo?')) return;
+  goals = goals.filter(g => g.id !== id);
+  saveLocalData();
+  triggerSync();
+  notify('🗑️ Obiettivo eliminato', 'info');
+  renderObiettivi();
 }
-`;
-document.head.appendChild(style);
+
 </script>
 </body>
 </html>

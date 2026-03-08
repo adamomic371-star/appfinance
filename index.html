@@ -330,9 +330,15 @@ footer{background:rgba(0,0,0,.3);border-top:1px solid var(--b1);padding:40px 5vw
 </section>
 
 <footer>
-  <a class="footer-logo" href="#"><div class="footer-logo-ico">💰</div><span class="footer-logo-txt">Kazka</span></a>
+  <a class="footer-logo" href="#">
+    <div id="footerLogoMark" style="display:inline-flex;align-items:center;justify-content:center"></div>
+    <span class="footer-logo-txt" style="margin-left:8px">Kazka</span>
+  </a>
   <div class="footer-links"><a href="#features">Funzionalità</a><a href="#business">Azienda</a><a href="#piani">Piani</a><a href="#faq">FAQ</a><a href="app.html">Accedi</a></div>
-  <div class="footer-right">Pro €3 · Biz Starter €9 · Biz Pro €19 · Lifetime €149<br><span style="margin-top:4px;display:block">© 2025 Kazka</span></div>
+  <div class="footer-right">Pro €3 · Biz Starter €9 · Biz Pro €19 · Lifetime €149<br>
+    <span style="margin-top:4px;display:block">© 2026 Kazka · Tutti i diritti riservati<br>
+    <span style="opacity:.7">Michele Adamo</span></span>
+  </div>
 </footer>
 
 <script>
@@ -364,6 +370,7 @@ function kazkaLogoSVG(size,glow){
 }
 var _lm=document.getElementById('idxLogoMark');
 if(_lm)_lm.innerHTML=kazkaLogoSVG(34,true);
+var _flm=document.getElementById('footerLogoMark');if(_flm)_flm.innerHTML=kazkaLogoSVG(28,false);
 
 /* ===== GEO-LANG DETECTION ===== */
 (function(){

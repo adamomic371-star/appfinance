@@ -1,56 +1,27 @@
 {
-  "name": "Kazka – Smart Finance",
-  "short_name": "Kazka",
-  "description": "App di finanza personale e aziendale con sync automatico cloud",
-  "start_url": "./app.html",
+  "name": "Finanza Pro",
+  "short_name": "Finanza Pro",
+  "description": "Il tuo assistente finanziario personale.",
+  "start_url": "/appfinance/app.html",
+  "scope": "/appfinance/",
   "display": "standalone",
-  "scope": "./",
+  "orientation": "any",
   "background_color": "#070b18",
-  "theme_color": "#6c63ff",
-  "orientation": "portrait-primary",
+  "theme_color": "#070b18",
+  "lang": "it",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/appfinance/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "/appfinance/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "screenshot-540x720.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "screenshot-1280x720.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Transazioni",
-      "short_name": "Tx",
-      "description": "Aggiungi una nuova transazione",
-      "url": "./app.html?page=transazioni",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Obiettivi",
-      "short_name": "Obiettivi",
-      "description": "Gestisci i tuoi obiettivi",
-      "url": "./app.html?page=obiettivi",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    }
-  ],
-  "categories": ["finance", "productivity"]
+  "prefer_related_applications": false
 }

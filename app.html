@@ -3474,7 +3474,7 @@ function saveClient(){
   const addr=document.getElementById('cliAddr').value.trim();
   const note=document.getElementById('cliNote').value.trim();
   if(!name){notify('❌ Inserisci almeno il nome');return;}
-  db.ref(`biz/${user.id}/clients`).push({type,name,email,phone,vat,addr,note,createdAt:new Date().toISOString()}).then(()=>{closeMo('clientModal');goTo('biz_clienti');notify('✅ '+(type==='client'?'Cliente':'Fornitore')+' aggiunto!');});
+  autoSync();db.ref(`biz/${user.id}/clients`).push({type,name,email,phone,vat,addr,note,createdAt:new Date().toISOString()}).then(()=>{closeMo('clientModal');goTo('biz_clienti');notify('✅ '+(type==='client'?'Cliente':'Fornitore')+' aggiunto!');});
 }
 function delClient(id){if(!confirm('Eliminare questo contatto?'))return;db.ref(`biz/${user.id}/clients/${id}`).remove().then(()=>{goTo('biz_clienti');notify('🗑️ Eliminato');});}
 
@@ -3655,9 +3655,9 @@ function saveProject(){
   const desc=document.getElementById('prDesc').value.trim();
   const status=document.getElementById('prStatus').value;
   if(!name){notify('❌ Inserisci il nome del progetto');return;}
-  db.ref(`biz/${user.id}/projects`).push({name,clientId,budget,startDate,endDate,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('projModal');goTo('biz_progetti');notify('✅ Progetto creato!');});
+  autoSync();db.ref(`biz/${user.id}/projects`).push({name,clientId,budget,startDate,endDate,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('projModal');goTo('biz_progetti');notify('✅ Progetto creato!');});
 }
-function updateProjStatus(id,status){db.ref(`biz/${user.id}/projects/${id}/status`).set(status).then(()=>{const p=projects.find(x=>x.id===id);if(p)p.status=status;goTo('biz_progetti');notify('✅ Stato aggiornato');});}
+autoSync();function updateProjStatus(id,status){db.ref(`biz/${user.id}/projects/${id}/status`).set(status).then(()=>{const p=projects.find(x=>x.id===id);if(p)p.status=status;goTo('biz_progetti');notify('✅ Stato aggiornato');});}
 function delProject(id){if(!confirm('Eliminare questo progetto?'))return;db.ref(`biz/${user.id}/projects/${id}`).remove().then(()=>{goTo('biz_progetti');notify('🗑️ Eliminato');});}
 
 function openBizTxModal(clientId,projectId){
@@ -3676,7 +3676,7 @@ function saveBizTx(){
   const clientId=document.getElementById('btClient').value;
   const iva=document.getElementById('btIva').value;
   if(!desc||!amt||amt<=0){notify('❌ Compila descrizione e importo');return;}
-  db.ref(`biz/${user.id}/transactions`).push({desc,amount:amt,type,cat,projectId,clientId,iva,createdAt:new Date().toISOString()}).then(()=>{closeMo('bizTxModal');goTo('biz_primanota');notify('✅ Movimento aggiunto!');});
+  autoSync();db.ref(`biz/${user.id}/transactions`).push({desc,amount:amt,type,cat,projectId,clientId,iva,createdAt:new Date().toISOString()}).then(()=>{closeMo('bizTxModal');goTo('biz_primanota');notify('✅ Movimento aggiunto!');});
 }
 function delBizTx(id){if(!confirm('Eliminare questo movimento?'))return;db.ref(`biz/${user.id}/transactions/${id}`).remove().then(()=>{goTo('biz_primanota');notify('🗑️ Eliminato');});}
 
@@ -3693,9 +3693,9 @@ function saveExpenseNote(){
   const date=document.getElementById('enDate').value;
   const projectId=document.getElementById('enProj').value;
   if(!desc||!amt){notify('❌ Compila descrizione e importo');return;}
-  db.ref(`biz/${user.id}/expenseNotes`).push({desc,amount:amt,cat,date,projectId,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('expenseNoteModal');goTo('biz_spese');notify('✅ Nota spese aggiunta!');});
+  autoSync();db.ref(`biz/${user.id}/expenseNotes`).push({desc,amount:amt,cat,date,projectId,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('expenseNoteModal');goTo('biz_spese');notify('✅ Nota spese aggiunta!');});
 }
-function updateExpenseStatus(id,status){db.ref(`biz/${user.id}/expenseNotes/${id}/status`).set(status).then(()=>{const e=expenseNotes.find(x=>x.id===id);if(e)e.status=status;goTo('biz_spese');notify('✅ Stato aggiornato');});}
+autoSync();function updateExpenseStatus(id,status){db.ref(`biz/${user.id}/expenseNotes/${id}/status`).set(status).then(()=>{const e=expenseNotes.find(x=>x.id===id);if(e)e.status=status;goTo('biz_spese');notify('✅ Stato aggiornato');});}
 function delExpenseNote(id){if(!confirm('Eliminare questa nota spese?'))return;db.ref(`biz/${user.id}/expenseNotes/${id}`).remove().then(()=>{goTo('biz_spese');notify('🗑️ Eliminata');});}
 
 /* ——— BIZ SETTINGS / LOGO ——— */
@@ -3712,7 +3712,7 @@ function saveBizLogo(){
   // Logo is already stored by previewBizLogo
   localStorage.setItem('fp_biz_settings_'+user.id,JSON.stringify(settings));
   closeMo('bizLogoModal');
-  notify('✅ Dati azienda salvati!');
+  autoSync();notify('✅ Dati azienda salvati!');
 }
 function openBizLogoModal(){
   const biz=getBizSettings();
@@ -4737,7 +4737,7 @@ function saveTx(){
   if(type==='expense'&&amt>bal){document.getElementById('txWarn').style.display='block';notify('❌ Saldo insufficiente!');return;}
   db.ref(`transactions/${Date.now()}`).set({userId:user.id,desc,amount:amt,type,cat,createdAt:new Date().toISOString()}).then(()=>{
     closeMo('txModal');
-    goTo('transazioni');notify('✅ Aggiunto!');if(type==='income'&&amt>=1000)setTimeout(()=>checkInvestModal(amt),700);
+    goTo('transazioni');notify('✅; autoSync() Aggiunto!');if(type==='income'&&amt>=1000)setTimeout(()=>checkInvestModal(amt),700);
   });
 }
 function delBill(id){
@@ -4747,12 +4747,12 @@ function delBill(id){
 function saveBill(){
   const n=document.getElementById('bName').value.trim(),a=parseFloat(document.getElementById('bAmt').value),d=document.getElementById('bDate').value;
   if(!n||!a||!d){notify('❌ Compila tutto');return;}
-  db.ref(`bills/${Date.now()}`).set({name:n,amount:a,date:d,userId:user.id,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');goTo('bollette');notify('✅ Aggiunto!');});
+  db.ref(`bills/${Date.now()}`).set({name:n,amount:a,date:d,userId:user.id,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');goTo('bollette');notify('✅; autoSync() Aggiunto!');});
 }
 function saveUtil(){
   const t=document.getElementById('utType').value,p=document.getElementById('utProv').value.trim(),c=document.getElementById('utCon').value.trim();
   if(!p||!c){notify('❌ Compila tutto');return;}
-  db.ref(`utilities/${Date.now()}`).set({type:t,provider:p,contract:c,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');sessionStorage.setItem('buTab','utenze');goTo('bollette');notify('✅ Aggiunto!');});
+  autoSync();db.ref(`utilities/${Date.now()}`).set({type:t,provider:p,contract:c,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');sessionStorage.setItem('buTab','utenze');goTo('bollette');notify('✅ Aggiunto!');});
 }
 function openNewTrip(){
   document.getElementById('trEditId').value='';
@@ -5110,11 +5110,11 @@ function saveRec(){
   const data={name:n,amount:a,type:t,cat:c,freq:f,nextDate:nd,kind:k,expiry,status:'active',userId:user.id};
   if(editId){
     db.ref(`recurring/${editId}`).update(data).then(()=>{
-      closeMo('recModal');goTo('ricorrenti');notify('✅ Ricorrente aggiornata!');
+      autoSync();closeMo('recModal');goTo('ricorrenti');notify('✅ Ricorrente aggiornata!');
     });
   } else {
     db.ref(`recurring/${Date.now()}`).set({...data,createdAt:new Date().toISOString()}).then(()=>{
-      closeMo('recModal');goTo('ricorrenti');notify('✅ Ricorrente aggiunta!');
+      autoSync();closeMo('recModal');goTo('ricorrenti');notify('✅ Ricorrente aggiunta!');
     });
   }
 }
@@ -5130,7 +5130,7 @@ function saveGroup(){
   if(!n){notify('❌ Inserisci un nome');return;}
   const gid='g_'+Date.now();
   const gt=document.getElementById('gType')?.value||'normal';
-  db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,groupType:gt,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');curGroupId=gid;goTo('gruppi');notify('✅ Gruppo creato!');});
+  autoSync();db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,groupType:gt,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');curGroupId=gid;goTo('gruppi');notify('✅ Gruppo creato!');});
 }
 function doInvite(){
   const target=document.getElementById('invTarget').value.trim();
@@ -5140,7 +5140,7 @@ function doInvite(){
     for(let id in us){if(id===target||us[id].email===target){found={...us[id],id};break;}}
     if(!found){notify('❌ Utente non trovato');return;}
     if(found.id===user.id){notify('❌ Non puoi invitare te stesso');return;}
-    db.ref(`groups/${curGroupId}/members/${found.id}`).set({name:found.name,email:found.email,joinedAt:new Date().toISOString()}).then(()=>{closeMo('inviteModal');goTo('gruppi');notify('✅ '+found.name+' aggiunto!');});
+    autoSync();db.ref(`groups/${curGroupId}/members/${found.id}`).set({name:found.name,email:found.email,joinedAt:new Date().toISOString()}).then(()=>{closeMo('inviteModal');goTo('gruppi');notify('✅ '+found.name+' aggiunto!');});
   });
 }
 function saveProfilePaypal(){
@@ -5152,7 +5152,7 @@ function saveProfilePaypal(){
   // Normalize paypal.me: ensure https://
   const stored=isPaypalMe&&!val.startsWith('http')?'https://'+val:val;
   localStorage.setItem('fp_paypal_'+user.id, stored);
-  db.ref(`users/${user.id}/paypalEmail`).set(stored).then(()=>notify('✅ PayPal salvato!'));
+  autoSync();db.ref(`users/${user.id}/paypalEmail`).set(stored).then(()=>notify('✅ PayPal salvato!'));
 }
 
 function openGExpModal(){
@@ -5252,7 +5252,7 @@ function leaveGroup(gid){
     curGroupId=null;
     groups=groups.filter(g=>g.id!==gid);
     goTo('gruppi');
-    notify('✅ Hai lasciato il gruppo');
+    autoSync();notify('✅ Hai lasciato il gruppo');
   }).catch(()=>notify('❌ Errore'));
 }
 function toggleRec(id,status){const next=status==='active'?'paused':'active';db.ref(`recurring/${id}/status`).set(next).then(()=>{goTo('ricorrenti');notify(next==='active'?'▶ Riattivata':'⏸ Messa in pausa');}); }
@@ -5305,7 +5305,7 @@ function saveBudgets(){
   });
   localStorage.setItem('fp_budgets_'+user.id,JSON.stringify(b));
   closeMo('budgetModal');
-  notify('✅ Budget salvati!');
+  autoSync();notify('✅ Budget salvati!');
   goTo('report');
 }
 function openBudgetModal(){
@@ -5359,7 +5359,7 @@ function saveEditTx(){
   db.ref(`transactions/${id}`).update({desc,amount:amt,type,cat}).then(()=>{
     closeMo('editTxModal');
     goTo('transazioni');
-    notify('✅ Transazione aggiornata!');
+    autoSync();notify('✅ Transazione aggiornata!');
   });
 }
 
@@ -5425,10 +5425,10 @@ function saveUserRow(uid){
     if(i!==-1){if(plan)allUsers[i].plan=plan;if(role)allUsers[i].role=role;}
     const btn=document.getElementById('usave_'+uid);
     if(btn)btn.style.display='none';
-    notify('✅ Utente aggiornato!');
+    autoSync();notify('✅ Utente aggiornato!');
   }).catch(()=>notify('❌ Errore salvataggio'));
 }
-function delUser(uid,name){if(!confirm(`Eliminare "${name}"?`))return;db.ref(`users/${uid}`).remove().then(()=>{allUsers=allUsers.filter(u=>u.id!==uid);notify('✅ Eliminato');renderAdmin(document.getElementById('content'));});}
+autoSync();function delUser(uid,name){if(!confirm(`Eliminare "${name}"?`))return;db.ref(`users/${uid}`).remove().then(()=>{allUsers=allUsers.filter(u=>u.id!==uid);notify('✅ Eliminato');renderAdmin(document.getElementById('content'));});}
 
 /* ===== DRAWER (MOBILE) ===== */
 function toggleDrawer(){
@@ -5585,7 +5585,7 @@ function saveGoal(){
   } else {
     goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,payDay,status:'active',createdAt:new Date().toISOString()});
   }
-  saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
+  autoSync();saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
 }
 function addToGoal(id){
   const amt=parseFloat(prompt('Quanti € vuoi aggiungere a questo obiettivo?'));
@@ -5744,7 +5744,7 @@ function updatePushStatus(){
 }
 function requestPushPermission(){
   if(!('Notification' in window)){notify('❌ Browser non supportato');return;}
-  if(Notification.permission==='granted'){notify('✅ Notifiche già attive!');return;}
+  if(Notification.permission==='granted'){notify('✅; autoSync() Notifiche già attive!');return;}
   Notification.requestPermission().then(p=>{
     updatePushStatus();
     if(p==='granted'){notify('✅ Notifiche push attivate!');setTimeout(()=>new Notification('Kazka 💰',{body:'Notifiche attivate! Riceverai avvisi per scadenze e ricorrenti.'}),500);}
@@ -5765,7 +5765,7 @@ function saveName(){
   if(!v){notify('❌ Nome vuoto');return;}
   db.ref(`users/${user.id}/name`).set(v).then(()=>{
     user.name=v;realUser.name=v;localStorage.setItem('fp_user',JSON.stringify(user));
-    notify('✅ Nome aggiornato!');goTo('profilo');
+    autoSync();notify('✅ Nome aggiornato!');goTo('profilo');
   });
 }
 function resetOnboarding(){
@@ -5798,7 +5798,7 @@ function saveEditBizTx(){
     cat:document.getElementById('ebtCat').value,
     iva:document.getElementById('ebtIva').value,
     dueDate:document.getElementById('ebtDue').value||null
-  }).then(()=>{closeMo('editBizTxModal');goTo('biz_primanota');notify('✅ Aggiornato!');});
+  autoSync();}).then(()=>{closeMo('editBizTxModal');goTo('biz_primanota');notify('✅ Aggiornato!');});
 }
 
 /* ===== SCADENZE MANUALI ===== */
@@ -5837,12 +5837,12 @@ function saveScadenza(){
   const data={title,date,cat:document.getElementById('scadCat').value,amount:parseFloat(document.getElementById('scadAmt').value)||0,notes:document.getElementById('scadNotes').value.trim(),reminder:parseInt(document.getElementById('scadReminder').value)||0,status:'pending'};
   if(editId){const idx=all.findIndex(s=>s.id===editId);if(idx>=0)all[idx]={...all[idx],...data};}
   else all.push({id:'scad_'+Date.now(),...data,createdAt:new Date().toISOString()});
-  saveManualScadenze(all);closeMo('scadenzaModal');goTo('biz_scadenzario');notify('✅ Scadenza salvata!');
+  autoSync();saveManualScadenze(all);closeMo('scadenzaModal');goTo('biz_scadenzario');notify('✅ Scadenza salvata!');
 }
 function doneScadenza(id){
   const all=loadManualScadenze();const idx=all.findIndex(s=>s.id===id);
   if(idx>=0)all[idx].status='done';
-  saveManualScadenze(all);goTo('biz_scadenzario');notify('✅ Scadenza completata!');
+  autoSync();saveManualScadenze(all);goTo('biz_scadenzario');notify('✅ Scadenza completata!');
 }
 function delScadenza(id){
   if(!confirm('Eliminare questa scadenza?'))return;

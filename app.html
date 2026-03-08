@@ -1024,7 +1024,6 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
         <p id="pgSub">Panoramica</p>
       </div>
       <div class="tb-right" id="tbRight">
-        <button id="syncBtn" onclick="manualSync()" style="padding:7px 12px;background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(0,212,255,.08));border:1.5px solid rgba(0,212,255,.35);border-radius:18px;font-size:11px;font-weight:700;color:#00d4ff;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'Outfit',sans-serif">🔄 Sync</button>
         <div class="tb-date" id="tbDate"></div>
         <div class="mode-sw" id="modeSw">
           <button class="mode-btn active" id="modePersonal" onclick="setMode('personal')">👤 Personale</button>
@@ -1032,8 +1031,6 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
         </div>
         <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Tema">🌙</button>
         <div id="syncBadge" style="position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,229,160,.9);color:#0a0f1e;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(0,229,160,.3)">⚡ Sincronizzato</div>
-  <button id="syncBtn" onclick="manualSync()" style="position:fixed;top:70px;right:16px;padding:10px 16px;background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(0,212,255,.1));border:1.5px solid rgba(0,212,255,.4);border-radius:22px;font-size:12px;font-weight:700;color:#00d4ff;cursor:pointer;transition:all .2s;z-index:499;box-shadow:0 2px 8px rgba(0,212,255,.2);backdrop-filter:blur(8px)">🔄 Sincronizza</button>
-
 <button class="notif-bell" id="notifBell" onclick="goTo('notifiche')" title="Notifiche">
           🔔<span class="notif-badge hidden" id="notifBadge">0</span>
         </button>
@@ -2384,22 +2381,6 @@ function delUtil(id){if(!confirm('Eliminare questo contratto?'))return;db.ref(`u
 
 /* ===== GROUP LISTENERS: chat + spese ===== */
 let groupListeners=[];
-
-function markBillAsPaid(id) {
-  let bills = loadBills();
-  const bill = bills.find(b => b.id === id);
-  
-  if (bill) {
-    bill.paid = true;
-    bill.paidDate = new Date().toISOString();
-    saveBills(bills);
-    addToSyncQueue('billPaid', bill);
-    notify('✅ Bolletta segnata come pagata!');
-    if (typeof renderBills === 'function') renderBills();
-    if (typeof renderDash === 'function') renderDash();
-  }
-}
-
 function startGroupListener(){
   groupListeners.forEach(fn=>fn());
   groupListeners=[];

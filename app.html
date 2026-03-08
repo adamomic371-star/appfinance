@@ -1593,7 +1593,6 @@ const FB={
   appId:"1:181987533980:web:41c5032990ccede17eb959"
 };
 
-
 const PLANS={
   free:{name:'Free',price:'Gratis',biz:false,features:['Dashboard personale','Movimenti (max 50)','Report base']},
   personal_pro:{name:'Personal Pro',price:'€3/mese',biz:false,features:['Tutto Free illimitato','Ricorrenti & Bollette','Budget mensile','Export CSV','Viaggi & Gruppi']},
@@ -1665,9 +1664,9 @@ function kazkaLogoSVG(size,glow){
 }
 
 window.addEventListener('load',()=>{
-  try{fillCatSelects();}catch(e){console.warn('fillCatSelects error',e);}
+  fillCatSelects();
   // Inietta logo Kazka subito nello splash
-  try{var _spm=document.getElementById('splLogoMark');if(_spm&&typeof kazkaLogoSVG==='function')_spm.innerHTML=kazkaLogoSVG(72,true);}catch(e){console.warn('Logo splash error',e);}
+  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
   // Controlla se Firebase è caricato
   if(typeof firebase === 'undefined'){
     document.querySelector('.spl-txt').textContent = '❌ Errore: controlla la connessione internet';
@@ -1687,36 +1686,28 @@ window.addEventListener('load',()=>{
     if(sv){ try{ user=JSON.parse(sv); realUser=user; } catch(e){ localStorage.removeItem('fp_user'); } }
     // Aspetta conferma connessione Firebase prima di uscire dallo splash
     // Timeout di sicurezza 8 secondi (per reti lente/iOS Safari)
-    // Esce dallo splash SUBITO (massimo 2 secondi)
-    // Non aspetta Firebase - funziona offline anche
-    setTimeout(exitSplash, 2000);
+    const _splashTimeout=setTimeout(exitSplash, 8000);
+    db.ref('.info/connected').once('value').then(()=>{
+      clearTimeout(_splashTimeout);
+      setTimeout(exitSplash, 600); // piccolo delay per animazione barra
+    }).catch(()=>{
+      clearTimeout(_splashTimeout);
+      exitSplash();
+    });
   }catch(e){
     console.error('Firebase error:',e);
     document.querySelector('.spl-txt').textContent = '❌ Errore connessione Firebase';
     document.querySelector('.spl-txt').style.color = '#ff4f6d';
-    setTimeout(exitSplash, 1500);
+    setTimeout(exitSplash, 4000);
   }
 });
 
 function exitSplash(){
   const s=document.getElementById('splash');
-  if(!s)return; // Se splash non esiste, skip
   // Inietta logo login screen prima di mostrarlo
-  try{
-    var _llm=document.getElementById('loginLogoMark');
-    if(_llm&&typeof kazkaLogoSVG==='function')_llm.innerHTML=kazkaLogoSVG(60,true);
-  }catch(e){console.warn('Logo error:',e)}
-  
+  var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
   s.classList.add('out');
-  setTimeout(()=>{
-    if(s)s.classList.add('hidden');
-    if(user){
-      try{showApp();}catch(e){console.error('showApp error:',e);}
-    }else{
-      const ls=document.getElementById('loginScreen');
-      if(ls)ls.classList.remove('hidden');
-    }
-  },580);
+  setTimeout(()=>{s.classList.add('hidden');if(user)showApp();else document.getElementById('loginScreen').classList.remove('hidden');},580);
 }
 
 /* ===== LOGIN ===== */
@@ -1841,63 +1832,6 @@ function doRegister(){
 
 /* ===== APP ===== */
 function showApp(){
-  // Carica dati da Firebase al login
-  if(db && user) {
-    const uid = user.id;
-    
-    // Carica transazioni
-    db.ref(`users/${uid}/transactions`).on('value', snap => {
-      const data = snap.val();
-      if(Array.isArray(data) && data.length > 0) {
-        transactions = data;
-        if(curPage === 'transazioni') renderTransazioni(document.getElementById('content'));
-        if(curPage === 'dashboard') renderDash(document.getElementById('content'));
-      }
-    });
-    
-    // Carica ricorrenti
-    db.ref(`users/${uid}/recurring`).on('value', snap => {
-      const data = snap.val();
-      if(Array.isArray(data) && data.length > 0) {
-        recurring = data;
-      }
-    });
-    
-    // Carica bollette
-    db.ref(`users/${uid}/bills`).on('value', snap => {
-      const data = snap.val();
-      if(Array.isArray(data) && data.length > 0) {
-        bills = data;
-        if(curPage === 'bollette') renderBollette(document.getElementById('content'));
-      }
-    });
-    
-    // Carica obiettivi
-    db.ref(`users/${uid}/goals`).on('value', snap => {
-      const data = snap.val();
-      if(Array.isArray(data) && data.length > 0) {
-        goals = data;
-        if(curPage === 'obiettivi') renderObiettivi(document.getElementById('content'));
-      }
-    });
-    
-    // Carica viaggi
-    db.ref(`users/${uid}/trips`).on('value', snap => {
-      const data = snap.val();
-      if(Array.isArray(data) && data.length > 0) {
-        trips = data;
-      }
-    });
-    
-    // Carica gruppi
-    db.ref(`users/${uid}/groups`).on('value', snap => {
-      const data = snap.val();
-      if(Array.isArray(data) && data.length > 0) {
-        groups = data;
-      }
-    });
-  }
-
   document.getElementById('app').classList.remove('hidden');
   applyTheme();
   // Restore last mode
@@ -6009,6 +5943,12 @@ window.addEventListener('resize',updateUI);
    SERVICE WORKER REGISTRATION
 ════════════════════════════════════════ */
 if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
 
 /* ════════════════════════════════════════
    PWA INSTALL LOGIC

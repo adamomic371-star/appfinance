@@ -781,6 +781,30 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
 </style>
+<script>
+(function(){
+  try{
+    var s=128,canvas=document.createElement('canvas');
+    canvas.width=s;canvas.height=s;
+    var ctx=canvas.getContext('2d'),cx=s/2,cy=s/2,r=cx*0.9;
+    ctx.beginPath();
+    for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));}
+    ctx.closePath();
+    var g=ctx.createLinearGradient(0,0,s,s);
+    g.addColorStop(0,'#6c4dff');g.addColorStop(1,'#00c8ff');
+    ctx.fillStyle=g;ctx.fill();
+    ctx.fillStyle='white';
+    ctx.font='bold '+(s*0.44|0)+'px sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('K',cx,cy+2);
+    var url=canvas.toDataURL();
+    ['icon','shortcut icon','apple-touch-icon'].forEach(function(rel){
+      var el=document.querySelector('link[rel="'+rel+'"]')||document.createElement('link');
+      el.rel=rel;el.href=url;document.head.appendChild(el);
+    });
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
 
@@ -792,7 +816,7 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
     <div class="wave">👋</div>
     <div class="spl-title">Ciao! Bentornato</div>
     <div class="spl-sub">Il tuo assistente finanziario personale</div>
-    <div class="spl-logo" style="display:flex;align-items:center;gap:12px"><div id="splLogoMark" class="spl-li"></div><div class="spl-lt" style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:4px"><div id="splLogoMark"></div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;letter-spacing:-1.5px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1">Kazka</div><div style="font-size:13px;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace">Smart Finance</div></div>
     <div class="spl-bar"><div class="spl-track"><div class="spl-fill"></div></div><div class="spl-txt">Caricamento...</div></div>
   </div>
 </div>
@@ -1316,6 +1340,15 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
         <option value="high">🔴 Alta</option><option value="medium" selected>🟡 Media</option><option value="low">🟢 Bassa</option>
       </select>
     </div>
+    <div class="fg"><label class="fl">📅 Notifica mensile — giorno del mese</label>
+      <select id="goalPayDay" class="fc">
+        <option value="">Nessuna notifica mensile</option>
+        <option value="1">1° del mese</option><option value="5">5 del mese</option>
+        <option value="10">10 del mese</option><option value="15">15 del mese</option>
+        <option value="20">20 del mese</option><option value="25">25 del mese</option>
+        <option value="28">28 del mese</option>
+      </select>
+    </div>
     <div class="ma"><button class="bms" id="goalSaveBtn" onclick="saveGoal()">Salva</button><button class="bmc" onclick="closeMo('goalModal')">Annulla</button></div>
   </div>
 </div>
@@ -1637,7 +1670,7 @@ function doLogin(){
       if(us[id].email===email&&await checkPass(pass,us[id].password)){found={...us[id],id};break;}
     }
     btn.disabled=false;
-    if(found){user=found;realUser=found;localStorage.setItem('fp_user',JSON.stringify(user));setMsg('','');document.getElementById('loginScreen').classList.add('hidden');showApp();}
+    if(found){user=found;realUser=found;localStorage.setItem('fp_user',JSON.stringify(user));setMsg('','');document.getElementById('loginScreen').classList.add('hidden');db.ref('users/'+found.id+'/lastLogin').set(new Date().toISOString());showApp();}
     else setMsg('❌ Email o password non corretti','error');
   }).catch(()=>{btn.disabled=false;setMsg('❌ Errore connessione','error');});
 }
@@ -1671,12 +1704,12 @@ function showApp(){
   var _lm=document.getElementById('drawerLogoMark');if(_lm)_lm.innerHTML=kazkaLogoSVG(30,true);
   var _sm=document.getElementById('sideLogoMark');if(_sm)_sm.innerHTML=kazkaLogoSVG(30,true);
   var _tm=document.getElementById('topbarLogoMark');if(_tm)_tm.innerHTML=kazkaLogoSVG(22,false);
-  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(46,true);
+  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
   var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
   // init lang buttons
   _updateLangBtns();
   var ll=document.getElementById('langLabel');if(ll)ll.textContent=t('language');
-  setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
+  setTimeout(()=>{checkRecurring();checkGroupDebts();checkGoalPayDayNotifs();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
@@ -2155,7 +2188,9 @@ function renderPage(p){
     const today2=new Date().toISOString().split('T')[0];
     const tripTotal=trips.filter(t=>!t.dateTo||t.dateTo>=today2).reduce((s,t)=>s+(t.budget||0),0);
     const goals=loadGoals();
-    const goalMonthly=goals.filter(g=>g.status!=='completed').reduce((s,g)=>s+(g.monthlyTarget||0),0);
+    // Scala Soldi Liberi SOLO per obiettivi dove l'utente ha segnalato la quota di questo mese
+    const _thisMonth=new Date().toISOString().slice(0,7);
+    const goalMonthly=goals.filter(g=>g.status!=='completed'&&g.thisMonthFunded===_thisMonth).reduce((s,g)=>s+(g.monthlyTarget||0),0);
     const freeMoney=bal-recTotal-billTotal-utilTotal-tripTotal-goalMonthly;
     const freeColor=freeMoney>=0?'var(--gr)':'var(--re)';
     con.innerHTML=`
@@ -2178,7 +2213,7 @@ function renderPage(p){
         ${billTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>📄 Bollette da pagare</span><span style="font-weight:700;color:var(--ye)">-${fmtE(billTotal)}</span></div>`:''}
         ${utilTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔌 Canoni utenze/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(utilTotal)}</span></div>`:''}
         ${tripTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>✈️ Budget viaggi</span><span style="font-weight:700;color:var(--ac2)">-${fmtE(tripTotal)}</span></div>`:''}
-        ${goalMonthly>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🎯 Risparmio mensile obiettivi</span><span style="font-weight:700;color:var(--ac)">-${fmtE(goalMonthly)}</span></div>`:''}
+        ${goalMonthly>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🎯 Obiettivi (quota segnalata)</span><span style="font-weight:700;color:var(--ac)">-${fmtE(goalMonthly)}</span></div>`:''}
         <div style="border-top:1px solid var(--b1);margin-top:4px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:800"><span style="color:var(--tx)">= Disponibile</span><span style="color:${freeColor}">${fmtE(freeMoney)}</span></div>
       </div>
     </div>
@@ -4038,7 +4073,7 @@ function renderAdmin(con){
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">👥</div>Gestione Utenti (${filtered.length})</div></div>
     <div class="adm-tw"><table class="adm-t">
-      <thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Azioni</th></tr></thead>
+      <thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Stato</th><th>Azioni</th></tr></thead>
       <tbody>${filtered.map(u=>`
       <tr id="urow_${u.id}">
         <td style="font-weight:600">${u.name||'–'}</td>
@@ -4055,6 +4090,7 @@ function renderAdmin(con){
           <option value="admin" ${u.role==='admin'?'selected':''}>👑 Admin</option>
         </select></td>
         <td style="font-size:10px;color:var(--tx3)">${u.createdAt?new Date(u.createdAt).toLocaleDateString('it-IT'):'–'}</td>
+        <td>${(()=>{if(!u.lastLogin)return '<span style=\"color:var(--tx3);font-size:10px\">Mai</span>';const diff=Date.now()-new Date(u.lastLogin).getTime();const mins=Math.floor(diff/60000);const hrs=Math.floor(diff/3600000);const days=Math.floor(diff/86400000);if(mins<10)return '<span style=\"display:inline-flex;align-items:center;gap:4px;color:var(--gr);font-size:10px;font-weight:700\"><span style=\"width:7px;height:7px;border-radius:50%;background:var(--gr);box-shadow:0 0 6px var(--gr);display:inline-block\"></span>Online</span>';if(mins<60)return '<span style=\"color:var(--tx2);font-size:10px\">'+mins+'m fa</span>';if(hrs<24)return '<span style=\"color:var(--tx2);font-size:10px\">'+hrs+'h fa</span>';return '<span style=\"color:var(--tx3);font-size:10px\">'+days+'g fa</span>';})()}</td>
         <td style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
           <button id="usave_${u.id}" class="btn-sm bs-g" style="display:none" onclick="saveUserRow('${u.id}')">💾</button>
           ${u.email!=='admin'?`<button class="btn-sm bs-s" onclick="impUser('${u.id}','${u.name?.replace(/'/g,"\\'")||''}')">👁️</button>`:''}
@@ -4555,12 +4591,18 @@ function renderGoals(con){
   const active=goals.filter(g=>g.status!=='completed');
   const done=goals.filter(g=>g.status==='completed');
   const priColor={high:'var(--re)',medium:'var(--ye)',low:'var(--gr)'};
+  const _thisM=new Date().toISOString().slice(0,7);
   const renderGoalCard=(g)=>{
     const pct=Math.min(100,Math.round((g.saved/g.target)*100));
     const rem=Math.max(0,g.target-g.saved);
     const today=new Date();
-    let monthsLeft=null,monthlyNeeded=null;
-    if(g.deadline){monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-today)/2592000000));monthlyNeeded=rem/monthsLeft;}
+    const funded=g.thisMonthFunded===_thisM;
+    // Ricalcola quota sempre sul residuo reale (automatico se mese saltato)
+    let monthsLeft=null,monthlyNeeded=g.monthlyTarget||null;
+    if(g.deadline){
+      monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-today)/2592000000));
+      monthlyNeeded=rem/monthsLeft;
+    }
     return `<div class="card" style="margin-bottom:12px;position:relative;overflow:hidden">
       <div style="position:absolute;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));width:${pct}%;transition:width .5s"></div>
       <div style="display:flex;align-items:flex-start;gap:12px;padding-top:8px">
@@ -4569,6 +4611,7 @@ function renderGoals(con){
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
             <div style="font-size:15px;font-weight:800">${g.name}</div>
             <span style="font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;background:rgba(${g.priority==='high'?'255,79,109':g.priority==='low'?'0,229,160':'255,209,102'},.12);color:${priColor[g.priority]||'var(--ye)'}">${g.priority==='high'?'🔴 Alta':g.priority==='low'?'🟢 Bassa':'🟡 Media'}</span>
+            ${funded?'<span style="font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;background:rgba(0,229,160,.1);color:var(--gr)">✅ Mese segnalato</span>':''}
           </div>
           <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
             <span style="color:var(--gr);font-weight:700">${fmtE(g.saved)}</span>
@@ -4579,14 +4622,15 @@ function renderGoals(con){
           </div>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);flex-wrap:wrap;gap:4px">
             <span>${pct}% — manca ${fmtE(rem)}</span>
-            ${monthlyNeeded?`<span>📅 ~${fmtE(monthlyNeeded)}/mese (${monthsLeft} mesi)</span>`:g.deadline?`<span>📅 Scad: ${formatDateIt(g.deadline)}</span>`:''}
+            ${monthlyNeeded?`<span>📅 ~${fmtE(monthlyNeeded)}/mese${monthsLeft?\` (${monthsLeft} mesi)\`:''}${g.payDay?\` · notifica il ${g.payDay}°\`:''}</span>`:g.deadline?`<span>📅 Scad: ${formatDateIt(g.deadline)}</span>`:''}
           </div>
         </div>
       </div>
       <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn-sm bs-g" onclick="addToGoal('${g.id}')">＋ Aggiungi fondi</button>
-        <button class="btn-sm" style="background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2)!important;color:var(--ac);font-size:10px" onclick="openEditGoal('${g.id}')">✏️</button>
-        ${g.saved>=g.target?`<button class="btn-sm bs-g" onclick="completeGoal('${g.id}')">🏆 Segna completato</button>`:''}
+        ${!funded&&monthlyNeeded?`<button class="btn-sm bs-g" style="font-weight:700" onclick="fundGoalThisMonth('${g.id}',${monthlyNeeded.toFixed(2)})">💰 Segnala quota ${fmtE(monthlyNeeded)}</button>`:''}
+        <button class="btn-sm" style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15)!important;color:var(--ac2)" onclick="addToGoal('${g.id}')">＋ Fondi liberi</button>
+        <button class="btn-sm" style="background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2)!important;color:var(--ac)" onclick="openEditGoal('${g.id}')">✏️</button>
+        ${g.saved>=g.target?`<button class="btn-sm bs-g" onclick="completeGoal('${g.id}')">🏆 Completato</button>`:''}
         <button class="btn-sm bs-d" onclick="delGoal('${g.id}')">🗑️</button>
       </div>
     </div>`;
@@ -4608,6 +4652,7 @@ function openNewGoal(){
   document.getElementById('goalSaved').value='0';
   document.getElementById('goalIcon').value='🎯';
   document.getElementById('goalPriority').value='medium';
+  document.getElementById('goalPayDay').value='';
   openMo('goalModal');
 }
 function openEditGoal(id){
@@ -4621,6 +4666,7 @@ function openEditGoal(id){
   document.getElementById('goalIcon').value=g.icon||'🎯';
   document.getElementById('goalDeadline').value=g.deadline||'';
   document.getElementById('goalPriority').value=g.priority||'medium';
+  document.getElementById('goalPayDay').value=g.payDay||'';
   openMo('goalModal');
 }
 function saveGoal(){
@@ -4633,13 +4679,14 @@ function saveGoal(){
   const deadline=document.getElementById('goalDeadline').value;
   const icon=document.getElementById('goalIcon').value;
   const priority=document.getElementById('goalPriority').value;
+  const payDay=parseInt(document.getElementById('goalPayDay').value)||null;
   const monthsLeft=deadline?Math.max(1,Math.ceil((new Date(deadline)-new Date())/2592000000)):null;
   const monthlyTarget=monthsLeft?Math.max(0,target-saved)/monthsLeft:0;
   if(editId){
     const idx=goals.findIndex(g=>g.id===editId);
-    if(idx>=0)goals[idx]={...goals[idx],name,target,saved,icon,deadline,priority,monthlyTarget};
+    if(idx>=0)goals[idx]={...goals[idx],name,target,saved,icon,deadline,priority,monthlyTarget,payDay};
   } else {
-    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,status:'active',createdAt:new Date().toISOString()});
+    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,payDay,status:'active',createdAt:new Date().toISOString()});
   }
   saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
 }
@@ -4651,6 +4698,71 @@ function addToGoal(id){
   if(goals[idx].saved>=goals[idx].target){goals[idx].status='completed';notify('🏆 Obiettivo raggiunto!');}
   saveGoals(goals);goTo('obiettivi');
 }
+/* ─── Segnala quota mensile obiettivo — scala Soldi Liberi ─── */
+function fundGoalThisMonth(id, amount){
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const goals=loadGoals();
+  const idx=goals.findIndex(g=>g.id===id);
+  if(idx<0)return;
+  const g=goals[idx];
+  const amt=parseFloat(amount)||0;
+  if(!confirm('Segnare '+fmtE(amt)+' per "'+g.name+'" questo mese?\nVerranno scalati dai tuoi Soldi Liberi.'))return;
+  goals[idx].saved=(g.saved||0)+amt;
+  goals[idx].thisMonthFunded=thisMonth;
+  // Ricalcola quota mensile aggiornata sul residuo
+  if(g.deadline){
+    const rem=Math.max(0,goals[idx].target-goals[idx].saved);
+    const mLeft=Math.max(1,Math.ceil((new Date(g.deadline)-new Date())/2592000000));
+    goals[idx].monthlyTarget=rem/mLeft;
+  }
+  if(goals[idx].saved>=goals[idx].target){goals[idx].status='completed';notify('\uD83C\uDFC6 Obiettivo raggiunto!');}
+  saveGoals(goals);
+  notify('\u2705 '+fmtE(amt)+' segnati per "'+g.name+'" — Soldi Liberi aggiornati!');
+  goTo('obiettivi');
+}
+
+/* ─── Controlla notifiche giornaliere quota obiettivi ─── */
+function checkGoalPayDayNotifs(){
+  const goals=loadGoals().filter(g=>g.status!=='completed'&&g.payDay);
+  const today=new Date();
+  const dayOfMonth=today.getDate();
+  const thisMonth=today.toISOString().slice(0,7);
+  goals.forEach(g=>{
+    if(parseInt(g.payDay)!==dayOfMonth)return;
+    if(g.thisMonthFunded===thisMonth)return; // già segnalato
+    const pushId='push_goal_pay_'+g.id+'_'+thisMonth;
+    if(!localStorage.getItem(pushId)){
+      const amt=parseFloat(g.monthlyTarget||0).toFixed(2);
+      sendPushIfGranted('\uD83C\uDFAF Obiettivo: '+g.name, 'Oggi è il '+dayOfMonth+'°! Segnala '+fmtE(parseFloat(amt))+' per raggiungere il tuo obiettivo.');
+      localStorage.setItem(pushId,'1');
+    }
+    pushNotif({
+      id:'goal_pay_'+g.id+'_'+thisMonth,
+      type:'goal',icon:g.icon||'\uD83C\uDFAF',
+      title:'\uD83D\uDCB0 Quota mensile: '+g.name,
+      sub:'Segnala '+fmtE(parseFloat(g.monthlyTarget||0))+' per '+thisMonth.replace('-','/')+' — apri obiettivi',
+      time:Date.now(),read:false,action:'obiettivi'
+    });
+  });
+  // Obiettivi dove la quota NON è stata segnalata il mese scorso → notifica ricalcolo
+  const prevMonth=new Date(today.getFullYear(),today.getMonth()-1,28).toISOString().slice(0,7);
+  goals.filter(g=>g.payDay&&g.thisMonthFunded&&g.thisMonthFunded<thisMonth&&g.thisMonthFunded===prevMonth).forEach(g=>{
+    // mese corrente non segnalato → nuovo importo ricalcolato automaticamente in render
+    const pushId='push_goal_miss_'+g.id+'_'+thisMonth;
+    if(!localStorage.getItem(pushId)){
+      pushNotif({
+        id:'goal_miss_'+g.id+'_'+thisMonth,
+        type:'goal',icon:'\u26A0\uFE0F',
+        title:'Quota saltata: '+g.name,
+        sub:'Non hai accantonato il mese scorso. Quota ricalcolata: '+fmtE(parseFloat(g.monthlyTarget||0))+'/mese',
+        time:Date.now()-500,read:false,action:'obiettivi'
+      });
+      localStorage.setItem(pushId,'1');
+    }
+  });
+}
+
+
 function completeGoal(id){const goals=loadGoals();const idx=goals.findIndex(g=>g.id===id);if(idx<0)return;goals[idx].status='completed';saveGoals(goals);goTo('obiettivi');notify('🏆 Completato!');}
 function delGoal(id){if(!confirm('Eliminare?'))return;saveGoals(loadGoals().filter(g=>g.id!==id));goTo('obiettivi');notify('🗑️ Eliminato');}
 

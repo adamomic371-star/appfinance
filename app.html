@@ -1593,6 +1593,122 @@ const FB={
   appId:"1:181987533980:web:41c5032990ccede17eb959"
 };
 
+// ===== AUTO SYNC SYSTEM (Google Drive Style) =====
+let syncPending = false;
+let syncTimer = null;
+let lastSyncTime = 0;
+const SYNC_DEBOUNCE = 1200; // 1.2 secondi dopo ultimo movimento
+
+function triggerAutoSync() {
+  // Se è già in sync, skip
+  if (syncPending) return;
+  
+  // Cancella timer precedente
+  if (syncTimer) clearTimeout(syncTimer);
+  
+  // Attendi 1.2s (debounce) prima di sincronizzare
+  syncTimer = setTimeout(() => {
+    performAutoSync();
+  }, SYNC_DEBOUNCE);
+}
+
+async function performAutoSync() {
+  // Condizioni per sincronizzare
+  if (!db || !user || syncPending || !transactions) return;
+  
+  syncPending = true;
+  const badge = document.getElementById('syncBadge');
+  
+  try {
+    // Mostra badge "Sincronizzando..."
+    if (badge) {
+      badge.textContent = '⏳ Sincronizzando...';
+      badge.style.opacity = '1';
+    }
+    
+    const uid = user.id;
+    
+    // Sincronizza TUTTI i dati verso Firebase
+    const syncPromises = [];
+    
+    // Transazioni
+    if (transactions && transactions.length > 0) {
+      syncPromises.push(db.ref(`users/${uid}/transactions`).set(transactions));
+    }
+    
+    // Ricorrenti
+    if (typeof recurring !== 'undefined' && recurring.length > 0) {
+      syncPromises.push(db.ref(`users/${uid}/recurring`).set(recurring));
+    }
+    
+    // Bollette
+    if (typeof bills !== 'undefined' && bills.length > 0) {
+      syncPromises.push(db.ref(`users/${uid}/bills`).set(bills));
+    }
+    
+    // Viaggi
+    if (typeof trips !== 'undefined' && trips.length > 0) {
+      syncPromises.push(db.ref(`users/${uid}/trips`).set(trips));
+    }
+    
+    // Obiettivi
+    if (typeof goals !== 'undefined' && goals.length > 0) {
+      syncPromises.push(db.ref(`users/${uid}/goals`).set(goals));
+    }
+    
+    // Gruppi
+    if (typeof groups !== 'undefined' && groups.length > 0) {
+      syncPromises.push(db.ref(`users/${uid}/groups`).set(groups));
+    }
+    
+    // Business mode
+    if (mode === 'business') {
+      const bid = user.id;
+      if (typeof bizTx !== 'undefined' && bizTx.length > 0) {
+        syncPromises.push(db.ref(`biz/${bid}/transactions`).set(bizTx));
+      }
+      if (typeof clients !== 'undefined' && clients.length > 0) {
+        syncPromises.push(db.ref(`biz/${bid}/clients`).set(clients));
+      }
+      if (typeof quotes !== 'undefined' && quotes.length > 0) {
+        syncPromises.push(db.ref(`biz/${bid}/quotes`).set(quotes));
+      }
+      if (typeof projects !== 'undefined' && projects.length > 0) {
+        syncPromises.push(db.ref(`biz/${bid}/projects`).set(projects));
+      }
+    }
+    
+    // Aspetta che tutti i sync finiscano
+    if (syncPromises.length > 0) {
+      await Promise.all(syncPromises);
+    }
+    
+    lastSyncTime = Date.now();
+    
+    // Mostra "✅ Sincronizzato"
+    if (badge) {
+      badge.textContent = '✅ Sincronizzato';
+      setTimeout(() => {
+        badge.style.opacity = '0';
+      }, 2000);
+    }
+  } catch (e) {
+    console.error('Auto-sync error:', e);
+    if (badge) {
+      badge.textContent = '❌ Errore sync';
+      badge.style.opacity = '1';
+    }
+  } finally {
+    syncPending = false;
+  }
+}
+
+function autoSync() {
+  // Wrapper pubblico per triggerAutoSync
+  triggerAutoSync();
+}
+
+
 const PLANS={
   free:{name:'Free',price:'Gratis',biz:false,features:['Dashboard personale','Movimenti (max 50)','Report base']},
   personal_pro:{name:'Personal Pro',price:'€3/mese',biz:false,features:['Tutto Free illimitato','Ricorrenti & Bollette','Budget mensile','Export CSV','Viaggi & Gruppi']},
@@ -1664,7 +1780,7 @@ function kazkaLogoSVG(size,glow){
 }
 
 window.addEventListener('load',()=>{
-  fillCatSelects();
+  try{fillCatSelects();}catch(e){console.warn('fillCatSelects error',e);}
   // Inietta logo Kazka subito nello splash
   var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
   // Controlla se Firebase è caricato
@@ -1686,7 +1802,7 @@ window.addEventListener('load',()=>{
     if(sv){ try{ user=JSON.parse(sv); realUser=user; } catch(e){ localStorage.removeItem('fp_user'); } }
     // Aspetta conferma connessione Firebase prima di uscire dallo splash
     // Timeout di sicurezza 8 secondi (per reti lente/iOS Safari)
-    const _splashTimeout=setTimeout(exitSplash, 8000);
+    const _splashTimeout=setTimeout(exitSplash, 3000);
     db.ref('.info/connected').once('value').then(()=>{
       clearTimeout(_splashTimeout);
       setTimeout(exitSplash, 600); // piccolo delay per animazione barra
@@ -1832,6 +1948,63 @@ function doRegister(){
 
 /* ===== APP ===== */
 function showApp(){
+  // Carica dati da Firebase al login
+  if(db && user) {
+    const uid = user.id;
+    
+    // Carica transazioni
+    db.ref(`users/${uid}/transactions`).on('value', snap => {
+      const data = snap.val();
+      if(Array.isArray(data) && data.length > 0) {
+        transactions = data;
+        if(curPage === 'transazioni') renderTransazioni(document.getElementById('content'));
+        if(curPage === 'dashboard') renderDash(document.getElementById('content'));
+      }
+    });
+    
+    // Carica ricorrenti
+    db.ref(`users/${uid}/recurring`).on('value', snap => {
+      const data = snap.val();
+      if(Array.isArray(data) && data.length > 0) {
+        recurring = data;
+      }
+    });
+    
+    // Carica bollette
+    db.ref(`users/${uid}/bills`).on('value', snap => {
+      const data = snap.val();
+      if(Array.isArray(data) && data.length > 0) {
+        bills = data;
+        if(curPage === 'bollette') renderBollette(document.getElementById('content'));
+      }
+    });
+    
+    // Carica obiettivi
+    db.ref(`users/${uid}/goals`).on('value', snap => {
+      const data = snap.val();
+      if(Array.isArray(data) && data.length > 0) {
+        goals = data;
+        if(curPage === 'obiettivi') renderObiettivi(document.getElementById('content'));
+      }
+    });
+    
+    // Carica viaggi
+    db.ref(`users/${uid}/trips`).on('value', snap => {
+      const data = snap.val();
+      if(Array.isArray(data) && data.length > 0) {
+        trips = data;
+      }
+    });
+    
+    // Carica gruppi
+    db.ref(`users/${uid}/groups`).on('value', snap => {
+      const data = snap.val();
+      if(Array.isArray(data) && data.length > 0) {
+        groups = data;
+      }
+    });
+  }
+
   document.getElementById('app').classList.remove('hidden');
   applyTheme();
   // Restore last mode
@@ -2377,7 +2550,7 @@ function clearAllNotifs(){
   appNotifs=[];saveNotifs();updateBellBadge();goTo('notifiche');
 }
 
-function delUtil(id){if(!confirm('Eliminare questo contratto?'))return;db.ref(`utilities/${id}`).remove().then(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');notify('🗑️ Eliminato');});}
+function delUtil(id){if(!confirm('Eliminare questo contratto?'))return;db.ref(`utilities/${id}`).remove().then(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');autoSync(); notify('🗑️ Eliminato');});}
 
 /* ===== GROUP LISTENERS: chat + spese ===== */
 let groupListeners=[];
@@ -3476,7 +3649,7 @@ function saveClient(){
   if(!name){notify('❌ Inserisci almeno il nome');return;}
   db.ref(`biz/${user.id}/clients`).push({type,name,email,phone,vat,addr,note,createdAt:new Date().toISOString()}).then(()=>{closeMo('clientModal');goTo('biz_clienti');notify('✅ '+(type==='client'?'Cliente':'Fornitore')+' aggiunto!');});
 }
-function delClient(id){if(!confirm('Eliminare questo contatto?'))return;db.ref(`biz/${user.id}/clients/${id}`).remove().then(()=>{goTo('biz_clienti');notify('🗑️ Eliminato');});}
+function delClient(id){if(!confirm('Eliminare questo contatto?'))return;db.ref(`biz/${user.id}/clients/${id}`).remove().then(()=>{goTo('biz_clienti');autoSync(); notify('🗑️ Eliminato');});}
 
 function openQuoteModal(clientId){
   // populate client select
@@ -3638,7 +3811,7 @@ function updateQuoteStatus(id,status){
     notify('✅ Stato aggiornato');
   });
 }
-function delQuote(id){if(!confirm('Eliminare questo preventivo?'))return;db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{goTo('biz_preventivi');notify('🗑️ Eliminato');});}
+function delQuote(id){if(!confirm('Eliminare questo preventivo?'))return;db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{goTo('biz_preventivi');autoSync(); notify('🗑️ Eliminato');});}
 
 function openProjModal(){
   const sel=document.getElementById('prClient');
@@ -3658,7 +3831,7 @@ function saveProject(){
   db.ref(`biz/${user.id}/projects`).push({name,clientId,budget,startDate,endDate,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('projModal');goTo('biz_progetti');notify('✅ Progetto creato!');});
 }
 function updateProjStatus(id,status){db.ref(`biz/${user.id}/projects/${id}/status`).set(status).then(()=>{const p=projects.find(x=>x.id===id);if(p)p.status=status;goTo('biz_progetti');notify('✅ Stato aggiornato');});}
-function delProject(id){if(!confirm('Eliminare questo progetto?'))return;db.ref(`biz/${user.id}/projects/${id}`).remove().then(()=>{goTo('biz_progetti');notify('🗑️ Eliminato');});}
+function delProject(id){if(!confirm('Eliminare questo progetto?'))return;db.ref(`biz/${user.id}/projects/${id}`).remove().then(()=>{goTo('biz_progetti');autoSync(); notify('🗑️ Eliminato');});}
 
 function openBizTxModal(clientId,projectId){
   const sc=document.getElementById('btClient');
@@ -3678,7 +3851,7 @@ function saveBizTx(){
   if(!desc||!amt||amt<=0){notify('❌ Compila descrizione e importo');return;}
   db.ref(`biz/${user.id}/transactions`).push({desc,amount:amt,type,cat,projectId,clientId,iva,createdAt:new Date().toISOString()}).then(()=>{closeMo('bizTxModal');goTo('biz_primanota');notify('✅ Movimento aggiunto!');});
 }
-function delBizTx(id){if(!confirm('Eliminare questo movimento?'))return;db.ref(`biz/${user.id}/transactions/${id}`).remove().then(()=>{goTo('biz_primanota');notify('🗑️ Eliminato');});}
+function delBizTx(id){if(!confirm('Eliminare questo movimento?'))return;db.ref(`biz/${user.id}/transactions/${id}`).remove().then(()=>{goTo('biz_primanota');autoSync(); notify('🗑️ Eliminato');});}
 
 function openExpenseNoteModal(){
   const sel=document.getElementById('enProj');
@@ -4799,7 +4972,7 @@ function saveTrip(){
   const ref=editId?db.ref(`trips/${editId}`):db.ref(`trips/${Date.now()}`);
   ref.set(data).then(()=>{closeMo('tripModal');goTo('viaggi');notify(editId?'✅ Viaggio aggiornato!':'✅ Viaggio aggiunto!');});
 }
-function delTrip(id){if(!confirm('Eliminare questo viaggio?'))return;db.ref(`trips/${id}`).remove().then(()=>{goTo('viaggi');notify('🗑️ Eliminato');});}
+function delTrip(id){if(!confirm('Eliminare questo viaggio?'))return;db.ref(`trips/${id}`).remove().then(()=>{goTo('viaggi');autoSync(); notify('🗑️ Eliminato');});}
 function openRecModal(){
   document.getElementById('recEditId').value='';
   document.getElementById('recModalTitle').textContent='🔄 Nuova Operazione Ricorrente';
@@ -5673,7 +5846,7 @@ function completeGoal(id){
   if(card){card.classList.add('goal-done-burst');}
   setTimeout(()=>{goTo('obiettivi');notify('🏆 Obiettivo completato! Ottimo lavoro!');},400);
 }
-function delGoal(id){if(!confirm('Eliminare?'))return;saveGoals(loadGoals().filter(g=>g.id!==id));goTo('obiettivi');notify('🗑️ Eliminato');}
+function delGoal(id){if(!confirm('Eliminare?'))return;saveGoals(loadGoals().filter(g=>g.id!==id));goTo('obiettivi');autoSync(); notify('🗑️ Eliminato');}
 
 /* ===== INVEST MODAL (>€1000) ===== */
 function checkInvestModal(amount){
@@ -5943,12 +6116,6 @@ window.addEventListener('resize',updateUI);
    SERVICE WORKER REGISTRATION
 ════════════════════════════════════════ */
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .then(reg => console.log('[SW] Registered:', reg.scope))
-      .catch(err => console.warn('[SW] Registration failed:', err));
-  });
-}
 
 /* ════════════════════════════════════════
    PWA INSTALL LOGIC

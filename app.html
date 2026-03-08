@@ -812,11 +812,10 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 <div id="splash">
   <div class="spl-bg"></div>
   <div class="spl-pts" id="pts"></div>
-  <div class="spl-c">
-    <div class="wave">👋</div>
-    <div class="spl-title">Ciao! Bentornato</div>
-    <div class="spl-sub">Il tuo assistente finanziario personale</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:4px"><div id="splLogoMark"></div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;letter-spacing:-1.5px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1">Kazka</div><div style="font-size:13px;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace">Smart Finance</div></div>
+  <div class="spl-c" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div id="splLogoMark" style="margin-bottom:20px"></div>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:44px;letter-spacing:-2px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:8px">Kazka</div>
+    <div style="font-size:11px;color:var(--tx3);letter-spacing:3px;font-family:'JetBrains Mono',monospace;margin-bottom:40px">SMART FINANCE</div>
     <div class="spl-bar"><div class="spl-track"><div class="spl-fill"></div></div><div class="spl-txt">Caricamento...</div></div>
   </div>
 </div>
@@ -1521,8 +1520,25 @@ const enc=t=>btoa(unescape(encodeURIComponent(t))); // kept for non-critical fie
 const dec=t=>{try{return decodeURIComponent(escape(atob(t)));}catch(e){return '';}};
 
 /* ===== INIT ===== */
+function kazkaLogoSVG(size,glow){
+  size=size||32;glow=(glow!==false);
+  var cx=size/2,cy=size/2,r=cx*0.9;
+  var pts='';for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';}
+  var uid='kz'+(Math.random()*99999|0);
+  var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.28|0)+'px rgba(108,77,255,0.65));':'';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
+    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
+    +'</linearGradient></defs>'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
+    +'</svg>';
+}
+
 window.addEventListener('load',()=>{
   fillCatSelects();
+  // Inietta logo Kazka subito nello splash
+  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
   // Controlla se Firebase è caricato
   if(typeof firebase === 'undefined'){
     document.querySelector('.spl-txt').textContent = '❌ Errore: controlla la connessione internet';
@@ -1540,7 +1556,16 @@ window.addEventListener('load',()=>{
     }).catch(e=>console.warn('Firebase check admin:',e));
     const sv=localStorage.getItem('fp_user');
     if(sv){ try{ user=JSON.parse(sv); realUser=user; } catch(e){ localStorage.removeItem('fp_user'); } }
-    setTimeout(exitSplash, 3600);
+    // Aspetta conferma connessione Firebase prima di uscire dallo splash
+    // Timeout di sicurezza 8 secondi (per reti lente/iOS Safari)
+    const _splashTimeout=setTimeout(exitSplash, 8000);
+    db.ref('.info/connected').once('value').then(()=>{
+      clearTimeout(_splashTimeout);
+      setTimeout(exitSplash, 600); // piccolo delay per animazione barra
+    }).catch(()=>{
+      clearTimeout(_splashTimeout);
+      exitSplash();
+    });
   }catch(e){
     console.error('Firebase error:',e);
     document.querySelector('.spl-txt').textContent = '❌ Errore connessione Firebase';
@@ -1551,10 +1576,9 @@ window.addEventListener('load',()=>{
 
 function exitSplash(){
   const s=document.getElementById('splash');
-  s.classList.add('out');
-  // Inject logo anche su login screen e splash prima di nasconderlo
-  var _spm=document.getElementById('splLogoMark');if(_spm)_spm.innerHTML=kazkaLogoSVG(72,true);
+  // Inietta logo login screen prima di mostrarlo
   var _llm=document.getElementById('loginLogoMark');if(_llm)_llm.innerHTML=kazkaLogoSVG(60,true);
+  s.classList.add('out');
   setTimeout(()=>{s.classList.add('hidden');if(user)showApp();else document.getElementById('loginScreen').classList.remove('hidden');},580);
 }
 
@@ -1648,20 +1672,7 @@ function _updateLangBtns(){
     b.classList.toggle('active',on);
   });
 }
-function kazkaLogoSVG(size,glow){
-  size=size||32;glow=(glow!==false);
-  var cx=size/2,cy=size/2,r=cx*0.9;
-  var pts='';for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';}
-  var uid='kz'+(Math.random()*99999|0);
-  var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.28|0)+'px rgba(108,77,255,0.65));':'';
-  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
-    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
-    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
-    +'</linearGradient></defs>'
-    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
-    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
-    +'</svg>';
-}
+
 
 function doLogin(){
   const email=document.getElementById('lEmail').value.trim(),pass=document.getElementById('lPass').value;

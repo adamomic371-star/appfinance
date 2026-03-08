@@ -1030,7 +1030,8 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
           <button class="mode-btn biz" id="modeBiz" onclick="setMode('business')">🏢 Azienda</button>
         </div>
         <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Tema">🌙</button>
-        <button class="notif-bell" id="notifBell" onclick="goTo('notifiche')" title="Notifiche">
+        <div id="syncBadge" style="position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,229,160,.9);color:#0a0f1e;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 12px rgba(0,229,160,.3)">⚡ Sincronizzato</div>
+<button class="notif-bell" id="notifBell" onclick="goTo('notifiche')" title="Notifiche">
           🔔<span class="notif-badge hidden" id="notifBadge">0</span>
         </button>
       </div>
@@ -1924,14 +1925,14 @@ function impUser(uid,uname){
     user={...snap.val(),id:uid};impersonating=true;isAdminMode=false;
     document.getElementById('impBar').classList.remove('hidden');
     document.getElementById('impName').textContent=uname;
-    updateUI();buildNav();loadData(()=>goTo('dashboard'));
+    updateUI();buildNav();goTo('dashboard');
     notify('👁️ Account di '+uname);
   });
 }
 function stopImp(){
   user=origAdmin;realUser=origAdmin;impersonating=false;isAdminMode=true;
   document.getElementById('impBar').classList.add('hidden');
-  updateUI();buildNav();loadData(()=>goTo('admin'));
+  updateUI();buildNav();goTo('admin');
   notify('✅ Tornato al tuo account');
 }
 
@@ -1961,6 +1962,7 @@ function buildNav(){
 }
 
 function goTo(p){
+  _curPage=p; // salva per listener real-time
   document.querySelectorAll('.ni,.drawer-ni').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
   const con=document.getElementById('content');
   if(con&&con.children.length>0){
@@ -2063,30 +2065,100 @@ function applyNegativePulse(){
 }
 
 /* ===== DATA ===== */
+// Listener real-time attivi — staccati al logout
+var _rtListeners=[];
+function _detachRTListeners(){
+  _rtListeners.forEach(fn=>{try{fn();}catch(e){}});
+  _rtListeners=[];
+}
+
+// Indica se il primo caricamento è completato (per evitare re-render durante init)
+var _rtReady=false;
+var _rtPending=0; // quante ref non hanno ancora risposto
+
+// Pagina corrente — usata dai listener per sapere cosa ri-renderizzare
+var _curPage='dashboard';
+
+function _rtRerender(){
+  if(!_rtReady)return; // non ancora pronto, ignora
+  const con=document.getElementById('content');
+  if(!con)return;
+  // Piccolo debounce: se arrivano 3 update insieme aspettiamo 80ms
+  if(window._rerenderTimer)clearTimeout(window._rerenderTimer);
+  window._rerenderTimer=setTimeout(()=>{
+    // Mostra badge di sincronizzazione
+    const badge=document.getElementById('syncBadge');
+    if(badge){badge.style.opacity='1';setTimeout(()=>{badge.style.opacity='0';},1200);}
+    renderPage(_curPage);
+    runCounters();
+    applyNegativePulse();
+  },80);
+}
+
+function _addRTListener(ref, handler){
+  ref.on('value', handler);
+  _rtListeners.push(()=>ref.off('value', handler));
+}
+
 function loadData(cb){
   const uid=user.id;
-  // Usa Promise.all — nessun rischio di counter sbagliato
-  const p=[];
+  _rtReady=false;
 
-  p.push(db.ref('transactions').once('value').then(s=>{
+  // Stacca listener precedenti (cambio account o reload)
+  _detachRTListeners();
+
+  let ready={tx:false,bills:false,util:false,trips:false,rec:false,grp:false,biz:false};
+  const bizNeeded=appMode==='business';
+  if(!bizNeeded)ready.biz=true;
+
+  function checkAllReady(){
+    if(Object.values(ready).every(Boolean)){
+      _rtReady=true;
+      if(cb)cb();
+      cb=null; // chiama cb solo la prima volta
+    }
+  }
+
+  // ── TRANSACTIONS ─────────────────────────────────
+  _addRTListener(db.ref('transactions'), s=>{
     transactions=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);
-  }));
-  p.push(db.ref('bills').once('value').then(s=>{
+    if(!ready.tx){ready.tx=true;checkAllReady();}
+    else _rtRerender();
+  });
+
+  // ── BILLS ────────────────────────────────────────
+  _addRTListener(db.ref('bills'), s=>{
     bills=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(b=>b.userId===uid);
-  }));
-  p.push(db.ref('utilities').once('value').then(s=>{
+    if(!ready.bills){ready.bills=true;checkAllReady();}
+    else _rtRerender();
+  });
+
+  // ── UTILITIES ────────────────────────────────────
+  _addRTListener(db.ref('utilities'), s=>{
     utilities=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(u=>u.userId===uid);
-  }));
-  p.push(db.ref('trips').once('value').then(s=>{
+    if(!ready.util){ready.util=true;checkAllReady();}
+    else _rtRerender();
+  });
+
+  // ── TRIPS ────────────────────────────────────────
+  _addRTListener(db.ref('trips'), s=>{
     trips=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(t=>t.userId===uid);
-  }));
-  p.push(db.ref('recurring').once('value').then(s=>{
+    if(!ready.trips){ready.trips=true;checkAllReady();}
+    else _rtRerender();
+  });
+
+  // ── RECURRING ────────────────────────────────────
+  _addRTListener(db.ref('recurring'), s=>{
     recurring=Object.entries(s.val()||{}).map(([id,d])=>({...d,id})).filter(r=>r.userId===uid);
-  }));
-  p.push(db.ref('groups').once('value').then(s=>{
+    if(!ready.rec){ready.rec=true;checkAllReady();}
+    else _rtRerender();
+  });
+
+  // ── GROUPS ───────────────────────────────────────
+  _addRTListener(db.ref('groups'), s=>{
     const all=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
     groups=all.filter(g=>g.creatorId===uid||(g.members&&g.members[uid]));
-    // carica paypal email in background, non blocca
+    // paypal in background
     const memberUids=[...new Set([
       ...groups.map(g=>g.creatorId),
       ...groups.flatMap(g=>Object.keys(g.members||{}))
@@ -2097,25 +2169,46 @@ function loadData(cb){
         if(email)localStorage.setItem('fp_paypal_'+mid,email);
       }).catch(()=>{});
     });
-  }));
+    if(!ready.grp){ready.grp=true;checkAllReady();}
+    else _rtRerender();
+  });
 
+  // ── ADMIN ────────────────────────────────────────
   if(realUser?.role==='admin'){
     db.ref('users').once('value').then(s=>{
       allUsers=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
     }).catch(()=>{});
   }
 
-  if(appMode==='business'){
-    p.push(db.ref('biz/'+uid+'/transactions').once('value').then(s=>{bizTx=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
-    p.push(db.ref('biz/'+uid+'/clients').once('value').then(s=>{clients=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
-    p.push(db.ref('biz/'+uid+'/quotes').once('value').then(s=>{quotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
-    p.push(db.ref('biz/'+uid+'/projects').once('value').then(s=>{projects=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
-    p.push(db.ref('biz/'+uid+'/expenseNotes').once('value').then(s=>{expenseNotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));}));
+  // ── BUSINESS ─────────────────────────────────────
+  if(bizNeeded){
+    let bizReady={tx:false,cli:false,quo:false,prj:false,exp:false};
+    function checkBiz(){if(Object.values(bizReady).every(Boolean)&&!ready.biz){ready.biz=true;checkAllReady();}}
+
+    _addRTListener(db.ref('biz/'+uid+'/transactions'), s=>{
+      bizTx=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+      if(!bizReady.tx){bizReady.tx=true;checkBiz();}else _rtRerender();
+    });
+    _addRTListener(db.ref('biz/'+uid+'/clients'), s=>{
+      clients=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+      if(!bizReady.cli){bizReady.cli=true;checkBiz();}else _rtRerender();
+    });
+    _addRTListener(db.ref('biz/'+uid+'/quotes'), s=>{
+      quotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+      if(!bizReady.quo){bizReady.quo=true;checkBiz();}else _rtRerender();
+    });
+    _addRTListener(db.ref('biz/'+uid+'/projects'), s=>{
+      projects=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+      if(!bizReady.prj){bizReady.prj=true;checkBiz();}else _rtRerender();
+    });
+    _addRTListener(db.ref('biz/'+uid+'/expenseNotes'), s=>{
+      expenseNotes=Object.entries(s.val()||{}).map(([id,d])=>({...d,id}));
+      if(!bizReady.exp){bizReady.exp=true;checkBiz();}else _rtRerender();
+    });
   }
 
-  // timeout di sicurezza: se Firebase non risponde in 10s, vai avanti comunque
-  const timeout=new Promise(res=>setTimeout(res,10000));
-  Promise.race([Promise.all(p),timeout]).then(()=>{if(cb)cb();}).catch(()=>{if(cb)cb();});
+  // timeout di sicurezza 10s
+  setTimeout(()=>{if(!_rtReady){_rtReady=true;if(cb)cb();}},10000);
 }
 
 /* ===== CHECK RECURRING — scala dal saldo ===== */
@@ -2284,7 +2377,7 @@ function clearAllNotifs(){
   appNotifs=[];saveNotifs();updateBellBadge();goTo('notifiche');
 }
 
-function delUtil(id){if(!confirm('Eliminare questo contratto?'))return;db.ref(`utilities/${id}`).remove().then(()=>{loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('🗑️ Eliminato');});}
+function delUtil(id){if(!confirm('Eliminare questo contratto?'))return;db.ref(`utilities/${id}`).remove().then(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');notify('🗑️ Eliminato');});}
 
 /* ===== GROUP LISTENERS: chat + spese ===== */
 let groupListeners=[];
@@ -3381,9 +3474,9 @@ function saveClient(){
   const addr=document.getElementById('cliAddr').value.trim();
   const note=document.getElementById('cliNote').value.trim();
   if(!name){notify('❌ Inserisci almeno il nome');return;}
-  db.ref(`biz/${user.id}/clients`).push({type,name,email,phone,vat,addr,note,createdAt:new Date().toISOString()}).then(()=>{closeMo('clientModal');loadData(()=>goTo('biz_clienti'));notify('✅ '+(type==='client'?'Cliente':'Fornitore')+' aggiunto!');});
+  db.ref(`biz/${user.id}/clients`).push({type,name,email,phone,vat,addr,note,createdAt:new Date().toISOString()}).then(()=>{closeMo('clientModal');goTo('biz_clienti');notify('✅ '+(type==='client'?'Cliente':'Fornitore')+' aggiunto!');});
 }
-function delClient(id){if(!confirm('Eliminare questo contatto?'))return;db.ref(`biz/${user.id}/clients/${id}`).remove().then(()=>{loadData(()=>goTo('biz_clienti'));notify('🗑️ Eliminato');});}
+function delClient(id){if(!confirm('Eliminare questo contatto?'))return;db.ref(`biz/${user.id}/clients/${id}`).remove().then(()=>{goTo('biz_clienti');notify('🗑️ Eliminato');});}
 
 function openQuoteModal(clientId){
   // populate client select
@@ -3492,7 +3585,7 @@ function saveQuote(){
     quoteNumber:Date.now()
   }).then(()=>{
     closeMo('quoteModal');
-    loadData(()=>goTo('biz_preventivi'));
+    goTo('biz_preventivi');
     notify('✅ Preventivo creato!');
   });
 }
@@ -3527,7 +3620,7 @@ function updateQuoteStatus(id,status){
         createdAt:new Date().toISOString()
       }).then(()=>{
         if(q)q.status='accepted';
-        loadData(()=>goTo('biz_preventivi'));
+        goTo('biz_preventivi');
         notify(`✅ Preventivo accettato! Entrata creata: ${causale}`);
         // Remove the quote from list (optional: keep as archive)
         setTimeout(()=>db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{
@@ -3545,7 +3638,7 @@ function updateQuoteStatus(id,status){
     notify('✅ Stato aggiornato');
   });
 }
-function delQuote(id){if(!confirm('Eliminare questo preventivo?'))return;db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{loadData(()=>goTo('biz_preventivi'));notify('🗑️ Eliminato');});}
+function delQuote(id){if(!confirm('Eliminare questo preventivo?'))return;db.ref(`biz/${user.id}/quotes/${id}`).remove().then(()=>{goTo('biz_preventivi');notify('🗑️ Eliminato');});}
 
 function openProjModal(){
   const sel=document.getElementById('prClient');
@@ -3562,10 +3655,10 @@ function saveProject(){
   const desc=document.getElementById('prDesc').value.trim();
   const status=document.getElementById('prStatus').value;
   if(!name){notify('❌ Inserisci il nome del progetto');return;}
-  db.ref(`biz/${user.id}/projects`).push({name,clientId,budget,startDate,endDate,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('projModal');loadData(()=>goTo('biz_progetti'));notify('✅ Progetto creato!');});
+  db.ref(`biz/${user.id}/projects`).push({name,clientId,budget,startDate,endDate,desc,status,createdAt:new Date().toISOString()}).then(()=>{closeMo('projModal');goTo('biz_progetti');notify('✅ Progetto creato!');});
 }
 function updateProjStatus(id,status){db.ref(`biz/${user.id}/projects/${id}/status`).set(status).then(()=>{const p=projects.find(x=>x.id===id);if(p)p.status=status;goTo('biz_progetti');notify('✅ Stato aggiornato');});}
-function delProject(id){if(!confirm('Eliminare questo progetto?'))return;db.ref(`biz/${user.id}/projects/${id}`).remove().then(()=>{loadData(()=>goTo('biz_progetti'));notify('🗑️ Eliminato');});}
+function delProject(id){if(!confirm('Eliminare questo progetto?'))return;db.ref(`biz/${user.id}/projects/${id}`).remove().then(()=>{goTo('biz_progetti');notify('🗑️ Eliminato');});}
 
 function openBizTxModal(clientId,projectId){
   const sc=document.getElementById('btClient');
@@ -3583,9 +3676,9 @@ function saveBizTx(){
   const clientId=document.getElementById('btClient').value;
   const iva=document.getElementById('btIva').value;
   if(!desc||!amt||amt<=0){notify('❌ Compila descrizione e importo');return;}
-  db.ref(`biz/${user.id}/transactions`).push({desc,amount:amt,type,cat,projectId,clientId,iva,createdAt:new Date().toISOString()}).then(()=>{closeMo('bizTxModal');loadData(()=>goTo('biz_primanota'));notify('✅ Movimento aggiunto!');});
+  db.ref(`biz/${user.id}/transactions`).push({desc,amount:amt,type,cat,projectId,clientId,iva,createdAt:new Date().toISOString()}).then(()=>{closeMo('bizTxModal');goTo('biz_primanota');notify('✅ Movimento aggiunto!');});
 }
-function delBizTx(id){if(!confirm('Eliminare questo movimento?'))return;db.ref(`biz/${user.id}/transactions/${id}`).remove().then(()=>{loadData(()=>goTo('biz_primanota'));notify('🗑️ Eliminato');});}
+function delBizTx(id){if(!confirm('Eliminare questo movimento?'))return;db.ref(`biz/${user.id}/transactions/${id}`).remove().then(()=>{goTo('biz_primanota');notify('🗑️ Eliminato');});}
 
 function openExpenseNoteModal(){
   const sel=document.getElementById('enProj');
@@ -3600,10 +3693,10 @@ function saveExpenseNote(){
   const date=document.getElementById('enDate').value;
   const projectId=document.getElementById('enProj').value;
   if(!desc||!amt){notify('❌ Compila descrizione e importo');return;}
-  db.ref(`biz/${user.id}/expenseNotes`).push({desc,amount:amt,cat,date,projectId,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('expenseNoteModal');loadData(()=>goTo('biz_spese'));notify('✅ Nota spese aggiunta!');});
+  db.ref(`biz/${user.id}/expenseNotes`).push({desc,amount:amt,cat,date,projectId,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('expenseNoteModal');goTo('biz_spese');notify('✅ Nota spese aggiunta!');});
 }
 function updateExpenseStatus(id,status){db.ref(`biz/${user.id}/expenseNotes/${id}/status`).set(status).then(()=>{const e=expenseNotes.find(x=>x.id===id);if(e)e.status=status;goTo('biz_spese');notify('✅ Stato aggiornato');});}
-function delExpenseNote(id){if(!confirm('Eliminare questa nota spese?'))return;db.ref(`biz/${user.id}/expenseNotes/${id}`).remove().then(()=>{loadData(()=>goTo('biz_spese'));notify('🗑️ Eliminata');});}
+function delExpenseNote(id){if(!confirm('Eliminare questa nota spese?'))return;db.ref(`biz/${user.id}/expenseNotes/${id}`).remove().then(()=>{goTo('biz_spese');notify('🗑️ Eliminata');});}
 
 /* ——— BIZ SETTINGS / LOGO ——— */
 function getBizSettings(){
@@ -4504,7 +4597,7 @@ function markPaidBySelf(uid,name,toUid,toName,amount){
     }).then(()=>{
       db.ref(`groups/${curGroupId}/chat`).push({text:`💰 ${name} ha segnalato il pagamento di ${fmtE(amount)} a ${toName}. In attesa di conferma.`,userId:'system',userName:'Sistema',ts:Date.now()});
       closeMo('gMarkPaidModal');
-      loadData(()=>goTo('gruppi'));
+      goTo('gruppi');
       notify('✅ Pagamento segnalato!');
     });
   };
@@ -4526,7 +4619,7 @@ function confirmMemberPaid(uid,name,creditorUid,creditorName,amount){
     }
     db.ref(`groups/${curGroupId}/chat`).push({text:`✅ Pagamento di ${name} → ${creditorName} (${fmtE(amount)}) confermato.`,userId:'system',userName:'Sistema',ts:Date.now()});
     closeMo('gMarkPaidModal');
-    loadData(()=>goTo('gruppi'));
+    goTo('gruppi');
     notify(`✅ Pagamento confermato!`);
   };
   openMo('gMarkPaidModal');
@@ -4582,7 +4675,7 @@ function sendPaymentRequest(){
     pushNotif({id:'pay_req_'+cb.value+'_'+Date.now(),type:'bill',icon:'💸',title:`Richiesta pagamento: ${g.name}`,sub:`Devi pagare ${fmtE(amount)}${note?' — '+note:''}`,time:Date.now(),read:false,action:'gruppi'});
   });
   closeMo('gPayRequestModal');
-  loadData(()=>goTo('gruppi'));
+  goTo('gruppi');
   notify(`📨 Richiesta inviata a ${checks.length} membro/i!`);
 }
 
@@ -4644,22 +4737,22 @@ function saveTx(){
   if(type==='expense'&&amt>bal){document.getElementById('txWarn').style.display='block';notify('❌ Saldo insufficiente!');return;}
   db.ref(`transactions/${Date.now()}`).set({userId:user.id,desc,amount:amt,type,cat,createdAt:new Date().toISOString()}).then(()=>{
     closeMo('txModal');
-    loadData(()=>{goTo('transazioni');notify('✅ Aggiunto!');if(type==='income'&&amt>=1000)setTimeout(()=>checkInvestModal(amt),700);});
+    goTo('transazioni');notify('✅ Aggiunto!');if(type==='income'&&amt>=1000)setTimeout(()=>checkInvestModal(amt),700);
   });
 }
 function delBill(id){
   if(!confirm('Eliminare questa bolletta?'))return;
-  db.ref('bills/'+id).remove().then(()=>{loadData(()=>goTo('bollette'));notify('🗑️ Bolletta eliminata');});
+  db.ref('bills/'+id).remove().then(()=>{goTo('bollette');notify('🗑️ Bolletta eliminata');});
 }
 function saveBill(){
   const n=document.getElementById('bName').value.trim(),a=parseFloat(document.getElementById('bAmt').value),d=document.getElementById('bDate').value;
   if(!n||!a||!d){notify('❌ Compila tutto');return;}
-  db.ref(`bills/${Date.now()}`).set({name:n,amount:a,date:d,userId:user.id,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');loadData(()=>goTo('bollette'));notify('✅ Aggiunto!');});
+  db.ref(`bills/${Date.now()}`).set({name:n,amount:a,date:d,userId:user.id,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');goTo('bollette');notify('✅ Aggiunto!');});
 }
 function saveUtil(){
   const t=document.getElementById('utType').value,p=document.getElementById('utProv').value.trim(),c=document.getElementById('utCon').value.trim();
   if(!p||!c){notify('❌ Compila tutto');return;}
-  db.ref(`utilities/${Date.now()}`).set({type:t,provider:p,contract:c,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('✅ Aggiunto!');});
+  db.ref(`utilities/${Date.now()}`).set({type:t,provider:p,contract:c,userId:user.id,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');sessionStorage.setItem('buTab','utenze');goTo('bollette');notify('✅ Aggiunto!');});
 }
 function openNewTrip(){
   document.getElementById('trEditId').value='';
@@ -4704,9 +4797,9 @@ function saveTrip(){
   };
   const editId=document.getElementById('trEditId').value;
   const ref=editId?db.ref(`trips/${editId}`):db.ref(`trips/${Date.now()}`);
-  ref.set(data).then(()=>{closeMo('tripModal');loadData(()=>goTo('viaggi'));notify(editId?'✅ Viaggio aggiornato!':'✅ Viaggio aggiunto!');});
+  ref.set(data).then(()=>{closeMo('tripModal');goTo('viaggi');notify(editId?'✅ Viaggio aggiornato!':'✅ Viaggio aggiunto!');});
 }
-function delTrip(id){if(!confirm('Eliminare questo viaggio?'))return;db.ref(`trips/${id}`).remove().then(()=>{loadData(()=>goTo('viaggi'));notify('🗑️ Eliminato');});}
+function delTrip(id){if(!confirm('Eliminare questo viaggio?'))return;db.ref(`trips/${id}`).remove().then(()=>{goTo('viaggi');notify('🗑️ Eliminato');});}
 function openRecModal(){
   document.getElementById('recEditId').value='';
   document.getElementById('recModalTitle').textContent='🔄 Nuova Operazione Ricorrente';
@@ -5017,11 +5110,11 @@ function saveRec(){
   const data={name:n,amount:a,type:t,cat:c,freq:f,nextDate:nd,kind:k,expiry,status:'active',userId:user.id};
   if(editId){
     db.ref(`recurring/${editId}`).update(data).then(()=>{
-      closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiornata!');
+      closeMo('recModal');goTo('ricorrenti');notify('✅ Ricorrente aggiornata!');
     });
   } else {
     db.ref(`recurring/${Date.now()}`).set({...data,createdAt:new Date().toISOString()}).then(()=>{
-      closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiunta!');
+      closeMo('recModal');goTo('ricorrenti');notify('✅ Ricorrente aggiunta!');
     });
   }
 }
@@ -5029,7 +5122,7 @@ function saveRec(){
 function delRec(id){
   if(!confirm('Eliminare questa operazione ricorrente?'))return;
   db.ref(`recurring/${id}`).remove().then(()=>{
-    loadData(()=>goTo('ricorrenti'));notify('🗑️ Ricorrente eliminata');
+    goTo('ricorrenti');notify('🗑️ Ricorrente eliminata');
   });
 }
 function saveGroup(){
@@ -5037,7 +5130,7 @@ function saveGroup(){
   if(!n){notify('❌ Inserisci un nome');return;}
   const gid='g_'+Date.now();
   const gt=document.getElementById('gType')?.value||'normal';
-  db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,groupType:gt,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');loadData(()=>{curGroupId=gid;goTo('gruppi');});notify('✅ Gruppo creato!');});
+  db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,groupType:gt,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');curGroupId=gid;goTo('gruppi');notify('✅ Gruppo creato!');});
 }
 function doInvite(){
   const target=document.getElementById('invTarget').value.trim();
@@ -5047,7 +5140,7 @@ function doInvite(){
     for(let id in us){if(id===target||us[id].email===target){found={...us[id],id};break;}}
     if(!found){notify('❌ Utente non trovato');return;}
     if(found.id===user.id){notify('❌ Non puoi invitare te stesso');return;}
-    db.ref(`groups/${curGroupId}/members/${found.id}`).set({name:found.name,email:found.email,joinedAt:new Date().toISOString()}).then(()=>{closeMo('inviteModal');loadData(()=>goTo('gruppi'));notify('✅ '+found.name+' aggiunto!');});
+    db.ref(`groups/${curGroupId}/members/${found.id}`).set({name:found.name,email:found.email,joinedAt:new Date().toISOString()}).then(()=>{closeMo('inviteModal');goTo('gruppi');notify('✅ '+found.name+' aggiunto!');});
   });
 }
 function saveProfilePaypal(){
@@ -5127,7 +5220,7 @@ function saveGExp(){
     share, ts, createdAt:new Date(ts).toISOString()
   }).then(()=>{
     closeMo('gExpModal');
-    loadData(()=>goTo('gruppi'));
+    goTo('gruppi');
     notify('✅ Spesa aggiunta!');
   });
 }
@@ -5138,7 +5231,7 @@ function sendMsg(){
 function removeGMember(uid){
   if(!confirm('Rimuovere questo membro dal gruppo?'))return;
   db.ref(`groups/${curGroupId}/members/${uid}`).remove().then(()=>{
-    loadData(()=>goTo('gruppi'));
+    goTo('gruppi');
     notify('✅ Membro rimosso');
   }).catch(()=>notify('❌ Errore rimozione'));
 }
@@ -5162,7 +5255,7 @@ function leaveGroup(gid){
     notify('✅ Hai lasciato il gruppo');
   }).catch(()=>notify('❌ Errore'));
 }
-function toggleRec(id,status){const next=status==='active'?'paused':'active';db.ref(`recurring/${id}/status`).set(next).then(()=>{loadData(()=>goTo('ricorrenti'));notify(next==='active'?'▶ Riattivata':'⏸ Messa in pausa');}); }
+function toggleRec(id,status){const next=status==='active'?'paused':'active';db.ref(`recurring/${id}/status`).set(next).then(()=>{goTo('ricorrenti');notify(next==='active'?'▶ Riattivata':'⏸ Messa in pausa');}); }
 
 /* ===== THEME ===== */
 function toggleTheme(){
@@ -5265,7 +5358,7 @@ function saveEditTx(){
   if(!desc||!amt){notify('❌ Compila tutti i campi');return;}
   db.ref(`transactions/${id}`).update({desc,amount:amt,type,cat}).then(()=>{
     closeMo('editTxModal');
-    loadData(()=>goTo('transazioni'));
+    goTo('transazioni');
     notify('✅ Transazione aggiornata!');
   });
 }
@@ -5294,7 +5387,7 @@ function exportCSV(){
 /* ===== IMPROVED DELETE ===== */
 function delTx(id,name){
   if(!confirm(`Eliminare "${name||'questa transazione'}"?`))return;
-  db.ref(`transactions/${id}`).remove().then(()=>{loadData(()=>goTo('transazioni'));notify('🗑️ Eliminata');});
+  db.ref(`transactions/${id}`).remove().then(()=>{goTo('transazioni');notify('🗑️ Eliminata');});
 }
 
 function openMo(id){document.getElementById(id).classList.add('active');}
@@ -5307,7 +5400,8 @@ function closeMo(id){
 
 /* ===== UTILS ===== */
 function notify(msg){const n=document.getElementById('notif');n.textContent=msg;n.style.display='block';clearTimeout(n._t);n._t=setTimeout(()=>n.style.display='none',3200);}
-function doLogout(){if(!confirm(t('logout')))return;user=null;realUser=null;localStorage.removeItem('fp_user');location.reload();}
+function doLogout(){
+  _detachRTListeners(); // stacca tutti i listener Firebaseif(!confirm(t('logout')))return;user=null;realUser=null;localStorage.removeItem('fp_user');location.reload();}
 function fmtE(v){return'€'+parseFloat(v||0).toFixed(2);}
 function fmtDate(d){try{return new Date(d).toLocaleDateString('it-IT');}catch(e){return d;}}
 function catIcon(cid){const c=CATS.find(x=>x.id===cid);return c?c.icon:'📦';}
@@ -5704,7 +5798,7 @@ function saveEditBizTx(){
     cat:document.getElementById('ebtCat').value,
     iva:document.getElementById('ebtIva').value,
     dueDate:document.getElementById('ebtDue').value||null
-  }).then(()=>{closeMo('editBizTxModal');loadData(()=>goTo('biz_primanota'));notify('✅ Aggiornato!');});
+  }).then(()=>{closeMo('editBizTxModal');goTo('biz_primanota');notify('✅ Aggiornato!');});
 }
 
 /* ===== SCADENZE MANUALI ===== */

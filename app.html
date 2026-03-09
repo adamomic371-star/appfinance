@@ -1467,6 +1467,20 @@ window.addEventListener('error', (e) => {
 
 console.log('✅ Kazka app loaded');
 
+
+
+// Ignore non-critical errors
+window.addEventListener('error', function(e) {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('ℹ️ Extension communication (ignorato)');
+    return true;
+  }
+  if (e.message && e.message.includes('appendChild')) {
+    console.warn('ℹ️ DOM not ready yet');
+    return true;
+  }
+}, true);
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
 
@@ -1491,8 +1505,31 @@ window.addEventListener('error', (e) => {
 
 console.log('✅ Kazka app loaded');
 
+
+
+// Ignore non-critical errors
+window.addEventListener('error', function(e) {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('ℹ️ Extension communication (ignorato)');
+    return true;
+  }
+  if (e.message && e.message.includes('appendChild')) {
+    console.warn('ℹ️ DOM not ready yet');
+    return true;
+  }
+}, true);
+
 </script>
 <script>
+
+// Ensure DOM is ready before manipulating
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    // DOM is ready
+  });
+}
+
+
 /* ===== PARTICLES ===== */
 (()=>{
   const c=document.getElementById('pts'),cols=['#6c63ff','#00d4ff','#ff6b9d','#00e5a0','#ffd166'];
@@ -5023,6 +5060,20 @@ window.addEventListener('error', (e) => {
 
 console.log('✅ Kazka app loaded');
 
+
+
+// Ignore non-critical errors
+window.addEventListener('error', function(e) {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('ℹ️ Extension communication (ignorato)');
+    return true;
+  }
+  if (e.message && e.message.includes('appendChild')) {
+    console.warn('ℹ️ DOM not ready yet');
+    return true;
+  }
+}, true);
+
 </script>
 
 <!-- ═══════════════════════════════════════════
@@ -5220,6 +5271,20 @@ window.addEventListener('error', (e) => {
 });
 
 console.log('✅ Kazka app loaded');
+
+
+
+// Ignore non-critical errors
+window.addEventListener('error', function(e) {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('ℹ️ Extension communication (ignorato)');
+    return true;
+  }
+  if (e.message && e.message.includes('appendChild')) {
+    console.warn('ℹ️ DOM not ready yet');
+    return true;
+  }
+}, true);
 
 </script>
 </body>

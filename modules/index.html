@@ -123,23 +123,14 @@
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
       font-family: 'Poppins', sans-serif;
-      font-size: 22px;
-      font-weight: 800;
+      font-size: 24px;
+      font-weight: 900;
       background: linear-gradient(135deg, var(--ac), var(--ac2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      letter-spacing: -0.5px;
-    }
-
-    .logo svg {
-      width: 28px;
-      height: 28px;
-      filter: drop-shadow(0 0 12px rgba(124, 111, 255, 0.5));
+      letter-spacing: -1px;
     }
 
     .language-switcher {
@@ -839,10 +830,6 @@
         align-items: center;
       }
 
-      .btn-primary, .btn-secondary {
-        width: 100%;
-        justify-content: center;
-      }
 
       .features, .dashboard-section, .stats-section, .usecases, .cta-section {
         padding: 60px 20px;
@@ -886,8 +873,45 @@
       }
 
       .btn-primary, .btn-secondary {
-        padding: 12px 24px;
-        font-size: 13px;
+        padding: 10px 16px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      nav {
+        height: 56px;
+        padding: 0 12px;
+      }
+
+      .logo {
+        font-size: 16px;
+      }
+
+      .hero {
+        padding: 60px 12px 20px;
+      }
+
+      .hero h1 {
+        font-size: clamp(24px, 5vw, 36px);
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 9px 14px;
+        font-size: 11px;
+        border-radius: 10px;
+      }
+
+      .hero-cta {
+        gap: 10px;
+      }
+
+      .feature-card, .usecase-card, .stat-item {
+        padding: 20px 12px;
+      }
+
+      .features, .dashboard-section, .stats-section, .usecases, .cta-section {
+        padding: 40px 12px;
       }
     }
 
@@ -2151,302 +2175,3 @@
       }
     }
 
-  </style>
-</head>
-<body>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- NAVIGATION                                                  -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-
-  <nav>
-    <div class="logo">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#7c6fff;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <rect x="42" y="28" width="10" height="64" rx="5" fill="url(#logoGrad)"/>
-        <rect x="52" y="28" width="34" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(-32 69 33)"/>
-        <rect x="52" y="76" width="32" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(32 68 81)"/>
-      </svg>
-      Kazka
-    </div>
-    <a href="app.html"><button>Accedi →</button></a>
-  </nav>
-
-  <main>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- HERO SECTION                                                -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-
-    <section class="hero">
-      <div class="hero-content">
-        <div class="hero-badge">✨ Il tuo personal finance assistant</div>
-        
-        <h1>
-          Reclaim Your<br>
-          <span class="highlight">Financial Power</span>
-        </h1>
-        
-        <p>Dai il controllo totale del tuo denaro. Traccia, analizza e domina ogni centesimo senza compromessi. Built for power users.</p>
-        
-        <div class="hero-cta">
-          <a href="app.html"><button class="btn-primary">Inizia Gratis →</button></a>
-          <button class="btn-secondary" onclick="scrollTo('features')">Scopri di più</button>
-        </div>
-
-        <div class="float-card">
-          <div class="float-card-header">
-            <div class="card-title">💰 Kazka</div>
-            <div class="card-status">LIVE</div>
-          </div>
-
-          <div class="balance-display">
-            <div class="balance-label">Saldo Totale</div>
-            <div class="balance-value">€4.250</div>
-          </div>
-
-          <div class="mini-stats">
-            <div class="mini-stat">
-              <div class="mini-stat-label">Entrate</div>
-              <div class="mini-stat-value" style="color: var(--gr);">+€5.200</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-stat-label">Uscite</div>
-              <div class="mini-stat-value" style="color: var(--re);">-€950</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- FEATURES SECTION                                            -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-
-    <section class="features" id="features">
-      <div class="section-header">
-        <h2>Powerful Features for<br><span style="background: linear-gradient(135deg, var(--ac), var(--ac2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Total Control</span></h2>
-        <p>Tutto ciò che serve per dominare il tuo mondo finanziario</p>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">💸</div>
-          <div class="feature-title">Transazioni Illimitate</div>
-          <div class="feature-desc">Traccia entrate e uscite con categorie intelligenti e note dettagliate</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <div class="feature-title">Report Avanzati</div>
-          <div class="feature-desc">Grafici mensili, annuali, breakdown per categoria e trend analysis</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <div class="feature-title">Obiettivi Finanziari</div>
-          <div class="feature-desc">Imposta mete di risparmio e monitora il progresso in tempo reale</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔄</div>
-          <div class="feature-title">Spese Ricorrenti</div>
-          <div class="feature-desc">Automatizza abbonamenti, stipendi, affitti e calcolo costi fissi</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">👥</div>
-          <div class="feature-title">Spese Condivise</div>
-          <div class="feature-desc">Gestisci budget con amici e famiglia, calcolo automatico dei saldi</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🏢</div>
-          <div class="feature-title">Modalità Business</div>
-          <div class="feature-desc">Prima nota, clienti, preventivi, progetti per imprenditori e freelancer</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- DASHBOARD PREVIEW SECTION                                   -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-
-    <section class="dashboard-section">
-      <div class="dashboard-container">
-        <div class="dashboard-text">
-          <h2>Dashboard Che Ti Parla</h2>
-          <p>Un'interfaccia intuitiva ma powerful. Vedi tutto quello che serve in un colpo d'occhio.</p>
-          
-          <ul class="benefits-list">
-            <li>Statistiche in tempo reale</li>
-            <li>Grafici interattivi e responsive</li>
-            <li>Previsioni di spesa intelligenti</li>
-            <li>Notifiche smart su anomalie</li>
-            <li>Export dati in PDF e CSV</li>
-            <li>Sync cloud automatico</li>
-          </ul>
-
-          <a href="app.html"><button class="btn-primary">Accedi all'App →</button></a>
-        </div>
-
-        <div class="dashboard-preview">
-          <div class="dashboard-image">
-            📱 Dashboard Preview
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- STATS SECTION                                               -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-
-    <section class="stats-section">
-      <div class="section-header" style="margin-bottom: 50px;">
-        <h2>Trusted by People Like You</h2>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-number">10K+</div>
-          <div class="stat-label">Utenti Attivi</div>
-        </div>
-
-        <div class="stat-item">
-          <div class="stat-number">€2.5B</div>
-          <div class="stat-label">Tracciati</div>
-        </div>
-
-        <div class="stat-item">
-          <div class="stat-number">99.9%</div>
-          <div class="stat-label">Uptime</div>
-        </div>
-
-        <div class="stat-item">
-          <div class="stat-number">24/7</div>
-          <div class="stat-label">Privacy First</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- USE CASES SECTION                                           -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-
-    <section class="usecases">
-      <div class="section-header">
-        <h2>Perfect For Everyone</h2>
-        <p>Che tu sia un lavoratore dipendente, freelancer o imprenditore</p>
-      </div>
-
-      <div class="usecases-grid">
-        <div class="usecase-card">
-          <div class="usecase-icon">👨‍💼</div>
-          <div class="usecase-title">Professionisti</div>
-          <div class="usecase-desc">Tieni traccia dello stipendio, investimenti e pianifica il futuro finanziario</div>
-          <div class="usecase-benefit">✓ Pianificazione</div>
-        </div>
-
-        <div class="usecase-card">
-          <div class="usecase-icon">🎨</div>
-          <div class="usecase-title">Freelancer</div>
-          <div class="usecase-desc">Gestisci progetti, fatture, clienti e tasse con la modalità business completa</div>
-          <div class="usecase-benefit">✓ Business Ready</div>
-        </div>
-
-        <div class="usecase-card">
-          <div class="usecase-icon">👨‍👩‍👧‍👦</div>
-          <div class="usecase-title">Famiglie</div>
-          <div class="usecase-desc">Condividi budget con partner e famiglia, trasparenza totale sulle spese</div>
-          <div class="usecase-benefit">✓ Collaborativo</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- CTA SECTION                                                 -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-
-    <section class="cta-section">
-      <div class="cta-content">
-        <h2>Pronto a Prendere il Controllo?</h2>
-        <p>Gratis, senza pubblicità, senza tracking. I tuoi dati rimangono tuoi.</p>
-        <a href="app.html"><button class="btn-primary" style="margin-top: 20px;">Apri Kazka Gratis →</button></a>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- FOOTER                                                      -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-
-  <footer>
-    <div>💰 <strong>Kazka</strong> v3.0 – Financial Control Reimagined</div>
-    <div style="margin-top: 12px; opacity: 0.7;">© 2025 · Built with passion · Powered by Firebase</div>
-  </footer>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- SCROLL ANIMATIONS & INTERACTIONS                             -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-
-  <script>
-    // Smooth scroll to section
-    function scrollTo(id) {
-      const element = document.getElementById(id);
-      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // Intersection Observer for scroll animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    // Observe all animated elements
-    document.querySelectorAll('.feature-card, .stat-item, .usecase-card').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = 'all 0.6s ease';
-      observer.observe(el);
-    });
-
-    // Parallax effect on hero
-    window.addEventListener('scroll', () => {
-      const hero = document.querySelector('.hero');
-      if (hero) {
-        const scrolled = window.pageYOffset;
-        hero.style.backgroundPosition = `0px ${scrolled * 0.5}px`;
-      }
-    });
-
-    // Hover glow effect
-    document.querySelectorAll('.feature-card, .usecase-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-      });
-    });
-
-  </script>
-
-</body>
-</html>

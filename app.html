@@ -6,9 +6,10 @@
   <meta name="theme-color" content="#0a0f1a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kazka">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>Kazka · Finanza completa</title>
+  <title>Kazka · Finanza intelligente</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -18,7 +19,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     :root {
       --bg: #0a0f1a;
       --bg-surface: #141b2b;
@@ -56,7 +56,6 @@
       --header-height: 64px;
       --sidebar-width: 260px;
     }
-
     html, body { height: 100%; overflow: hidden; }
     body {
       font-family: 'Inter', sans-serif;
@@ -65,7 +64,6 @@
       font-size: 14px;
       -webkit-font-smoothing: antialiased;
     }
-
     /* ===== BOTTONI ===== */
     .btn {
       display: inline-flex;
@@ -118,16 +116,15 @@
     }
     .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: var(--radius-sm); }
     .btn-block { width: 100%; }
-
     /* ===== LAYOUT ===== */
     #app {
       display: flex;
       height: 100vh;
       width: 100vw;
       overflow: hidden;
+      position: relative;
     }
-
-    /* SIDEBAR VERTICALE (DESKTOP) */
+    /* SIDEBAR DESKTOP */
     .sidebar {
       width: var(--sidebar-width);
       background: var(--bg-surface);
@@ -181,7 +178,6 @@
       box-shadow: var(--shadow-glow);
     }
     .nav-item i { width: 20px; text-align: center; }
-
     /* MAIN */
     .main {
       flex: 1;
@@ -207,7 +203,62 @@
       overflow-y: auto;
       padding: var(--space-xl);
     }
-
+    /* ===== DRAWER MOBILE ===== */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-xl) 0;
+    }
+    .drawer.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 0 var(--space-lg) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-close {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .drawer-user {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      margin: 0 var(--space-lg) var(--space-lg);
+      border: 1px solid var(--border);
+    }
     /* ===== CARD ===== */
     .card {
       background: var(--bg-surface);
@@ -230,7 +281,6 @@
       font-size: 15px;
     }
     .card-title i { color: var(--accent); }
-
     /* ===== GRIGLIE ===== */
     .grid-2, .grid-3, .grid-4 {
       display: grid;
@@ -240,7 +290,6 @@
     .grid-2 { grid-template-columns: repeat(2, 1fr); }
     .grid-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-4 { grid-template-columns: repeat(4, 1fr); }
-
     .stat-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -261,7 +310,6 @@
     }
     .stat-value.positive { color: var(--success); }
     .stat-value.negative { color: var(--danger); }
-
     /* ===== LISTE ===== */
     .item-row {
       display: flex;
@@ -287,7 +335,6 @@
     .item-amount { font-weight: 700; }
     .amount-positive { color: var(--success); }
     .amount-negative { color: var(--danger); }
-
     /* ===== BADGE ===== */
     .badge {
       display: inline-flex;
@@ -315,7 +362,6 @@
       color: var(--danger);
       border-color: rgba(255, 107, 107, 0.2);
     }
-
     /* ===== FORM ===== */
     .input-group { margin-bottom: var(--space-lg); }
     label {
@@ -340,7 +386,6 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
-
     /* ===== MODAL ===== */
     .modal-overlay {
       position: fixed;
@@ -385,7 +430,6 @@
       cursor: pointer;
       color: var(--text-tertiary);
     }
-
     /* ===== TOAST ===== */
     .toast {
       position: fixed;
@@ -402,18 +446,29 @@
       z-index: 2000;
       display: none;
     }
-
-    /* ===== MOBILE ===== */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .sidebar { display: none; }
+      .topbar { padding: 0 var(--space-lg); }
+      .content { padding: var(--space-lg); }
       .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .hamburger {
+        display: block !important;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 20px;
+        cursor: pointer;
+        margin-right: var(--space-md);
+      }
     }
     @media (max-width: 480px) {
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
       .topbar-actions .btn span { display: none; }
+      .topbar-actions .btn i { margin: 0; }
+      .hamburger { font-size: 18px; }
     }
-
-    /* ===== UTILITY ===== */
+    .hamburger { display: none; }
     .hidden { display: none !important; }
     .flex { display: flex; }
     .items-center { align-items: center; }
@@ -451,7 +506,7 @@
 
 <!-- APP PRINCIPALE -->
 <div id="app" class="hidden">
-  <!-- SIDEBAR VERTICALE -->
+  <!-- SIDEBAR DESKTOP -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
@@ -472,12 +527,40 @@
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- DRAWER MOBILE (overlay + pannello) -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-chart-pie"></i> KAZKA
+      </div>
+      <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-user" id="drawerUser">
+      <div class="text-sm font-medium" id="drawerName">Caricamento...</div>
+      <div class="text-xs text-muted" id="drawerPlan">Free</div>
+    </div>
+    <nav id="drawerNav">
+      <!-- Verrà popolato via JS -->
+    </nav>
+    <div style="margin-top: auto; padding: var(--space-lg);">
+      <button class="btn btn-outline w-full" onclick="handleLogout(); closeDrawer();">
+        <i class="fas fa-sign-out-alt"></i> Esci
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
   <main class="main">
     <header class="topbar">
-      <div>
-        <h1 class="page-title" id="pageTitle">Dashboard</h1>
-        <div class="page-subtitle" id="pageSubtitle">Panoramica</div>
+      <div style="display: flex; align-items: center;">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleDrawer()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div>
+          <h1 class="page-title" id="pageTitle">Dashboard</h1>
+          <div class="page-subtitle" id="pageSubtitle">Panoramica</div>
+        </div>
       </div>
       <div class="topbar-actions" id="topbarActions">
         <button class="btn btn-secondary btn-sm" id="themeToggle" onclick="toggleTheme()">
@@ -578,14 +661,12 @@
       
       for (let id in users) {
         if (users[id].email === email) {
-          // In produzione usa hash, qui demo accetta qualsiasi password
           found = { id, ...users[id] };
           break;
         }
       }
 
       if (!found) {
-        // Crea nuovo utente automaticamente per demo
         const newId = 'u_' + email.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const newUser = {
           email,
@@ -605,6 +686,7 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       document.getElementById('sidebarName').textContent = found.name;
+      document.getElementById('drawerName').textContent = found.name;
       
       await loadUserData(found.id);
       buildNav();
@@ -640,14 +722,12 @@
       goals = Object.entries(data.goals || {}).map(([id, d]) => ({ id, ...d }));
       budgets = data.budgets || {};
       
-      // Business
       bizTx = Object.entries(data.biz?.transactions || {}).map(([id, d]) => ({ id, ...d }));
       clients = Object.entries(data.biz?.clients || {}).map(([id, d]) => ({ id, ...d }));
       quotes = Object.entries(data.biz?.quotes || {}).map(([id, d]) => ({ id, ...d }));
       projects = Object.entries(data.biz?.projects || {}).map(([id, d]) => ({ id, ...d }));
       expenseNotes = Object.entries(data.biz?.expenseNotes || {}).map(([id, d]) => ({ id, ...d }));
 
-      // Gruppi (nodo separato)
       const groupsSnap = await db.ref('groups').once('value');
       const allGroups = Object.entries(groupsSnap.val() || {}).map(([id, d]) => ({ id, ...d }));
       groups = allGroups.filter(g => g.creatorId === uid || (g.members && g.members[uid]));
@@ -687,13 +767,25 @@
   };
 
   function buildNav() {
-    const nav = document.getElementById('sidebarNav');
     const items = appMode === 'business' ? navItems.business : navItems.personal;
-    nav.innerHTML = items.map(item => `
-      <div class="nav-item" onclick="goToPage('${item.id}')">
-        <i class="fas ${item.icon}"></i> ${item.label}
-      </div>
-    `).join('');
+    const sidebarNav = document.getElementById('sidebarNav');
+    const drawerNav = document.getElementById('drawerNav');
+    
+    sidebarNav.innerHTML = '';
+    drawerNav.innerHTML = '';
+    
+    items.forEach(item => {
+      sidebarNav.innerHTML += `
+        <div class="nav-item" onclick="goToPage('${item.id}')">
+          <i class="fas ${item.icon}"></i> ${item.label}
+        </div>
+      `;
+      drawerNav.innerHTML += `
+        <div class="nav-item" onclick="goToPage('${item.id}'); closeDrawer();">
+          <i class="fas ${item.icon}"></i> ${item.label}
+        </div>
+      `;
+    });
   }
 
   function setMode(mode) {
@@ -705,12 +797,12 @@
   // ==================== ROUTER ====================
   function goToPage(page) {
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    const activeEl = Array.from(document.querySelectorAll('.nav-item')).find(el => 
+    const activeEls = Array.from(document.querySelectorAll('.nav-item')).filter(el => 
       el.textContent.includes(page === 'dashboard' ? 'Dashboard' : 
                              page === 'transazioni' ? 'Movimenti' : 
                              page === 'biz_dashboard' ? 'Dashboard' : page)
     );
-    if (activeEl) activeEl.classList.add('active');
+    activeEls.forEach(el => el.classList.add('active'));
 
     document.getElementById('pageTitle').textContent = 
       page === 'dashboard' ? 'Dashboard' :
@@ -1395,6 +1487,19 @@
     if (icon) icon.className = document.body.classList.contains('light') ? 'fas fa-sun' : 'fas fa-moon';
   }
 
+  // ==================== DRAWER FUNCTIONS ====================
+  function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+  }
+
   // ==================== AVVIO ====================
   window.addEventListener('load', async () => {
     const saved = localStorage.getItem('kazka_user');
@@ -1404,6 +1509,7 @@
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
         document.getElementById('sidebarName').textContent = currentUser.name;
+        document.getElementById('drawerName').textContent = currentUser.name;
         await loadUserData(currentUser.id);
         buildNav();
         renderPage('dashboard');
@@ -1441,6 +1547,31 @@
   window.editGoal = editGoal;
   window.goToGroup = goToGroup;
   window.clearAllNotifs = clearAllNotifs;
+  window.toggleDrawer = toggleDrawer;
+  window.closeDrawer = closeDrawer;
+
+  // ==================== PWA INSTALL ====================
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Mostra un piccolo avviso che l'app è installabile (opzionale)
+    setTimeout(() => {
+      if (confirm('Installa Kazka sul tuo dispositivo per un accesso più rapido!')) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      }
+    }, 2000);
+  });
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      console.log('Service Worker registrato', reg);
+    }).catch(err => {
+      console.log('Service Worker errore', err);
+    });
+  }
 </script>
 </body>
 </html>

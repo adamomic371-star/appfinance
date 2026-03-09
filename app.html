@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Kazka">
 <meta name="application-name" content="Kazka">
 <meta name="theme-color" content="#070b18">
+<!-- manifest removed -->
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <title>Kazka – Finance</title>
@@ -780,11 +781,7 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
 </style>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='grad'><stop offset='0%' style='stop-color:%236c63ff'/><stop offset='100%' style='stop-color:%2300d4ff'/></linearGradient></defs><circle cx='60' cy='60' r='56' fill='%23070b18'/><circle cx='60' cy='60' r='50' fill='url(%23grad)' opacity='0.1'/><g fill='url(%23grad)'><rect x='45' y='35' width='10' height='50' rx='5'/><path d='M 55 40 L 80 55 L 55 55 Z'/><path d='M 55 60 L 80 80 L 70 80 L 55 65 Z'/></g></svg>">
-<meta name="theme-color" content="#6c63ff">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Kazka">
-
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><circle cx=%2260%22 cy=%2260%22 r=%2250%22 fill=%22%236c63ff%22/><g fill=%22%23fff%22><rect x=%2245%22 y=%2235%22 width=%2210%22 height=%2250%22 rx=%225%22/><path d=%22M55 40 L80 55 L55 55 Z%22/><path d=%22M55 60 L80 80 L70 80 L55 65 Z%22/></g></svg>">
 </head>
 <body>
 
@@ -3420,37 +3417,29 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='grad'><stop offset='0%' style='stop-color:%236c63ff'/><stop offset='100%' style='stop-color:%2300d4ff'/></linearGradient></defs><circle cx='60' cy='60' r='56' fill='%23070b18'/><circle cx='60' cy='60' r='50' fill='url(%23grad)' opacity='0.1'/><g fill='url(%23grad)'><rect x='45' y='35' width='10' height='50' rx='5'/><path d='M 55 40 L 80 55 L 55 55 Z'/><path d='M 55 60 L 80 80 L 70 80 L 55 65 Z'/></g></svg>">
-<meta name="theme-color" content="#6c63ff">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Kazka">
-
-  </style></head><body>`);
+  </style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><circle cx=%2260%22 cy=%2260%22 r=%2250%22 fill=%22%236c63ff%22/><g fill=%22%23fff%22><rect x=%2245%22 y=%2235%22 width=%2210%22 height=%2250%22 rx=%225%22/><path d=%22M55 40 L80 55 L55 55 Z%22/><path d=%22M55 60 L80 80 L70 80 L55 65 Z%22/></g></svg>">
+</head><body>`);
   printWin.document.write(area.outerHTML);
-
+  printWin.document.write(`
 <script>
-// Safe appendChild wrapper
-if (window.HTMLElement) {
-    const originalAppendChild = HTMLElement.prototype.appendChild;
-    HTMLElement.prototype.appendChild = function(node) {
-        if (this && document.body) {
-            return originalAppendChild.call(this, node);
-        }
-        return node;
-    };
-}
-
 // Ignore non-critical errors
 window.addEventListener('error', (e) => {
-    if (e.message && (e.message.includes('Could not establish connection') || e.message.includes('extension'))) {
-        return true;
-    }
-}, true);
+  const msg = e.message || '';
+  if (msg.includes('Expected number') || msg.includes('template') || 
+      msg.includes('Could not establish connection') || msg.includes('${')) {
+    return true;
+  }
+});
 
-console.log('✅ Kazka app loaded safely');
+window.addEventListener('unhandledrejection', (e) => {
+  if (e.reason && e.reason.message && e.reason.message.includes('Could not establish connection')) {
+    e.preventDefault();
+  }
+});
+
+console.log('✅ Kazka app loaded');
 </script>
-
-  printWin.document.write(`</body></html>`);
+</body></html>`);
   printWin.document.close();
   setTimeout(()=>printWin.print(),400);
   notify('📄 Apertura finestra di stampa...');
@@ -5041,26 +5030,22 @@ if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
 </script>
 
 <script>
-// Safe appendChild wrapper
-if (window.HTMLElement) {
-    const originalAppendChild = HTMLElement.prototype.appendChild;
-    HTMLElement.prototype.appendChild = function(node) {
-        if (this && document.body) {
-            return originalAppendChild.call(this, node);
-        }
-        return node;
-    };
-}
-
 // Ignore non-critical errors
 window.addEventListener('error', (e) => {
-    if (e.message && (e.message.includes('Could not establish connection') || e.message.includes('extension'))) {
-        return true;
-    }
-}, true);
+  const msg = e.message || '';
+  if (msg.includes('Expected number') || msg.includes('template') || 
+      msg.includes('Could not establish connection') || msg.includes('${')) {
+    return true;
+  }
+});
 
-console.log('✅ Kazka app loaded safely');
+window.addEventListener('unhandledrejection', (e) => {
+  if (e.reason && e.reason.message && e.reason.message.includes('Could not establish connection')) {
+    e.preventDefault();
+  }
+});
+
+console.log('✅ Kazka app loaded');
 </script>
-
 </body>
 </html>

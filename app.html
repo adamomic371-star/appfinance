@@ -1803,16 +1803,34 @@ function startRealtimeSync(){
   // Goals from Firebase → localStorage sync
   db.ref(`users/${uid}/goals`).once('value',snap=>{
     const v=snap.val();
-    if(v){
-      const arr=Array.isArray(v)?v:Object.entries(v).map(([id,d])=>({...d,id}));
-      if(arr.length>0)localStorage.setItem('fp_goals_'+uid,JSON.stringify(arr));
-    }
+    if(v){const arr=Array.isArray(v)?v:Object.entries(v).map(([id,d])=>({...d,id}));if(arr.length>0)localStorage.setItem('fp_goals_'+uid,JSON.stringify(arr));}
   });
   // Budgets from Firebase → localStorage sync
   db.ref(`users/${uid}/budgets`).once('value',snap=>{
     const v=snap.val();
     if(v&&Object.keys(v).length>0)localStorage.setItem('fp_budgets_'+uid,JSON.stringify(v));
   });
+  // Scadenze manuali → localStorage sync
+  const scadRef=db.ref(`users/${uid}/scadenze`);
+  scadRef.on('value',snap=>{
+    const v=snap.val();
+    if(v)localStorage.setItem('fp_scad_'+uid,JSON.stringify(Array.isArray(v)?v:Object.values(v)));
+  });
+  _rtListeners.push(scadRef);
+  // Biz settings → localStorage sync
+  const bizSetRef=db.ref(`users/${uid}/biz/settings`);
+  bizSetRef.on('value',snap=>{
+    const v=snap.val();
+    if(v)localStorage.setItem('fp_biz_settings_'+uid,JSON.stringify(v));
+  });
+  _rtListeners.push(bizSetRef);
+  // Prefs (theme, etc) → apply
+  const prefsRef=db.ref(`users/${uid}/prefs`);
+  prefsRef.on('value',snap=>{
+    const p=snap.val()||{};
+    if(p.theme){localStorage.setItem('fp_theme',p.theme);applyTheme();}
+  });
+  _rtListeners.push(prefsRef);
 
   console.log('🔴 Realtime sync attivo per',uid);
   updateSyncIndicator('synced',new Date().toISOString());
@@ -2905,7 +2923,7 @@ function renderBizSpese(con){
 
 /* —— SCADENZIARIO —— */
 function loadManualScadenze(){try{return JSON.parse(localStorage.getItem('fp_scad_'+user.id)||'[]');}catch(e){return [];}}
-function saveManualScadenze(s){localStorage.setItem('fp_scad_'+user.id,JSON.stringify(s));}
+function saveManualScadenze(s){localStorage.setItem('fp_scad_'+user.id,JSON.stringify(s));if(db&&user)db.ref(`users/${user.id}/scadenze`).set(s||[]);}
 
 function renderBizScadenzario(con){
   const today=new Date();today.setHours(0,0,0,0);
@@ -3277,6 +3295,7 @@ function saveBizLogo(){
   const settings={...biz,name,vat,addr,contact};
   // Logo is already stored by previewBizLogo
   localStorage.setItem('fp_biz_settings_'+user.id,JSON.stringify(settings));
+  if(db&&user)db.ref(`users/${user.id}/biz/settings`).set(settings);
   closeMo('bizLogoModal');
   notify('✅ Dati azienda salvati!');
 }
@@ -3304,6 +3323,7 @@ function previewBizLogo(input){
     const biz=getBizSettings();
     biz.logo=logo;
     localStorage.setItem('fp_biz_settings_'+user.id,JSON.stringify(biz));
+    if(db&&user)db.ref(`users/${user.id}/biz/settings`).set(biz);
   };
   r.readAsDataURL(file);
 }
@@ -4472,6 +4492,7 @@ function toggleTheme(){
   const light=document.body.classList.toggle('light');
   localStorage.setItem('fp_theme',light?'light':'dark');
   document.getElementById('themeBtn').textContent=light?'☀️':'🌙';
+  if(db&&user)db.ref(`users/${user.id}/prefs`).update({theme:light?'light':'dark'});
 }
 function applyTheme(){
   const t=localStorage.getItem('fp_theme');
@@ -4928,7 +4949,7 @@ function saveEditBizTx(){
 
 /* ===== SCADENZE MANUALI ===== */
 function loadManualScadenze(){try{return JSON.parse(localStorage.getItem('fp_scad_'+user.id)||'[]');}catch(e){return [];}}
-function saveManualScadenze(s){localStorage.setItem('fp_scad_'+user.id,JSON.stringify(s));}
+function saveManualScadenze(s){localStorage.setItem('fp_scad_'+user.id,JSON.stringify(s));if(db&&user)db.ref(`users/${user.id}/scadenze`).set(s||[]);}
 function openNewScadenza(){
   document.getElementById('scadEditId').value='';
   document.getElementById('scadModalTitle').textContent='📅 Nuova Scadenza';
@@ -5117,73 +5138,34 @@ console.log('✅ Auto-sync to Firebase enabled');
 
 // ===== LOAD FROM FIREBASE ON APP START =====
 function loadFromFirebaseOnStart() {
-  if (!db || !user) {
-    console.log('⏳ Firebase non pronto, riproverò...');
-    setTimeout(loadFromFirebaseOnStart, 500);
-    return;
-  }
-  
-  console.log('📥 Caricando dati da Firebase...');
-  
-  db.ref('users/' + user.id).once('value', snap => {
-    const data = snap.val();
-    
-    if (data) {
-      console.log('📦 Dati ricevuti da Firebase:', data);
-      
-      // Carica gli obiettivi
-      if (data.goals) {
-        localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
-        console.log('✅ Obiettivi caricati:', data.goals.length);
-      }
-      
-      // Carica le transazioni
-      if (data.transactions) {
-        localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
-        console.log('✅ Transazioni caricate:', data.transactions.length);
-      }
-      
-      // Carica i ricorrenti
-      if (data.recurring) {
-        localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
-        console.log('✅ Ricorrenti caricati:', data.recurring.length);
-      }
-      
-      // Carica i gruppi
-      if (data.groups) {
-        localStorage.setItem('fp_groups_' + user.id, JSON.stringify(data.groups));
-        console.log('✅ Gruppi caricati');
-      }
-      
-      // Carica i preventivi
-      if (data.quotes) {
-        localStorage.setItem('fp_quotes_' + user.id, JSON.stringify(data.quotes));
-        console.log('✅ Preventivi caricati');
-      }
-      
-      // Carica il profilo
-      if (data.profile) {
-        localStorage.setItem('fp_profile_' + user.id, JSON.stringify(data.profile));
-        console.log('✅ Profilo caricato');
-      }
-      
-      updateSyncIndicator('synced', data.lastSync);
-    } else {
-      console.log('📭 Nessun dato trovato su Firebase (primo accesso)');
-      updateSyncIndicator('synced');
-    }
-  }).catch(err => {
-    console.error('Errore caricamento Firebase:', err);
+  if (!db || !user) { setTimeout(loadFromFirebaseOnStart, 500); return; }
+  const uid = user.id;
+  // Carica preferenze utente (theme, paypal, scadenze, biz settings)
+  db.ref(`users/${uid}/prefs`).once('value', snap => {
+    const p = snap.val() || {};
+    if (p.theme) { localStorage.setItem('fp_theme', p.theme); applyTheme(); }
   });
+  db.ref(`users/${uid}/scadenze`).once('value', snap => {
+    const v = snap.val();
+    if (v) localStorage.setItem('fp_scad_'+uid, JSON.stringify(Array.isArray(v)?v:Object.values(v)));
+  });
+  db.ref(`users/${uid}/biz/settings`).once('value', snap => {
+    const v = snap.val();
+    if (v) localStorage.setItem('fp_biz_settings_'+uid, JSON.stringify(v));
+  });
+  db.ref(`users/${uid}/paypalEmail`).once('value', snap => {
+    const v = snap.val();
+    if (v) localStorage.setItem('fp_paypal_'+uid, v);
+  });
+  updateSyncIndicator('synced', new Date().toISOString());
 }
 
 // Chiama al caricamento dell'app
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    if (typeof user !== 'undefined' && user && db) {
-      loadFromFirebaseOnStart();
-    } else {
-      console.log('⏳ Aspettando Firebase init...');
+  setTimeout(() => { if (typeof user !== 'undefined' && user && db) loadFromFirebaseOnStart(); }, 1000);
+});
+
+ console.log('⏳ Aspettando Firebase init...');
     }
   }, 1000);
 });

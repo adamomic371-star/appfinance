@@ -535,59 +535,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 
   /* Nasconde drawer scrollbar su mobile */
   .drawer::-webkit-scrollbar{display:none}
-
-  /* LOGIN RESPONSIVE */
-  #loginScreen{padding:20px 0;display:flex;align-items:center;justify-content:center}
-  .lg-card{padding:24px 18px;max-width:100%;width:90%;border-radius:20px;margin:20px auto}
-  .lg-logo{margin-bottom:20px}
-  .lg-icon{width:56px;height:56px;margin:0 auto 10px}
-  .lg-name{font-size:20px}
-  .lg-sub{font-size:11px}
-  .tab-pills{gap:6px;margin-bottom:16px}
-  .tab-pill{padding:8px 16px;font-size:12px}
-  .inp-wrap{margin-bottom:12px}
-  .fi{padding:10px 12px;font-size:14px}
-  .btn-p{padding:10px 16px;font-size:13px;border-radius:12px}
-  .auth-msg{font-size:12px;padding:10px}
-
-  /* SPLASH SCREEN RESPONSIVE */
-  #splash{padding:20px}
-  .spl-logo-anim{width:70px;height:70px}
-  .spl-logo-circle{width:70px;height:70px}
-  .spl-brand{font-size:24px}
-  .spl-sub{font-size:12px}
-  .spl-bar-wrap{width:160px}
 }
-@media(max-width:400px){
-  /* EXTRA SMALL DEVICES */
-  .lg-card{padding:20px 14px;width:95%}
-  .lg-icon{width:50px;height:50px}
-  .lg-name{font-size:18px}
-  .tab-pill{padding:7px 12px;font-size:11px}
-  .inp-wrap{margin-bottom:10px}
-  .fi{padding:9px 10px;font-size:13px}
-  .btn-p{padding:9px 12px;font-size:12px}
-  
-  .spl-logo-anim{width:60px;height:60px}
-  .spl-logo-circle{width:60px;height:60px}
-  .spl-brand{font-size:22px}
-  .spl-bar-wrap{width:140px}
-}
-@media(max-width:320px){
-  /* VERY SMALL DEVICES */
-  .lg-card{padding:16px 12px}
-  .lg-icon{width:48px;height:48px}
-  .lg-name{font-size:16px;margin-bottom:4px}
-  .lg-sub{font-size:10px}
-  .tab-pills{gap:4px;margin-bottom:12px}
-  .tab-pill{padding:6px 10px;font-size:10px}
-  .inp-wrap{margin-bottom:8px}
-  .fi{padding:8px 8px;font-size:12px}
-  .btn-p{padding:8px 10px;font-size:11px}
-  
-  .spl-logo-anim{width:50px;height:50px}
-  .spl-logo-circle{width:50px;height:50px}
-  .spl-brand{font-size:20px}
+@media(max-width:380px){
+  .plan-grid{grid-template-columns:1fr}
+  .pie-grid{grid-template-columns:1fr 1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .sc-val{font-size:18px}
+  .content{padding:12px 10px 84px}
 }
 
 /* ======= HAMBURGER BUTTON ======= */
@@ -2190,36 +2144,16 @@ function _updateLangBtns(){
 }
 function kazkaLogoSVG(size,glow){
   size=size||32;glow=(glow!==false);
+  var cx=size/2,cy=size/2,r=cx*0.9;
+  var pts='';for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';}
   var uid='kz'+(Math.random()*99999|0);
-  var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.35|0)+'px rgba(124,111,255,0.7));':'';
-  var scale=size/120;
-  var cx=60,cy=60;
-  
-  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 120 120" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
-    +'<defs>'
-    +'<linearGradient id="'+uid+'g1" x1="0%" y1="0%" x2="100%" y2="100%">'
-    +'<stop offset="0%" stop-color="#7c6fff"/><stop offset="100%" stop-color="#00e5ff"/>'
-    +'</linearGradient>'
-    +'<linearGradient id="'+uid+'g2" x1="0%" y1="100%" x2="100%" y2="0%">'
-    +'<stop offset="0%" stop-color="#00f5a8"/><stop offset="100%" stop-color="#00e5ff"/>'
-    +'</linearGradient>'
-    +'</defs>'
-    /* Cerchio esterno */
-    +'<circle cx="60" cy="60" r="58" fill="none" stroke="url(#'+uid+'g1)" stroke-width="0.8" opacity="0.3"/>'
-    /* Vertical stem */
-    +'<rect x="42" y="28" width="10" height="64" rx="5" fill="url(#'+uid+'g1)"/>'
-    /* Upper diagonal */
-    +'<g transform="translate(69,33) rotate(-32)">'
-    +'<rect x="-17" y="-5" width="34" height="10" rx="5" fill="url(#'+uid+'g1)"/>'
-    +'</g>'
-    /* Lower diagonal */
-    +'<g transform="translate(68,81) rotate(32)">'
-    +'<rect x="-16" y="-5" width="32" height="10" rx="5" fill="url(#'+uid+'g2)"/>'
-    +'</g>'
-    /* Accent dots */
-    +'<circle cx="82" cy="50" r="3.5" fill="url(#'+uid+'g2)" opacity="0.7"/>'
-    +'<circle cx="88" cy="65" r="3.5" fill="url(#'+uid+'g2)" opacity="0.5"/>'
-    +'<circle cx="82" cy="80" r="3.5" fill="url(#'+uid+'g2)" opacity="0.7"/>'
+  var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.28|0)+'px rgba(108,77,255,0.65));':'';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
+    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
+    +'</linearGradient></defs>'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
     +'</svg>';
 }
 

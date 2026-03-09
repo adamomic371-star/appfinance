@@ -1,22 +1,16 @@
-
 // 14-AUTH.JS - Autenticazione con auto-login admin silenzioso
 
 const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admintest"
+  email: "adamomic371@gmail.com",
+  password: "123admin456"
 };
 
 async function loginWithEmail(email, password) {
   try {
-    // ⚠️ IMPORTANTE: Controlla se è un tentativo di login admin
-    // Se l'email contiene "admin" (case-insensitive) E password è "admintest"
-    // → Auto-login come admin SILENZIOSO (no notifiche, no Firebase call)
-    
     const emailLower = (email || '').toLowerCase();
-    const passwordLower = (password || '').toLowerCase();
-    
+
     // Riconosci credenziali admin (silent login)
-    if (emailLower.includes('admin') && password === ADMIN_CREDENTIALS.password) {
+    if (emailLower === ADMIN_CREDENTIALS.email.toLowerCase() && password === ADMIN_CREDENTIALS.password) {
       console.log('🔐 Admin credentials detected - silent login');
       
       user = {
@@ -37,13 +31,11 @@ async function loginWithEmail(email, password) {
       }));
       
       console.log('✅ Admin auto-login successful (silent)');
-      
-      // NON mostrare notifica, vai direttamente alla app
       hideLoginScreen();
       return user;
     }
     
-    // Se non è admin, tenta login normale su Firebase
+    // Login normale Firebase
     console.log('🔄 Login tentativo:', email);
     
     if (!firebase) {
@@ -82,21 +74,13 @@ async function loginWithEmail(email, password) {
     console.error('Error code:', err.code);
     console.error('Error message:', err.message);
     
-    // Messaggi di errore specifici
     let msg = '❌ Errore login';
-    if (err.code === 'auth/user-not-found') {
-      msg = '❌ Utente non trovato';
-    } else if (err.code === 'auth/wrong-password') {
-      msg = '❌ Password errata';
-    } else if (err.code === 'auth/invalid-email') {
-      msg = '❌ Email non valida';
-    } else if (err.code === 'auth/user-disabled') {
-      msg = '❌ Utente disabilitato';
-    } else if (err.code === 'auth/configuration-not-found') {
-      msg = '❌ Firebase non configurato';
-    } else {
-      msg = '❌ ' + err.message;
-    }
+    if (err.code === 'auth/user-not-found')         msg = '❌ Utente non trovato';
+    else if (err.code === 'auth/wrong-password')     msg = '❌ Password errata';
+    else if (err.code === 'auth/invalid-email')      msg = '❌ Email non valida';
+    else if (err.code === 'auth/user-disabled')      msg = '❌ Utente disabilitato';
+    else if (err.code === 'auth/configuration-not-found') msg = '❌ Firebase non configurato';
+    else msg = '❌ ' + err.message;
     
     showNotification(msg, 'error');
     return null;
@@ -124,11 +108,8 @@ async function registerWithEmail(email, password, name) {
     const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
     
     console.log('✅ User created in Firebase');
-    console.log('🔄 Updating user profile...');
     
-    await result.user.updateProfile({
-      displayName: name
-    });
+    await result.user.updateProfile({ displayName: name });
     
     console.log('✅ Profile updated');
     
@@ -139,7 +120,6 @@ async function registerWithEmail(email, password, name) {
     };
     
     console.log('✅ Registration successful');
-    console.log('✅ User object created:', user);
     
     localStorage.setItem('fp_user_' + user.id, JSON.stringify(user));
     showNotification('✅ Registrazione completata!', 'success');
@@ -148,24 +128,14 @@ async function registerWithEmail(email, password, name) {
     
   } catch (err) {
     console.error('❌ Registration error:', err);
-    console.error('Error code:', err.code);
-    console.error('Error message:', err.message);
     
-    // Messaggi di errore specifici
     let msg = '❌ Errore registrazione';
-    if (err.code === 'auth/email-already-in-use') {
-      msg = '❌ Email già registrata';
-    } else if (err.code === 'auth/weak-password') {
-      msg = '❌ Password troppo debole';
-    } else if (err.code === 'auth/invalid-email') {
-      msg = '❌ Email non valida';
-    } else if (err.code === 'auth/operation-not-allowed') {
-      msg = '❌ Registrazione non abilitata';
-    } else if (err.code === 'auth/configuration-not-found') {
-      msg = '❌ Firebase non configurato';
-    } else {
-      msg = '❌ ' + err.message;
-    }
+    if (err.code === 'auth/email-already-in-use')    msg = '❌ Email già registrata';
+    else if (err.code === 'auth/weak-password')      msg = '❌ Password troppo debole';
+    else if (err.code === 'auth/invalid-email')      msg = '❌ Email non valida';
+    else if (err.code === 'auth/operation-not-allowed') msg = '❌ Registrazione non abilitata';
+    else if (err.code === 'auth/configuration-not-found') msg = '❌ Firebase non configurato';
+    else msg = '❌ ' + err.message;
     
     showNotification(msg, 'error');
     return null;
@@ -181,8 +151,6 @@ function logout() {
     }
     
     user = null;
-    
-    // Pulisci localStorage
     localStorage.removeItem('fp_user');
     localStorage.removeItem('fp_admin_session');
     

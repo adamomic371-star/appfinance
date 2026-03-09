@@ -1,17 +1,11 @@
-
 // 17-ADMIN.JS - Gestione credenziali admin
+// NOTA: ADMIN_CREDENTIALS è definito in 14-auth.js — non ridichiarare qui
 
 const ADMIN_CONFIG = {
-  email: "admin@kazka.com",  // Email per Firebase
-  password: "admintest",      // Password per Firebase
+  email: "adamomic371@gmail.com",
+  password: "123admin456",
   username: "admin",
   name: "Administrator"
-};
-
-// Credenziali alternative (se Firebase non funziona)
-const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admintest"
 };
 
 async function loginAsAdmin() {
@@ -52,7 +46,7 @@ async function loginAsAdmin() {
       }
     }
     
-    // Fallback: Login locale (no Firebase needed)
+    // Fallback: Login locale
     console.log('🔄 Usando admin login locale...');
     user = {
       id: 'admin-' + Date.now(),

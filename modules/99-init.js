@@ -1,5 +1,5 @@
 
-// INIT.JS - Inizializzazione app
+// 99-INIT.JS - Inizializzazione app
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🚀 DOMContentLoaded - Inizializzazione app');
@@ -28,8 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // 2. Nascondi splash dopo 2 secondi
   setTimeout(hideSplashScreen, 2000);
   
-  // 3. Inizializza Firebase
-  setTimeout(initializeFirebase, 100);
+  // 3. Setup login form
+  setTimeout(setupLoginForm, 100);
+  
+  // 4. Inizializza Firebase
+  setTimeout(initializeFirebase, 500);
   
   console.log('✅ App initialized');
 });
@@ -38,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('error', (e) => {
   const msg = e.message || '';
   if (msg.includes('Could not establish connection') || 
-      msg.includes('template') || msg.includes('${') ||
+      msg.includes('template') || msg.includes('${')||
       msg.includes('appendChild')) {
     console.warn('ℹ️ Non-critical:', msg.substring(0, 50));
     return true;

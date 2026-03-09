@@ -111,6 +111,30 @@
   cursor: not-allowed;
 }
 
+.admin-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  border: none;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.admin-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+}
+
+.admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .form-toggle {
   text-align: center;
   margin-top: 20px;

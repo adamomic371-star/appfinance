@@ -781,6 +781,103 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
 </style>
+<style>
+/* SYNC INDICATOR - MOBILE FIX */
+.sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255, 244, 255, 0.08);
+  border: 1px solid rgba(255, 244, 255, 0.1);
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: 28px;
+}
+
+.sync-indicator.synced {
+  border-color: rgba(0, 229, 160, 0.4);
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.1);
+}
+
+.sync-indicator.syncing {
+  border-color: rgba(0, 212, 255, 0.4);
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.sync-indicator.error {
+  border-color: rgba(255, 79, 109, 0.4);
+  color: #ff4f6d;
+  background: rgba(255, 79, 109, 0.1);
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.sync-indicator.synced .sync-dot {
+  background: #00e5a0;
+  box-shadow: 0 0 8px rgba(0, 229, 160, 0.5);
+}
+
+.sync-indicator.syncing .sync-dot {
+  background: #00d4ff;
+  animation: sync-pulse 1s ease-in-out infinite;
+}
+
+.sync-indicator.error .sync-dot {
+  background: #ff4f6d;
+  box-shadow: 0 0 8px rgba(255, 79, 109, 0.5);
+}
+
+.sync-status-text {
+  display: inline;
+}
+
+.sync-status-icon {
+  display: none;
+}
+
+@keyframes sync-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* MOBILE - Nascondi testo, mostra solo icona */
+@media (max-width: 600px) {
+  .sync-indicator {
+    padding: 6px 8px;
+    gap: 0;
+  }
+  
+  .sync-status-text {
+    display: none;
+  }
+  
+  .sync-status-icon {
+    display: inline;
+    font-size: 12px;
+  }
+}
+
+/* TABLET - Testo ridotto */
+@media (max-width: 1024px) and (min-width: 601px) {
+  .sync-indicator {
+    padding: 6px 9px;
+    gap: 4px;
+    font-size: 8px;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -899,9 +996,10 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
       <div class="tb-center">
         <div class="tb-app-name" style="display:flex;align-items:center;gap:6px"><span id="topbarLogoMark"></span><span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</span>
       <!-- SYNC INDICATOR -->
-      <div class="sync-indicator synced" id="syncIndicator" title="Stato sincronizzazione database">
+      <div class="sync-indicator synced" id="syncIndicator" title="Stato sincronizzazione">
         <div class="sync-dot"></div>
-        <span id="syncStatus">Sincronizzato</span>
+        <span class="sync-status-icon" id="syncIcon">✓</span>
+        <span class="sync-status-text" id="syncStatus">Sync</span>
       </div>
     </div>
         <div class="tb-page-name" id="pgTitle">Dashboard</div>
@@ -1387,12 +1485,13 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
 
-// ===== SYNC INDICATOR =====
+// ===== SYNC INDICATOR MOBILE FRIENDLY =====
 let lastSyncTime = null;
 
 function updateSyncIndicator(status) {
   const indicator = document.getElementById('syncIndicator');
   const statusText = document.getElementById('syncStatus');
+  const statusIcon = document.getElementById('syncIcon');
   
   if (!indicator) return;
   
@@ -1400,20 +1499,27 @@ function updateSyncIndicator(status) {
   
   if (status === 'syncing') {
     indicator.classList.add('syncing');
-    statusText.textContent = 'Sincronizzando...';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '⏳';
+    indicator.title = 'Sincronizzando in corso...';
   } else if (status === 'synced') {
     indicator.classList.add('synced');
-    statusText.textContent = 'Sincronizzato ✓';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✓';
+    indicator.title = 'Sincronizzato';
     lastSyncTime = new Date();
   } else if (status === 'error') {
     indicator.classList.add('error');
-    statusText.textContent = 'Errore sync';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✕';
+    indicator.title = 'Errore sincronizzazione';
   }
 }
 
 // Quando si sincronizza
 const originalTriggerSync = typeof triggerSync !== 'undefined' ? triggerSync : null;
-if (originalTriggerSync) {
+if (originalTriggerSync && !window.triggerSyncOverridden) {
+  window.triggerSyncOverridden = true;
   window.triggerSync = function() {
     updateSyncIndicator('syncing');
     
@@ -1425,36 +1531,181 @@ if (originalTriggerSync) {
   };
 }
 
-// Auto-sync listener
-if (typeof db !== 'undefined' && db) {
-  const oldRef = db.ref;
-  let syncTimeout = null;
-  
-  window.addEventListener('storage', () => {
-    updateSyncIndicator('syncing');
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(() => {
-      updateSyncIndicator('synced');
-    }, 1000);
-  });
-}
-
 // Inizializza
 window.addEventListener('load', () => {
-  updateSyncIndicator('synced');
+  setTimeout(() => {
+    updateSyncIndicator('synced');
+  }, 100);
 });
 
 console.log('✅ Sync indicator initializzato');
+
+
+
+// ===== AUTO SYNC TO FIREBASE =====
+let autoSyncTimeout = null;
+
+function triggerAutoSync() {
+  if (!db || !user) return;
+  
+  clearTimeout(autoSyncTimeout);
+  autoSyncTimeout = setTimeout(() => {
+    syncAllToFirebase();
+  }, 500);
+}
+
+function syncAllToFirebase() {
+  if (!db || !user) return;
+  
+  try {
+    const userData = {
+      lastSync: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      groups: loadGroups?.() || [],
+      quotes: loadQuotes?.() || [],
+      profile: loadProfile?.() || {},
+      budgets: loadBudgets?.() || {},
+    };
+    
+    db.ref('users/' + user.id).update(userData).then(() => {
+      updateSyncIndicator('synced', new Date().toISOString());
+      console.log('✅ Sync Firebase:', userData);
+    }).catch(err => {
+      console.error('Sync error:', err);
+      updateSyncIndicator('error');
+    });
+  } catch (e) {
+    console.warn('Auto sync error:', e);
+  }
+}
+
+// Sovrascrivi le funzioni di save per aggiungere il sync
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    originalSaveGoals.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Obiettivi salvati + auto-sync');
+  };
+}
+
+const originalSaveTransactions = typeof saveTransactions !== 'undefined' ? saveTransactions : null;
+if (originalSaveTransactions) {
+  window.saveTransactions = function(txs) {
+    originalSaveTransactions.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Transazioni salvate + auto-sync');
+  };
+}
+
+const originalSaveRecurring = typeof saveRecurring !== 'undefined' ? saveRecurring : null;
+if (originalSaveRecurring) {
+  window.saveRecurring = function(recs) {
+    originalSaveRecurring.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Ricorrenti salvate + auto-sync');
+  };
+}
+
+// Storage event listener per sincronizzare tra tab
+window.addEventListener('storage', (e) => {
+  if (e.key && (e.key.includes('goals') || e.key.includes('transaction') || e.key.includes('recurring'))) {
+    triggerAutoSync();
+    console.log('📱 Storage change detected, syncing...');
+  }
+});
+
+console.log('✅ Auto-sync to Firebase enabled');
+
+
+
+// ===== LOAD FROM FIREBASE ON APP START =====
+function loadFromFirebaseOnStart() {
+  if (!db || !user) {
+    console.log('⏳ Firebase non pronto, riproverò...');
+    setTimeout(loadFromFirebaseOnStart, 500);
+    return;
+  }
+  
+  console.log('📥 Caricando dati da Firebase...');
+  
+  db.ref('users/' + user.id).once('value', snap => {
+    const data = snap.val();
+    
+    if (data) {
+      console.log('📦 Dati ricevuti da Firebase:', data);
+      
+      // Carica gli obiettivi
+      if (data.goals) {
+        localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+        console.log('✅ Obiettivi caricati:', data.goals.length);
+      }
+      
+      // Carica le transazioni
+      if (data.transactions) {
+        localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+        console.log('✅ Transazioni caricate:', data.transactions.length);
+      }
+      
+      // Carica i ricorrenti
+      if (data.recurring) {
+        localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+        console.log('✅ Ricorrenti caricati:', data.recurring.length);
+      }
+      
+      // Carica i gruppi
+      if (data.groups) {
+        localStorage.setItem('fp_groups_' + user.id, JSON.stringify(data.groups));
+        console.log('✅ Gruppi caricati');
+      }
+      
+      // Carica i preventivi
+      if (data.quotes) {
+        localStorage.setItem('fp_quotes_' + user.id, JSON.stringify(data.quotes));
+        console.log('✅ Preventivi caricati');
+      }
+      
+      // Carica il profilo
+      if (data.profile) {
+        localStorage.setItem('fp_profile_' + user.id, JSON.stringify(data.profile));
+        console.log('✅ Profilo caricato');
+      }
+      
+      updateSyncIndicator('synced', data.lastSync);
+    } else {
+      console.log('📭 Nessun dato trovato su Firebase (primo accesso)');
+      updateSyncIndicator('synced');
+    }
+  }).catch(err => {
+    console.error('Errore caricamento Firebase:', err);
+  });
+}
+
+// Chiama al caricamento dell'app
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (typeof user !== 'undefined' && user && db) {
+      loadFromFirebaseOnStart();
+    } else {
+      console.log('⏳ Aspettando Firebase init...');
+    }
+  }, 1000);
+});
+
+console.log('✅ Firebase load on start configured');
 
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
 
-// ===== SYNC INDICATOR =====
+// ===== SYNC INDICATOR MOBILE FRIENDLY =====
 let lastSyncTime = null;
 
 function updateSyncIndicator(status) {
   const indicator = document.getElementById('syncIndicator');
   const statusText = document.getElementById('syncStatus');
+  const statusIcon = document.getElementById('syncIcon');
   
   if (!indicator) return;
   
@@ -1462,20 +1713,27 @@ function updateSyncIndicator(status) {
   
   if (status === 'syncing') {
     indicator.classList.add('syncing');
-    statusText.textContent = 'Sincronizzando...';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '⏳';
+    indicator.title = 'Sincronizzando in corso...';
   } else if (status === 'synced') {
     indicator.classList.add('synced');
-    statusText.textContent = 'Sincronizzato ✓';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✓';
+    indicator.title = 'Sincronizzato';
     lastSyncTime = new Date();
   } else if (status === 'error') {
     indicator.classList.add('error');
-    statusText.textContent = 'Errore sync';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✕';
+    indicator.title = 'Errore sincronizzazione';
   }
 }
 
 // Quando si sincronizza
 const originalTriggerSync = typeof triggerSync !== 'undefined' ? triggerSync : null;
-if (originalTriggerSync) {
+if (originalTriggerSync && !window.triggerSyncOverridden) {
+  window.triggerSyncOverridden = true;
   window.triggerSync = function() {
     updateSyncIndicator('syncing');
     
@@ -1487,26 +1745,170 @@ if (originalTriggerSync) {
   };
 }
 
-// Auto-sync listener
-if (typeof db !== 'undefined' && db) {
-  const oldRef = db.ref;
-  let syncTimeout = null;
-  
-  window.addEventListener('storage', () => {
-    updateSyncIndicator('syncing');
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(() => {
-      updateSyncIndicator('synced');
-    }, 1000);
-  });
-}
-
 // Inizializza
 window.addEventListener('load', () => {
-  updateSyncIndicator('synced');
+  setTimeout(() => {
+    updateSyncIndicator('synced');
+  }, 100);
 });
 
 console.log('✅ Sync indicator initializzato');
+
+
+
+// ===== AUTO SYNC TO FIREBASE =====
+let autoSyncTimeout = null;
+
+function triggerAutoSync() {
+  if (!db || !user) return;
+  
+  clearTimeout(autoSyncTimeout);
+  autoSyncTimeout = setTimeout(() => {
+    syncAllToFirebase();
+  }, 500);
+}
+
+function syncAllToFirebase() {
+  if (!db || !user) return;
+  
+  try {
+    const userData = {
+      lastSync: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      groups: loadGroups?.() || [],
+      quotes: loadQuotes?.() || [],
+      profile: loadProfile?.() || {},
+      budgets: loadBudgets?.() || {},
+    };
+    
+    db.ref('users/' + user.id).update(userData).then(() => {
+      updateSyncIndicator('synced', new Date().toISOString());
+      console.log('✅ Sync Firebase:', userData);
+    }).catch(err => {
+      console.error('Sync error:', err);
+      updateSyncIndicator('error');
+    });
+  } catch (e) {
+    console.warn('Auto sync error:', e);
+  }
+}
+
+// Sovrascrivi le funzioni di save per aggiungere il sync
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    originalSaveGoals.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Obiettivi salvati + auto-sync');
+  };
+}
+
+const originalSaveTransactions = typeof saveTransactions !== 'undefined' ? saveTransactions : null;
+if (originalSaveTransactions) {
+  window.saveTransactions = function(txs) {
+    originalSaveTransactions.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Transazioni salvate + auto-sync');
+  };
+}
+
+const originalSaveRecurring = typeof saveRecurring !== 'undefined' ? saveRecurring : null;
+if (originalSaveRecurring) {
+  window.saveRecurring = function(recs) {
+    originalSaveRecurring.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Ricorrenti salvate + auto-sync');
+  };
+}
+
+// Storage event listener per sincronizzare tra tab
+window.addEventListener('storage', (e) => {
+  if (e.key && (e.key.includes('goals') || e.key.includes('transaction') || e.key.includes('recurring'))) {
+    triggerAutoSync();
+    console.log('📱 Storage change detected, syncing...');
+  }
+});
+
+console.log('✅ Auto-sync to Firebase enabled');
+
+
+
+// ===== LOAD FROM FIREBASE ON APP START =====
+function loadFromFirebaseOnStart() {
+  if (!db || !user) {
+    console.log('⏳ Firebase non pronto, riproverò...');
+    setTimeout(loadFromFirebaseOnStart, 500);
+    return;
+  }
+  
+  console.log('📥 Caricando dati da Firebase...');
+  
+  db.ref('users/' + user.id).once('value', snap => {
+    const data = snap.val();
+    
+    if (data) {
+      console.log('📦 Dati ricevuti da Firebase:', data);
+      
+      // Carica gli obiettivi
+      if (data.goals) {
+        localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+        console.log('✅ Obiettivi caricati:', data.goals.length);
+      }
+      
+      // Carica le transazioni
+      if (data.transactions) {
+        localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+        console.log('✅ Transazioni caricate:', data.transactions.length);
+      }
+      
+      // Carica i ricorrenti
+      if (data.recurring) {
+        localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+        console.log('✅ Ricorrenti caricati:', data.recurring.length);
+      }
+      
+      // Carica i gruppi
+      if (data.groups) {
+        localStorage.setItem('fp_groups_' + user.id, JSON.stringify(data.groups));
+        console.log('✅ Gruppi caricati');
+      }
+      
+      // Carica i preventivi
+      if (data.quotes) {
+        localStorage.setItem('fp_quotes_' + user.id, JSON.stringify(data.quotes));
+        console.log('✅ Preventivi caricati');
+      }
+      
+      // Carica il profilo
+      if (data.profile) {
+        localStorage.setItem('fp_profile_' + user.id, JSON.stringify(data.profile));
+        console.log('✅ Profilo caricato');
+      }
+      
+      updateSyncIndicator('synced', data.lastSync);
+    } else {
+      console.log('📭 Nessun dato trovato su Firebase (primo accesso)');
+      updateSyncIndicator('synced');
+    }
+  }).catch(err => {
+    console.error('Errore caricamento Firebase:', err);
+  });
+}
+
+// Chiama al caricamento dell'app
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (typeof user !== 'undefined' && user && db) {
+      loadFromFirebaseOnStart();
+    } else {
+      console.log('⏳ Aspettando Firebase init...');
+    }
+  }, 1000);
+});
+
+console.log('✅ Firebase load on start configured');
 
 </script>
 <script>
@@ -3606,7 +4008,104 @@ function exportQuotePDF(){
   white-space: nowrap;
 }
 
-</style></head><body>`);
+</style><style>
+/* SYNC INDICATOR - MOBILE FIX */
+.sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255, 244, 255, 0.08);
+  border: 1px solid rgba(255, 244, 255, 0.1);
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: 28px;
+}
+
+.sync-indicator.synced {
+  border-color: rgba(0, 229, 160, 0.4);
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.1);
+}
+
+.sync-indicator.syncing {
+  border-color: rgba(0, 212, 255, 0.4);
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.sync-indicator.error {
+  border-color: rgba(255, 79, 109, 0.4);
+  color: #ff4f6d;
+  background: rgba(255, 79, 109, 0.1);
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.sync-indicator.synced .sync-dot {
+  background: #00e5a0;
+  box-shadow: 0 0 8px rgba(0, 229, 160, 0.5);
+}
+
+.sync-indicator.syncing .sync-dot {
+  background: #00d4ff;
+  animation: sync-pulse 1s ease-in-out infinite;
+}
+
+.sync-indicator.error .sync-dot {
+  background: #ff4f6d;
+  box-shadow: 0 0 8px rgba(255, 79, 109, 0.5);
+}
+
+.sync-status-text {
+  display: inline;
+}
+
+.sync-status-icon {
+  display: none;
+}
+
+@keyframes sync-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* MOBILE - Nascondi testo, mostra solo icona */
+@media (max-width: 600px) {
+  .sync-indicator {
+    padding: 6px 8px;
+    gap: 0;
+  }
+  
+  .sync-status-text {
+    display: none;
+  }
+  
+  .sync-status-icon {
+    display: inline;
+    font-size: 12px;
+  }
+}
+
+/* TABLET - Testo ridotto */
+@media (max-width: 1024px) and (min-width: 601px) {
+  .sync-indicator {
+    padding: 6px 9px;
+    gap: 4px;
+    font-size: 8px;
+  }
+}
+</style>
+</head><body>`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`</body></html>`);
   printWin.document.close();
@@ -5023,12 +5522,13 @@ function delScadenza(id){
 window.addEventListener('resize',updateUI);
 
 
-// ===== SYNC INDICATOR =====
+// ===== SYNC INDICATOR MOBILE FRIENDLY =====
 let lastSyncTime = null;
 
 function updateSyncIndicator(status) {
   const indicator = document.getElementById('syncIndicator');
   const statusText = document.getElementById('syncStatus');
+  const statusIcon = document.getElementById('syncIcon');
   
   if (!indicator) return;
   
@@ -5036,20 +5536,27 @@ function updateSyncIndicator(status) {
   
   if (status === 'syncing') {
     indicator.classList.add('syncing');
-    statusText.textContent = 'Sincronizzando...';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '⏳';
+    indicator.title = 'Sincronizzando in corso...';
   } else if (status === 'synced') {
     indicator.classList.add('synced');
-    statusText.textContent = 'Sincronizzato ✓';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✓';
+    indicator.title = 'Sincronizzato';
     lastSyncTime = new Date();
   } else if (status === 'error') {
     indicator.classList.add('error');
-    statusText.textContent = 'Errore sync';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✕';
+    indicator.title = 'Errore sincronizzazione';
   }
 }
 
 // Quando si sincronizza
 const originalTriggerSync = typeof triggerSync !== 'undefined' ? triggerSync : null;
-if (originalTriggerSync) {
+if (originalTriggerSync && !window.triggerSyncOverridden) {
+  window.triggerSyncOverridden = true;
   window.triggerSync = function() {
     updateSyncIndicator('syncing');
     
@@ -5061,26 +5568,170 @@ if (originalTriggerSync) {
   };
 }
 
-// Auto-sync listener
-if (typeof db !== 'undefined' && db) {
-  const oldRef = db.ref;
-  let syncTimeout = null;
-  
-  window.addEventListener('storage', () => {
-    updateSyncIndicator('syncing');
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(() => {
-      updateSyncIndicator('synced');
-    }, 1000);
-  });
-}
-
 // Inizializza
 window.addEventListener('load', () => {
-  updateSyncIndicator('synced');
+  setTimeout(() => {
+    updateSyncIndicator('synced');
+  }, 100);
 });
 
 console.log('✅ Sync indicator initializzato');
+
+
+
+// ===== AUTO SYNC TO FIREBASE =====
+let autoSyncTimeout = null;
+
+function triggerAutoSync() {
+  if (!db || !user) return;
+  
+  clearTimeout(autoSyncTimeout);
+  autoSyncTimeout = setTimeout(() => {
+    syncAllToFirebase();
+  }, 500);
+}
+
+function syncAllToFirebase() {
+  if (!db || !user) return;
+  
+  try {
+    const userData = {
+      lastSync: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      groups: loadGroups?.() || [],
+      quotes: loadQuotes?.() || [],
+      profile: loadProfile?.() || {},
+      budgets: loadBudgets?.() || {},
+    };
+    
+    db.ref('users/' + user.id).update(userData).then(() => {
+      updateSyncIndicator('synced', new Date().toISOString());
+      console.log('✅ Sync Firebase:', userData);
+    }).catch(err => {
+      console.error('Sync error:', err);
+      updateSyncIndicator('error');
+    });
+  } catch (e) {
+    console.warn('Auto sync error:', e);
+  }
+}
+
+// Sovrascrivi le funzioni di save per aggiungere il sync
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    originalSaveGoals.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Obiettivi salvati + auto-sync');
+  };
+}
+
+const originalSaveTransactions = typeof saveTransactions !== 'undefined' ? saveTransactions : null;
+if (originalSaveTransactions) {
+  window.saveTransactions = function(txs) {
+    originalSaveTransactions.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Transazioni salvate + auto-sync');
+  };
+}
+
+const originalSaveRecurring = typeof saveRecurring !== 'undefined' ? saveRecurring : null;
+if (originalSaveRecurring) {
+  window.saveRecurring = function(recs) {
+    originalSaveRecurring.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Ricorrenti salvate + auto-sync');
+  };
+}
+
+// Storage event listener per sincronizzare tra tab
+window.addEventListener('storage', (e) => {
+  if (e.key && (e.key.includes('goals') || e.key.includes('transaction') || e.key.includes('recurring'))) {
+    triggerAutoSync();
+    console.log('📱 Storage change detected, syncing...');
+  }
+});
+
+console.log('✅ Auto-sync to Firebase enabled');
+
+
+
+// ===== LOAD FROM FIREBASE ON APP START =====
+function loadFromFirebaseOnStart() {
+  if (!db || !user) {
+    console.log('⏳ Firebase non pronto, riproverò...');
+    setTimeout(loadFromFirebaseOnStart, 500);
+    return;
+  }
+  
+  console.log('📥 Caricando dati da Firebase...');
+  
+  db.ref('users/' + user.id).once('value', snap => {
+    const data = snap.val();
+    
+    if (data) {
+      console.log('📦 Dati ricevuti da Firebase:', data);
+      
+      // Carica gli obiettivi
+      if (data.goals) {
+        localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+        console.log('✅ Obiettivi caricati:', data.goals.length);
+      }
+      
+      // Carica le transazioni
+      if (data.transactions) {
+        localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+        console.log('✅ Transazioni caricate:', data.transactions.length);
+      }
+      
+      // Carica i ricorrenti
+      if (data.recurring) {
+        localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+        console.log('✅ Ricorrenti caricati:', data.recurring.length);
+      }
+      
+      // Carica i gruppi
+      if (data.groups) {
+        localStorage.setItem('fp_groups_' + user.id, JSON.stringify(data.groups));
+        console.log('✅ Gruppi caricati');
+      }
+      
+      // Carica i preventivi
+      if (data.quotes) {
+        localStorage.setItem('fp_quotes_' + user.id, JSON.stringify(data.quotes));
+        console.log('✅ Preventivi caricati');
+      }
+      
+      // Carica il profilo
+      if (data.profile) {
+        localStorage.setItem('fp_profile_' + user.id, JSON.stringify(data.profile));
+        console.log('✅ Profilo caricato');
+      }
+      
+      updateSyncIndicator('synced', data.lastSync);
+    } else {
+      console.log('📭 Nessun dato trovato su Firebase (primo accesso)');
+      updateSyncIndicator('synced');
+    }
+  }).catch(err => {
+    console.error('Errore caricamento Firebase:', err);
+  });
+}
+
+// Chiama al caricamento dell'app
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (typeof user !== 'undefined' && user && db) {
+      loadFromFirebaseOnStart();
+    } else {
+      console.log('⏳ Aspettando Firebase init...');
+    }
+  }, 1000);
+});
+
+console.log('✅ Firebase load on start configured');
 
 </script>
 
@@ -5259,100 +5910,13 @@ if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
 }
 
 
-// ===== SYNC INDICATOR VISUAL =====
-let lastSyncTime = null;
-let currentSyncStatus = 'synced';
-
-function updateSyncIndicator(status, timestamp = null) {
-  const indicator = document.getElementById('syncIndicator');
-  const statusText = document.getElementById('syncStatus');
-  const timeText = document.getElementById('syncTime');
-  
-  if (!indicator) return;
-  
-  // Rimuovi tutti le classi di stato
-  indicator.classList.remove('synced', 'syncing', 'error');
-  
-  currentSyncStatus = status;
-  
-  if (status === 'syncing') {
-    indicator.classList.add('syncing');
-    statusText.textContent = 'Sincronizzando...';
-    timeText.textContent = '';
-  } else if (status === 'synced') {
-    indicator.classList.add('synced');
-    statusText.textContent = 'Sincronizzato';
-    
-    if (timestamp) {
-      lastSyncTime = timestamp;
-      const now = new Date();
-      const diff = Math.floor((now - new Date(timestamp)) / 1000);
-      
-      let timeStr = '';
-      if (diff < 60) timeStr = 'Ora';
-      else if (diff < 3600) timeStr = Math.floor(diff / 60) + 'm fa';
-      else if (diff < 86400) timeStr = Math.floor(diff / 3600) + 'h fa';
-      else timeStr = Math.floor(diff / 86400) + 'g fa';
-      
-      timeText.textContent = timeStr;
-    }
-  } else if (status === 'error') {
-    indicator.classList.add('error');
-    statusText.textContent = 'Errore sync';
-    timeText.textContent = 'Riprova';
-  }
-}
-
-// Aggiorna il timestamp ogni minuto
-setInterval(() => {
-  if (lastSyncTime && currentSyncStatus === 'synced') {
-    const now = new Date();
-    const diff = Math.floor((now - new Date(lastSyncTime)) / 1000);
-    
-    let timeStr = '';
-    if (diff < 60) timeStr = 'Ora';
-    else if (diff < 3600) timeStr = Math.floor(diff / 60) + 'm fa';
-    else if (diff < 86400) timeStr = Math.floor(diff / 3600) + 'h fa';
-    else timeStr = Math.floor(diff / 86400) + 'g fa';
-    
-    const timeText = document.getElementById('syncTime');
-    if (timeText) timeText.textContent = timeStr;
-  }
-}, 30000);
-
-// Inizializza l'indicatore
-window.addEventListener('load', () => {
-  updateSyncIndicator('synced', new Date().toISOString());
-});
-
-// Override della funzione triggerSync per aggiornare l'indicatore
-const originalTriggerSync = triggerSync;
-if (typeof originalTriggerSync === 'function') {
-  window.triggerSync = function() {
-    updateSyncIndicator('syncing');
-    
-    // Chiama la funzione originale
-    const result = originalTriggerSync.apply(this, arguments);
-    
-    // Aspetta un po' e poi aggiorna
-    setTimeout(() => {
-      updateSyncIndicator('synced', new Date().toISOString());
-    }, 1500);
-    
-    return result;
-  };
-}
-
-console.log('✅ Sync indicator visual aggiunto');
-
-
-
-// ===== SYNC INDICATOR =====
+// ===== SYNC INDICATOR MOBILE FRIENDLY =====
 let lastSyncTime = null;
 
 function updateSyncIndicator(status) {
   const indicator = document.getElementById('syncIndicator');
   const statusText = document.getElementById('syncStatus');
+  const statusIcon = document.getElementById('syncIcon');
   
   if (!indicator) return;
   
@@ -5360,20 +5924,27 @@ function updateSyncIndicator(status) {
   
   if (status === 'syncing') {
     indicator.classList.add('syncing');
-    statusText.textContent = 'Sincronizzando...';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '⏳';
+    indicator.title = 'Sincronizzando in corso...';
   } else if (status === 'synced') {
     indicator.classList.add('synced');
-    statusText.textContent = 'Sincronizzato ✓';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✓';
+    indicator.title = 'Sincronizzato';
     lastSyncTime = new Date();
   } else if (status === 'error') {
     indicator.classList.add('error');
-    statusText.textContent = 'Errore sync';
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✕';
+    indicator.title = 'Errore sincronizzazione';
   }
 }
 
 // Quando si sincronizza
 const originalTriggerSync = typeof triggerSync !== 'undefined' ? triggerSync : null;
-if (originalTriggerSync) {
+if (originalTriggerSync && !window.triggerSyncOverridden) {
+  window.triggerSyncOverridden = true;
   window.triggerSync = function() {
     updateSyncIndicator('syncing');
     
@@ -5385,26 +5956,227 @@ if (originalTriggerSync) {
   };
 }
 
-// Auto-sync listener
-if (typeof db !== 'undefined' && db) {
-  const oldRef = db.ref;
-  let syncTimeout = null;
+// Inizializza
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    updateSyncIndicator('synced');
+  }, 100);
+});
+
+console.log('✅ Sync indicator visual aggiunto');
+
+
+
+// ===== SYNC INDICATOR MOBILE FRIENDLY =====
+let lastSyncTime = null;
+
+function updateSyncIndicator(status) {
+  const indicator = document.getElementById('syncIndicator');
+  const statusText = document.getElementById('syncStatus');
+  const statusIcon = document.getElementById('syncIcon');
   
-  window.addEventListener('storage', () => {
+  if (!indicator) return;
+  
+  indicator.classList.remove('synced', 'syncing', 'error');
+  
+  if (status === 'syncing') {
+    indicator.classList.add('syncing');
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '⏳';
+    indicator.title = 'Sincronizzando in corso...';
+  } else if (status === 'synced') {
+    indicator.classList.add('synced');
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✓';
+    indicator.title = 'Sincronizzato';
+    lastSyncTime = new Date();
+  } else if (status === 'error') {
+    indicator.classList.add('error');
+    statusText.textContent = 'Sync';
+    statusIcon.textContent = '✕';
+    indicator.title = 'Errore sincronizzazione';
+  }
+}
+
+// Quando si sincronizza
+const originalTriggerSync = typeof triggerSync !== 'undefined' ? triggerSync : null;
+if (originalTriggerSync && !window.triggerSyncOverridden) {
+  window.triggerSyncOverridden = true;
+  window.triggerSync = function() {
     updateSyncIndicator('syncing');
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(() => {
+    
+    setTimeout(() => {
       updateSyncIndicator('synced');
-    }, 1000);
-  });
+    }, 1500);
+    
+    return originalTriggerSync.apply(this, arguments);
+  };
 }
 
 // Inizializza
 window.addEventListener('load', () => {
-  updateSyncIndicator('synced');
+  setTimeout(() => {
+    updateSyncIndicator('synced');
+  }, 100);
 });
 
 console.log('✅ Sync indicator initializzato');
+
+
+
+// ===== AUTO SYNC TO FIREBASE =====
+let autoSyncTimeout = null;
+
+function triggerAutoSync() {
+  if (!db || !user) return;
+  
+  clearTimeout(autoSyncTimeout);
+  autoSyncTimeout = setTimeout(() => {
+    syncAllToFirebase();
+  }, 500);
+}
+
+function syncAllToFirebase() {
+  if (!db || !user) return;
+  
+  try {
+    const userData = {
+      lastSync: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      groups: loadGroups?.() || [],
+      quotes: loadQuotes?.() || [],
+      profile: loadProfile?.() || {},
+      budgets: loadBudgets?.() || {},
+    };
+    
+    db.ref('users/' + user.id).update(userData).then(() => {
+      updateSyncIndicator('synced', new Date().toISOString());
+      console.log('✅ Sync Firebase:', userData);
+    }).catch(err => {
+      console.error('Sync error:', err);
+      updateSyncIndicator('error');
+    });
+  } catch (e) {
+    console.warn('Auto sync error:', e);
+  }
+}
+
+// Sovrascrivi le funzioni di save per aggiungere il sync
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    originalSaveGoals.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Obiettivi salvati + auto-sync');
+  };
+}
+
+const originalSaveTransactions = typeof saveTransactions !== 'undefined' ? saveTransactions : null;
+if (originalSaveTransactions) {
+  window.saveTransactions = function(txs) {
+    originalSaveTransactions.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Transazioni salvate + auto-sync');
+  };
+}
+
+const originalSaveRecurring = typeof saveRecurring !== 'undefined' ? saveRecurring : null;
+if (originalSaveRecurring) {
+  window.saveRecurring = function(recs) {
+    originalSaveRecurring.apply(this, arguments);
+    triggerAutoSync();
+    console.log('💾 Ricorrenti salvate + auto-sync');
+  };
+}
+
+// Storage event listener per sincronizzare tra tab
+window.addEventListener('storage', (e) => {
+  if (e.key && (e.key.includes('goals') || e.key.includes('transaction') || e.key.includes('recurring'))) {
+    triggerAutoSync();
+    console.log('📱 Storage change detected, syncing...');
+  }
+});
+
+console.log('✅ Auto-sync to Firebase enabled');
+
+
+
+// ===== LOAD FROM FIREBASE ON APP START =====
+function loadFromFirebaseOnStart() {
+  if (!db || !user) {
+    console.log('⏳ Firebase non pronto, riproverò...');
+    setTimeout(loadFromFirebaseOnStart, 500);
+    return;
+  }
+  
+  console.log('📥 Caricando dati da Firebase...');
+  
+  db.ref('users/' + user.id).once('value', snap => {
+    const data = snap.val();
+    
+    if (data) {
+      console.log('📦 Dati ricevuti da Firebase:', data);
+      
+      // Carica gli obiettivi
+      if (data.goals) {
+        localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+        console.log('✅ Obiettivi caricati:', data.goals.length);
+      }
+      
+      // Carica le transazioni
+      if (data.transactions) {
+        localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+        console.log('✅ Transazioni caricate:', data.transactions.length);
+      }
+      
+      // Carica i ricorrenti
+      if (data.recurring) {
+        localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+        console.log('✅ Ricorrenti caricati:', data.recurring.length);
+      }
+      
+      // Carica i gruppi
+      if (data.groups) {
+        localStorage.setItem('fp_groups_' + user.id, JSON.stringify(data.groups));
+        console.log('✅ Gruppi caricati');
+      }
+      
+      // Carica i preventivi
+      if (data.quotes) {
+        localStorage.setItem('fp_quotes_' + user.id, JSON.stringify(data.quotes));
+        console.log('✅ Preventivi caricati');
+      }
+      
+      // Carica il profilo
+      if (data.profile) {
+        localStorage.setItem('fp_profile_' + user.id, JSON.stringify(data.profile));
+        console.log('✅ Profilo caricato');
+      }
+      
+      updateSyncIndicator('synced', data.lastSync);
+    } else {
+      console.log('📭 Nessun dato trovato su Firebase (primo accesso)');
+      updateSyncIndicator('synced');
+    }
+  }).catch(err => {
+    console.error('Errore caricamento Firebase:', err);
+  });
+}
+
+// Chiama al caricamento dell'app
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (typeof user !== 'undefined' && user && db) {
+      loadFromFirebaseOnStart();
+    } else {
+      console.log('⏳ Aspettando Firebase init...');
+    }
+  }, 1000);
+});
+
+console.log('✅ Firebase load on start configured');
 
 </script>
 </body>

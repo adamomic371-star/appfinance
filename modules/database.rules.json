@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read":  "auth == null || true",
+        ".write": "auth == null || true",
+        "transactions": { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "bills":        { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "utilities":    { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "trips":        { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "recurring":    { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "goals":        { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "budgets":      { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "biz":          { ".read": "auth == null || true", ".write": "auth == null || true" }
+      }
+    },
+    "groups": {
+      ".read":  "auth == null || true",
+      ".write": "auth == null || true"
+    }
+  }
+}

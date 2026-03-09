@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#020409">
+  <title>Kazka – Reclaim Your Financial Power</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #020409;
+      --bg2: #0a0f1a;
+      --bg3: #141b2f;
+      --ac: #7c6fff;
+      --ac2: #00e5ff;
+      --gr: #00f5a8;
+      --re: #ff4466;
+      --tx: #f0f4ff;
+      --tx2: #7a8fa3;
+      --tx3: #4a5568;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      line-height: 1.6;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* BACKGROUND & ATMOSPHERE                                       */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 150% 100% at 50% 0%, rgba(124, 111, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 120% 80% at 80% 100%, rgba(0, 229, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 20% 60%, rgba(255, 68, 102, 0.04) 0%, transparent 55%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+      z-index: 1;
+      pointer-events: none;
+      animation: grain 8s infinite;
+    }
+
+    @keyframes grain {
+      0%, 100% { opacity: 0.02; }
+      50% { opacity: 0.035; }
+    }
+
+    /* Scrollbar custom */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { 
+      background: rgba(124, 111, 255, 0.4);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover { 
+      background: rgba(124, 111, 255, 0.6);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* LAYOUT CONTAINER                                              */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    main {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    section {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* NAVIGATION                                                    */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(2, 4, 9, 0.7);
+      backdrop-filter: blur(30px);
+      border-bottom: 1px solid rgba(124, 111, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 1000;
+      animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-70px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .logo svg {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 12px rgba(124, 111, 255, 0.5));
+    }
+
+    .language-switcher {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid rgba(124, 111, 255, 0.2);
+    }
+
+    .lang-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      color: var(--tx2);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(124, 111, 255, 0.3);
+    }
+
+    .lang-btn:hover:not(.active) {
+      color: var(--tx);
+    }
+
+    nav button {
+      padding: 11px 28px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 24px rgba(124, 111, 255, 0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    nav button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(124, 111, 255, 0.5);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* HERO SECTION                                                  */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .hero {
+      min-height: 100vh;
+      padding: 100px 40px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(124, 111, 255, 0.15) 0%, transparent 70%);
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      animation: heroFadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes heroFadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.15), rgba(0, 229, 255, 0.08));
+      border: 1px solid rgba(124, 111, 255, 0.3);
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ac2);
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      animation: badgeGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes badgeGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(124, 111, 255, 0.2); }
+      50% { box-shadow: 0 0 40px rgba(124, 111, 255, 0.4); }
+    }
+
+    .hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(42px, 8vw, 72px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      word-spacing: 100vw;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(120deg, var(--ac) 0%, var(--ac2) 50%, var(--gr) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 300% 100%;
+      animation: gradientFlow 6s ease infinite;
+    }
+
+    @keyframes gradientFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero p {
+      font-size: clamp(16px, 3vw, 20px);
+      color: var(--tx2);
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+      letter-spacing: 0.2px;
+      font-weight: 500;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+      animation: ctaSlideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    }
+
+    @keyframes ctaSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-primary {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border: none;
+      border-radius: 16px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 10px 32px rgba(124, 111, 255, 0.4);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(124, 111, 255, 0.6);
+    }
+
+    .btn-secondary {
+      padding: 14px 32px;
+      background: transparent;
+      border: 1.5px solid rgba(124, 111, 255, 0.5);
+      border-radius: 16px;
+      color: var(--ac);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(124, 111, 255, 0.1);
+      border-color: var(--ac2);
+      transform: translateY(-4px);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* FLOATING ELEMENTS                                             */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .float-card {
+      width: clamp(280px, 90%, 420px);
+      background: rgba(10, 15, 26, 0.6);
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 24px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 60px rgba(124, 111, 255, 0.08), 0 40px 80px rgba(0, 0, 0, 0.3);
+      animation: floatUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+    }
+
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(60px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .float-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card-status {
+      font-size: 10px;
+      color: var(--gr);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .balance-display {
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.12), rgba(0, 229, 255, 0.06));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .balance-label {
+      font-size: 10px;
+      color: var(--tx2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .balance-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .mini-stat {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .mini-stat-label {
+      font-size: 9px;
+      color: var(--tx2);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .mini-stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* FEATURES SECTION                                              */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .features {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(124, 111, 255, 0.04) 50%, transparent 100%);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+
+    .section-header h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(36px, 6vw, 48px);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-header p {
+      font-size: 16px;
+      color: var(--tx2);
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(10, 15, 26, 0.4);
+      border: 1px solid rgba(124, 111, 255, 0.15);
+      border-radius: 20px;
+      padding: 28px 24px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(124, 111, 255, 0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(124, 111, 255, 0.4);
+      background: rgba(10, 15, 26, 0.7);
+      transform: translateY(-12px);
+      box-shadow: 0 20px 60px rgba(124, 111, 255, 0.15);
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .feature-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--tx2);
+      line-height: 1.7;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* DASHBOARD PREVIEW SECTION                                     */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .dashboard-section {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 229, 255, 0.03) 50%, transparent 100%);
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .dashboard-text h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(32px, 5vw, 44px);
+      font-weight: 800;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .dashboard-text p {
+      font-size: 15px;
+      color: var(--tx2);
+      margin-bottom: 20px;
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    .benefits-list {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .benefits-list li {
+      padding: 12px 0;
+      padding-left: 32px;
+      position: relative;
+      font-size: 14px;
+      color: var(--tx2);
+    }
+
+    .benefits-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--gr);
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .dashboard-preview {
+      perspective: 1000px;
+    }
+
+    .dashboard-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.15), rgba(0, 229, 255, 0.08));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--tx2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(124, 111, 255, 0.1);
+      animation: imageFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes imageFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* STATS SECTION                                                 */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .stats-section {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, rgba(124, 111, 255, 0.06) 0%, rgba(0, 229, 255, 0.03) 50%, transparent 100%);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      animation: statPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .stat-item:nth-child(1) { animation-delay: 0.1s; }
+    .stat-item:nth-child(2) { animation-delay: 0.2s; }
+    .stat-item:nth-child(3) { animation-delay: 0.3s; }
+    .stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes statPop {
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .stat-number {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--tx2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* USE CASES SECTION                                             */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .usecases {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 68, 102, 0.02) 50%, transparent 100%);
+    }
+
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .usecase-card {
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.08), rgba(0, 229, 255, 0.04));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 20px;
+      padding: 32px 28px;
+      transition: all 0.4s ease;
+      animation: fadeInUp 0.6s ease both;
+      cursor: pointer;
+    }
+
+    .usecase-card:nth-child(1) { animation-delay: 0.1s; }
+    .usecase-card:nth-child(2) { animation-delay: 0.2s; }
+    .usecase-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .usecase-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 229, 255, 0.4);
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.12), rgba(0, 229, 255, 0.08));
+      box-shadow: 0 20px 50px rgba(0, 229, 255, 0.1);
+    }
+
+    .usecase-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .usecase-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .usecase-desc {
+      font-size: 14px;
+      color: var(--tx2);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .usecase-benefit {
+      font-size: 12px;
+      color: var(--gr);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* CTA SECTION                                                   */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .cta-section {
+      padding: 80px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-content {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+
+    .cta-content h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .cta-content p {
+      font-size: 16px;
+      color: var(--tx2);
+      margin-bottom: 32px;
+      font-weight: 500;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* FOOTER                                                        */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    footer {
+      padding: 40px;
+      text-align: center;
+      color: var(--tx2);
+      font-size: 12px;
+      border-top: 1px solid rgba(124, 111, 255, 0.1);
+      font-weight: 500;
+    }
+
+    footer strong {
+      color: var(--tx);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* UTILITY ANIMATIONS                                            */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* RESPONSIVE                                                    */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 20px;
+      }
+
+      .nav-left {
+        gap: 12px;
+      }
+
+      .language-switcher {
+        display: none;
+      }
+
+      .hero {
+        padding: 80px 20px 40px;
+      }
+
+      .hero h1 {
+        word-spacing: normal;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .features, .dashboard-section, .stats-section, .usecases, .cta-section {
+        padding: 60px 20px;
+      }
+
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .features-grid, .stats-grid, .usecases-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .section-header h2 {
+        font-size: clamp(28px, 5vw, 36px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav {
+        padding: 0 16px;
+        height: 60px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .hero {
+        padding: 70px 16px 30px;
+      }
+
+      .hero h1 {
+        font-size: clamp(28px, 6vw, 40px);
+      }
+
+      .float-card {
+        width: 100%;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 12px 24px;
+        font-size: 13px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-left">
+      <div class="logo" style="background: linear-gradient(135deg, var(--ac), var(--ac2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 28px; font-weight: 900; letter-spacing: -1px;">KAZKA</div>
+
+      <div class="language-switcher">
+        <button class="lang-btn active" data-lang="it">Italiano</button>
+        <button class="lang-btn" data-lang="en">English</button>
+      </div>
+    </div>
+    <a href="app.html"><button>Accedi →</button></a>
+  </nav>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- HERO SECTION                                                -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge" data-i18n="badge">✨ Il tuo personal finance assistant</div>
+        
+        <h1 data-i18n="hero-title">
+          Reclaim Your<br>
+          <span class="highlight" data-i18n="hero-highlight">Financial Power</span>
+        </h1>
+        
+        <p data-i18n="hero-desc">Dai il controllo totale del tuo denaro. Traccia, analizza e domina ogni centesimo senza compromessi.</p>
+        
+        <div class="hero-cta">
+          <a href="app.html"><button class="btn-primary" data-i18n="btn-start">Inizia Gratis →</button></a>
+          <button class="btn-secondary" onclick="scrollTo('features')" data-i18n="btn-discover">Scopri di più</button>
+        </div>
+
+        <div class="float-card">
+          <div class="float-card-header">
+            <div class="card-title">💰 Kazka</div>
+            <div class="card-status" data-i18n="card-live">LIVE</div>
+          </div>
+
+          <div class="balance-display">
+            <div class="balance-label" data-i18n="balance-label">Saldo Totale</div>
+            <div class="balance-value">€4.250</div>
+          </div>
+
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <div class="mini-stat-label" data-i18n="income-label">Entrate</div>
+              <div class="mini-stat-value" style="color: var(--gr);">+€5.200</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-label" data-i18n="expense-label">Uscite</div>
+              <div class="mini-stat-value" style="color: var(--re);">-€950</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- FEATURES SECTION                                            -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="features" id="features">
+      <div class="section-header">
+        <h2 data-i18n="features-title">Powerful Features for<br><span style="background: linear-gradient(135deg, var(--ac), var(--ac2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Total Control</span></h2>
+        <p data-i18n="features-desc">Tutto ciò che serve per dominare il tuo mondo finanziario</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">💸</div>
+          <div class="feature-title" data-i18n="f1-title">Transazioni Illimitate</div>
+          <div class="feature-desc" data-i18n="f1-desc">Traccia entrate e uscite con categorie intelligenti e note dettagliate</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title" data-i18n="f2-title">Report Avanzati</div>
+          <div class="feature-desc" data-i18n="f2-desc">Grafici mensili, annuali, breakdown per categoria e trend analysis</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title" data-i18n="f3-title">Obiettivi Finanziari</div>
+          <div class="feature-desc" data-i18n="f3-desc">Imposta mete di risparmio e monitora il progresso in tempo reale</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-title" data-i18n="f4-title">Spese Ricorrenti</div>
+          <div class="feature-desc" data-i18n="f4-desc">Automatizza abbonamenti, stipendi, affitti e calcolo costi fissi</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <div class="feature-title" data-i18n="f5-title">Spese Condivise</div>
+          <div class="feature-desc" data-i18n="f5-desc">Gestisci budget con amici e famiglia, calcolo automatico dei saldi</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏢</div>
+          <div class="feature-title" data-i18n="f6-title">Modalità Business</div>
+          <div class="feature-desc" data-i18n="f6-desc">Prima nota, clienti, preventivi, progetti per imprenditori e freelancer</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- DASHBOARD PREVIEW SECTION                                   -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="dashboard-section">
+      <div class="dashboard-container">
+        <div class="dashboard-text">
+          <h2 data-i18n="dashboard-title">Dashboard Che Ti Parla</h2>
+          <p data-i18n="dashboard-desc">Un'interfaccia intuitiva ma powerful. Vedi tutto quello che serve in un colpo d'occhio.</p>
+          
+          <ul class="benefits-list">
+            <li data-i18n="benefit-1">Statistiche in tempo reale</li>
+            <li data-i18n="benefit-2">Grafici interattivi e responsive</li>
+            <li data-i18n="benefit-3">Previsioni di spesa intelligenti</li>
+            <li data-i18n="benefit-4">Notifiche smart su anomalie</li>
+            <li data-i18n="benefit-5">Export dati in PDF e CSV</li>
+            <li data-i18n="benefit-6">Sync cloud automatico</li>
+          </ul>
+
+          <a href="app.html"><button class="btn-primary" data-i18n="btn-app">Accedi all'App →</button></a>
+        </div>
+
+        <div class="dashboard-preview">
+          <div class="dashboard-image" data-i18n="dashboard-preview">
+            📱 Dashboard Preview
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- STATS SECTION                                               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="stats-section">
+      <div class="section-header" style="margin-bottom: 50px;">
+        <h2 data-i18n="stats-title">Trusted by People Like You</h2>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label" data-i18n="stat-1">Utenti Attivi</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">€2.5B</div>
+          <div class="stat-label" data-i18n="stat-2">Tracciati</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">99.9%</div>
+          <div class="stat-label" data-i18n="stat-3">Uptime</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label" data-i18n="stat-4">Privacy First</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- USE CASES SECTION                                           -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="usecases">
+      <div class="section-header">
+        <h2 data-i18n="usecase-title">Perfect For Everyone</h2>
+        <p data-i18n="usecase-subtitle">Che tu sia un lavoratore dipendente, freelancer o imprenditore</p>
+      </div>
+
+      <div class="usecases-grid">
+        <div class="usecase-card">
+          <div class="usecase-icon">👨‍💼</div>
+          <div class="usecase-title" data-i18n="uc1-title">Professionisti</div>
+          <div class="usecase-desc" data-i18n="uc1-desc">Tieni traccia dello stipendio, investimenti e pianifica il futuro finanziario</div>
+          <div class="usecase-benefit" data-i18n="uc1-benefit">✓ Pianificazione</div>
+        </div>
+
+        <div class="usecase-card">
+          <div class="usecase-icon">🎨</div>
+          <div class="usecase-title" data-i18n="uc2-title">Freelancer</div>
+          <div class="usecase-desc" data-i18n="uc2-desc">Gestisci progetti, fatture, clienti e tasse con la modalità business completa</div>
+          <div class="usecase-benefit" data-i18n="uc2-benefit">✓ Business Ready</div>
+        </div>
+
+        <div class="usecase-card">
+          <div class="usecase-icon">👨‍👩‍👧‍👦</div>
+          <div class="usecase-title" data-i18n="uc3-title">Famiglie</div>
+          <div class="usecase-desc" data-i18n="uc3-desc">Condividi budget con partner e famiglia, trasparenza totale sulle spese</div>
+          <div class="usecase-benefit" data-i18n="uc3-benefit">✓ Collaborativo</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- CTA SECTION                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2 data-i18n="cta-title">Pronto a Prendere il Controllo?</h2>
+        <p data-i18n="cta-desc">Gratis, senza pubblicità, senza tracking. I tuoi dati rimangono tuoi.</p>
+        <a href="app.html"><button class="btn-primary" style="margin-top: 20px;" data-i18n="btn-open">Apri Kazka Gratis →</button></a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div>💰 <strong>Kazka</strong> v3.0 – <span data-i18n="footer-1">Financial Control Reimagined</span></div>
+    <div style="margin-top: 12px; opacity: 0.7;"><span data-i18n="footer-2">© 2025 · Built with passion · Powered by Firebase</span></div>
+  </footer>
+
+  <script>
+    // TRADUZIONI MULTILINGUA
+    const translations = {
+      it: {
+        badge: '✨ Il tuo personal finance assistant',
+        'hero-title': 'Reclaim Your<br><span class="highlight">Financial Power</span>',
+        'hero-highlight': 'Financial Power',
+        'hero-desc': 'Dai il controllo totale del tuo denaro. Traccia, analizza e domina ogni centesimo senza compromessi.',
+        'btn-start': 'Inizia Gratis →',
+        'btn-discover': 'Scopri di più',
+        'card-live': 'LIVE',
+        'balance-label': 'Saldo Totale',
+        'income-label': 'Entrate',
+        'expense-label': 'Uscite',
+        'features-title': 'Powerful Features for<br><span style="background: linear-gradient(135deg, var(--ac), var(--ac2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Total Control</span>',
+        'features-desc': 'Tutto ciò che serve per dominare il tuo mondo finanziario',
+        'f1-title': 'Transazioni Illimitate',
+        'f1-desc': 'Traccia entrate e uscite con categorie intelligenti e note dettagliate',
+        'f2-title': 'Report Avanzati',
+        'f2-desc': 'Grafici mensili, annuali, breakdown per categoria e trend analysis',
+        'f3-title': 'Obiettivi Finanziari',
+        'f3-desc': 'Imposta mete di risparmio e monitora il progresso in tempo reale',
+        'f4-title': 'Spese Ricorrenti',
+        'f4-desc': 'Automatizza abbonamenti, stipendi, affitti e calcolo costi fissi',
+        'f5-title': 'Spese Condivise',
+        'f5-desc': 'Gestisci budget con amici e famiglia, calcolo automatico dei saldi',
+        'f6-title': 'Modalità Business',
+        'f6-desc': 'Prima nota, clienti, preventivi, progetti per imprenditori e freelancer',
+        'dashboard-title': 'Dashboard Che Ti Parla',
+        'dashboard-desc': 'Un\'interfaccia intuitiva ma powerful. Vedi tutto quello che serve in un colpo d\'occhio.',
+        'benefit-1': 'Statistiche in tempo reale',
+        'benefit-2': 'Grafici interattivi e responsive',
+        'benefit-3': 'Previsioni di spesa intelligenti',
+        'benefit-4': 'Notifiche smart su anomalie',
+        'benefit-5': 'Export dati in PDF e CSV',
+        'benefit-6': 'Sync cloud automatico',
+        'btn-app': 'Accedi all\'App →',
+        'dashboard-preview': '📱 Dashboard Preview',
+        'stats-title': 'Trusted by People Like You',
+        'stat-1': 'Utenti Attivi',
+        'stat-2': 'Tracciati',
+        'stat-3': 'Uptime',
+        'stat-4': 'Privacy First',
+        'usecase-title': 'Perfect For Everyone',
+        'usecase-subtitle': 'Che tu sia un lavoratore dipendente, freelancer o imprenditore',
+        'uc1-title': 'Professionisti',
+        'uc1-desc': 'Tieni traccia dello stipendio, investimenti e pianifica il futuro finanziario',
+        'uc1-benefit': '✓ Pianificazione',
+        'uc2-title': 'Freelancer',
+        'uc2-desc': 'Gestisci progetti, fatture, clienti e tasse con la modalità business completa',
+        'uc2-benefit': '✓ Business Ready',
+        'uc3-title': 'Famiglie',
+        'uc3-desc': 'Condividi budget con partner e famiglia, trasparenza totale sulle spese',
+        'uc3-benefit': '✓ Collaborativo',
+        'cta-title': 'Pronto a Prendere il Controllo?',
+        'cta-desc': 'Gratis, senza pubblicità, senza tracking. I tuoi dati rimangono tuoi.',
+        'btn-open': 'Apri Kazka Gratis →',
+        'footer-1': 'Financial Control Reimagined',
+        'footer-2': '© 2025 · Built with passion · Powered by Firebase'
+      },
+      en: {
+        badge: '✨ Your personal finance assistant',
+        'hero-title': 'Reclaim Your<br><span class="highlight">Financial Power</span>',
+        'hero-highlight': 'Financial Power',
+        'hero-desc': 'Take full control of your money. Track, analyze, and dominate every penny without compromise.',
+        'btn-start': 'Start Free →',
+        'btn-discover': 'Learn more',
+        'card-live': 'LIVE',
+        'balance-label': 'Total Balance',
+        'income-label': 'Income',
+        'expense-label': 'Expenses',
+        'features-title': 'Powerful Features for<br><span style="background: linear-gradient(135deg, var(--ac), var(--ac2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Total Control</span>',
+        'features-desc': 'Everything you need to dominate your financial world',
+        'f1-title': 'Unlimited Transactions',
+        'f1-desc': 'Track income and expenses with smart categories and detailed notes',
+        'f2-title': 'Advanced Reports',
+        'f2-desc': 'Monthly and yearly charts, category breakdowns, and trend analysis',
+        'f3-title': 'Financial Goals',
+        'f3-desc': 'Set savings targets and monitor progress in real-time',
+        'f4-title': 'Recurring Expenses',
+        'f4-desc': 'Automate subscriptions, salaries, rent, and fixed cost calculations',
+        'f5-title': 'Shared Expenses',
+        'f5-desc': 'Manage budgets with friends and family, automatic balance calculations',
+        'f6-title': 'Business Mode',
+        'f6-desc': 'Ledger, clients, invoices, projects for entrepreneurs and freelancers',
+        'dashboard-title': 'Dashboard That Speaks',
+        'dashboard-desc': 'An intuitive yet powerful interface. See everything you need at a glance.',
+        'benefit-1': 'Real-time statistics',
+        'benefit-2': 'Interactive and responsive charts',
+        'benefit-3': 'Intelligent spending forecasts',
+        'benefit-4': 'Smart anomaly notifications',
+        'benefit-5': 'Export data to PDF and CSV',
+        'benefit-6': 'Automatic cloud sync',
+        'btn-app': 'Access the App →',
+        'dashboard-preview': '📱 Dashboard Preview',
+        'stats-title': 'Trusted by People Like You',
+        'stat-1': 'Active Users',
+        'stat-2': 'Tracked',
+        'stat-3': 'Uptime',
+        'stat-4': 'Privacy First',
+        'usecase-title': 'Perfect For Everyone',
+        'usecase-subtitle': 'Whether you\'re an employee, freelancer, or entrepreneur',
+        'uc1-title': 'Professionals',
+        'uc1-desc': 'Track salary, investments, and plan your financial future',
+        'uc1-benefit': '✓ Planning',
+        'uc2-title': 'Freelancers',
+        'uc2-desc': 'Manage projects, invoices, clients, and taxes with full business mode',
+        'uc2-benefit': '✓ Business Ready',
+        'uc3-title': 'Families',
+        'uc3-desc': 'Share budgets with partners and family, complete transparency',
+        'uc3-benefit': '✓ Collaborative',
+        'cta-title': 'Ready to Take Control?',
+        'cta-desc': 'Free, no ads, no tracking. Your data stays yours.',
+        'btn-open': 'Open Kazka Free →',
+        'footer-1': 'Financial Control Reimagined',
+        'footer-2': '© 2025 · Built with passion · Powered by Firebase'
+      }
+    };
+
+    let currentLanguage = localStorage.getItem('kazka-lang') || 'it';
+
+    // Funzione per cambiare lingua
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      localStorage.setItem('kazka-lang', lang);
+      
+      // Aggiorna gli elementi con data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+
+      // Aggiorna i bottoni attivi
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+
+      // Aggiorna attributo html lang
+      document.documentElement.lang = lang;
+    }
+
+    // Event listeners per i bottoni di lingua
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setLanguage(btn.getAttribute('data-lang'));
+      });
+    });
+
+    // Inizializza la lingua al caricamento
+    setLanguage(currentLanguage);
+
+    // Smooth scroll to section
+    function scrollTo(id) {
+      const element = document.getElementById(id);
+      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.querySelectorAll('.feature-card, .stat-item, .usecase-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'all 0.6s ease';
+      observer.observe(el);
+    });
+
+    // Parallax effect on hero
+    window.addEventListener('scroll', () => {
+      const hero = document.querySelector('.hero');
+      if (hero) {
+        const scrolled = window.pageYOffset;
+        hero.style.backgroundPosition = `0px ${scrolled * 0.5}px`;
+      }
+    });
+
+  </script>
+
+</body>
+</html>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #020409;
+      --bg2: #0a0f1a;
+      --bg3: #141b2f;
+      --ac: #7c6fff;
+      --ac2: #00e5ff;
+      --gr: #00f5a8;
+      --re: #ff4466;
+      --tx: #f0f4ff;
+      --tx2: #7a8fa3;
+      --tx3: #4a5568;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      line-height: 1.6;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* BACKGROUND & ATMOSPHERE                                       */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 150% 100% at 50% 0%, rgba(124, 111, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 120% 80% at 80% 100%, rgba(0, 229, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 20% 60%, rgba(255, 68, 102, 0.04) 0%, transparent 55%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+      z-index: 1;
+      pointer-events: none;
+      animation: grain 8s infinite;
+    }
+
+    @keyframes grain {
+      0%, 100% { opacity: 0.02; }
+      50% { opacity: 0.035; }
+    }
+
+    /* Scrollbar custom */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { 
+      background: rgba(124, 111, 255, 0.4);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover { 
+      background: rgba(124, 111, 255, 0.6);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* LAYOUT CONTAINER                                              */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    main {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    section {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* NAVIGATION                                                    */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(2, 4, 9, 0.7);
+      backdrop-filter: blur(30px);
+      border-bottom: 1px solid rgba(124, 111, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 1000;
+      animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-70px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .logo svg {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 12px rgba(124, 111, 255, 0.5));
+    }
+
+    nav button {
+      padding: 11px 28px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 24px rgba(124, 111, 255, 0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    nav button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(124, 111, 255, 0.5);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* HERO SECTION                                                  */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .hero {
+      min-height: 100vh;
+      padding: 100px 40px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(124, 111, 255, 0.15) 0%, transparent 70%);
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      animation: heroFadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes heroFadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.15), rgba(0, 229, 255, 0.08));
+      border: 1px solid rgba(124, 111, 255, 0.3);
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ac2);
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      animation: badgeGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes badgeGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(124, 111, 255, 0.2); }
+      50% { box-shadow: 0 0 40px rgba(124, 111, 255, 0.4); }
+    }
+
+    .hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(42px, 8vw, 72px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      word-spacing: 100vw;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(120deg, var(--ac) 0%, var(--ac2) 50%, var(--gr) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 300% 100%;
+      animation: gradientFlow 6s ease infinite;
+    }
+
+    @keyframes gradientFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero p {
+      font-size: clamp(16px, 3vw, 20px);
+      color: var(--tx2);
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+      letter-spacing: 0.2px;
+      font-weight: 500;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+      animation: ctaSlideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    }
+
+    @keyframes ctaSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-primary {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border: none;
+      border-radius: 16px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 10px 32px rgba(124, 111, 255, 0.4);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(124, 111, 255, 0.6);
+    }
+
+    .btn-secondary {
+      padding: 14px 32px;
+      background: transparent;
+      border: 1.5px solid rgba(124, 111, 255, 0.5);
+      border-radius: 16px;
+      color: var(--ac);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(124, 111, 255, 0.1);
+      border-color: var(--ac2);
+      transform: translateY(-4px);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* FLOATING ELEMENTS                                             */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .float-card {
+      width: clamp(280px, 90%, 420px);
+      background: rgba(10, 15, 26, 0.6);
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 24px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 60px rgba(124, 111, 255, 0.08), 0 40px 80px rgba(0, 0, 0, 0.3);
+      animation: floatUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+    }
+
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(60px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .float-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card-status {
+      font-size: 10px;
+      color: var(--gr);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .balance-display {
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.12), rgba(0, 229, 255, 0.06));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .balance-label {
+      font-size: 10px;
+      color: var(--tx2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .balance-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .mini-stat {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .mini-stat-label {
+      font-size: 9px;
+      color: var(--tx2);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .mini-stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* FEATURES SECTION                                              */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .features {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(124, 111, 255, 0.04) 50%, transparent 100%);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+
+    .section-header h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(36px, 6vw, 48px);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-header p {
+      font-size: 16px;
+      color: var(--tx2);
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(10, 15, 26, 0.4);
+      border: 1px solid rgba(124, 111, 255, 0.15);
+      border-radius: 20px;
+      padding: 28px 24px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(124, 111, 255, 0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(124, 111, 255, 0.4);
+      background: rgba(10, 15, 26, 0.7);
+      transform: translateY(-12px);
+      box-shadow: 0 20px 60px rgba(124, 111, 255, 0.15);
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .feature-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--tx2);
+      line-height: 1.7;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* DASHBOARD PREVIEW SECTION                                     */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .dashboard-section {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 229, 255, 0.03) 50%, transparent 100%);
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .dashboard-text h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(32px, 5vw, 44px);
+      font-weight: 800;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .dashboard-text p {
+      font-size: 15px;
+      color: var(--tx2);
+      margin-bottom: 20px;
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    .benefits-list {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .benefits-list li {
+      padding: 12px 0;
+      padding-left: 32px;
+      position: relative;
+      font-size: 14px;
+      color: var(--tx2);
+    }
+
+    .benefits-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--gr);
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .dashboard-preview {
+      perspective: 1000px;
+    }
+
+    .dashboard-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.15), rgba(0, 229, 255, 0.08));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--tx2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(124, 111, 255, 0.1);
+      animation: imageFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes imageFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* STATS SECTION                                                 */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .stats-section {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, rgba(124, 111, 255, 0.06) 0%, rgba(0, 229, 255, 0.03) 50%, transparent 100%);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      animation: statPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .stat-item:nth-child(1) { animation-delay: 0.1s; }
+    .stat-item:nth-child(2) { animation-delay: 0.2s; }
+    .stat-item:nth-child(3) { animation-delay: 0.3s; }
+    .stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes statPop {
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .stat-number {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--tx2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* USE CASES SECTION                                             */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .usecases {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 68, 102, 0.02) 50%, transparent 100%);
+    }
+
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .usecase-card {
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.08), rgba(0, 229, 255, 0.04));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 20px;
+      padding: 32px 28px;
+      transition: all 0.4s ease;
+      animation: fadeInUp 0.6s ease both;
+      cursor: pointer;
+    }
+
+    .usecase-card:nth-child(1) { animation-delay: 0.1s; }
+    .usecase-card:nth-child(2) { animation-delay: 0.2s; }
+    .usecase-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .usecase-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 229, 255, 0.4);
+      background: linear-gradient(135deg, rgba(124, 111, 255, 0.12), rgba(0, 229, 255, 0.08));
+      box-shadow: 0 20px 50px rgba(0, 229, 255, 0.1);
+    }
+
+    .usecase-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .usecase-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .usecase-desc {
+      font-size: 14px;
+      color: var(--tx2);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .usecase-benefit {
+      font-size: 12px;
+      color: var(--gr);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* CTA SECTION                                                   */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    .cta-section {
+      padding: 80px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-content {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+
+    .cta-content h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .cta-content p {
+      font-size: 16px;
+      color: var(--tx2);
+      margin-bottom: 32px;
+      font-weight: 500;
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* FOOTER                                                        */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    footer {
+      padding: 40px;
+      text-align: center;
+      color: var(--tx2);
+      font-size: 12px;
+      border-top: 1px solid rgba(124, 111, 255, 0.1);
+      font-weight: 500;
+    }
+
+    footer strong {
+      color: var(--tx);
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* UTILITY ANIMATIONS                                            */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+    /* RESPONSIVE                                                    */
+    /* ═════════════════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 20px;
+      }
+
+      .hero {
+        padding: 80px 20px 40px;
+      }
+
+      .hero h1 {
+        word-spacing: normal;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .features, .dashboard-section, .stats-section, .usecases, .cta-section {
+        padding: 60px 20px;
+      }
+
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .features-grid, .stats-grid, .usecases-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .section-header h2 {
+        font-size: clamp(28px, 5vw, 36px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav {
+        padding: 0 16px;
+        height: 60px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .hero {
+        padding: 70px 16px 30px;
+      }
+
+      .hero h1 {
+        font-size: clamp(28px, 6vw, 40px);
+      }
+
+      .float-card {
+        width: 100%;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 12px 24px;
+        font-size: 13px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- NAVIGATION                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <nav>
+    <div class="logo">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#7c6fff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect x="42" y="28" width="10" height="64" rx="5" fill="url(#logoGrad)"/>
+        <rect x="52" y="28" width="34" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(-32 69 33)"/>
+        <rect x="52" y="76" width="32" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(32 68 81)"/>
+      </svg>
+      Kazka
+    </div>
+    <a href="app.html"><button>Accedi →</button></a>
+  </nav>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- HERO SECTION                                                -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">✨ Il tuo personal finance assistant</div>
+        
+        <h1>
+          Reclaim Your<br>
+          <span class="highlight">Financial Power</span>
+        </h1>
+        
+        <p>Dai il controllo totale del tuo denaro. Traccia, analizza e domina ogni centesimo senza compromessi. Built for power users.</p>
+        
+        <div class="hero-cta">
+          <a href="app.html"><button class="btn-primary">Inizia Gratis →</button></a>
+          <button class="btn-secondary" onclick="scrollTo('features')">Scopri di più</button>
+        </div>
+
+        <div class="float-card">
+          <div class="float-card-header">
+            <div class="card-title">💰 Kazka</div>
+            <div class="card-status">LIVE</div>
+          </div>
+
+          <div class="balance-display">
+            <div class="balance-label">Saldo Totale</div>
+            <div class="balance-value">€4.250</div>
+          </div>
+
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <div class="mini-stat-label">Entrate</div>
+              <div class="mini-stat-value" style="color: var(--gr);">+€5.200</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-label">Uscite</div>
+              <div class="mini-stat-value" style="color: var(--re);">-€950</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- FEATURES SECTION                                            -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="features" id="features">
+      <div class="section-header">
+        <h2>Powerful Features for<br><span style="background: linear-gradient(135deg, var(--ac), var(--ac2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Total Control</span></h2>
+        <p>Tutto ciò che serve per dominare il tuo mondo finanziario</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">💸</div>
+          <div class="feature-title">Transazioni Illimitate</div>
+          <div class="feature-desc">Traccia entrate e uscite con categorie intelligenti e note dettagliate</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Report Avanzati</div>
+          <div class="feature-desc">Grafici mensili, annuali, breakdown per categoria e trend analysis</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Obiettivi Finanziari</div>
+          <div class="feature-desc">Imposta mete di risparmio e monitora il progresso in tempo reale</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-title">Spese Ricorrenti</div>
+          <div class="feature-desc">Automatizza abbonamenti, stipendi, affitti e calcolo costi fissi</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <div class="feature-title">Spese Condivise</div>
+          <div class="feature-desc">Gestisci budget con amici e famiglia, calcolo automatico dei saldi</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏢</div>
+          <div class="feature-title">Modalità Business</div>
+          <div class="feature-desc">Prima nota, clienti, preventivi, progetti per imprenditori e freelancer</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- DASHBOARD PREVIEW SECTION                                   -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="dashboard-section">
+      <div class="dashboard-container">
+        <div class="dashboard-text">
+          <h2>Dashboard Che Ti Parla</h2>
+          <p>Un'interfaccia intuitiva ma powerful. Vedi tutto quello che serve in un colpo d'occhio.</p>
+          
+          <ul class="benefits-list">
+            <li>Statistiche in tempo reale</li>
+            <li>Grafici interattivi e responsive</li>
+            <li>Previsioni di spesa intelligenti</li>
+            <li>Notifiche smart su anomalie</li>
+            <li>Export dati in PDF e CSV</li>
+            <li>Sync cloud automatico</li>
+          </ul>
+
+          <a href="app.html"><button class="btn-primary">Accedi all'App →</button></a>
+        </div>
+
+        <div class="dashboard-preview">
+          <div class="dashboard-image">
+            📱 Dashboard Preview
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- STATS SECTION                                               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="stats-section">
+      <div class="section-header" style="margin-bottom: 50px;">
+        <h2>Trusted by People Like You</h2>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label">Utenti Attivi</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">€2.5B</div>
+          <div class="stat-label">Tracciati</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">99.9%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Privacy First</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- USE CASES SECTION                                           -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="usecases">
+      <div class="section-header">
+        <h2>Perfect For Everyone</h2>
+        <p>Che tu sia un lavoratore dipendente, freelancer o imprenditore</p>
+      </div>
+
+      <div class="usecases-grid">
+        <div class="usecase-card">
+          <div class="usecase-icon">👨‍💼</div>
+          <div class="usecase-title">Professionisti</div>
+          <div class="usecase-desc">Tieni traccia dello stipendio, investimenti e pianifica il futuro finanziario</div>
+          <div class="usecase-benefit">✓ Pianificazione</div>
+        </div>
+
+        <div class="usecase-card">
+          <div class="usecase-icon">🎨</div>
+          <div class="usecase-title">Freelancer</div>
+          <div class="usecase-desc">Gestisci progetti, fatture, clienti e tasse con la modalità business completa</div>
+          <div class="usecase-benefit">✓ Business Ready</div>
+        </div>
+
+        <div class="usecase-card">
+          <div class="usecase-icon">👨‍👩‍👧‍👦</div>
+          <div class="usecase-title">Famiglie</div>
+          <div class="usecase-desc">Condividi budget con partner e famiglia, trasparenza totale sulle spese</div>
+          <div class="usecase-benefit">✓ Collaborativo</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- CTA SECTION                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>Pronto a Prendere il Controllo?</h2>
+        <p>Gratis, senza pubblicità, senza tracking. I tuoi dati rimangono tuoi.</p>
+        <a href="app.html"><button class="btn-primary" style="margin-top: 20px;">Apri Kazka Gratis →</button></a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <footer>
+    <div>💰 <strong>Kazka</strong> v3.0 – Financial Control Reimagined</div>
+    <div style="margin-top: 12px; opacity: 0.7;">© 2025 · Built with passion · Powered by Firebase</div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SCROLL ANIMATIONS & INTERACTIONS                             -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <script>
+    // Smooth scroll to section
+    function scrollTo(id) {
+      const element = document.getElementById(id);
+      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.querySelectorAll('.feature-card, .stat-item, .usecase-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'all 0.6s ease';
+      observer.observe(el);
+    });
+
+    // Parallax effect on hero
+    window.addEventListener('scroll', () => {
+      const hero = document.querySelector('.hero');
+      if (hero) {
+        const scrolled = window.pageYOffset;
+        hero.style.backgroundPosition = `0px ${scrolled * 0.5}px`;
+      }
+    });
+
+    // Hover glow effect
+    document.querySelectorAll('.feature-card, .usecase-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+  </script>
+
+</body>
+</html>

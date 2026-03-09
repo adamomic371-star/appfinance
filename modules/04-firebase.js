@@ -1,47 +1,22 @@
 
-// 04-FIREBASE.JS - Connessione Firebase con diagnostica
+// 04-FIREBASE.JS - Connessione Firebase
 
 async function initializeFirebase() {
   try {
-    console.log('🔄 Inizializzando Firebase...');
+    console.log('🔄 Setup Firebase Auth listener...');
     
-    // Controlla se Firebase è caricato
-    if (typeof firebase === 'undefined') {
+    // Firebase è già inizializzato in app.html
+    if (!firebase) {
       console.error('❌ Firebase SDK non caricato!');
-      showNotification('❌ Firebase non disponibile', 'error');
       return false;
     }
     
-    console.log('✅ Firebase SDK trovato');
-    
-    // Controlla se è già inizializzato
-    if (firebase.apps.length > 0) {
-      console.log('✅ Firebase già inizializzato');
+    if (!db) {
       db = firebase.database();
-    } else {
-      console.log('🔄 Inizializzando Firebase con config...');
-      firebase.initializeApp(FIREBASE_CONFIG);
-      db = firebase.database();
-      console.log('✅ Firebase inizializzato');
-    }
-    
-    // Test di connessione
-    try {
-      const testRef = db.ref('.info/connected');
-      testRef.on('value', (snap) => {
-        if (snap.val() === true) {
-          console.log('✅ Firebase Database connesso');
-        } else {
-          console.warn('⚠️ Firebase Database disconnesso');
-        }
-      });
-    } catch (err) {
-      console.warn('⚠️ Errore test connessione Firebase:', err);
+      console.log('✅ Database reference creato');
     }
     
     // Setup auth listener
-    console.log('🔄 Setup Auth listener...');
-    
     firebase.auth().onAuthStateChanged((authUser) => {
       if (authUser) {
         user = {
@@ -49,15 +24,12 @@ async function initializeFirebase() {
           email: authUser.email,
           name: authUser.displayName || 'User'
         };
-        console.log('✅ User logged in:', user.email);
-        
-        // Salva l'utente nel localStorage
+        console.log('✅ Firebase User logged in:', user.email);
         localStorage.setItem('fp_user_' + authUser.uid, JSON.stringify(user));
-        
         onUserLoggedIn();
       } else {
         user = null;
-        console.log('🔐 No user logged in');
+        console.log('🔐 No Firebase user logged in');
       }
     });
     
@@ -66,9 +38,6 @@ async function initializeFirebase() {
     
   } catch (err) {
     console.error('❌ Firebase init error:', err);
-    console.error('Error message:', err.message);
-    console.error('Error code:', err.code);
-    showNotification('❌ Errore Firebase: ' + err.message, 'error');
     return false;
   }
 }
@@ -76,7 +45,6 @@ async function initializeFirebase() {
 function onUserLoggedIn() {
   console.log('✅ User logged in handler called');
   loadFromFirebase();
-  hideLoginScreen();
 }
 
 console.log('✅ firebase.js loaded');

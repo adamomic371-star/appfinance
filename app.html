@@ -9,7 +9,6 @@
 <meta name="apple-mobile-web-app-title" content="Kazka">
 <meta name="application-name" content="Kazka">
 <meta name="theme-color" content="#070b18">
-<!-- manifest removed (CORS) -->
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <title>Kazka – Finance</title>
@@ -781,86 +780,26 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
 </style>
-
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><defs><linearGradient id=%22grad%22><stop offset=%220%%22 style=%22stop-color:%236c63ff%22/><stop offset=%22100%%22 style=%22stop-color:%2300d4ff%22/></linearGradient></defs><circle cx=%2260%22 cy=%2260%22 r=%2256%22 fill=%22%23070b18%22/><circle cx=%2260%22 cy=%2260%22 r=%2250%22 fill=%22url(%23grad)%22 opacity=%220.1%22/><g fill=%22url(%23grad)%22><rect x=%2245%22 y=%2235%22 width=%2210%22 height=%2250%22 rx=%225%22/><path d=%22M 55 40 L 80 55 L 55 55 Z%22/><path d=%22M 55 60 L 80 80 L 70 80 L 55 65 Z%22/></g></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='grad'><stop offset='0%' style='stop-color:%236c63ff'/><stop offset='100%' style='stop-color:%2300d4ff'/></linearGradient></defs><circle cx='60' cy='60' r='56' fill='%23070b18'/><circle cx='60' cy='60' r='50' fill='url(%23grad)' opacity='0.1'/><g fill='url(%23grad)'><rect x='45' y='35' width='10' height='50' rx='5'/><path d='M 55 40 L 80 55 L 55 55 Z'/><path d='M 55 60 L 80 80 L 70 80 L 55 65 Z'/></g></svg>">
 <meta name="theme-color" content="#6c63ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kazka">
-
-
-<style>
-.sync-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: rgba(255, 244, 255, 0.08);
-  border: 1px solid rgba(255, 244, 255, 0.1);
-  border-radius: 12px;
-  font-size: 9px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  height: 28px;
-}
-.sync-indicator.synced {
-  border-color: rgba(0, 229, 160, 0.4);
-  color: #00e5a0;
-  background: rgba(0, 229, 160, 0.1);
-}
-.sync-indicator.syncing {
-  border-color: rgba(0, 212, 255, 0.4);
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.1);
-}
-.sync-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-}
-.sync-indicator.synced .sync-dot {
-  background: #00e5a0;
-  box-shadow: 0 0 8px rgba(0, 229, 160, 0.5);
-}
-.sync-indicator.syncing .sync-dot {
-  background: #00d4ff;
-  animation: sync-pulse 1s ease-in-out infinite;
-}
-@keyframes sync-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-@media (max-width: 600px) {
-  .sync-indicator { padding: 6px 8px; gap: 0; }
-  .sync-status-text { display: none; }
-}
-</style>
 
 </head>
 <body>
 
 <!-- SPLASH -->
-<div id="splash" style="background: linear-gradient(135deg, #070b18 0%, #0a0e1a 100%); position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 30px;">
-  <style>
-    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-    #splash.hide { animation: fadeOut 0.6s ease forwards; }
-    .splash-logo { width: 100px; height: 100px; animation: slideDown 0.8s ease; }
-    .splash-text { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff 30%, #8b80ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Syne', sans-serif; animation: slideDown 0.8s ease 0.2s backwards; }
-    .splash-subtext { font-size: 12px; color: #8892b0; animation: slideDown 0.8s ease 0.4s backwards; }
-    .splash-bar { width: 200px; height: 3px; background: rgba(255, 244, 255, 0.1); border-radius: 2px; overflow: hidden; animation: slideDown 0.8s ease 0.6s backwards; }
-    .splash-fill { height: 100%; background: linear-gradient(90deg, #6c63ff, #00d4ff); animation: loading 2s ease infinite; }
-    @keyframes loading { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
-  </style>
-  <div class="splash-logo"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="kGrad"><stop offset="0%" style="stop-color:#6c63ff"/><stop offset="100%" style="stop-color:#00d4ff"/></linearGradient></defs><circle cx="60" cy="60" r="55" fill="none" stroke="url(#kGrad)" stroke-width="2" opacity="0.2"/><g fill="url(#kGrad)"><rect x="35" y="25" width="12" height="70" rx="6"/><path d="M 47 35 L 80 55 L 47 55 Z"/><path d="M 47 65 L 85 95 L 73 95 L 47 70 Z"/></g></svg></div>
-  <div style="text-align: center;"><div class="splash-text">Kazka</div><div class="splash-subtext">Smart Finance Assistant</div></div>
-  <div class="splash-bar"><div class="splash-fill"></div></div>
+<div id="splash">
+  <div class="spl-bg"></div>
+  <div class="spl-pts" id="pts"></div>
+  <div class="spl-c">
+    <div class="wave">👋</div>
+    <div class="spl-title">Ciao! Bentornato</div>
+    <div class="spl-sub">Il tuo assistente finanziario personale</div>
+    <div class="spl-logo" style="display:flex;align-items:center;gap:12px"><div id="splLogoMark" class="spl-li"></div><div class="spl-lt" style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</div></div>
+    <div class="spl-bar"><div class="spl-track"><div class="spl-fill"></div></div><div class="spl-txt">Caricamento...</div></div>
+  </div>
 </div>
-
-<!-- LOGIN
 
 <!-- LOGIN -->
 <div id="loginScreen" class="hidden">
@@ -1444,92 +1383,9 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
 
 <div id="notif" class="notif"></div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
-
-// ===== CORE HANDLERS =====
-function hideSplashScreen() {
-  const splash = document.getElementById('splash');
-  if (splash) {
-    splash.classList.add('hide');
-    setTimeout(() => { splash.style.display = 'none'; }, 600);
-  }
-}
-
-// Auto-hide splash after 2 seconds
-window.addEventListener('load', () => {
-  setTimeout(hideSplashScreen, 2000);
-});
-
-// Ignore extension errors
-window.addEventListener('error', (e) => {
-  if (e.message && e.message.includes('Could not establish connection')) return true;
-});
-
-console.log('✅ Kazka app loaded');
-
-
-
-// Ignore non-critical errors
-window.addEventListener('error', function(e) {
-  if (e.message && e.message.includes('Could not establish connection')) {
-    console.warn('ℹ️ Extension communication (ignorato)');
-    return true;
-  }
-  if (e.message && e.message.includes('appendChild')) {
-    console.warn('ℹ️ DOM not ready yet');
-    return true;
-  }
-}, true);
-
-</script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
-
-// ===== CORE HANDLERS =====
-function hideSplashScreen() {
-  const splash = document.getElementById('splash');
-  if (splash) {
-    splash.classList.add('hide');
-    setTimeout(() => { splash.style.display = 'none'; }, 600);
-  }
-}
-
-// Auto-hide splash after 2 seconds
-window.addEventListener('load', () => {
-  setTimeout(hideSplashScreen, 2000);
-});
-
-// Ignore extension errors
-window.addEventListener('error', (e) => {
-  if (e.message && e.message.includes('Could not establish connection')) return true;
-});
-
-console.log('✅ Kazka app loaded');
-
-
-
-// Ignore non-critical errors
-window.addEventListener('error', function(e) {
-  if (e.message && e.message.includes('Could not establish connection')) {
-    console.warn('ℹ️ Extension communication (ignorato)');
-    return true;
-  }
-  if (e.message && e.message.includes('appendChild')) {
-    console.warn('ℹ️ DOM not ready yet');
-    return true;
-  }
-}, true);
-
-</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-
-// Ensure DOM is ready before manipulating
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    // DOM is ready
-  });
-}
-
-
 /* ===== PARTICLES ===== */
 (()=>{
   const c=document.getElementById('pts'),cols=['#6c63ff','#00d4ff','#ff6b9d','#00e5a0','#ffd166'];
@@ -3564,66 +3420,36 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-  </style>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><defs><linearGradient id=%22grad%22><stop offset=%220%%22 style=%22stop-color:%236c63ff%22/><stop offset=%22100%%22 style=%22stop-color:%2300d4ff%22/></linearGradient></defs><circle cx=%2260%22 cy=%2260%22 r=%2256%22 fill=%22%23070b18%22/><circle cx=%2260%22 cy=%2260%22 r=%2250%22 fill=%22url(%23grad)%22 opacity=%220.1%22/><g fill=%22url(%23grad)%22><rect x=%2245%22 y=%2235%22 width=%2210%22 height=%2250%22 rx=%225%22/><path d=%22M 55 40 L 80 55 L 55 55 Z%22/><path d=%22M 55 60 L 80 80 L 70 80 L 55 65 Z%22/></g></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='grad'><stop offset='0%' style='stop-color:%236c63ff'/><stop offset='100%' style='stop-color:%2300d4ff'/></linearGradient></defs><circle cx='60' cy='60' r='56' fill='%23070b18'/><circle cx='60' cy='60' r='50' fill='url(%23grad)' opacity='0.1'/><g fill='url(%23grad)'><rect x='45' y='35' width='10' height='50' rx='5'/><path d='M 55 40 L 80 55 L 55 55 Z'/><path d='M 55 60 L 80 80 L 70 80 L 55 65 Z'/></g></svg>">
 <meta name="theme-color" content="#6c63ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kazka">
 
-
-<style>
-.sync-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: rgba(255, 244, 255, 0.08);
-  border: 1px solid rgba(255, 244, 255, 0.1);
-  border-radius: 12px;
-  font-size: 9px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  height: 28px;
-}
-.sync-indicator.synced {
-  border-color: rgba(0, 229, 160, 0.4);
-  color: #00e5a0;
-  background: rgba(0, 229, 160, 0.1);
-}
-.sync-indicator.syncing {
-  border-color: rgba(0, 212, 255, 0.4);
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.1);
-}
-.sync-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-}
-.sync-indicator.synced .sync-dot {
-  background: #00e5a0;
-  box-shadow: 0 0 8px rgba(0, 229, 160, 0.5);
-}
-.sync-indicator.syncing .sync-dot {
-  background: #00d4ff;
-  animation: sync-pulse 1s ease-in-out infinite;
-}
-@keyframes sync-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-@media (max-width: 600px) {
-  .sync-indicator { padding: 6px 8px; gap: 0; }
-  .sync-status-text { display: none; }
-}
-</style>
-
-</head><body>`);
+  </style></head><body>`);
   printWin.document.write(area.outerHTML);
+
+<script>
+// Safe appendChild wrapper
+if (window.HTMLElement) {
+    const originalAppendChild = HTMLElement.prototype.appendChild;
+    HTMLElement.prototype.appendChild = function(node) {
+        if (this && document.body) {
+            return originalAppendChild.call(this, node);
+        }
+        return node;
+    };
+}
+
+// Ignore non-critical errors
+window.addEventListener('error', (e) => {
+    if (e.message && (e.message.includes('Could not establish connection') || e.message.includes('extension'))) {
+        return true;
+    }
+}, true);
+
+console.log('✅ Kazka app loaded safely');
+</script>
+
   printWin.document.write(`</body></html>`);
   printWin.document.close();
   setTimeout(()=>printWin.print(),400);
@@ -5037,43 +4863,6 @@ function delScadenza(id){
 
 // window resize: update admin button label
 window.addEventListener('resize',updateUI);
-
-
-// ===== CORE HANDLERS =====
-function hideSplashScreen() {
-  const splash = document.getElementById('splash');
-  if (splash) {
-    splash.classList.add('hide');
-    setTimeout(() => { splash.style.display = 'none'; }, 600);
-  }
-}
-
-// Auto-hide splash after 2 seconds
-window.addEventListener('load', () => {
-  setTimeout(hideSplashScreen, 2000);
-});
-
-// Ignore extension errors
-window.addEventListener('error', (e) => {
-  if (e.message && e.message.includes('Could not establish connection')) return true;
-});
-
-console.log('✅ Kazka app loaded');
-
-
-
-// Ignore non-critical errors
-window.addEventListener('error', function(e) {
-  if (e.message && e.message.includes('Could not establish connection')) {
-    console.warn('ℹ️ Extension communication (ignorato)');
-    return true;
-  }
-  if (e.message && e.message.includes('appendChild')) {
-    console.warn('ℹ️ DOM not ready yet');
-    return true;
-  }
-}, true);
-
 </script>
 
 <!-- ═══════════════════════════════════════════
@@ -5249,43 +5038,29 @@ window.addEventListener('appinstalled', () => {
 if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
   setTimeout(_showPwaBanner, 3500);
 }
+</script>
 
-
-// ===== CORE HANDLERS =====
-function hideSplashScreen() {
-  const splash = document.getElementById('splash');
-  if (splash) {
-    splash.classList.add('hide');
-    setTimeout(() => { splash.style.display = 'none'; }, 600);
-  }
+<script>
+// Safe appendChild wrapper
+if (window.HTMLElement) {
+    const originalAppendChild = HTMLElement.prototype.appendChild;
+    HTMLElement.prototype.appendChild = function(node) {
+        if (this && document.body) {
+            return originalAppendChild.call(this, node);
+        }
+        return node;
+    };
 }
 
-// Auto-hide splash after 2 seconds
-window.addEventListener('load', () => {
-  setTimeout(hideSplashScreen, 2000);
-});
-
-// Ignore extension errors
-window.addEventListener('error', (e) => {
-  if (e.message && e.message.includes('Could not establish connection')) return true;
-});
-
-console.log('✅ Kazka app loaded');
-
-
-
 // Ignore non-critical errors
-window.addEventListener('error', function(e) {
-  if (e.message && e.message.includes('Could not establish connection')) {
-    console.warn('ℹ️ Extension communication (ignorato)');
-    return true;
-  }
-  if (e.message && e.message.includes('appendChild')) {
-    console.warn('ℹ️ DOM not ready yet');
-    return true;
-  }
+window.addEventListener('error', (e) => {
+    if (e.message && (e.message.includes('Could not establish connection') || e.message.includes('extension'))) {
+        return true;
+    }
 }, true);
 
+console.log('✅ Kazka app loaded safely');
 </script>
+
 </body>
 </html>

@@ -3416,7 +3416,69 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-  </style></head><body>`);
+  
+/* SYNC STATUS INDICATOR */
+.sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(255, 244, 255, 0.05);
+  border: 1px solid rgba(255, 244, 255, 0.1);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.sync-indicator.synced {
+  border-color: rgba(0, 229, 160, 0.3);
+  color: var(--gr);
+  background: rgba(0, 229, 160, 0.08);
+}
+
+.sync-indicator.syncing {
+  border-color: rgba(0, 212, 255, 0.3);
+  color: var(--ac2);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.sync-indicator.error {
+  border-color: rgba(255, 79, 109, 0.3);
+  color: var(--re);
+  background: rgba(255, 79, 109, 0.08);
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.sync-indicator.synced .sync-dot {
+  background: var(--gr);
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.6);
+}
+
+.sync-indicator.syncing .sync-dot {
+  background: var(--ac2);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.sync-indicator.error .sync-dot {
+  background: var(--re);
+  box-shadow: 0 0 10px rgba(255, 79, 109, 0.6);
+}
+
+.sync-timestamp {
+  font-size: 9px;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+</style></head><body>`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`</body></html>`);
   printWin.document.close();
@@ -5006,6 +5068,94 @@ window.addEventListener('appinstalled', () => {
 if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
   setTimeout(_showPwaBanner, 3500);
 }
+
+
+// ===== SYNC INDICATOR VISUAL =====
+let lastSyncTime = null;
+let currentSyncStatus = 'synced';
+
+function updateSyncIndicator(status, timestamp = null) {
+  const indicator = document.getElementById('syncIndicator');
+  const statusText = document.getElementById('syncStatus');
+  const timeText = document.getElementById('syncTime');
+  
+  if (!indicator) return;
+  
+  // Rimuovi tutti le classi di stato
+  indicator.classList.remove('synced', 'syncing', 'error');
+  
+  currentSyncStatus = status;
+  
+  if (status === 'syncing') {
+    indicator.classList.add('syncing');
+    statusText.textContent = 'Sincronizzando...';
+    timeText.textContent = '';
+  } else if (status === 'synced') {
+    indicator.classList.add('synced');
+    statusText.textContent = 'Sincronizzato';
+    
+    if (timestamp) {
+      lastSyncTime = timestamp;
+      const now = new Date();
+      const diff = Math.floor((now - new Date(timestamp)) / 1000);
+      
+      let timeStr = '';
+      if (diff < 60) timeStr = 'Ora';
+      else if (diff < 3600) timeStr = Math.floor(diff / 60) + 'm fa';
+      else if (diff < 86400) timeStr = Math.floor(diff / 3600) + 'h fa';
+      else timeStr = Math.floor(diff / 86400) + 'g fa';
+      
+      timeText.textContent = timeStr;
+    }
+  } else if (status === 'error') {
+    indicator.classList.add('error');
+    statusText.textContent = 'Errore sync';
+    timeText.textContent = 'Riprova';
+  }
+}
+
+// Aggiorna il timestamp ogni minuto
+setInterval(() => {
+  if (lastSyncTime && currentSyncStatus === 'synced') {
+    const now = new Date();
+    const diff = Math.floor((now - new Date(lastSyncTime)) / 1000);
+    
+    let timeStr = '';
+    if (diff < 60) timeStr = 'Ora';
+    else if (diff < 3600) timeStr = Math.floor(diff / 60) + 'm fa';
+    else if (diff < 86400) timeStr = Math.floor(diff / 3600) + 'h fa';
+    else timeStr = Math.floor(diff / 86400) + 'g fa';
+    
+    const timeText = document.getElementById('syncTime');
+    if (timeText) timeText.textContent = timeStr;
+  }
+}, 30000);
+
+// Inizializza l'indicatore
+window.addEventListener('load', () => {
+  updateSyncIndicator('synced', new Date().toISOString());
+});
+
+// Override della funzione triggerSync per aggiornare l'indicatore
+const originalTriggerSync = triggerSync;
+if (typeof originalTriggerSync === 'function') {
+  window.triggerSync = function() {
+    updateSyncIndicator('syncing');
+    
+    // Chiama la funzione originale
+    const result = originalTriggerSync.apply(this, arguments);
+    
+    // Aspetta un po' e poi aggiorna
+    setTimeout(() => {
+      updateSyncIndicator('synced', new Date().toISOString());
+    }, 1500);
+    
+    return result;
+  };
+}
+
+console.log('✅ Sync indicator visual aggiunto');
+
 </script>
 </body>
 </html>

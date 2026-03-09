@@ -1,11 +1,14 @@
 {
-  "name": "Kazka - Finanza intelligente",
+  "name": "Kazka - Smart Finance Assistant",
   "short_name": "Kazka",
   "description": "Gestisci le tue finanze personali e aziendali",
   "start_url": "/appfinance/app.html",
   "display": "standalone",
-  "background_color": "#0a0f1a",
-  "theme_color": "#7c6fff",
+  "background_color": "#070b18",
+  "theme_color": "#6c63ff",
+  "orientation": "portrait-primary",
+  "scope": "/appfinance/",
+  "lang": "it",
   "icons": [
     {
       "src": "icon-192.png",
@@ -19,5 +22,7 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["finance", "productivity"],
+  "screenshots": []
 }

@@ -5,336 +5,158 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kazka · Migrazione Dati Completa</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    body {
-      background: #0a0f1a;
-      color: #e2e8f0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .container {
-      max-width: 800px;
-      width: 100%;
-      background: #141b2b;
-      border: 1px solid #2a344a;
-      border-radius: 24px;
-      padding: 30px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
-    h1 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, #7c6fff, #00e5ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .sub {
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-    .card {
-      background: #1e273a;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #2a344a;
-    }
-    .card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #cbd5e1;
-    }
-    .card-title i {
-      color: #7c6fff;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .stat-item {
-      background: #0a0f1a;
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-      border: 1px solid #2a344a;
-    }
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #7c6fff;
-    }
-    .stat-label {
-      font-size: 11px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 4px;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 24px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-      background: #2a344a;
-      color: #cbd5e1;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #7c6fff, #00e5ff);
-      color: white;
-      box-shadow: 0 4px 20px rgba(124, 111, 255, 0.3);
-    }
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(124, 111, 255, 0.5);
-    }
-    .btn-danger {
-      background: #ff6b6b;
-      color: white;
-    }
-    .btn-danger:hover:not(:disabled) {
-      background: #ff5252;
-    }
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-    .progress-bar {
-      height: 8px;
-      background: #0a0f1a;
-      border-radius: 20px;
-      overflow: hidden;
-      margin: 16px 0;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #7c6fff, #00e5ff);
-      width: 0%;
-      transition: width 0.3s;
-    }
-    .log {
-      background: #0a0f1a;
-      border-radius: 12px;
-      padding: 16px;
-      max-height: 300px;
-      overflow-y: auto;
-      font-family: 'Menlo', monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      border: 1px solid #2a344a;
-    }
-    .log-line {
-      display: flex;
-      gap: 8px;
-      padding: 4px 0;
-      border-bottom: 1px solid #1e273a;
-    }
-    .log-line:last-child {
-      border-bottom: none;
-    }
-    .log-info { color: #7c6fff; }
-    .log-success { color: #00e5a0; }
-    .log-warning { color: #fbbf24; }
-    .log-error { color: #ff6b6b; }
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 12px 0;
-      font-size: 14px;
-    }
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: #7c6fff;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #2a344a;
-      margin: 20px 0;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+    body { background:#0a0f1a; color:#e2e8f0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .container { max-width:900px; width:100%; background:#141b2b; border:1px solid #2a344a; border-radius:24px; padding:30px; box-shadow:0 20px 40px rgba(0,0,0,0.5); }
+    h1 { font-size:28px; font-weight:700; margin-bottom:8px; background:linear-gradient(135deg,#7c6fff,#00e5ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .sub { color:#94a3b8; font-size:14px; margin-bottom:30px; }
+    .card { background:#1e273a; border-radius:16px; padding:20px; margin-bottom:20px; border:1px solid #2a344a; }
+    .card-title { font-size:16px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; color:#cbd5e1; }
+    .card-title i { color:#7c6fff; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:16px; }
+    .stat-item { background:#0a0f1a; border-radius:12px; padding:12px; text-align:center; border:1px solid #2a344a; }
+    .stat-value { font-size:24px; font-weight:700; color:#7c6fff; }
+    .stat-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-top:4px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; border-radius:40px; font-weight:600; font-size:14px; cursor:pointer; border:none; transition:all 0.2s; background:#2a344a; color:#cbd5e1; }
+    .btn-primary { background:linear-gradient(135deg,#7c6fff,#00e5ff); color:white; box-shadow:0 4px 20px rgba(124,111,255,0.3); }
+    .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 28px rgba(124,111,255,0.5); }
+    .btn-danger { background:#ff6b6b; color:white; }
+    .btn-danger:hover:not(:disabled) { background:#ff5252; }
+    .btn:disabled { opacity:0.4; cursor:not-allowed; }
+    .progress-bar { height:8px; background:#0a0f1a; border-radius:20px; overflow:hidden; margin:16px 0; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,#7c6fff,#00e5ff); width:0%; transition:width 0.3s; }
+    .log { background:#0a0f1a; border-radius:12px; padding:16px; max-height:300px; overflow-y:auto; font-family:monospace; font-size:12px; line-height:1.6; border:1px solid #2a344a; }
+    .log-line { display:flex; gap:8px; padding:4px 0; border-bottom:1px solid #1e273a; }
+    .log-info { color:#7c6fff; }
+    .log-success { color:#00e5a0; }
+    .log-warning { color:#fbbf24; }
+    .log-error { color:#ff6b6b; }
+    .checkbox-group { display:flex; align-items:center; gap:8px; margin:12px 0; font-size:14px; }
+    input[type="checkbox"] { width:18px; height:18px; accent-color:#7c6fff; }
+    hr { border:none; border-top:1px solid #2a344a; margin:20px 0; }
   </style>
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 <div class="container">
   <h1>💾 Kazka · Migrazione Dati</h1>
-  <div class="sub">Sposta i tuoi dati dalla vecchia struttura piatta alla nuova organizzazione per utente</div>
+  <div class="sub">Sposta i dati dalla vecchia struttura piatta (transactions, bills, trips, goals, chats, reminders, ...) nella nuova organizzazione per utente</div>
 
-  <!-- STEP 1: ANALISI -->
   <div class="card">
     <div class="card-title"><i class="fas fa-search"></i> 1. Analisi database</div>
-    <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">🔍 Analizza nodi esistenti</button>
-    <div id="statsContainer" style="display: none; margin-top: 20px;">
+    <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">🔍 Analizza tutti i nodi</button>
+    <div id="statsContainer" style="display:none; margin-top:20px;">
       <div class="stats-grid" id="statsGrid"></div>
+      <div id="userList" style="margin-top:12px; font-size:13px; color:#94a3b8;"></div>
     </div>
   </div>
 
-  <!-- STEP 2: OPZIONI MIGRAZIONE -->
   <div class="card">
     <div class="card-title"><i class="fas fa-cog"></i> 2. Opzioni migrazione</div>
-    <div class="checkbox-group">
-      <input type="checkbox" id="migrateBiz" checked>
-      <label for="migrateBiz">Includi dati business (clienti, preventivi, progetti, note spese)</label>
-    </div>
     <div class="checkbox-group">
       <input type="checkbox" id="dryRun" checked>
       <label for="dryRun">🚧 Simulazione (dry run) – non scrive su Firebase</label>
     </div>
   </div>
 
-  <!-- STEP 3: MIGRAZIONE -->
   <div class="card">
     <div class="card-title"><i class="fas fa-sync-alt"></i> 3. Esegui migrazione</div>
     <button class="btn btn-primary" id="migrateBtn" onclick="migrate()" disabled>▶ Avvia migrazione</button>
-    <div class="progress-bar" id="progressContainer" style="display: none;">
+    <div class="progress-bar" id="progressContainer" style="display:none;">
       <div class="progress-fill" id="progressFill"></div>
     </div>
   </div>
 
-  <!-- STEP 4: PULIZIA (opzionale) -->
   <div class="card">
     <div class="card-title"><i class="fas fa-trash-alt"></i> 4. Pulizia vecchi dati (dopo verifica)</div>
     <button class="btn btn-danger" id="cleanupBtn" onclick="cleanup()" disabled>🗑️ Elimina nodi originali</button>
-    <div style="font-size: 12px; color: #fbbf24; margin-top: 8px;">
-      ⚠️ Questa operazione rimuove definitivamente i dati dalla vecchia struttura. Fallo solo dopo aver verificato che la migrazione è andata a buon fine.
-    </div>
+    <div style="font-size:12px; color:#fbbf24; margin-top:8px;">⚠️ Rimuove definitivamente i dati dalla vecchia struttura. Fallo solo dopo aver verificato.</div>
   </div>
 
   <hr>
-
-  <!-- LOG -->
   <div class="log" id="log">
     <div class="log-line"><span class="log-info">ℹ️</span> <span>Pronto. Clicca "Analizza database" per iniziare.</span></div>
   </div>
 </div>
-
-<!-- Font Awesome per icone (opzionale) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-  // ==================== CONFIGURAZIONE FIREBASE ====================
   const firebaseConfig = {
     apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
     authDomain: "financeapp-556ae.firebaseapp.com",
     databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "financeapp-556ae",
-    storageBucket: "financeapp-556ae.firebasestorage.app",
-    messagingSenderId: "181987533980",
+    storageBucket: "financeapp-556ae.appspot.com",
     appId: "1:181987533980:web:41c5032990ccede17eb959"
   };
-
-  // Inizializza Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // ==================== STATO GLOBALE ====================
-  let analysis = {
-    users: [],                 // array di userId univoci trovati
-    nodes: {},                 // per ogni nodo, array di record
-    stats: {}                  // conteggi per tipo
-  };
-  let migrationDone = false;
-
-  // Nodi da migrare (sempre)
-  const STANDARD_NODES = ['transactions', 'bills', 'utilities', 'trips', 'recurring', 'goals', 'budgets'];
-
-  // Nodi business (opzionali)
-  const BUSINESS_NODES = [
-    { src: 'clients', dest: 'biz/clients' },
-    { src: 'quotes', dest: 'biz/quotes' },
-    { src: 'projects', dest: 'biz/projects' },
-    { src: 'expenseNotes', dest: 'biz/expenseNotes' },
-    { src: 'bizTransactions', dest: 'biz/transactions' } // se usato
+  // Nodi da migrare: tutti quelli che potrebbero contenere dati piatti
+  // Aggiungi o rimuovi in base alla tua struttura
+  const NODI_PIATTI = [
+    'transactions',
+    'bills',
+    'utilities',
+    'trips',
+    'recurring',
+    'goals',
+    'budgets',
+    'chats',
+    'reminders',
+    'clients',
+    'quotes',
+    'projects',
+    'expenseNotes',
+    'bizTransactions'
   ];
 
-  // ==================== UTILITIES ====================
-  function log(msg, type = 'info') {
-    const logDiv = document.getElementById('log');
+  let analysis = { nodes: {}, stats: {}, users: new Set() };
+  let migrationDone = false;
+
+  function log(msg, type='info') {
+    const div = document.getElementById('log');
     const line = document.createElement('div');
     line.className = 'log-line';
-    let icon = 'ℹ️';
-    if (type === 'success') icon = '✅';
-    else if (type === 'warning') icon = '⚠️';
-    else if (type === 'error') icon = '❌';
-    line.innerHTML = `<span class="log-${type}">${icon}</span> <span>${msg}</span>`;
-    logDiv.appendChild(line);
-    logDiv.scrollTop = logDiv.scrollHeight;
+    line.innerHTML = `<span class="log-${type}">${type==='info'?'ℹ️':type==='success'?'✅':type==='warning'?'⚠️':'❌'}</span> <span>${msg}</span>`;
+    div.appendChild(line);
+    div.scrollTop = div.scrollHeight;
   }
 
-  function setProgress(percent) {
-    document.getElementById('progressFill').style.width = percent + '%';
+  function setProgress(p) {
+    document.getElementById('progressFill').style.width = p + '%';
   }
 
-  function enableButtons(analyze = true, migrate = true, cleanup = true) {
+  function enableButtons(analyze, migrate, cleanup) {
     document.getElementById('analyzeBtn').disabled = !analyze;
     document.getElementById('migrateBtn').disabled = !migrate;
     document.getElementById('cleanupBtn').disabled = !cleanup;
   }
 
-  // ==================== ANALISI ====================
   async function analyze() {
     log('🔍 Analisi database in corso...', 'info');
     enableButtons(false, false, false);
     document.getElementById('statsContainer').style.display = 'none';
+    analysis = { nodes: {}, stats: {}, users: new Set() };
 
     try {
-      // Legge tutti i nodi standard e business (se esistono)
-      const nodesToCheck = [...STANDARD_NODES, ...BUSINESS_NODES.map(b => b.src)];
-      const snapshots = await Promise.all(
-        nodesToCheck.map(async (node) => {
-          const snap = await db.ref(node).once('value');
-          return { node, data: snap.val() || {} };
-        })
-      );
-
-      // Costruisce mappa userId -> conteggi
-      const userMap = new Map();  // userId -> set di tipi
-      analysis.nodes = {};
-      analysis.stats = {};
-
-      for (let { node, data } of snapshots) {
-        const entries = Object.entries(data);
-        if (entries.length === 0) continue;
-
-        analysis.nodes[node] = entries.map(([id, val]) => ({ id, ...val }));
-        analysis.stats[node] = entries.length;
-
-        // Estrae userId da ogni record (se presente)
-        entries.forEach(([_, val]) => {
-          if (val.userId) {
-            if (!userMap.has(val.userId)) userMap.set(val.userId, new Set());
-            userMap.get(val.userId).add(node);
+      // Legge tutti i nodi piatti
+      for (let node of NODI_PIATTI) {
+        const snap = await db.ref(node).once('value');
+        const data = snap.val();
+        if (data && typeof data === 'object') {
+          const entries = Object.entries(data);
+          if (entries.length > 0) {
+            analysis.nodes[node] = entries.map(([id, val]) => ({ id, ...val }));
+            analysis.stats[node] = entries.length;
+            // Estrae userId
+            entries.forEach(([_, val]) => {
+              if (val.userId) analysis.users.add(val.userId);
+            });
           }
-        });
+        }
       }
-
-      analysis.users = Array.from(userMap.keys());
 
       // Mostra statistiche
       const statsGrid = document.getElementById('statsGrid');
@@ -347,117 +169,92 @@
           </div>
         `;
       }
-      if (analysis.users.length > 0) {
-        statsGrid.innerHTML += `
-          <div class="stat-item">
-            <div class="stat-value">${analysis.users.length}</div>
-            <div class="stat-label">utenti coinvolti</div>
-          </div>
-        `;
-      }
-
+      const userList = document.getElementById('userList');
+      userList.innerHTML = `<strong>Utenti coinvolti (${analysis.users.size}):</strong> ${Array.from(analysis.users).join(', ')}`;
       document.getElementById('statsContainer').style.display = 'block';
 
       if (Object.keys(analysis.stats).length === 0) {
         log('Nessun dato da migrare trovato.', 'warning');
         enableButtons(true, false, false);
       } else {
-        log(`Trovati dati in ${Object.keys(analysis.stats).length} nodi.`, 'success');
+        log(`Trovati dati in ${Object.keys(analysis.stats).length} nodi, per ${analysis.users.size} utenti.`, 'success');
         enableButtons(true, true, false);
       }
-
     } catch (e) {
-      log('Errore durante l\'analisi: ' + e.message, 'error');
+      log('Errore analisi: ' + e.message, 'error');
       enableButtons(true, false, false);
     }
   }
 
-  // ==================== MIGRAZIONE ====================
   async function migrate() {
     const dryRun = document.getElementById('dryRun').checked;
-    const includeBiz = document.getElementById('migrateBiz').checked;
-
     log(`🚀 Avvio migrazione (${dryRun ? 'SIMULAZIONE' : 'REALE'})...`, 'info');
     enableButtons(false, false, false);
     document.getElementById('progressContainer').style.display = 'block';
     setProgress(0);
 
-    // Prepara lista nodi da migrare
-    const nodesToMigrate = [...STANDARD_NODES];
-    if (includeBiz) {
-      BUSINESS_NODES.forEach(b => nodesToMigrate.push(b.src));
-    }
+    let totalRecords = Object.values(analysis.stats).reduce((a,b)=>a+b,0);
+    let processed = 0, success = 0, errors = 0, skipped = 0;
 
-    // Filtra solo quelli con dati
-    const activeNodes = nodesToMigrate.filter(node => analysis.stats[node] > 0);
-    const totalRecords = activeNodes.reduce((acc, node) => acc + analysis.stats[node], 0);
-    let processed = 0;
-
-    let successCount = 0;
-    let errorCount = 0;
-    let skippedCount = 0;
-
-    for (let node of activeNodes) {
-      const records = analysis.nodes[node] || [];
+    for (let [node, records] of Object.entries(analysis.nodes)) {
       log(`Migro ${records.length} record da "${node}"...`, 'info');
-
       for (let rec of records) {
         try {
           const userId = rec.userId;
           if (!userId) {
             log(`Record ${rec.id} in ${node} senza userId, saltato.`, 'warning');
-            skippedCount++;
+            skipped++;
             processed++;
-            setProgress((processed / totalRecords) * 100);
+            setProgress((processed/totalRecords)*100);
             continue;
           }
 
-          // Determina percorso di destinazione
+          // Costruisce percorso destinazione
           let destPath;
-          if (STANDARD_NODES.includes(node)) {
-            destPath = `users/${userId}/${node}/${rec.id}`;
+          if (node === 'chats') {
+            // chats sono per gruppo, non per utente? Dipende dalla struttura
+            // Se hanno groupId, li lasciamo dove sono? Oppure li spostiamo sotto groups/[groupId]/messages
+            // Per ora li ignoriamo, ma possiamo decidere
+            log(`Chats non ancora gestite, saltato.`, 'warning');
+            skipped++;
+            processed++;
+            setProgress((processed/totalRecords)*100);
+            continue;
+          } else if (node === 'reminders') {
+            destPath = `users/${userId}/reminders/${rec.id}`;
+          } else if (node === 'goals') {
+            destPath = `users/${userId}/goals/${rec.id}`;
+          } else if (node === 'budgets') {
+            destPath = `users/${userId}/budgets/${rec.id}`;
+          } else if (node === 'clients' || node === 'quotes' || node === 'projects' || node === 'expenseNotes' || node === 'bizTransactions') {
+            destPath = `users/${userId}/biz/${node}/${rec.id}`;
           } else {
-            // Nodo business: cerca la mappatura
-            const bizMap = BUSINESS_NODES.find(b => b.src === node);
-            if (bizMap) {
-              destPath = `users/${userId}/${bizMap.dest}/${rec.id}`;
-            } else {
-              // Se non mappato, salta
-              log(`Nodo business ${node} non mappato, saltato.`, 'warning');
-              skippedCount++;
-              processed++;
-              setProgress((processed / totalRecords) * 100);
-              continue;
-            }
+            destPath = `users/${userId}/${node}/${rec.id}`;
           }
 
-          // Prepara dati (rimuovi userId per evitare duplicati, ma lo lasciamo per sicurezza)
           const { id, userId: _, ...data } = rec;
 
           if (!dryRun) {
             await db.ref(destPath).set(data);
           } else {
-            // In simulazione, logghiamo solo
-            log(`[SIMULAZIONE] ${destPath}`, 'info');
+            log(`[SIM] ${destPath}`, 'info');
           }
-
-          successCount++;
+          success++;
         } catch (e) {
-          log(`Errore migrazione record ${rec.id} in ${node}: ${e.message}`, 'error');
-          errorCount++;
+          log(`Errore su ${node}/${rec.id}: ${e.message}`, 'error');
+          errors++;
         }
-
         processed++;
-        setProgress((processed / totalRecords) * 100);
+        setProgress((processed/totalRecords)*100);
       }
     }
 
     setProgress(100);
-    log(`✅ Migrazione completata. Successi: ${successCount}, Errori: ${errorCount}, Saltati: ${skippedCount}`, errorCount > 0 ? 'warning' : 'success');
+    log(`✅ Migrazione completata. Successi: ${success}, Errori: ${errors}, Saltati: ${skipped}`, errors>0?'warning':'success');
 
-    if (!dryRun && errorCount === 0) {
+    if (!dryRun && errors === 0) {
       migrationDone = true;
-      enableButtons(true, false, true);  // abilita analisi e cleanup
+      enableButtons(true, false, true);
     } else if (dryRun) {
       log('🔍 Simulazione terminata. Se tutto OK, togli la spunta "Simulazione" e avvia la migrazione reale.', 'info');
       enableButtons(true, true, false);
@@ -466,43 +263,30 @@
     }
   }
 
-  // ==================== PULIZIA ====================
   async function cleanup() {
-    if (!migrationDone && !confirm('Sei sicuro? La migrazione non è stata completata o ci sono errori. Continuare?')) {
-      return;
-    }
-    if (!confirm('🚨 STAI PER ELIMINARE DEFINITIVAMENTE I VECCHI DATI. Sei sicuro?')) {
-      return;
-    }
+    if (!migrationDone && !confirm('Migrazione non completata o con errori. Continuare?')) return;
+    if (!confirm('🚨 ELIMINARE DEFINITIVAMENTE I VECCHI DATI? Sei sicuro?')) return;
 
     log('🗑️ Pulizia nodi originali...', 'info');
     enableButtons(false, false, false);
 
-    const includeBiz = document.getElementById('migrateBiz').checked;
-    const nodesToDelete = [...STANDARD_NODES];
-    if (includeBiz) {
-      BUSINESS_NODES.forEach(b => nodesToDelete.push(b.src));
-    }
-    const activeNodes = nodesToDelete.filter(node => analysis.stats[node] > 0);
-
     try {
-      for (let node of activeNodes) {
+      for (let node of Object.keys(analysis.stats)) {
+        if (node === 'chats') continue; // eventualmente mantieni chats
         log(`Elimino nodo "${node}"...`, 'info');
         await db.ref(node).remove();
       }
-      log('✅ Pulizia completata. Tutti i vecchi nodi sono stati rimossi.', 'success');
-      // Reset analisi
-      analysis = { users: [], nodes: {}, stats: {} };
+      log('✅ Pulizia completata. Vecchi nodi rimossi.', 'success');
+      analysis = { nodes: {}, stats: {}, users: new Set() };
       document.getElementById('statsContainer').style.display = 'none';
       migrationDone = false;
       enableButtons(true, false, false);
     } catch (e) {
-      log('Errore durante la pulizia: ' + e.message, 'error');
+      log('Errore pulizia: ' + e.message, 'error');
       enableButtons(true, false, true);
     }
   }
 
-  // Esponi funzioni globali
   window.analyze = analyze;
   window.migrate = migrate;
   window.cleanup = cleanup;

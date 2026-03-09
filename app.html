@@ -84,9 +84,30 @@
       </p>
     </div>
   </div>
-  
+
+  <!-- ============================================ -->
+  <!-- FIREBASE SDK — DEVE ESSERE PRIMO DI TUTTO   -->
+  <!-- ============================================ -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- FIREBASE CONFIG (inizializzazione + db globale) -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
+      authDomain: "financeapp-556ae.firebaseapp.com",
+      databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "financeapp-556ae",
+      appId: "1:181987533980:web:41c5032990ccede17eb959"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();   // var → globale, visibile da tutti i moduli
+    console.log('✅ Firebase SDK + db inizializzati');
+  </script>
+
   <!-- MODULI JAVASCRIPT -->
-  
+
   <!-- 1. CONFIGURATION -->
   <script src="modules/01-config.js"></script>
   
@@ -114,12 +135,7 @@
   
   <!-- 6. INITIALIZATION -->
   <script src="modules/99-init.js"></script>
-  
-  <!-- FIREBASE SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  
+
   <!-- ERROR HANDLER -->
   <script>
     window.addEventListener('error', (e) => {

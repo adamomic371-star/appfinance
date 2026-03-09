@@ -9,9 +9,9 @@
 <meta name="apple-mobile-web-app-title" content="Kazka">
 <meta name="application-name" content="Kazka">
 <meta name="theme-color" content="#070b18">
-
-
-
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>Kazka – Finance</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
@@ -781,25 +781,6 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   .qt-line{grid-template-columns:1fr 60px 60px 50px 28px;gap:4px}
 }
 </style>
-
-<!-- Fix SVG errors on GH Pages -->
-<script>
-// Intercept console errors per SVG per non mostrarli
-const originalError = console.error;
-console.error = function(...args) {
-  const msg = args.join(' ');
-  if (msg.includes('SVG') || msg.includes('attribute') || msg.includes('Expected')) {
-    return; // Silent fail per SVG
-  }
-  originalError.apply(console, args);
-};
-
-// Fix per template literals non interpolati
-if (typeof window !== 'undefined') {
-  window.onbeforeunload = null;
-}
-</script>
-
 </head>
 <body>
 
@@ -1637,11 +1618,11 @@ function kazkaLogoSVG(size,glow){
   var pts='';for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';}
   var uid='kz'+(Math.random()*99999|0);
   var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.28|0)+'px rgba(108,77,255,0.65));':'';
-// REMOVED -   return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
     +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
     +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
     +'</linearGradient></defs>'
-// REMOVED -     +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
+    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
     +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
     +'</svg>';
 }
@@ -3435,26 +3416,7 @@ function exportQuotePDF(){
     td{padding:8px 10px;font-size:12px;border:1px solid #eee;vertical-align:middle}
     .qt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #6c63ff}
     @media print{body{padding:0}}
-  </style>
-<!-- Fix SVG errors on GH Pages -->
-<script>
-// Intercept console errors per SVG per non mostrarli
-const originalError = console.error;
-console.error = function(...args) {
-  const msg = args.join(' ');
-  if (msg.includes('SVG') || msg.includes('attribute') || msg.includes('Expected')) {
-    return; // Silent fail per SVG
-  }
-  originalError.apply(console, args);
-};
-
-// Fix per template literals non interpolati
-if (typeof window !== 'undefined') {
-  window.onbeforeunload = null;
-}
-</script>
-
-</head><body>`);
+  </style></head><body>`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`</body></html>`);
   printWin.document.close();
@@ -3610,8 +3572,8 @@ function renderReport(con,bal){
         }).join(' ');
         const first=pts.split(' ')[0];const last=pts.split(' ').pop();
         const fx=first.split(',')[0];const lx=last.split(',')[0];
-        return `<polyline points="${pts}" fill="none" stroke="${bal>=0?'#00e5a0':'#ff4f6d'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <polygon points="${fx},80 ${pts} ${lx},80" fill="url(#balGrad)"/>`;
+// REMOVED -         return `<polyline points="${pts}" fill="none" stroke="${bal>=0?'#00e5a0':'#ff4f6d'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+// REMOVED -         <polygon points="${fx},80 ${pts} ${lx},80" fill="url(#balGrad)"/>`;
       })()}
     </svg>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-top:4px">

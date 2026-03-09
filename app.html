@@ -915,6 +915,65 @@ body.biz-mode .topbar::after{content:'';position:absolute;bottom:0;left:0;right:
   animation: splashFadeOut 0.6s ease forwards;
 }
 </style>
+<style>
+/* LIGHT MODE SUPPORT */
+:root[data-theme="light"] {
+  --bg: #f5f5f7;
+  --bg2: #ffffff;
+  --bg3: #f9f9fb;
+  --tx: #1d1d1f;
+  --tx2: #666666;
+  --tx3: #999999;
+}
+
+.theme-toggle {
+  cursor: pointer;
+  padding: 8px 12px;
+  background: rgba(255, 244, 255, 0.08);
+  border: 1px solid rgba(255, 244, 255, 0.1);
+  border-radius: 8px;
+  color: var(--tx);
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 244, 255, 0.12);
+}
+</style>
+<style>
+/* LOADING STATES */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(108, 99, 255, 0.2);
+  border-top-color: var(--ac);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ac), var(--ac2));
+  animation: slideRight 0.6s ease-out;
+  z-index: 9998;
+}
+
+@keyframes slideRight {
+  from { width: 0; }
+  to { width: 100%; }
+}
+</style>
 </head>
 <body>
 
@@ -1830,6 +1889,391 @@ window.addEventListener('load', () => {
 
 console.log('✅ Kazka app initialized - Splash handler ready');
 
+
+
+// ===== ERROR HANDLING & UTILITIES =====
+let lastError = null;
+let requestQueue = [];
+let isOnline = true;
+
+// Monitor online/offline
+window.addEventListener('online', () => {
+  isOnline = true;
+  console.log('✅ Online - Syncing queued data...');
+  updateSyncIndicator('syncing');
+  syncQueuedData();
+});
+
+window.addEventListener('offline', () => {
+  isOnline = false;
+  console.log('⚠️ Offline - Data will sync when online');
+  showNotification('📡 Offline mode - Changes will sync automatically', 'warning');
+});
+
+// Data validation
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateNumber(value) {
+  return !isNaN(value) && value !== '';
+}
+
+function sanitizeInput(input) {
+  const div = document.createElement('div');
+  div.textContent = input;
+  return div.innerHTML;
+}
+
+// Error handler with retry
+async function withRetry(fn, retries = 3, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (i === retries - 1) throw err;
+      console.warn(\`Retry \${i + 1}/\${retries} in \${delay}ms...\`);
+      await new Promise(r => setTimeout(r, delay));
+      delay *= 2; // exponential backoff
+    }
+  }
+}
+
+// Safe Firebase operations
+async function safeDbUpdate(path, data) {
+  if (!db || !user) return;
+  
+  try {
+    await withRetry(async () => {
+      return db.ref(path).update(data);
+    });
+    return true;
+  } catch (err) {
+    console.error('❌ Firebase update failed:', err);
+    showNotification('❌ Sync error - ' + err.message, 'error');
+    addToSyncQueue(path, data);
+    return false;
+  }
+}
+
+// Sync queue for offline support
+function addToSyncQueue(path, data) {
+  requestQueue.push({path, data, timestamp: Date.now()});
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+  console.log('📋 Added to sync queue, total:', requestQueue.length);
+}
+
+function loadSyncQueue() {
+  const queue = localStorage.getItem('fp_sync_queue_' + user.id);
+  if (queue) requestQueue = JSON.parse(queue);
+}
+
+async function syncQueuedData() {
+  if (!isOnline || !user || requestQueue.length === 0) return;
+  
+  console.log('🔄 Syncing queued data:', requestQueue.length);
+  const toRemove = [];
+  
+  for (const item of requestQueue) {
+    try {
+      await db.ref(item.path).update(item.data);
+      toRemove.push(item.timestamp);
+      console.log('✅ Synced queued:', item.path);
+    } catch (err) {
+      console.error('Failed to sync queued:', err);
+    }
+  }
+  
+  requestQueue = requestQueue.filter(i => !toRemove.includes(i.timestamp));
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+}
+
+// Debounce helper
+function debounce(fn, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Rate limiting
+class RateLimiter {
+  constructor(maxRequests = 5, windowMs = 1000) {
+    this.maxRequests = maxRequests;
+    this.windowMs = windowMs;
+    this.requests = [];
+  }
+  
+  isAllowed() {
+    const now = Date.now();
+    this.requests = this.requests.filter(t => now - t < this.windowMs);
+    
+    if (this.requests.length < this.maxRequests) {
+      this.requests.push(now);
+      return true;
+    }
+    return false;
+  }
+}
+
+const syncLimiter = new RateLimiter(5, 2000);
+
+// Toast notifications (improved)
+function showNotification(msg, type = 'success', duration = 3000) {
+  const n = document.createElement('div');
+  const bgColor = {
+    success: 'rgba(0, 229, 160, 0.9)',
+    error: 'rgba(255, 79, 109, 0.9)',
+    warning: 'rgba(255, 209, 102, 0.9)',
+    info: 'rgba(0, 212, 255, 0.9)'
+  }[type] || 'rgba(0, 229, 160, 0.9)';
+  
+  n.style.cssText = \`
+    position: fixed; bottom: 20px; right: 20px; 
+    background: \${bgColor};
+    color: #fff; padding: 14px 18px;
+    border-radius: 12px; font-size: 11px; font-weight: 600;
+    z-index: 1000; animation: slideUp 0.3s ease;
+    max-width: 300px;
+  \`;
+  n.textContent = msg;
+  document.body.appendChild(n);
+  
+  setTimeout(() => {
+    n.style.opacity = '0';
+    n.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => n.remove(), 300);
+  }, duration);
+}
+
+console.log('✅ Error handling & utilities loaded');
+
+
+
+// ===== BACKUP & EXPORT =====
+function exportDataAsJSON() {
+  try {
+    const data = {
+      exported: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+    };
+    
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-backup-\${new Date().toISOString().split('T')[0]}.json\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ Backup scaricato in JSON', 'success');
+    console.log('✅ JSON backup created');
+  } catch (err) {
+    console.error('Export error:', err);
+    showNotification('❌ Errore backup', 'error');
+  }
+}
+
+function exportDataAsCSV() {
+  try {
+    const txs = loadTransactions?.() || [];
+    const rows = [['Data', 'Descrizione', 'Tipo', 'Importo']];
+    
+    txs.forEach(t => {
+      rows.push([
+        t.date || '',
+        sanitizeInput(t.desc || ''),
+        t.type || '',
+        (t.amt || 0).toFixed(2)
+      ]);
+    });
+    
+    const csv = rows.map(r => r.map(v => \`"\${v}"\`).join(',')).join('\n');
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-transazioni-\${new Date().toISOString().split('T')[0]}.csv\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ CSV scaricato', 'success');
+  } catch (err) {
+    console.error('CSV export error:', err);
+    showNotification('❌ Errore export CSV', 'error');
+  }
+}
+
+function importDataFromJSON(file) {
+  try {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = JSON.parse(e.target.result);
+      
+      if (data.goals) localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+      if (data.transactions) localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+      if (data.recurring) localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+      
+      showNotification('✅ Dati importati con successo', 'success');
+      location.reload();
+    };
+    reader.readAsText(file);
+  } catch (err) {
+    console.error('Import error:', err);
+    showNotification('❌ Errore import - File invalido', 'error');
+  }
+}
+
+console.log('✅ Backup & Export functions loaded');
+
+
+
+// ===== THEME SUPPORT =====
+function initTheme() {
+  const savedTheme = localStorage.getItem('fp_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  console.log('🎨 Theme:', savedTheme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('fp_theme', next);
+  
+  showNotification('🎨 Theme: ' + (next === 'dark' ? 'Dark' : 'Light'), 'info');
+  console.log('🎨 Theme changed to:', next);
+}
+
+window.addEventListener('load', initTheme);
+
+console.log('✅ Theme support loaded');
+
+
+
+// ===== SETTINGS & PREFERENCES =====
+class UserSettings {
+  constructor(userId) {
+    this.userId = userId;
+    this.key = 'fp_settings_' + userId;
+  }
+  
+  load() {
+    const settings = localStorage.getItem(this.key);
+    return settings ? JSON.parse(settings) : this.defaults();
+  }
+  
+  defaults() {
+    return {
+      theme: 'dark',
+      notifications: true,
+      autoSync: true,
+      currency: 'EUR',
+      language: 'it',
+      timeFormat: '24h',
+    };
+  }
+  
+  save(settings) {
+    localStorage.setItem(this.key, JSON.stringify(settings));
+  }
+  
+  get(key) {
+    return this.load()[key];
+  }
+  
+  set(key, value) {
+    const settings = this.load();
+    settings[key] = value;
+    this.save(settings);
+  }
+}
+
+let userSettings = null;
+
+function initSettings() {
+  if (typeof user !== 'undefined' && user) {
+    userSettings = new UserSettings(user.id);
+    console.log('✅ User settings initialized');
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(initSettings, 100);
+});
+
+console.log('✅ Settings system loaded');
+
+
+
+// ===== IMPROVED SYNC WITH DEBOUNCE & VALIDATION =====
+const debouncedSync = debounce(async () => {
+  if (!isOnline) {
+    console.log('⚠️ Offline - queueing sync');
+    return;
+  }
+  
+  if (!syncLimiter.isAllowed()) {
+    console.log('⚠️ Rate limit - too many requests');
+    return;
+  }
+  
+  updateSyncIndicator('syncing');
+  
+  try {
+    const data = {
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+      lastSync: new Date().toISOString(),
+    };
+    
+    await safeDbUpdate('users/' + user.id, data);
+    updateSyncIndicator('synced', new Date().toISOString());
+  } catch (err) {
+    console.error('Sync error:', err);
+    updateSyncIndicator('error');
+  }
+}, 1000);
+
+// Override sync functions dengan debounce
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    try {
+      if (!Array.isArray(goals)) throw new Error('Invalid goals format');
+      originalSaveGoals.apply(this, arguments);
+      debouncedSync();
+    } catch (err) {
+      console.error('Save goals error:', err);
+      showNotification('❌ ' + err.message, 'error');
+    }
+  };
+}
+
+console.log('✅ Improved sync loaded');
+
+
+
+// ===== INITIALIZE ON APP START =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (user) {
+      loadSyncQueue();
+      syncQueuedData();
+    }
+  }, 1500);
+});
+
+console.log('✅ App initialization complete');
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
 
@@ -2066,6 +2510,391 @@ window.addEventListener('load', () => {
 });
 
 console.log('✅ Kazka app initialized - Splash handler ready');
+
+
+
+// ===== ERROR HANDLING & UTILITIES =====
+let lastError = null;
+let requestQueue = [];
+let isOnline = true;
+
+// Monitor online/offline
+window.addEventListener('online', () => {
+  isOnline = true;
+  console.log('✅ Online - Syncing queued data...');
+  updateSyncIndicator('syncing');
+  syncQueuedData();
+});
+
+window.addEventListener('offline', () => {
+  isOnline = false;
+  console.log('⚠️ Offline - Data will sync when online');
+  showNotification('📡 Offline mode - Changes will sync automatically', 'warning');
+});
+
+// Data validation
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateNumber(value) {
+  return !isNaN(value) && value !== '';
+}
+
+function sanitizeInput(input) {
+  const div = document.createElement('div');
+  div.textContent = input;
+  return div.innerHTML;
+}
+
+// Error handler with retry
+async function withRetry(fn, retries = 3, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (i === retries - 1) throw err;
+      console.warn(\`Retry \${i + 1}/\${retries} in \${delay}ms...\`);
+      await new Promise(r => setTimeout(r, delay));
+      delay *= 2; // exponential backoff
+    }
+  }
+}
+
+// Safe Firebase operations
+async function safeDbUpdate(path, data) {
+  if (!db || !user) return;
+  
+  try {
+    await withRetry(async () => {
+      return db.ref(path).update(data);
+    });
+    return true;
+  } catch (err) {
+    console.error('❌ Firebase update failed:', err);
+    showNotification('❌ Sync error - ' + err.message, 'error');
+    addToSyncQueue(path, data);
+    return false;
+  }
+}
+
+// Sync queue for offline support
+function addToSyncQueue(path, data) {
+  requestQueue.push({path, data, timestamp: Date.now()});
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+  console.log('📋 Added to sync queue, total:', requestQueue.length);
+}
+
+function loadSyncQueue() {
+  const queue = localStorage.getItem('fp_sync_queue_' + user.id);
+  if (queue) requestQueue = JSON.parse(queue);
+}
+
+async function syncQueuedData() {
+  if (!isOnline || !user || requestQueue.length === 0) return;
+  
+  console.log('🔄 Syncing queued data:', requestQueue.length);
+  const toRemove = [];
+  
+  for (const item of requestQueue) {
+    try {
+      await db.ref(item.path).update(item.data);
+      toRemove.push(item.timestamp);
+      console.log('✅ Synced queued:', item.path);
+    } catch (err) {
+      console.error('Failed to sync queued:', err);
+    }
+  }
+  
+  requestQueue = requestQueue.filter(i => !toRemove.includes(i.timestamp));
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+}
+
+// Debounce helper
+function debounce(fn, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Rate limiting
+class RateLimiter {
+  constructor(maxRequests = 5, windowMs = 1000) {
+    this.maxRequests = maxRequests;
+    this.windowMs = windowMs;
+    this.requests = [];
+  }
+  
+  isAllowed() {
+    const now = Date.now();
+    this.requests = this.requests.filter(t => now - t < this.windowMs);
+    
+    if (this.requests.length < this.maxRequests) {
+      this.requests.push(now);
+      return true;
+    }
+    return false;
+  }
+}
+
+const syncLimiter = new RateLimiter(5, 2000);
+
+// Toast notifications (improved)
+function showNotification(msg, type = 'success', duration = 3000) {
+  const n = document.createElement('div');
+  const bgColor = {
+    success: 'rgba(0, 229, 160, 0.9)',
+    error: 'rgba(255, 79, 109, 0.9)',
+    warning: 'rgba(255, 209, 102, 0.9)',
+    info: 'rgba(0, 212, 255, 0.9)'
+  }[type] || 'rgba(0, 229, 160, 0.9)';
+  
+  n.style.cssText = \`
+    position: fixed; bottom: 20px; right: 20px; 
+    background: \${bgColor};
+    color: #fff; padding: 14px 18px;
+    border-radius: 12px; font-size: 11px; font-weight: 600;
+    z-index: 1000; animation: slideUp 0.3s ease;
+    max-width: 300px;
+  \`;
+  n.textContent = msg;
+  document.body.appendChild(n);
+  
+  setTimeout(() => {
+    n.style.opacity = '0';
+    n.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => n.remove(), 300);
+  }, duration);
+}
+
+console.log('✅ Error handling & utilities loaded');
+
+
+
+// ===== BACKUP & EXPORT =====
+function exportDataAsJSON() {
+  try {
+    const data = {
+      exported: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+    };
+    
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-backup-\${new Date().toISOString().split('T')[0]}.json\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ Backup scaricato in JSON', 'success');
+    console.log('✅ JSON backup created');
+  } catch (err) {
+    console.error('Export error:', err);
+    showNotification('❌ Errore backup', 'error');
+  }
+}
+
+function exportDataAsCSV() {
+  try {
+    const txs = loadTransactions?.() || [];
+    const rows = [['Data', 'Descrizione', 'Tipo', 'Importo']];
+    
+    txs.forEach(t => {
+      rows.push([
+        t.date || '',
+        sanitizeInput(t.desc || ''),
+        t.type || '',
+        (t.amt || 0).toFixed(2)
+      ]);
+    });
+    
+    const csv = rows.map(r => r.map(v => \`"\${v}"\`).join(',')).join('\n');
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-transazioni-\${new Date().toISOString().split('T')[0]}.csv\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ CSV scaricato', 'success');
+  } catch (err) {
+    console.error('CSV export error:', err);
+    showNotification('❌ Errore export CSV', 'error');
+  }
+}
+
+function importDataFromJSON(file) {
+  try {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = JSON.parse(e.target.result);
+      
+      if (data.goals) localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+      if (data.transactions) localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+      if (data.recurring) localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+      
+      showNotification('✅ Dati importati con successo', 'success');
+      location.reload();
+    };
+    reader.readAsText(file);
+  } catch (err) {
+    console.error('Import error:', err);
+    showNotification('❌ Errore import - File invalido', 'error');
+  }
+}
+
+console.log('✅ Backup & Export functions loaded');
+
+
+
+// ===== THEME SUPPORT =====
+function initTheme() {
+  const savedTheme = localStorage.getItem('fp_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  console.log('🎨 Theme:', savedTheme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('fp_theme', next);
+  
+  showNotification('🎨 Theme: ' + (next === 'dark' ? 'Dark' : 'Light'), 'info');
+  console.log('🎨 Theme changed to:', next);
+}
+
+window.addEventListener('load', initTheme);
+
+console.log('✅ Theme support loaded');
+
+
+
+// ===== SETTINGS & PREFERENCES =====
+class UserSettings {
+  constructor(userId) {
+    this.userId = userId;
+    this.key = 'fp_settings_' + userId;
+  }
+  
+  load() {
+    const settings = localStorage.getItem(this.key);
+    return settings ? JSON.parse(settings) : this.defaults();
+  }
+  
+  defaults() {
+    return {
+      theme: 'dark',
+      notifications: true,
+      autoSync: true,
+      currency: 'EUR',
+      language: 'it',
+      timeFormat: '24h',
+    };
+  }
+  
+  save(settings) {
+    localStorage.setItem(this.key, JSON.stringify(settings));
+  }
+  
+  get(key) {
+    return this.load()[key];
+  }
+  
+  set(key, value) {
+    const settings = this.load();
+    settings[key] = value;
+    this.save(settings);
+  }
+}
+
+let userSettings = null;
+
+function initSettings() {
+  if (typeof user !== 'undefined' && user) {
+    userSettings = new UserSettings(user.id);
+    console.log('✅ User settings initialized');
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(initSettings, 100);
+});
+
+console.log('✅ Settings system loaded');
+
+
+
+// ===== IMPROVED SYNC WITH DEBOUNCE & VALIDATION =====
+const debouncedSync = debounce(async () => {
+  if (!isOnline) {
+    console.log('⚠️ Offline - queueing sync');
+    return;
+  }
+  
+  if (!syncLimiter.isAllowed()) {
+    console.log('⚠️ Rate limit - too many requests');
+    return;
+  }
+  
+  updateSyncIndicator('syncing');
+  
+  try {
+    const data = {
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+      lastSync: new Date().toISOString(),
+    };
+    
+    await safeDbUpdate('users/' + user.id, data);
+    updateSyncIndicator('synced', new Date().toISOString());
+  } catch (err) {
+    console.error('Sync error:', err);
+    updateSyncIndicator('error');
+  }
+}, 1000);
+
+// Override sync functions dengan debounce
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    try {
+      if (!Array.isArray(goals)) throw new Error('Invalid goals format');
+      originalSaveGoals.apply(this, arguments);
+      debouncedSync();
+    } catch (err) {
+      console.error('Save goals error:', err);
+      showNotification('❌ ' + err.message, 'error');
+    }
+  };
+}
+
+console.log('✅ Improved sync loaded');
+
+
+
+// ===== INITIALIZE ON APP START =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (user) {
+      loadSyncQueue();
+      syncQueuedData();
+    }
+  }, 1500);
+});
+
+console.log('✅ App initialization complete');
 
 </script>
 <script>
@@ -4299,6 +5128,65 @@ function exportQuotePDF(){
   animation: splashFadeOut 0.6s ease forwards;
 }
 </style>
+<style>
+/* LIGHT MODE SUPPORT */
+:root[data-theme="light"] {
+  --bg: #f5f5f7;
+  --bg2: #ffffff;
+  --bg3: #f9f9fb;
+  --tx: #1d1d1f;
+  --tx2: #666666;
+  --tx3: #999999;
+}
+
+.theme-toggle {
+  cursor: pointer;
+  padding: 8px 12px;
+  background: rgba(255, 244, 255, 0.08);
+  border: 1px solid rgba(255, 244, 255, 0.1);
+  border-radius: 8px;
+  color: var(--tx);
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 244, 255, 0.12);
+}
+</style>
+<style>
+/* LOADING STATES */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(108, 99, 255, 0.2);
+  border-top-color: var(--ac);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ac), var(--ac2));
+  animation: slideRight 0.6s ease-out;
+  z-index: 9998;
+}
+
+@keyframes slideRight {
+  from { width: 0; }
+  to { width: 100%; }
+}
+</style>
 </head><body>`);
   printWin.document.write(area.outerHTML);
   printWin.document.write(`</body></html>`);
@@ -5950,6 +6838,391 @@ window.addEventListener('load', () => {
 
 console.log('✅ Kazka app initialized - Splash handler ready');
 
+
+
+// ===== ERROR HANDLING & UTILITIES =====
+let lastError = null;
+let requestQueue = [];
+let isOnline = true;
+
+// Monitor online/offline
+window.addEventListener('online', () => {
+  isOnline = true;
+  console.log('✅ Online - Syncing queued data...');
+  updateSyncIndicator('syncing');
+  syncQueuedData();
+});
+
+window.addEventListener('offline', () => {
+  isOnline = false;
+  console.log('⚠️ Offline - Data will sync when online');
+  showNotification('📡 Offline mode - Changes will sync automatically', 'warning');
+});
+
+// Data validation
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateNumber(value) {
+  return !isNaN(value) && value !== '';
+}
+
+function sanitizeInput(input) {
+  const div = document.createElement('div');
+  div.textContent = input;
+  return div.innerHTML;
+}
+
+// Error handler with retry
+async function withRetry(fn, retries = 3, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (i === retries - 1) throw err;
+      console.warn(\`Retry \${i + 1}/\${retries} in \${delay}ms...\`);
+      await new Promise(r => setTimeout(r, delay));
+      delay *= 2; // exponential backoff
+    }
+  }
+}
+
+// Safe Firebase operations
+async function safeDbUpdate(path, data) {
+  if (!db || !user) return;
+  
+  try {
+    await withRetry(async () => {
+      return db.ref(path).update(data);
+    });
+    return true;
+  } catch (err) {
+    console.error('❌ Firebase update failed:', err);
+    showNotification('❌ Sync error - ' + err.message, 'error');
+    addToSyncQueue(path, data);
+    return false;
+  }
+}
+
+// Sync queue for offline support
+function addToSyncQueue(path, data) {
+  requestQueue.push({path, data, timestamp: Date.now()});
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+  console.log('📋 Added to sync queue, total:', requestQueue.length);
+}
+
+function loadSyncQueue() {
+  const queue = localStorage.getItem('fp_sync_queue_' + user.id);
+  if (queue) requestQueue = JSON.parse(queue);
+}
+
+async function syncQueuedData() {
+  if (!isOnline || !user || requestQueue.length === 0) return;
+  
+  console.log('🔄 Syncing queued data:', requestQueue.length);
+  const toRemove = [];
+  
+  for (const item of requestQueue) {
+    try {
+      await db.ref(item.path).update(item.data);
+      toRemove.push(item.timestamp);
+      console.log('✅ Synced queued:', item.path);
+    } catch (err) {
+      console.error('Failed to sync queued:', err);
+    }
+  }
+  
+  requestQueue = requestQueue.filter(i => !toRemove.includes(i.timestamp));
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+}
+
+// Debounce helper
+function debounce(fn, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Rate limiting
+class RateLimiter {
+  constructor(maxRequests = 5, windowMs = 1000) {
+    this.maxRequests = maxRequests;
+    this.windowMs = windowMs;
+    this.requests = [];
+  }
+  
+  isAllowed() {
+    const now = Date.now();
+    this.requests = this.requests.filter(t => now - t < this.windowMs);
+    
+    if (this.requests.length < this.maxRequests) {
+      this.requests.push(now);
+      return true;
+    }
+    return false;
+  }
+}
+
+const syncLimiter = new RateLimiter(5, 2000);
+
+// Toast notifications (improved)
+function showNotification(msg, type = 'success', duration = 3000) {
+  const n = document.createElement('div');
+  const bgColor = {
+    success: 'rgba(0, 229, 160, 0.9)',
+    error: 'rgba(255, 79, 109, 0.9)',
+    warning: 'rgba(255, 209, 102, 0.9)',
+    info: 'rgba(0, 212, 255, 0.9)'
+  }[type] || 'rgba(0, 229, 160, 0.9)';
+  
+  n.style.cssText = \`
+    position: fixed; bottom: 20px; right: 20px; 
+    background: \${bgColor};
+    color: #fff; padding: 14px 18px;
+    border-radius: 12px; font-size: 11px; font-weight: 600;
+    z-index: 1000; animation: slideUp 0.3s ease;
+    max-width: 300px;
+  \`;
+  n.textContent = msg;
+  document.body.appendChild(n);
+  
+  setTimeout(() => {
+    n.style.opacity = '0';
+    n.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => n.remove(), 300);
+  }, duration);
+}
+
+console.log('✅ Error handling & utilities loaded');
+
+
+
+// ===== BACKUP & EXPORT =====
+function exportDataAsJSON() {
+  try {
+    const data = {
+      exported: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+    };
+    
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-backup-\${new Date().toISOString().split('T')[0]}.json\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ Backup scaricato in JSON', 'success');
+    console.log('✅ JSON backup created');
+  } catch (err) {
+    console.error('Export error:', err);
+    showNotification('❌ Errore backup', 'error');
+  }
+}
+
+function exportDataAsCSV() {
+  try {
+    const txs = loadTransactions?.() || [];
+    const rows = [['Data', 'Descrizione', 'Tipo', 'Importo']];
+    
+    txs.forEach(t => {
+      rows.push([
+        t.date || '',
+        sanitizeInput(t.desc || ''),
+        t.type || '',
+        (t.amt || 0).toFixed(2)
+      ]);
+    });
+    
+    const csv = rows.map(r => r.map(v => \`"\${v}"\`).join(',')).join('\n');
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-transazioni-\${new Date().toISOString().split('T')[0]}.csv\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ CSV scaricato', 'success');
+  } catch (err) {
+    console.error('CSV export error:', err);
+    showNotification('❌ Errore export CSV', 'error');
+  }
+}
+
+function importDataFromJSON(file) {
+  try {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = JSON.parse(e.target.result);
+      
+      if (data.goals) localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+      if (data.transactions) localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+      if (data.recurring) localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+      
+      showNotification('✅ Dati importati con successo', 'success');
+      location.reload();
+    };
+    reader.readAsText(file);
+  } catch (err) {
+    console.error('Import error:', err);
+    showNotification('❌ Errore import - File invalido', 'error');
+  }
+}
+
+console.log('✅ Backup & Export functions loaded');
+
+
+
+// ===== THEME SUPPORT =====
+function initTheme() {
+  const savedTheme = localStorage.getItem('fp_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  console.log('🎨 Theme:', savedTheme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('fp_theme', next);
+  
+  showNotification('🎨 Theme: ' + (next === 'dark' ? 'Dark' : 'Light'), 'info');
+  console.log('🎨 Theme changed to:', next);
+}
+
+window.addEventListener('load', initTheme);
+
+console.log('✅ Theme support loaded');
+
+
+
+// ===== SETTINGS & PREFERENCES =====
+class UserSettings {
+  constructor(userId) {
+    this.userId = userId;
+    this.key = 'fp_settings_' + userId;
+  }
+  
+  load() {
+    const settings = localStorage.getItem(this.key);
+    return settings ? JSON.parse(settings) : this.defaults();
+  }
+  
+  defaults() {
+    return {
+      theme: 'dark',
+      notifications: true,
+      autoSync: true,
+      currency: 'EUR',
+      language: 'it',
+      timeFormat: '24h',
+    };
+  }
+  
+  save(settings) {
+    localStorage.setItem(this.key, JSON.stringify(settings));
+  }
+  
+  get(key) {
+    return this.load()[key];
+  }
+  
+  set(key, value) {
+    const settings = this.load();
+    settings[key] = value;
+    this.save(settings);
+  }
+}
+
+let userSettings = null;
+
+function initSettings() {
+  if (typeof user !== 'undefined' && user) {
+    userSettings = new UserSettings(user.id);
+    console.log('✅ User settings initialized');
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(initSettings, 100);
+});
+
+console.log('✅ Settings system loaded');
+
+
+
+// ===== IMPROVED SYNC WITH DEBOUNCE & VALIDATION =====
+const debouncedSync = debounce(async () => {
+  if (!isOnline) {
+    console.log('⚠️ Offline - queueing sync');
+    return;
+  }
+  
+  if (!syncLimiter.isAllowed()) {
+    console.log('⚠️ Rate limit - too many requests');
+    return;
+  }
+  
+  updateSyncIndicator('syncing');
+  
+  try {
+    const data = {
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+      lastSync: new Date().toISOString(),
+    };
+    
+    await safeDbUpdate('users/' + user.id, data);
+    updateSyncIndicator('synced', new Date().toISOString());
+  } catch (err) {
+    console.error('Sync error:', err);
+    updateSyncIndicator('error');
+  }
+}, 1000);
+
+// Override sync functions dengan debounce
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    try {
+      if (!Array.isArray(goals)) throw new Error('Invalid goals format');
+      originalSaveGoals.apply(this, arguments);
+      debouncedSync();
+    } catch (err) {
+      console.error('Save goals error:', err);
+      showNotification('❌ ' + err.message, 'error');
+    }
+  };
+}
+
+console.log('✅ Improved sync loaded');
+
+
+
+// ===== INITIALIZE ON APP START =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (user) {
+      loadSyncQueue();
+      syncQueuedData();
+    }
+  }, 1500);
+});
+
+console.log('✅ App initialization complete');
+
 </script>
 
 <!-- ═══════════════════════════════════════════
@@ -6417,6 +7690,391 @@ window.addEventListener('load', () => {
 });
 
 console.log('✅ Kazka app initialized - Splash handler ready');
+
+
+
+// ===== ERROR HANDLING & UTILITIES =====
+let lastError = null;
+let requestQueue = [];
+let isOnline = true;
+
+// Monitor online/offline
+window.addEventListener('online', () => {
+  isOnline = true;
+  console.log('✅ Online - Syncing queued data...');
+  updateSyncIndicator('syncing');
+  syncQueuedData();
+});
+
+window.addEventListener('offline', () => {
+  isOnline = false;
+  console.log('⚠️ Offline - Data will sync when online');
+  showNotification('📡 Offline mode - Changes will sync automatically', 'warning');
+});
+
+// Data validation
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateNumber(value) {
+  return !isNaN(value) && value !== '';
+}
+
+function sanitizeInput(input) {
+  const div = document.createElement('div');
+  div.textContent = input;
+  return div.innerHTML;
+}
+
+// Error handler with retry
+async function withRetry(fn, retries = 3, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (i === retries - 1) throw err;
+      console.warn(\`Retry \${i + 1}/\${retries} in \${delay}ms...\`);
+      await new Promise(r => setTimeout(r, delay));
+      delay *= 2; // exponential backoff
+    }
+  }
+}
+
+// Safe Firebase operations
+async function safeDbUpdate(path, data) {
+  if (!db || !user) return;
+  
+  try {
+    await withRetry(async () => {
+      return db.ref(path).update(data);
+    });
+    return true;
+  } catch (err) {
+    console.error('❌ Firebase update failed:', err);
+    showNotification('❌ Sync error - ' + err.message, 'error');
+    addToSyncQueue(path, data);
+    return false;
+  }
+}
+
+// Sync queue for offline support
+function addToSyncQueue(path, data) {
+  requestQueue.push({path, data, timestamp: Date.now()});
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+  console.log('📋 Added to sync queue, total:', requestQueue.length);
+}
+
+function loadSyncQueue() {
+  const queue = localStorage.getItem('fp_sync_queue_' + user.id);
+  if (queue) requestQueue = JSON.parse(queue);
+}
+
+async function syncQueuedData() {
+  if (!isOnline || !user || requestQueue.length === 0) return;
+  
+  console.log('🔄 Syncing queued data:', requestQueue.length);
+  const toRemove = [];
+  
+  for (const item of requestQueue) {
+    try {
+      await db.ref(item.path).update(item.data);
+      toRemove.push(item.timestamp);
+      console.log('✅ Synced queued:', item.path);
+    } catch (err) {
+      console.error('Failed to sync queued:', err);
+    }
+  }
+  
+  requestQueue = requestQueue.filter(i => !toRemove.includes(i.timestamp));
+  localStorage.setItem('fp_sync_queue_' + user.id, JSON.stringify(requestQueue));
+}
+
+// Debounce helper
+function debounce(fn, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Rate limiting
+class RateLimiter {
+  constructor(maxRequests = 5, windowMs = 1000) {
+    this.maxRequests = maxRequests;
+    this.windowMs = windowMs;
+    this.requests = [];
+  }
+  
+  isAllowed() {
+    const now = Date.now();
+    this.requests = this.requests.filter(t => now - t < this.windowMs);
+    
+    if (this.requests.length < this.maxRequests) {
+      this.requests.push(now);
+      return true;
+    }
+    return false;
+  }
+}
+
+const syncLimiter = new RateLimiter(5, 2000);
+
+// Toast notifications (improved)
+function showNotification(msg, type = 'success', duration = 3000) {
+  const n = document.createElement('div');
+  const bgColor = {
+    success: 'rgba(0, 229, 160, 0.9)',
+    error: 'rgba(255, 79, 109, 0.9)',
+    warning: 'rgba(255, 209, 102, 0.9)',
+    info: 'rgba(0, 212, 255, 0.9)'
+  }[type] || 'rgba(0, 229, 160, 0.9)';
+  
+  n.style.cssText = \`
+    position: fixed; bottom: 20px; right: 20px; 
+    background: \${bgColor};
+    color: #fff; padding: 14px 18px;
+    border-radius: 12px; font-size: 11px; font-weight: 600;
+    z-index: 1000; animation: slideUp 0.3s ease;
+    max-width: 300px;
+  \`;
+  n.textContent = msg;
+  document.body.appendChild(n);
+  
+  setTimeout(() => {
+    n.style.opacity = '0';
+    n.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => n.remove(), 300);
+  }, duration);
+}
+
+console.log('✅ Error handling & utilities loaded');
+
+
+
+// ===== BACKUP & EXPORT =====
+function exportDataAsJSON() {
+  try {
+    const data = {
+      exported: new Date().toISOString(),
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+    };
+    
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-backup-\${new Date().toISOString().split('T')[0]}.json\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ Backup scaricato in JSON', 'success');
+    console.log('✅ JSON backup created');
+  } catch (err) {
+    console.error('Export error:', err);
+    showNotification('❌ Errore backup', 'error');
+  }
+}
+
+function exportDataAsCSV() {
+  try {
+    const txs = loadTransactions?.() || [];
+    const rows = [['Data', 'Descrizione', 'Tipo', 'Importo']];
+    
+    txs.forEach(t => {
+      rows.push([
+        t.date || '',
+        sanitizeInput(t.desc || ''),
+        t.type || '',
+        (t.amt || 0).toFixed(2)
+      ]);
+    });
+    
+    const csv = rows.map(r => r.map(v => \`"\${v}"\`).join(',')).join('\n');
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = \`kazka-transazioni-\${new Date().toISOString().split('T')[0]}.csv\`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ CSV scaricato', 'success');
+  } catch (err) {
+    console.error('CSV export error:', err);
+    showNotification('❌ Errore export CSV', 'error');
+  }
+}
+
+function importDataFromJSON(file) {
+  try {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = JSON.parse(e.target.result);
+      
+      if (data.goals) localStorage.setItem('fp_goals_' + user.id, JSON.stringify(data.goals));
+      if (data.transactions) localStorage.setItem('fp_transactions_' + user.id, JSON.stringify(data.transactions));
+      if (data.recurring) localStorage.setItem('fp_recurring_' + user.id, JSON.stringify(data.recurring));
+      
+      showNotification('✅ Dati importati con successo', 'success');
+      location.reload();
+    };
+    reader.readAsText(file);
+  } catch (err) {
+    console.error('Import error:', err);
+    showNotification('❌ Errore import - File invalido', 'error');
+  }
+}
+
+console.log('✅ Backup & Export functions loaded');
+
+
+
+// ===== THEME SUPPORT =====
+function initTheme() {
+  const savedTheme = localStorage.getItem('fp_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  console.log('🎨 Theme:', savedTheme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('fp_theme', next);
+  
+  showNotification('🎨 Theme: ' + (next === 'dark' ? 'Dark' : 'Light'), 'info');
+  console.log('🎨 Theme changed to:', next);
+}
+
+window.addEventListener('load', initTheme);
+
+console.log('✅ Theme support loaded');
+
+
+
+// ===== SETTINGS & PREFERENCES =====
+class UserSettings {
+  constructor(userId) {
+    this.userId = userId;
+    this.key = 'fp_settings_' + userId;
+  }
+  
+  load() {
+    const settings = localStorage.getItem(this.key);
+    return settings ? JSON.parse(settings) : this.defaults();
+  }
+  
+  defaults() {
+    return {
+      theme: 'dark',
+      notifications: true,
+      autoSync: true,
+      currency: 'EUR',
+      language: 'it',
+      timeFormat: '24h',
+    };
+  }
+  
+  save(settings) {
+    localStorage.setItem(this.key, JSON.stringify(settings));
+  }
+  
+  get(key) {
+    return this.load()[key];
+  }
+  
+  set(key, value) {
+    const settings = this.load();
+    settings[key] = value;
+    this.save(settings);
+  }
+}
+
+let userSettings = null;
+
+function initSettings() {
+  if (typeof user !== 'undefined' && user) {
+    userSettings = new UserSettings(user.id);
+    console.log('✅ User settings initialized');
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(initSettings, 100);
+});
+
+console.log('✅ Settings system loaded');
+
+
+
+// ===== IMPROVED SYNC WITH DEBOUNCE & VALIDATION =====
+const debouncedSync = debounce(async () => {
+  if (!isOnline) {
+    console.log('⚠️ Offline - queueing sync');
+    return;
+  }
+  
+  if (!syncLimiter.isAllowed()) {
+    console.log('⚠️ Rate limit - too many requests');
+    return;
+  }
+  
+  updateSyncIndicator('syncing');
+  
+  try {
+    const data = {
+      goals: loadGoals?.() || [],
+      transactions: loadTransactions?.() || [],
+      recurring: loadRecurring?.() || [],
+      profile: loadProfile?.() || {},
+      lastSync: new Date().toISOString(),
+    };
+    
+    await safeDbUpdate('users/' + user.id, data);
+    updateSyncIndicator('synced', new Date().toISOString());
+  } catch (err) {
+    console.error('Sync error:', err);
+    updateSyncIndicator('error');
+  }
+}, 1000);
+
+// Override sync functions dengan debounce
+const originalSaveGoals = typeof saveGoals !== 'undefined' ? saveGoals : null;
+if (originalSaveGoals) {
+  window.saveGoals = function(goals) {
+    try {
+      if (!Array.isArray(goals)) throw new Error('Invalid goals format');
+      originalSaveGoals.apply(this, arguments);
+      debouncedSync();
+    } catch (err) {
+      console.error('Save goals error:', err);
+      showNotification('❌ ' + err.message, 'error');
+    }
+  };
+}
+
+console.log('✅ Improved sync loaded');
+
+
+
+// ===== INITIALIZE ON APP START =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (user) {
+      loadSyncQueue();
+      syncQueuedData();
+    }
+  }, 1500);
+});
+
+console.log('✅ App initialization complete');
 
 </script>
 </body>

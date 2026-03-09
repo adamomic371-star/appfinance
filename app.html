@@ -22,7 +22,7 @@
   --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);
   --ac:#7c6fff;--ac2:#00e5ff;--ac3:#ff5fa0;
   --gr:#00f5a8;--re:#ff4466;--ye:#ffcc44;--or:#ff9944;
-  --tx:#eef2ff;--tx2:#7a85a8;--tx3:#3a4268;
+  --tx:#eef2ff;--tx2:#9bb1c8;--tx3:#3a4268;
   --r:16px;--glow:0 0 50px rgba(124,111,255,.12);
   --sw:230px;
   --sat:env(safe-area-inset-top,0px);
@@ -104,7 +104,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 /* ═══════════════════════════════════════
    LOGIN SCREEN
 ═══════════════════════════════════════ */
-#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:900;overflow:hidden}
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:900;overflow-y:auto;overflow-x:hidden;padding:20px}
 .lg-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 30% 50%,rgba(124,111,255,.1) 0%,transparent 65%),radial-gradient(ellipse 50% 40% at 70% 80%,rgba(0,229,255,.07) 0%,transparent 60%)}
 .lg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:48px 48px}
 
@@ -292,16 +292,44 @@ nav{flex:1;display:flex;flex-direction:column;gap:2px}
 .exp-v{color:var(--re)}
 
 /* ── BUTTONS ── */
-.btn-p{width:100%;padding:13px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;margin-bottom:8px;box-shadow:0 6px 20px rgba(124,111,255,.3)}
-.btn-p:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,111,255,.4)}
-.btn-p:active{transform:translateY(0)}
+.btn-p{width:100%;padding:13px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:14px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .3s cubic-bezier(.34,1.56,.64,1);margin-bottom:8px;box-shadow:0 8px 24px rgba(124,111,255,.4)}
+.btn-p:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 36px rgba(124,111,255,.6)}
+.btn-p:active{transform:translateY(-1px) scale(.98);box-shadow:0 4px 12px rgba(124,111,255,.3)}
+
+/* SPLASH & LOGIN - Animazioni spettacolari */
+@keyframes slideInUp {
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes fadeIn {
+  from{opacity:0}
+  to{opacity:1}
+}
+
+#loginScreen .lg-card{
+  animation:slideInUp .6s cubic-bezier(.34,1.56,.64,1)
+}
+
+.fi {
+  animation:fadeIn .5s ease forwards
+}
+
+.fi:nth-of-type(1){animation-delay:.1s}
+.fi:nth-of-type(2){animation-delay:.2s}
+.fi:nth-of-type(3){animation-delay:.3s}
+
+.btn-p:focus-visible{
+  outline:2px solid var(--ac2)
+  outline-offset:2px
+}
 .btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-.btn-s{width:100%;padding:12px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;color:var(--tx);font-weight:600;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;margin-bottom:8px}
-.btn-s:hover{background:var(--s2);border-color:var(--b2)}
+.btn-s{width:100%;padding:12px;background:var(--s1);border:1px solid var(--b1);border-radius:14px;color:var(--tx);font-weight:600;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .3s cubic-bezier(.34,1.56,.64,1);margin-bottom:8px}
+.btn-s:hover{background:var(--s2);border-color:var(--b2);transform:translateY(-2px)}
 
-.btn-d{width:100%;padding:12px;background:rgba(255,68,102,.08);border:1px solid rgba(255,68,102,.2);border-radius:12px;color:var(--re);font-weight:600;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
-.btn-d:hover{background:rgba(255,68,102,.15);border-color:rgba(255,68,102,.35)}
+.btn-d{width:100%;padding:12px;background:rgba(255,68,102,.08);border:1px solid rgba(255,68,102,.2);border-radius:14px;color:var(--re);font-weight:600;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.btn-d:hover{background:rgba(255,68,102,.15);border-color:rgba(255,68,102,.35);transform:translateY(-2px)}
 
 /* Small action buttons */
 .btn-sm{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:5px}
@@ -632,6 +660,23 @@ canvas{max-width:100%}
 @keyframes sync-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* LOGIN RESPONSIVE - Mobile piccoli */
+@media (max-width: 480px) {
+  #loginScreen{padding:16px;align-items:flex-start;justify-content:flex-start;padding-top:calc(60px + var(--sat))}
+  .lg-card{max-width:100%;padding:20px 16px;border-radius:20px}
+  .fi{padding:11px 12px 11px 32px;font-size:13px}
+  .btn-p{padding:12px;font-size:13px}
+  .tab-pill{padding:8px 16px;font-size:12px;border-radius:10px}
+}
+
+@media (max-width: 360px) {
+  #loginScreen{padding:12px;padding-top:calc(50px + var(--sat))}
+  .lg-card{padding:16px 12px;border-radius:16px}
+  .fi{padding:10px 10px 10px 28px;font-size:12px}
+  .btn-p{padding:10px;font-size:12px}
+  .tab-pill{padding:6px 12px;font-size:11px}
 }
 
 /* MOBILE - Nascondi testo, mostra solo icona */

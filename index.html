@@ -2,133 +2,144 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kazka - Smart Finance Assistant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Kazka - Personal & Business Finance Platform. Gestisci finanze personali e aziendali in un'unica app.">
+  <meta name="theme-color" content="#020409">
+  <title>Kazka - Personal & Business Finance Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    :root { --bg:#070b18;--bg2:#0d1225;--ac:#6c63ff;--ac2:#00d4ff;--gr:#00e5a0;--re:#ff4f6d;--tx:#f0f4ff;--tx2:#8892b0; }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;}
-    body::before{content:'';position:fixed;top:-30%;left:-20%;width:150%;height:150%;background:radial-gradient(ellipse at 30% 20%,rgba(108,99,255,.12) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(0,212,255,.08) 0%,transparent 50%);pointer-events:none;}
-    nav{position:fixed;top:0;left:0;right:0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,11,24,.92);backdrop-filter:blur(20px);z-index:100;border-bottom:1px solid rgba(255,255,255,.05);}
-    .nav-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .cta-btn{padding:10px 24px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 4px 15px rgba(108,99,255,.35);}
-    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(108,99,255,.45);}
-    .hero{padding:120px 24px 60px;text-align:center;max-width:700px;margin:0 auto;}
-    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:20px;font-size:12px;color:var(--ac);font-weight:600;margin-bottom:24px;letter-spacing:.5px;}
-    h1{font-family:'Syne',sans-serif;font-size:clamp(36px,8vw,62px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px;}
-    h1 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .hero p{font-size:18px;color:var(--tx2);line-height:1.6;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto;}
-    .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-    .cta-secondary{padding:12px 24px;background:rgba(108,99,255,.08);color:var(--ac);border:1px solid rgba(108,99,255,.3);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .2s;}
-    .cta-secondary:hover{background:rgba(108,99,255,.15);}
-    .mockup-section{padding:40px 24px 80px;display:flex;justify-content:center;}
-    .mockup{width:min(340px,90vw);background:var(--bg2);border:1px solid rgba(108,99,255,.2);border-radius:32px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 60px rgba(108,99,255,.15);}
-    .mockup-topbar{padding:16px 20px;background:rgba(7,11,24,.9);display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);}
-    .mockup-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .mockup-body{padding:16px;}
-    .mockup-balance{background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(0,212,255,.08));border:1px solid rgba(108,99,255,.25);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;}
-    .mockup-balance-label{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
-    .mockup-balance-val{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;}
-    .mockup-stats{display:flex;justify-content:space-around;margin-top:12px;}
-    .mockup-stat{text-align:center;}
-    .mockup-stat-label{font-size:9px;color:var(--tx2);text-transform:uppercase;}
-    .mockup-stat-val{font-size:14px;font-weight:700;margin-top:2px;}
-    .mockup-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
-    .mockup-action{background:var(--bg);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px 4px;text-align:center;font-size:9px;color:var(--tx2);}
-    .mockup-action-icon{font-size:18px;display:block;margin-bottom:4px;}
-    .mockup-tx{display:flex;flex-direction:column;gap:6px;}
-    .mockup-tx-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;border:1px solid rgba(255,255,255,.04);}
-    .mockup-tx-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
-    .mockup-tx-info{flex:1;}
-    .mockup-tx-name{font-size:12px;font-weight:600;}
-    .mockup-tx-cat{font-size:10px;color:var(--tx2);margin-top:1px;}
-    .mockup-tx-amount{font-size:13px;font-weight:700;}
-    .features{padding:80px 24px;max-width:900px;margin:0 auto;}
-    .features h2{font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,40px);font-weight:800;text-align:center;margin-bottom:48px;letter-spacing:-.5px;}
-    .features h2 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
-    .feature-card{background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px;transition:all .3s;}
-    .feature-card:hover{border-color:rgba(108,99,255,.3);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3);}
-    .feature-icon{font-size:32px;margin-bottom:16px;}
-    .feature-title{font-size:16px;font-weight:700;margin-bottom:8px;}
-    .feature-desc{font-size:13px;color:var(--tx2);line-height:1.6;}
-    .final-cta{text-align:center;padding:80px 24px;background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,255,.04));margin:0 24px 40px;border-radius:24px;border:1px solid rgba(108,99,255,.15);}
-    .final-cta h2{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:800;margin-bottom:16px;}
-    .final-cta p{color:var(--tx2);margin-bottom:32px;font-size:16px;}
-    footer{text-align:center;padding:24px;color:var(--tx2);font-size:13px;border-top:1px solid rgba(255,255,255,.05);}
+    *{margin:0;padding:0;box-sizing:border-box}:root{--bg:#020409;--bg2:#0a0f1a;--bg3:#141b2f;--ac:#7c6fff;--ac2:#00e5ff;--gr:#00f5a8;--re:#ff4466;--tx:#f0f4ff;--tx2:#9bb1c8;--tx3:#4a5568}html,body{width:100%;font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;line-height:1.6}body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 150% 100% at 50% 0%,rgba(124,111,255,.12) 0%,transparent 50%),radial-gradient(ellipse 120% 80% at 80% 100%,rgba(0,229,255,.08) 0%,transparent 60%);z-index:0;pointer-events:none}main{position:relative;z-index:2}nav{position:fixed;top:0;left:0;right:0;height:70px;background:rgba(2,4,9,.7);backdrop-filter:blur(30px);border-bottom:1px solid rgba(124,111,255,.1);display:flex;align-items:center;justify-content:space-between;padding:0 40px;z-index:1000;animation:slideDown .6s ease}@keyframes slideDown{from{transform:translateY(-70px);opacity:0}to{transform:translateY(0);opacity:1}}.logo{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}.logo svg{width:28px;height:28px;filter:drop-shadow(0 0 12px rgba(124,111,255,.5));animation:float 4s ease-in-out infinite}.nav-cta{padding:11px 28px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:12px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 24px rgba(124,111,255,.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px}.nav-cta:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 12px 36px rgba(124,111,255,.5)}.nav-cta:active{transform:translateY(-1px) scale(.98)}.hero{padding:120px 40px 60px;text-align:center;margin-top:70px}.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(124,111,255,.12);border:1px solid rgba(124,111,255,.3);border-radius:20px;font-size:12px;color:var(--ac);font-weight:700;margin-bottom:24px;letter-spacing:.5px;animation:fadeInUp .8s ease .2s both}h1{font-size:clamp(40px,8vw,64px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-2px;animation:fadeInUp .8s ease .4s both}h1 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.hero-desc{font-size:18px;color:var(--tx2);max-width:600px;margin:0 auto 36px;animation:fadeInUp .8s ease .6s both}.hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeInUp .8s ease .8s both}.btn-primary,.btn-secondary,.nav-cta{border-radius:14px!important;transition:all .3s cubic-bezier(.34,1.56,.64,1)!important}.btn-primary{padding:14px 32px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;color:#fff;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 10px 32px rgba(124,111,255,.4);text-decoration:none;display:inline-flex;align-items:center;gap:8px}.btn-primary:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 16px 48px rgba(124,111,255,.6)}.btn-primary:active{transform:translateY(-2px) scale(.98)}.btn-secondary{padding:14px 32px;background:0;border:1.5px solid rgba(124,111,255,.5);color:var(--ac);font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}.btn-secondary:hover{background:rgba(124,111,255,.1);border-color:var(--ac2);transform:translateY(-4px)}section{padding:80px 40px;max-width:1200px;margin:0 auto}.section-header{text-align:center;margin-bottom:60px}.section-header h2{font-size:clamp(32px,5vw,48px);font-weight:800;margin-bottom:12px;letter-spacing:-1px}.section-header h2 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.section-header p{font-size:16px;color:var(--tx2);max-width:500px;margin:0 auto}.section-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:40px}.toggle-label{font-size:14px;font-weight:700;color:var(--tx2);transition:all .3s ease}.toggle-switch{position:relative;width:60px;height:32px;background:rgba(124,111,255,.2);border:1px solid rgba(124,111,255,.3);border-radius:16px;cursor:pointer;transition:all .3s ease}.toggle-switch:hover{background:rgba(124,111,255,.3)}.toggle-switch.active{background:linear-gradient(135deg,var(--ac),var(--ac2));border-color:transparent}.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:26px;height:26px;background:#fff;border-radius:14px;transition:all .3s ease;box-shadow:0 2px 8px rgba(0,0,0,.2)}.toggle-switch.active::after{left:31px}.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}.feature-card{background:linear-gradient(135deg,rgba(10,15,26,.6),rgba(20,27,47,.4));border:1px solid rgba(124,111,255,.2);border-radius:20px;padding:30px;transition:all .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer;position:relative;overflow:hidden;animation:fadeInUp .6s ease forwards;opacity:0}.feature-card:nth-child(1){animation-delay:.1s}.feature-card:nth-child(2){animation-delay:.2s}.feature-card:nth-child(3){animation-delay:.3s}.feature-card:nth-child(4){animation-delay:.4s}.feature-card:nth-child(5){animation-delay:.5s}.feature-card:nth-child(6){animation-delay:.6s}.feature-card::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(124,111,255,.2) 0%,transparent 70%);opacity:0;transition:all .5s ease}.feature-card:hover::after{opacity:1}.feature-card:hover{border-color:rgba(0,229,255,.4);transform:translateY(-12px) scale(1.03);box-shadow:0 20px 60px rgba(124,111,255,.3)}.feature-icon{font-size:40px;margin-bottom:16px;display:block;transition:all .3s ease;position:relative;z-index:2;animation:float 3s ease-in-out infinite}.feature-card:hover .feature-icon{transform:scale(1.3) rotate(15deg);animation:none}.feature-title{font-size:18px;font-weight:800;margin-bottom:10px;position:relative;z-index:2}.feature-desc{font-size:14px;color:var(--tx2);line-height:1.7;position:relative;z-index:2}.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin-top:60px}.pricing-card{background:linear-gradient(135deg,rgba(10,15,26,.6),rgba(20,27,47,.4));border:1px solid rgba(124,111,255,.2);border-radius:20px;padding:40px;text-align:center;transition:all .3s ease;position:relative;animation:fadeInUp .6s ease forwards;opacity:0}.pricing-card:nth-child(1){animation-delay:.2s}.pricing-card:nth-child(2){animation-delay:.4s}.pricing-card:nth-child(3){animation-delay:.6s}.pricing-card:hover{border-color:rgba(0,229,255,.4);transform:translateY(-8px);box-shadow:0 20px 60px rgba(124,111,255,.3)}.pricing-tag{display:inline-block;background:rgba(124,111,255,.15);border:1px solid rgba(124,111,255,.3);color:var(--ac);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}.pricing-title{font-size:24px;font-weight:800;margin-bottom:12px}.pricing-desc{font-size:14px;color:var(--tx2);margin-bottom:24px}.pricing-price{font-size:48px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:24px}.pricing-features{text-align:left;margin-bottom:32px}.pricing-feature{font-size:13px;color:var(--tx2);padding:10px 0;border-bottom:1px solid rgba(124,111,255,.1);display:flex;align-items:center;gap:10px}.pricing-feature::before{content:'✓';color:var(--gr);font-weight:800;font-size:16px}.final-cta{text-align:center;padding:100px 40px;background:linear-gradient(135deg,rgba(124,111,255,.08),rgba(0,229,255,.04));border:1px solid rgba(124,111,255,.15);border-radius:30px;margin:60px 40px;animation:fadeInUp .8s ease}.final-cta h2{font-size:clamp(28px,5vw,44px);font-weight:800;margin-bottom:16px}.final-cta p{font-size:16px;color:var(--tx2);margin-bottom:32px}footer{text-align:center;padding:40px;color:var(--tx2);font-size:13px;border-top:1px solid rgba(124,111,255,.1)}@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}.hidden{display:none!important}.business-section{--ac:#00d4ff;--ac2:#7c6fff}.business-section .feature-card{border-color:rgba(0,212,255,.2)}.business-section .feature-card:hover{border-color:rgba(0,212,255,.4);box-shadow:0 20px 60px rgba(0,212,255,.3)}.business-section .section-header h2 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}@media(max-width:1024px){section{padding:60px 30px}.final-cta{margin:50px 30px;padding:80px 30px}nav{padding:0 30px}}@media(max-width:768px){nav{padding:0 20px}section{padding:50px 20px}.final-cta{margin:40px 20px;padding:60px 20px}.features-grid{gap:16px}.pricing-grid{gap:20px}.hero{padding:100px 20px 40px}h1{font-size:clamp(32px,6vw,48px)}.hero-desc{font-size:16px}.hero-cta{gap:12px}.btn-primary,.btn-secondary{padding:12px 24px;font-size:13px}.feature-card{padding:20px}.feature-icon{font-size:32px}.feature-title{font-size:16px}.feature-desc{font-size:13px}}@media(max-width:480px){nav{padding:0 16px;height:60px;justify-content:space-between}.logo{font-size:16px;gap:8px}.logo svg{width:20px;height:20px}.nav-cta{padding:10px 16px;font-size:11px}section{padding:40px 16px}.hero{padding:80px 16px 30px}h1{font-size:clamp(26px,6vw,36px);letter-spacing:-1px}.hero-desc{font-size:14px}.hero-cta{gap:8px;flex-direction:column}.btn-primary,.btn-secondary{padding:12px 20px;font-size:12px;width:100%;justify-content:center}.section-header h2{font-size:clamp(24px,5vw,32px)}.feature-card{padding:16px}.feature-icon{font-size:28px;margin-bottom:12px}.feature-title{font-size:14px}.feature-desc{font-size:12px}.pricing-card{padding:24px}.pricing-title{font-size:18px}.pricing-price{font-size:36px}.final-cta{margin:30px 16px;padding:40px 16px}.final-cta h2{font-size:clamp(20px,5vw,28px)}.section-toggle{flex-direction:column;gap:8px}}@media(max-width:360px){.btn-primary,.btn-secondary,.nav-cta{padding:10px 14px;font-size:11px;border-radius:10px!important}.feature-icon{font-size:24px}.pricing-price{font-size:32px}}@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}:focus-visible{outline:2px solid var(--ac2);outline-offset:2px;border-radius:4px}
   </style>
 </head>
 <body>
+
   <nav>
-    <div class="nav-logo">💰 Kazka</div>
-    <a href="app.html" class="cta-btn">🚀 Apri App</a>
+    <div class="logo">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6fff;stop-opacity:1"/><stop offset="100%" style="stop-color:#00e5ff;stop-opacity:1"/></linearGradient></defs><rect x="42" y="28" width="10" height="64" rx="5" fill="url(#logoGrad)"/><rect x="52" y="28" width="34" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(-32 69 33)"/><rect x="52" y="76" width="32" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(32 68 81)"/></svg>
+      KAZKA
+    </div>
+    <a href="app.html" class="nav-cta">Apri App →</a>
   </nav>
 
-  <section class="hero">
-    <div class="hero-badge">✨ Smart Finance Assistant</div>
-    <h1>Gestisci il tuo <span>denaro</span> in modo intelligente</h1>
-    <p>Traccia entrate e uscite, raggiungi i tuoi obiettivi finanziari e tieni sotto controllo budget personale e business — tutto in un'unica app.</p>
-    <div class="hero-cta">
-      <a href="app.html" class="cta-btn">🚀 Inizia gratis</a>
-      <a href="#features" class="cta-secondary">Scopri le funzioni</a>
-    </div>
-  </section>
-
-  <div class="mockup-section">
-    <div class="mockup">
-      <div class="mockup-topbar">
-        <span style="font-size:20px;">💰</span>
-        <span class="mockup-logo">Kazka</span>
-        <span style="margin-left:auto;font-size:11px;color:#00e5a0;">✓ Pronto</span>
+  <main>
+    <section class="hero">
+      <div class="hero-badge">✨ Smart Finance Platform</div>
+      <h1>Gestisci le tue finanze con <span>semplicità e potenza</span></h1>
+      <p class="hero-desc">Una piattaforma unica per personal finance e business accounting. Traccia, analizza, decidi.</p>
+      <div class="hero-cta">
+        <a href="app.html" class="btn-primary">Inizia Gratis →</a>
+        <a href="#features" class="btn-secondary">Scopri di più</a>
       </div>
-      <div class="mockup-body">
-        <div class="mockup-balance">
-          <div class="mockup-balance-label">Saldo Totale</div>
-          <div class="mockup-balance-val">€4.250,00</div>
-          <div class="mockup-stats">
-            <div class="mockup-stat"><div class="mockup-stat-label">Entrate</div><div class="mockup-stat-val" style="color:#00e5a0;">+€5.200</div></div>
-            <div class="mockup-stat"><div class="mockup-stat-label">Uscite</div><div class="mockup-stat-val" style="color:#ff4f6d;">-€950</div></div>
+    </section>
+
+    <section id="features">
+      <div class="section-toggle">
+        <span class="toggle-label">Personal</span>
+        <div class="toggle-switch active" id="modeToggle" onclick="toggleMode()" role="switch" aria-checked="false" tabindex="0"></div>
+        <span class="toggle-label">Business</span>
+      </div>
+
+      <div id="personal-section">
+        <div class="section-header">
+          <h2>Finanza <span>Personale</span></h2>
+          <p>Gestisci le tue entrate, uscite e obiettivi di risparmio in un'unica app</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">💸</div><div class="feature-title">Transazioni Illimitate</div><div class="feature-desc">Registra ogni movimento con categoria, descrizione e data. Filtra e cerca facilmente.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">📊</div><div class="feature-title">Report Intelligenti</div><div class="feature-desc">Grafici mensili e annuali, analisi per categoria, trend spending e previsioni.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">🎯</div><div class="feature-title">Obiettivi di Risparmio</div><div class="feature-desc">Crea mete finanziarie, traccia il progresso e raggiungi i tuoi sogni economici.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">🔄</div><div class="feature-title">Spese Ricorrenti</div><div class="feature-desc">Gestisci abbonamenti, stipendi, affitto. Calcolo automatico del costo mensile.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">👥</div><div class="feature-title">Spese Condivise</div><div class="feature-desc">Dividi le spese con amici e famiglia. Calcolo automatico di chi deve cosa.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">⚡</div><div class="feature-title">Bollette & Viaggi</div><div class="feature-desc">Traccia scadenze bollette e gestisci budget dedicati per i tuoi viaggi.</div></div>
+        </div>
+      </div>
+
+      <div id="business-section" class="hidden business-section">
+        <div class="section-header">
+          <h2>Modalità <span>Business</span></h2>
+          <p>Gestisci la tua attività con strumenti professionali e contabilità completa</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">📓</div><div class="feature-title">Prima Nota Semplice</div><div class="feature-desc">Registra i movimenti aziendali. Importa da CSV o inserisci manualmente.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">👥</div><div class="feature-title">Gestione Clienti</div><div class="feature-desc">Database clienti con contatti, storico transazioni e note personali.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">📄</div><div class="feature-title">Preventivi PDF</div><div class="feature-desc">Crea preventivi professionali in PDF da inviare direttamente ai clienti.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">📈</div><div class="feature-title">Progetti & Margini</div><div class="feature-desc">Traccia progetti, calcola margini di guadagno, analizza redditività.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">💰</div><div class="feature-title">Scadenzario IVA</div><div class="feature-desc">Calcolo trimestrale IVA, dichiarazioni e scadenze fiscali sempre a portata.</div></div>
+          <div class="feature-card"><div class="feature-icon" aria-hidden="true">📊</div><div class="feature-title">Report Aziendali</div><div class="feature-desc">Bilanci, conto economico, analisi cash flow e performance metriche.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <h2>Piani <span>Semplici</span></h2>
+        <p>Scegli il piano che fa per te, sempre con pieno accesso a tutte le feature</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tag">Popular</div>
+          <div class="pricing-title">Personale</div>
+          <div class="pricing-desc">Per gestire le tue finanze</div>
+          <div class="pricing-price">Gratis</div>
+          <div class="pricing-features">
+            <div class="pricing-feature">Transazioni illimitate</div>
+            <div class="pricing-feature">Report e analytics</div>
+            <div class="pricing-feature">Obiettivi di risparmio</div>
+            <div class="pricing-feature">Spese ricorrenti</div>
+            <div class="pricing-feature">Sync cloud</div>
           </div>
+          <a href="app.html" class="btn-primary">Inizia Gratis</a>
         </div>
-        <div class="mockup-actions">
-          <div class="mockup-action"><span class="mockup-action-icon">➕</span>Entrata</div>
-          <div class="mockup-action"><span class="mockup-action-icon">➖</span>Uscita</div>
-          <div class="mockup-action"><span class="mockup-action-icon">📊</span>Report</div>
-          <div class="mockup-action"><span class="mockup-action-icon">🎯</span>Obiettivi</div>
+
+        <div class="pricing-card">
+          <div class="pricing-tag">Pro</div>
+          <div class="pricing-title">Pro+</div>
+          <div class="pricing-desc">Personal + Business features</div>
+          <div class="pricing-price">€9<span style="font-size:24px">/mo</span></div>
+          <div class="pricing-features">
+            <div class="pricing-feature">Tutto del piano Personale</div>
+            <div class="pricing-feature">Prima nota aziendali</div>
+            <div class="pricing-feature">Gestione clienti</div>
+            <div class="pricing-feature">Preventivi PDF</div>
+            <div class="pricing-feature">Progetti e margini</div>
+            <div class="pricing-feature">Support prioritario</div>
+          </div>
+          <a href="app.html" class="btn-primary">Prova Gratis 30 giorni</a>
         </div>
-        <div class="mockup-tx">
-          <div class="mockup-tx-item"><div class="mockup-tx-icon" style="background:rgba(0,229,160,.1);">💼</div><div class="mockup-tx-info"><div class="mockup-tx-name">Stipendio</div><div class="mockup-tx-cat">Lavoro</div></div><div class="mockup-tx-amount" style="color:#00e5a0;">+€2.500</div></div>
-          <div class="mockup-tx-item"><div class="mockup-tx-icon" style="background:rgba(255,79,109,.1);">🛒</div><div class="mockup-tx-info"><div class="mockup-tx-name">Spesa</div><div class="mockup-tx-cat">Alimentari</div></div><div class="mockup-tx-amount" style="color:#ff4f6d;">-€85</div></div>
-          <div class="mockup-tx-item"><div class="mockup-tx-icon" style="background:rgba(255,79,109,.1);">📱</div><div class="mockup-tx-info"><div class="mockup-tx-name">Netflix</div><div class="mockup-tx-cat">Abbonamenti</div></div><div class="mockup-tx-amount" style="color:#ff4f6d;">-€18</div></div>
+
+        <div class="pricing-card">
+          <div class="pricing-tag">Enterprise</div>
+          <div class="pricing-title">Enterprise</div>
+          <div class="pricing-desc">Soluzioni custom per team</div>
+          <div class="pricing-price">Contattaci</div>
+          <div class="pricing-features">
+            <div class="pricing-feature">Tutto di Pro+</div>
+            <div class="pricing-feature">Multi-user (team)</div>
+            <div class="pricing-feature">Permessi granulari</div>
+            <div class="pricing-feature">API access</div>
+            <div class="pricing-feature">Dedicated support</div>
+            <div class="pricing-feature">SLA guarantee</div>
+          </div>
+          <button class="btn-secondary" onclick="alert('Contatta il nostro team per una demo')">Contatta Sales</button>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <section class="features" id="features">
-    <h2>Tutto quello che ti <span>serve</span></h2>
-    <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">💸</div><div class="feature-title">Transazioni illimitate</div><div class="feature-desc">Registra entrate e uscite con categorie, descrizioni e date. Filtra per mese e analizza i trend.</div></div>
-      <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Report avanzati</div><div class="feature-desc">Grafici mensili e annuali, breakdown per categoria, confronto tra periodi.</div></div>
-      <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Obiettivi finanziari</div><div class="feature-desc">Imposta obiettivi di risparmio e monitora il progresso verso il tuo futuro finanziario.</div></div>
-      <div class="feature-card"><div class="feature-icon">🔄</div><div class="feature-title">Spese ricorrenti</div><div class="feature-desc">Abbonamenti, stipendi, affitto. Calcolo automatico del costo mensile fisso netto.</div></div>
-      <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Bollette & Viaggi</div><div class="feature-desc">Tieni d'occhio le scadenze delle bollette e traccia le spese di viaggio con budget dedicato.</div></div>
-      <div class="feature-card"><div class="feature-icon">👥</div><div class="feature-title">Gruppi e spese condivise</div><div class="feature-desc">Gestisci spese condivise con amici o famiglia. Calcolo automatico dei saldi e chi deve cosa.</div></div>
-      <div class="feature-card"><div class="feature-icon">🏢</div><div class="feature-title">Modalità Business</div><div class="feature-desc">Prima nota, clienti, preventivi, progetti, scadenzario IVA. Tutto per la tua attività.</div></div>
-      <div class="feature-card"><div class="feature-icon">🔥</div><div class="feature-title">Sync Firebase</div><div class="feature-desc">I tuoi dati sempre al sicuro e sincronizzati su tutti i dispositivi grazie a Firebase.</div></div>
+    <div class="final-cta">
+      <h2>Inizia a controllare le tue finanze oggi</h2>
+      <p>Kazka è gratis per i tuoi dati personali. Niente carta di credito richiesta.</p>
+      <a href="app.html" class="btn-primary" style="font-size:16px;padding:14px 40px">Apri Kazka Adesso →</a>
     </div>
-  </section>
-
-  <div class="final-cta">
-    <h2>Pronto a prendere il controllo delle tue finanze?</h2>
-    <p>Gratis, senza pubblicità, i tuoi dati restano tuoi.</p>
-    <a href="app.html" class="cta-btn" style="font-size:16px;padding:14px 32px;">🚀 Inizia ora — è gratis</a>
-  </div>
+  </main>
 
   <footer>
-    <div>💰 <strong>Kazka</strong> v3.0 · Smart Finance Assistant</div>
-    <div style="margin-top:8px;font-size:11px;opacity:.5;">© 2024 Michele Adamo · Powered by Firebase</div>
+    <div>💰 <strong>Kazka</strong> v3.0 - Personal & Business Finance Platform</div>
+    <div style="margin-top:8px">© 2025 · Powered by Firebase · Privacy & Security First</div>
   </footer>
+
+  <script>
+    function toggleMode(){const e=document.getElementById('modeToggle'),t=document.getElementById('personal-section'),a=document.getElementById('business-section');e.classList.toggle('active'),t.classList.toggle('hidden'),a.classList.toggle('hidden'),e.setAttribute('aria-checked',e.classList.contains('active'))}document.getElementById('modeToggle').addEventListener('keydown',e=>{' '!==e.key&&'Enter'!==e.key||(e.preventDefault(),toggleMode())}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));t&&t.scrollIntoView({behavior:'smooth'})})})
+  </script>
+
 </body>
 </html>

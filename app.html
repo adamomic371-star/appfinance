@@ -2038,7 +2038,7 @@ function showNotification(msg, type = 'success', duration = 3000) {
     max-width: 300px;
   \`;
   n.textContent = msg;
-  document.body.appendChild(n);
+  if (document.body) document.body.appendChild(n);
   
   setTimeout(() => {
     n.style.opacity = '0';
@@ -2273,6 +2273,31 @@ window.addEventListener('load', () => {
 });
 
 console.log('✅ App initialization complete');
+
+
+
+// ===== WAIT FOR DOM READY =====
+function ensureDOMReady(callback) {
+  if (document.body) {
+    callback();
+  } else {
+    document.addEventListener('DOMContentLoaded', callback);
+  }
+}
+
+console.log('✅ DOM ready handler loaded');
+
+
+
+// Ignore extension errors (non bloccanti)
+window.addEventListener('error', (e) => {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('⚠️  Extension error (non bloccante):', e.message);
+    return true; // Ignora l'errore
+  }
+});
+
+console.log('✅ Error handler loaded');
 
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
@@ -2660,7 +2685,7 @@ function showNotification(msg, type = 'success', duration = 3000) {
     max-width: 300px;
   \`;
   n.textContent = msg;
-  document.body.appendChild(n);
+  if (document.body) document.body.appendChild(n);
   
   setTimeout(() => {
     n.style.opacity = '0';
@@ -2895,6 +2920,31 @@ window.addEventListener('load', () => {
 });
 
 console.log('✅ App initialization complete');
+
+
+
+// ===== WAIT FOR DOM READY =====
+function ensureDOMReady(callback) {
+  if (document.body) {
+    callback();
+  } else {
+    document.addEventListener('DOMContentLoaded', callback);
+  }
+}
+
+console.log('✅ DOM ready handler loaded');
+
+
+
+// Ignore extension errors (non bloccanti)
+window.addEventListener('error', (e) => {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('⚠️  Extension error (non bloccante):', e.message);
+    return true; // Ignora l'errore
+  }
+});
+
+console.log('✅ Error handler loaded');
 
 </script>
 <script>
@@ -6987,7 +7037,7 @@ function showNotification(msg, type = 'success', duration = 3000) {
     max-width: 300px;
   \`;
   n.textContent = msg;
-  document.body.appendChild(n);
+  if (document.body) document.body.appendChild(n);
   
   setTimeout(() => {
     n.style.opacity = '0';
@@ -7222,6 +7272,31 @@ window.addEventListener('load', () => {
 });
 
 console.log('✅ App initialization complete');
+
+
+
+// ===== WAIT FOR DOM READY =====
+function ensureDOMReady(callback) {
+  if (document.body) {
+    callback();
+  } else {
+    document.addEventListener('DOMContentLoaded', callback);
+  }
+}
+
+console.log('✅ DOM ready handler loaded');
+
+
+
+// Ignore extension errors (non bloccanti)
+window.addEventListener('error', (e) => {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('⚠️  Extension error (non bloccante):', e.message);
+    return true; // Ignora l'errore
+  }
+});
+
+console.log('✅ Error handler loaded');
 
 </script>
 
@@ -7840,7 +7915,7 @@ function showNotification(msg, type = 'success', duration = 3000) {
     max-width: 300px;
   \`;
   n.textContent = msg;
-  document.body.appendChild(n);
+  if (document.body) document.body.appendChild(n);
   
   setTimeout(() => {
     n.style.opacity = '0';
@@ -8075,6 +8150,31 @@ window.addEventListener('load', () => {
 });
 
 console.log('✅ App initialization complete');
+
+
+
+// ===== WAIT FOR DOM READY =====
+function ensureDOMReady(callback) {
+  if (document.body) {
+    callback();
+  } else {
+    document.addEventListener('DOMContentLoaded', callback);
+  }
+}
+
+console.log('✅ DOM ready handler loaded');
+
+
+
+// Ignore extension errors (non bloccanti)
+window.addEventListener('error', (e) => {
+  if (e.message && e.message.includes('Could not establish connection')) {
+    console.warn('⚠️  Extension error (non bloccante):', e.message);
+    return true; // Ignora l'errore
+  }
+});
+
+console.log('✅ Error handler loaded');
 
 </script>
 </body>

@@ -1,395 +1,134 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Kazka – Smart Finance App: personal & business finance,: saldo libero, obiettivi risparmio, ricorrenti, gruppi PayPal, preventivi PDF, IVA, notifiche push.">
-<meta name="theme-color" content="#070b18">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Kazka – Smart Finance App</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#070b18;--bg2:#0d1225;--s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.15);--ac:#6c63ff;--ac2:#00d4ff;--ac3:#ff6b9d;--gr:#00e5a0;--re:#ff4f6d;--ye:#ffd166;--or:#f7971e;--tx:#f0f4ff;--tx2:#8892b0;--tx3:#4a5580;}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;overflow-x:hidden;line-height:1.6}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5vw;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,11,24,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-ico{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
-.nav-logo-txt{font-size:17px;font-weight:800;font-family:"Syne",sans-serif;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{color:var(--tx2);text-decoration:none;font-size:14px;font-weight:600;transition:color .2s}
-.nav-links a:hover{color:var(--tx)}
-.nav-cta{padding:9px 20px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;transition:all .2s;box-shadow:0 4px 14px rgba(108,99,255,.35)}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,.5)}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
-.hamburger span{width:22px;height:2px;background:var(--tx2);border-radius:2px}
-.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(7,11,24,.97);border-bottom:1px solid var(--b1);padding:20px 5vw;flex-direction:column;gap:16px;z-index:99;backdrop-filter:blur(16px)}
-.mobile-menu.open{display:flex}
-.mobile-menu a{color:var(--tx2);text-decoration:none;font-size:15px;font-weight:600;padding:8px 0;border-bottom:1px solid var(--b1)}
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:110px 5vw 70px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(108,99,255,.2) 0%,transparent 65%),radial-gradient(ellipse 50% 40% at 90% 80%,rgba(0,212,255,.12) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 10% 70%,rgba(255,107,157,.08) 0%,transparent 60%)}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:50px 50px}
-.hp{position:absolute;border-radius:50%;animation:hpFloat linear infinite}
-@keyframes hpFloat{0%{transform:translateY(100vh);opacity:0}10%{opacity:.5}90%{opacity:.1}100%{transform:translateY(-5vh);opacity:0}}
-.hero-content{position:relative;max-width:860px;margin:0 auto}
-.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;animation:fadeUp .6s ease .1s both}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--ac2)}
-.pwa-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--gr)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.hero-title{font-size:clamp(36px,7vw,78px);font-weight:900;line-height:1.06;letter-spacing:-2.5px;margin-bottom:22px;animation:fadeUp .6s ease .2s both}
-.hero-title span{background:linear-gradient(135deg,var(--ac),var(--ac2),var(--ac3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:clamp(14px,2.5vw,19px);color:var(--tx2);max-width:600px;margin:0 auto 38px;font-weight:400;line-height:1.75;animation:fadeUp .6s ease .3s both}
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s ease .4s both}
-.btn-hero{padding:14px 28px;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
-.btn-hero-p{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;box-shadow:0 8px 28px rgba(108,99,255,.4)}
-.btn-hero-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(108,99,255,.55)}
-.btn-hero-s{background:transparent;color:var(--tx);border:1px solid var(--b2)}
-.btn-hero-s:hover{background:var(--s2);border-color:var(--ac)}
-.hero-stats{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;margin-top:56px;padding-top:40px;border-top:1px solid var(--b1);animation:fadeUp .6s ease .5s both}
-.hs{text-align:center}
-.hs-n{font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hs-l{font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-.mockup-section{padding:10px 5vw 70px;display:flex;justify-content:center}
-.mockup{background:rgba(10,14,30,.95);border:1px solid var(--b2);border-radius:22px;max-width:680px;width:100%;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6);animation:fadeUp .8s ease .3s both}
-.mock-bar{background:rgba(7,11,24,.8);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--b1)}
-.mock-dots{display:flex;gap:6px}
-.mock-dot{width:11px;height:11px;border-radius:50%}
-.mock-url{flex:1;background:rgba(255,255,255,.05);border-radius:6px;padding:5px 12px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--tx3);text-align:center}
-.mock-body{padding:18px 16px;display:flex;flex-direction:column;gap:10px}
-.mock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.mock-title{font-size:14px;font-weight:800}
-.mock-sub{font-size:10px;color:var(--tx3)}
-.mock-free{background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,212,255,.04));border:1px solid rgba(0,229,160,.2);border-radius:14px;padding:14px 16px}
-.mock-free-label{font-size:9px;color:var(--gr);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.mock-free-val{font-size:26px;font-weight:900;color:var(--gr);letter-spacing:-1px}
-.mock-free-row{display:flex;justify-content:space-between;font-size:10px;color:var(--tx2);margin-top:4px}
-.mock-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.mock-s{background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:10px}
-.mock-s-l{font-size:8px;color:var(--tx3);text-transform:uppercase;margin-bottom:4px}
-.mock-s-v{font-size:15px;font-weight:800}
-.mock-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:12px}
-.mock-card-title{font-size:10px;font-weight:700;margin-bottom:8px;color:var(--tx2)}
-.mock-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.mock-row:last-child{border:none}
-.mock-ico{width:26px;height:26px;border-radius:7px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.mock-desc{flex:1;font-size:10px;font-weight:600}
-.mock-amt{font-size:11px;font-weight:800}
-.mock-goal{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.mock-goal:last-child{border:none}
-.mock-goal-top{display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px}
-.mock-goal-bar{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
-.mock-goal-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:3px}
-section{padding:80px 5vw}
-.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac2);margin-bottom:12px}
-.section-title{font-size:clamp(26px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:16px;line-height:1.15}
-.section-sub{font-size:16px;color:var(--tx2);max-width:560px;line-height:1.7}
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:48px}
-.feat-card{background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:24px;transition:all .25s;position:relative;overflow:hidden}
-.feat-card:hover{border-color:var(--b2);transform:translateY(-3px);background:var(--s2)}
-.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--ac2));opacity:0;transition:opacity .25s}
-.feat-card:hover::before{opacity:1}
-.feat-ico{font-size:28px;margin-bottom:14px;display:block}
-.feat-title{font-size:16px;font-weight:800;margin-bottom:7px}
-.feat-desc{font-size:13px;color:var(--tx2);line-height:1.6}
-.feat-new{display:inline-block;font-size:9px;font-weight:700;background:rgba(0,229,160,.12);color:var(--gr);border:1px solid rgba(0,229,160,.25);border-radius:20px;padding:2px 8px;margin-left:7px;vertical-align:middle;text-transform:uppercase;letter-spacing:.3px}
-.biz-section{background:linear-gradient(135deg,rgba(247,151,30,.04),rgba(108,99,255,.04));border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
-.biz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:40px}
-.biz-card{background:rgba(247,151,30,.05);border:1px solid rgba(247,151,30,.12);border-radius:16px;padding:20px;transition:all .2s}
-.biz-card:hover{border-color:rgba(247,151,30,.3);background:rgba(247,151,30,.08)}
-.biz-ico{font-size:24px;margin-bottom:10px}
-.biz-title{font-size:14px;font-weight:800;margin-bottom:5px;color:#ffd166}
-.biz-desc{font-size:12px;color:var(--tx2);line-height:1.5}
-.pwa-strip{background:linear-gradient(135deg,rgba(0,229,160,.06),rgba(0,212,255,.04));border-top:1px solid rgba(0,229,160,.12);border-bottom:1px solid rgba(0,229,160,.12);padding:48px 5vw;text-align:center}
-.pwa-steps{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:32px}
-.pwa-step{display:flex;align-items:flex-start;gap:12px;max-width:220px;text-align:left}
-.pwa-step-n{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
-.pwa-step-txt{font-size:13px;color:var(--tx2);line-height:1.5}
-.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:40px}
-.plan-card{background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:24px;transition:all .25s;position:relative}
-.plan-card.popular{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.06)}
-.plan-card.popular::before{content:'Piu popolare';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:9px;font-weight:800;padding:3px 12px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
-.plan-name{font-size:13px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.plan-price{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
-.plan-price span{font-size:14px;font-weight:400;color:var(--tx2)}
-.plan-desc{font-size:11px;color:var(--tx3);margin-bottom:16px;min-height:28px}
-.plan-features{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
-.pf{font-size:12px;color:var(--tx2);display:flex;align-items:flex-start;gap:7px;line-height:1.4}
-.pf::before{content:'✓';color:var(--gr);font-weight:800;flex-shrink:0}
-.plan-btn{width:100%;padding:11px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;border:none;text-decoration:none;display:block;text-align:center;transition:all .2s}
-.plan-btn-p{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:0 4px 14px rgba(108,99,255,.3)}
-.plan-btn-s{background:var(--s2);color:var(--tx);border:1px solid var(--b2)!important}
-.faq-list{max-width:720px;margin:40px auto 0;display:flex;flex-direction:column;gap:10px}
-.faq-item{background:var(--s1);border:1px solid var(--b1);border-radius:14px;overflow:hidden}
-.faq-q{padding:16px 20px;font-size:14px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;user-select:none}
-.faq-q:hover{background:var(--s2)}
-.faq-arrow{font-size:12px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
-.faq-item.open .faq-arrow{transform:rotate(180deg)}
-.faq-a{display:none;padding:0 20px 16px;font-size:13px;color:var(--tx2);line-height:1.7}
-.faq-item.open .faq-a{display:block}
-.cta-section{padding:100px 5vw;text-align:center;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(108,99,255,.12) 0%,transparent 70%)}
-.cta-title{font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-1.5px;margin-bottom:18px}
-.cta-title span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cta-sub{font-size:16px;color:var(--tx2);max-width:480px;margin:0 auto 36px}
-footer{background:rgba(0,0,0,.3);border-top:1px solid var(--b1);padding:40px 5vw;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
-.footer-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
-.footer-logo-ico{width:30px;height:30px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
-.footer-logo-txt{font-size:15px;font-weight:800;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.footer-links{display:flex;gap:20px;flex-wrap:wrap}
-.footer-links a{color:var(--tx3);text-decoration:none;font-size:12px;font-weight:600;transition:color .2s}
-.footer-right{font-size:11px;color:var(--tx3)}
-@media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}section{padding:60px 5vw}.feat-grid{grid-template-columns:1fr}.biz-grid{grid-template-columns:1fr 1fr}.plan-grid{grid-template-columns:1fr 1fr}.hero-stats{gap:24px}.pwa-steps{flex-direction:column;align-items:center}}
-@media(max-width:480px){.biz-grid{grid-template-columns:1fr}.plan-grid{grid-template-columns:1fr}.hero-btns{flex-direction:column;align-items:center}footer{flex-direction:column;text-align:center}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kazka - Smart Finance Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#070b18;--bg2:#0d1225;--ac:#6c63ff;--ac2:#00d4ff;--gr:#00e5a0;--re:#ff4f6d;--tx:#f0f4ff;--tx2:#8892b0; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;top:-30%;left:-20%;width:150%;height:150%;background:radial-gradient(ellipse at 30% 20%,rgba(108,99,255,.12) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(0,212,255,.08) 0%,transparent 50%);pointer-events:none;}
+    nav{position:fixed;top:0;left:0;right:0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,11,24,.92);backdrop-filter:blur(20px);z-index:100;border-bottom:1px solid rgba(255,255,255,.05);}
+    .nav-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .cta-btn{padding:10px 24px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 4px 15px rgba(108,99,255,.35);}
+    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(108,99,255,.45);}
+    .hero{padding:120px 24px 60px;text-align:center;max-width:700px;margin:0 auto;}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:20px;font-size:12px;color:var(--ac);font-weight:600;margin-bottom:24px;letter-spacing:.5px;}
+    h1{font-family:'Syne',sans-serif;font-size:clamp(36px,8vw,62px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px;}
+    h1 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .hero p{font-size:18px;color:var(--tx2);line-height:1.6;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto;}
+    .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .cta-secondary{padding:12px 24px;background:rgba(108,99,255,.08);color:var(--ac);border:1px solid rgba(108,99,255,.3);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .2s;}
+    .cta-secondary:hover{background:rgba(108,99,255,.15);}
+    .mockup-section{padding:40px 24px 80px;display:flex;justify-content:center;}
+    .mockup{width:min(340px,90vw);background:var(--bg2);border:1px solid rgba(108,99,255,.2);border-radius:32px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 60px rgba(108,99,255,.15);}
+    .mockup-topbar{padding:16px 20px;background:rgba(7,11,24,.9);display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+    .mockup-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .mockup-body{padding:16px;}
+    .mockup-balance{background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(0,212,255,.08));border:1px solid rgba(108,99,255,.25);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;}
+    .mockup-balance-label{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+    .mockup-balance-val{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;}
+    .mockup-stats{display:flex;justify-content:space-around;margin-top:12px;}
+    .mockup-stat{text-align:center;}
+    .mockup-stat-label{font-size:9px;color:var(--tx2);text-transform:uppercase;}
+    .mockup-stat-val{font-size:14px;font-weight:700;margin-top:2px;}
+    .mockup-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+    .mockup-action{background:var(--bg);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px 4px;text-align:center;font-size:9px;color:var(--tx2);}
+    .mockup-action-icon{font-size:18px;display:block;margin-bottom:4px;}
+    .mockup-tx{display:flex;flex-direction:column;gap:6px;}
+    .mockup-tx-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;border:1px solid rgba(255,255,255,.04);}
+    .mockup-tx-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+    .mockup-tx-info{flex:1;}
+    .mockup-tx-name{font-size:12px;font-weight:600;}
+    .mockup-tx-cat{font-size:10px;color:var(--tx2);margin-top:1px;}
+    .mockup-tx-amount{font-size:13px;font-weight:700;}
+    .features{padding:80px 24px;max-width:900px;margin:0 auto;}
+    .features h2{font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,40px);font-weight:800;text-align:center;margin-bottom:48px;letter-spacing:-.5px;}
+    .features h2 span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+    .feature-card{background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px;transition:all .3s;}
+    .feature-card:hover{border-color:rgba(108,99,255,.3);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3);}
+    .feature-icon{font-size:32px;margin-bottom:16px;}
+    .feature-title{font-size:16px;font-weight:700;margin-bottom:8px;}
+    .feature-desc{font-size:13px;color:var(--tx2);line-height:1.6;}
+    .final-cta{text-align:center;padding:80px 24px;background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,255,.04));margin:0 24px 40px;border-radius:24px;border:1px solid rgba(108,99,255,.15);}
+    .final-cta h2{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:800;margin-bottom:16px;}
+    .final-cta p{color:var(--tx2);margin-bottom:32px;font-size:16px;}
+    footer{text-align:center;padding:24px;color:var(--tx2);font-size:13px;border-top:1px solid rgba(255,255,255,.05);}
+  </style>
 </head>
 <body>
-<nav>
-  <a class="nav-logo" href="#"><div class="nav-logo-ico" id="idxLogoMark"></div><span class="nav-logo-txt">Kazka</span></a>
-  <div class="nav-links">
-    <a href="#features">Funzionalità</a><a href="#business">Azienda</a><a href="#piani">Piani</a><a href="#faq">FAQ</a>
-  </div>
-  <a class="nav-cta" href="app.html">Accedi →</a>
-  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-</nav>
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#features" onclick="toggleMenu()">Funzionalità</a>
-  <a href="#business" onclick="toggleMenu()">Modalità Azienda</a>
-  <a href="#piani" onclick="toggleMenu()">Piani & Prezzi</a>
-  <a href="#faq" onclick="toggleMenu()">FAQ</a>
-  <a href="app.html" style="color:var(--ac)">Entra nell'app</a>
-</div>
+  <nav>
+    <div class="nav-logo">💰 Kazka</div>
+    <a href="app.html" class="cta-btn">🚀 Apri App</a>
+  </nav>
 
-<section class="hero">
-  <div class="hero-bg"></div><div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-badges">
-      <div class="hero-badge">🚀 Versione 2.0 — Tutto aggiornato</div>
-      <div class="pwa-badge">📲 Installabile come app</div>
+  <section class="hero">
+    <div class="hero-badge">✨ Smart Finance Assistant</div>
+    <h1>Gestisci il tuo <span>denaro</span> in modo intelligente</h1>
+    <p>Traccia entrate e uscite, raggiungi i tuoi obiettivi finanziari e tieni sotto controllo budget personale e business — tutto in un'unica app.</p>
+    <div class="hero-cta">
+      <a href="app.html" class="cta-btn">🚀 Inizia gratis</a>
+      <a href="#features" class="cta-secondary">Scopri le funzioni</a>
     </div>
-    <h1 class="hero-title">Le tue finanze,<br><span>finalmente chiare</span></h1>
-    <p class="hero-sub">Scopri i tuoi <strong style="color:var(--gr)">Soldi Liberi</strong> ogni giorno. Tieni traccia di tutto, fissa obiettivi di risparmio e gestisci anche la tua azienda — in un'unica app.</p>
-    <div class="hero-btns">
-      <a href="app.html" class="btn-hero btn-hero-p">💰 Inizia Gratis</a>
-      <a href="#features" class="btn-hero btn-hero-s">Scopri le funzioni</a>
-    </div>
-    <div class="hero-stats">
-      <div class="hs"><div class="hs-n">2</div><div class="hs-l">Modalità app</div></div>
-      <div class="hs"><div class="hs-n">20+</div><div class="hs-l">Funzionalità</div></div>
-      <div class="hs"><div class="hs-n">PWA</div><div class="hs-l">Installabile</div></div>
-      <div class="hs"><div class="hs-n">100%</div><div class="hs-l">Privacy</div></div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<div class="mockup-section">
-  <div class="mockup">
-    <div class="mock-bar">
-      <div class="mock-dots"><div class="mock-dot" style="background:#ff5f57"></div><div class="mock-dot" style="background:#febc2e"></div><div class="mock-dot" style="background:#28c840"></div></div>
-      <div class="mock-url">adamomic371-star.github.io/appfinance/app.html</div>
-    </div>
-    <div class="mock-body">
-      <div class="mock-header">
-        <div><div class="mock-title">🏠 Dashboard</div><div class="mock-sub">Benvenuto, Marco</div></div>
-        <span style="font-size:10px;background:rgba(108,99,255,.1);color:var(--ac);padding:4px 10px;border-radius:20px;font-weight:700;border:1px solid rgba(108,99,255,.2)">👤 Personale</span>
+  <div class="mockup-section">
+    <div class="mockup">
+      <div class="mockup-topbar">
+        <span style="font-size:20px;">💰</span>
+        <span class="mockup-logo">Kazka</span>
+        <span style="margin-left:auto;font-size:11px;color:#00e5a0;">✓ Pronto</span>
       </div>
-      <div class="mock-free">
-        <div class="mock-free-label">🟢 Soldi Liberi — Puoi spendere</div>
-        <div class="mock-free-val">€ 1.847,50</div>
-        <div class="mock-free-row"><span>💰 Saldo totale</span><span style="color:#f0f4ff">€ 4.200,00</span></div>
-        <div class="mock-free-row"><span>🔄 Ricorrenti/mese</span><span style="color:#ffd166">-€ 847,00</span></div>
-        <div class="mock-free-row"><span>📄 Bollette</span><span style="color:#ffd166">-€ 320,50</span></div>
-        <div class="mock-free-row"><span>🎯 Risparmio obiettivi</span><span style="color:#6c63ff">-€ 185,00</span></div>
-        <div class="mock-free-row" style="border-top:1px solid rgba(255,255,255,.1);padding-top:5px;margin-top:3px"><strong style="color:#f0f4ff">= Disponibile</strong><span style="color:#00e5a0;font-weight:800">€ 1.847,50</span></div>
-      </div>
-      <div class="mock-stats-row">
-        <div class="mock-s"><div class="mock-s-l">Entrate</div><div class="mock-s-v" style="color:#00e5a0">€4.200</div></div>
-        <div class="mock-s"><div class="mock-s-l">Uscite</div><div class="mock-s-v" style="color:#ff4f6d">€2.352</div></div>
-        <div class="mock-s"><div class="mock-s-l">Ricorrenti</div><div class="mock-s-v" style="color:#ffd166">€847</div></div>
-      </div>
-      <div class="mock-card">
-        <div class="mock-card-title">🎯 Obiettivi di Risparmio</div>
-        <div class="mock-goal"><div class="mock-goal-top"><span>🚗 Auto nuova</span><span style="color:#00d4ff">€3.200/€8.000</span></div><div class="mock-goal-bar"><div class="mock-goal-fill" style="width:40%"></div></div></div>
-        <div class="mock-goal"><div class="mock-goal-top"><span>✈️ Vacanze estate</span><span style="color:#00d4ff">€780/€1.500</span></div><div class="mock-goal-bar"><div class="mock-goal-fill" style="width:52%"></div></div></div>
-        <div class="mock-goal"><div class="mock-goal-top"><span>🆘 Fondo emergenza</span><span style="color:#00e5a0">Raggiunto!</span></div><div class="mock-goal-bar"><div class="mock-goal-fill" style="width:100%;background:var(--gr)"></div></div></div>
-      </div>
-      <div class="mock-card">
-        <div class="mock-card-title">🕐 Ultimi movimenti</div>
-        <div class="mock-row"><div class="mock-ico">🍕</div><div class="mock-desc">Ristorante Da Mario</div><div class="mock-amt" style="color:#ff4f6d">-€32,00</div></div>
-        <div class="mock-row"><div class="mock-ico">💼</div><div class="mock-desc">Stipendio marzo</div><div class="mock-amt" style="color:#00e5a0">+€2.100</div></div>
-        <div class="mock-row"><div class="mock-ico">🛒</div><div class="mock-desc">Supermercato</div><div class="mock-amt" style="color:#ff4f6d">-€87,40</div></div>
+      <div class="mockup-body">
+        <div class="mockup-balance">
+          <div class="mockup-balance-label">Saldo Totale</div>
+          <div class="mockup-balance-val">€4.250,00</div>
+          <div class="mockup-stats">
+            <div class="mockup-stat"><div class="mockup-stat-label">Entrate</div><div class="mockup-stat-val" style="color:#00e5a0;">+€5.200</div></div>
+            <div class="mockup-stat"><div class="mockup-stat-label">Uscite</div><div class="mockup-stat-val" style="color:#ff4f6d;">-€950</div></div>
+          </div>
+        </div>
+        <div class="mockup-actions">
+          <div class="mockup-action"><span class="mockup-action-icon">➕</span>Entrata</div>
+          <div class="mockup-action"><span class="mockup-action-icon">➖</span>Uscita</div>
+          <div class="mockup-action"><span class="mockup-action-icon">📊</span>Report</div>
+          <div class="mockup-action"><span class="mockup-action-icon">🎯</span>Obiettivi</div>
+        </div>
+        <div class="mockup-tx">
+          <div class="mockup-tx-item"><div class="mockup-tx-icon" style="background:rgba(0,229,160,.1);">💼</div><div class="mockup-tx-info"><div class="mockup-tx-name">Stipendio</div><div class="mockup-tx-cat">Lavoro</div></div><div class="mockup-tx-amount" style="color:#00e5a0;">+€2.500</div></div>
+          <div class="mockup-tx-item"><div class="mockup-tx-icon" style="background:rgba(255,79,109,.1);">🛒</div><div class="mockup-tx-info"><div class="mockup-tx-name">Spesa</div><div class="mockup-tx-cat">Alimentari</div></div><div class="mockup-tx-amount" style="color:#ff4f6d;">-€85</div></div>
+          <div class="mockup-tx-item"><div class="mockup-tx-icon" style="background:rgba(255,79,109,.1);">📱</div><div class="mockup-tx-info"><div class="mockup-tx-name">Netflix</div><div class="mockup-tx-cat">Abbonamenti</div></div><div class="mockup-tx-amount" style="color:#ff4f6d;">-€18</div></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<section id="features">
-  <div class="section-label">Modalità Personale</div>
-  <h2 class="section-title">Tutto quello che ti serve<br>per le tue finanze</h2>
-  <p class="section-sub">Ogni funzionalità pensata per darti il pieno controllo — senza complicazioni.</p>
-  <div class="feat-grid">
-    <div class="feat-card"><span class="feat-ico">🟢</span><div class="feat-title">Soldi Liberi <span class="feat-new">Nuovo</span></div><div class="feat-desc">Saldo meno tutte le spese fisse: ricorrenti, bollette, canoni, budget viaggi e quote risparmio. Sai esattamente quanto puoi spendere ogni giorno.</div></div>
-    <div class="feat-card"><span class="feat-ico">🎯</span><div class="feat-title">Obiettivi di Risparmio <span class="feat-new">Nuovo</span></div><div class="feat-desc">Target, scadenza, priorità. L'app calcola la quota mensile da accantonare. Quando carichi +€1.000 puoi allocarla subito agli obiettivi.</div></div>
-    <div class="feat-card"><span class="feat-ico">💸</span><div class="feat-title">Movimenti con filtri avanzati <span class="feat-new">Aggiornato</span></div><div class="feat-desc">Filtra per mese, categoria e tipo. Statistiche per periodo. Importa da CSV o esporta i tuoi dati.</div></div>
-    <div class="feat-card"><span class="feat-ico">🔄</span><div class="feat-title">Ricorrenti automatiche</div><div class="feat-desc">Abbonamenti, mutuo, stipendio, affitto. Imposta frequenza e scadenza — l'app li registra e avvisa prima delle date.</div></div>
-    <div class="feat-card"><span class="feat-ico">✈️</span><div class="feat-title">Viaggi dettagliati <span class="feat-new">Aggiornato</span></div><div class="feat-desc">Date partenza/ritorno, alloggio, volo, note. Countdown giorni mancanti e separazione viag futuri/passati.</div></div>
-    <div class="feat-card"><span class="feat-ico">👥</span><div class="feat-title">Gruppi con PayPal</div><div class="feat-desc">Dividi spese con chi vuoi. Scegli i partecipanti per ogni spesa. Debiti netti e pagamento PayPal diretto.</div></div>
-    <div class="feat-card"><span class="feat-ico">📊</span><div class="feat-title">Report & analisi</div><div class="feat-desc">Grafici per categoria, andamento mensile, distribuzione entrate/uscite. Aggiornati in tempo reale.</div></div>
-    <div class="feat-card"><span class="feat-ico">🔔</span><div class="feat-title">Notifiche Push <span class="feat-new">Nuovo</span></div><div class="feat-desc">Avvisi per scadenze, ricorrenti e nuove spese di gruppo — anche con l'app in background.</div></div>
-    <div class="feat-card"><span class="feat-ico">📲</span><div class="feat-title">PWA Installabile</div><div class="feat-desc">Installa come app nativa su iPhone e Android. Funziona offline. Nessun App Store richiesto.</div></div>
-  </div>
-</section>
-
-<section id="business" class="biz-section">
-  <div class="section-label" style="color:var(--or)">Modalità Azienda</div>
-  <h2 class="section-title">Strumenti professionali<br><span style="color:var(--or)">per la tua attività</span></h2>
-  <p class="section-sub">Un tap sul menu e passi alla modalità Azienda. Tutto separato dal personale.</p>
-  <div class="biz-grid">
-    <div class="biz-card"><div class="biz-ico">💼</div><div class="biz-title">Prima Nota + Report <span class="feat-new">Aggiornato</span></div><div class="biz-desc">Movimenti con IVA, progetto e cliente. Report mensile con grafico e breakdown per cliente. Filtro per mese. Modifica e cancella.</div></div>
-    <div class="biz-card"><div class="biz-ico">👥</div><div class="biz-title">Clienti & Fornitori</div><div class="biz-desc">Anagrafica con P.IVA, email, telefono. Storico movimenti con totale fatturato per cliente.</div></div>
-    <div class="biz-card"><div class="biz-ico">📋</div><div class="biz-title">Preventivi PDF</div><div class="biz-desc">Righe dinamiche, IVA per riga. Accettato → genera movimento in Prima Nota automaticamente.</div></div>
-    <div class="biz-card"><div class="biz-ico">🧮</div><div class="biz-title">IVA Trimestrale</div><div class="biz-desc">IVA a debito e credito per trimestre. Data di versamento e confronto trimestre precedente.</div></div>
-    <div class="biz-card"><div class="biz-ico">📁</div><div class="biz-title">Progetti</div><div class="biz-desc">Cliente, budget, scadenza e stato. Collega movimenti ai progetti per tracciare la redditività.</div></div>
-    <div class="biz-card"><div class="biz-ico">📅</div><div class="biz-title">Scadenziario manuale <span class="feat-new">Nuovo</span></div><div class="biz-desc">Aggiungi scadenze libere con promemoria. Segna completate, modifica o elimina.</div></div>
-  </div>
-</section>
-
-<div class="pwa-strip">
-  <div class="section-label" style="color:var(--gr)">📲 Installazione</div>
-  <h2 class="section-title" style="font-size:clamp(24px,4vw,38px)">Installala come app vera</h2>
-  <p style="color:var(--tx2);margin-top:8px;font-size:15px">Nessun App Store. Gratis. Funziona anche offline.</p>
-  <div class="pwa-steps">
-    <div class="pwa-step"><div class="pwa-step-n" style="background:rgba(108,99,255,.15);color:var(--ac);border:1px solid rgba(108,99,255,.25)">1</div><div class="pwa-step-txt"><strong style="color:var(--tx)">iPhone / Safari</strong><br>Tocca Condividi → Aggiungi a schermata Home</div></div>
-    <div class="pwa-step"><div class="pwa-step-n" style="background:rgba(0,229,160,.1);color:var(--gr);border:1px solid rgba(0,229,160,.2)">2</div><div class="pwa-step-txt"><strong style="color:var(--tx)">Android / Chrome</strong><br>Menu ⋮ → Installa app oppure il banner</div></div>
-    <div class="pwa-step"><div class="pwa-step-n" style="background:rgba(0,212,255,.1);color:var(--ac2);border:1px solid rgba(0,212,255,.2)">3</div><div class="pwa-step-txt"><strong style="color:var(--tx)">Desktop</strong><br>Icona installa nella barra indirizzi</div></div>
-  </div>
-</div>
-
-<section id="piani" style="text-align:center">
-  <div class="section-label">Prezzi</div>
-  <h2 class="section-title">Scegli il piano giusto</h2>
-  <p class="section-sub" style="margin:0 auto">Inizia gratis. Nessun abbonamento nascosto.</p>
-  <div class="plan-grid">
-    <div class="plan-card">
-      <div class="plan-name">Free</div><div class="plan-price">€0<span>/mese</span></div><div class="plan-desc">Per iniziare subito</div>
-      <div class="plan-features">
-        <div class="pf">Dashboard Soldi Liberi</div><div class="pf">Movimenti illimitati</div><div class="pf">Report & analisi</div><div class="pf">Import/Export CSV</div><div class="pf">Notifiche push</div><div class="pf">PWA installabile</div>
-      </div>
-      <a href="app.html" class="plan-btn plan-btn-s">Inizia gratis</a>
+  <section class="features" id="features">
+    <h2>Tutto quello che ti <span>serve</span></h2>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">💸</div><div class="feature-title">Transazioni illimitate</div><div class="feature-desc">Registra entrate e uscite con categorie, descrizioni e date. Filtra per mese e analizza i trend.</div></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Report avanzati</div><div class="feature-desc">Grafici mensili e annuali, breakdown per categoria, confronto tra periodi.</div></div>
+      <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Obiettivi finanziari</div><div class="feature-desc">Imposta obiettivi di risparmio e monitora il progresso verso il tuo futuro finanziario.</div></div>
+      <div class="feature-card"><div class="feature-icon">🔄</div><div class="feature-title">Spese ricorrenti</div><div class="feature-desc">Abbonamenti, stipendi, affitto. Calcolo automatico del costo mensile fisso netto.</div></div>
+      <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Bollette & Viaggi</div><div class="feature-desc">Tieni d'occhio le scadenze delle bollette e traccia le spese di viaggio con budget dedicato.</div></div>
+      <div class="feature-card"><div class="feature-icon">👥</div><div class="feature-title">Gruppi e spese condivise</div><div class="feature-desc">Gestisci spese condivise con amici o famiglia. Calcolo automatico dei saldi e chi deve cosa.</div></div>
+      <div class="feature-card"><div class="feature-icon">🏢</div><div class="feature-title">Modalità Business</div><div class="feature-desc">Prima nota, clienti, preventivi, progetti, scadenzario IVA. Tutto per la tua attività.</div></div>
+      <div class="feature-card"><div class="feature-icon">🔥</div><div class="feature-title">Sync Firebase</div><div class="feature-desc">I tuoi dati sempre al sicuro e sincronizzati su tutti i dispositivi grazie a Firebase.</div></div>
     </div>
-    <div class="plan-card popular">
-      <div class="plan-name">Personal Pro</div><div class="plan-price">€3<span>/mese</span></div><div class="plan-desc">Per il controllo completo</div>
-      <div class="plan-features">
-        <div class="pf">Tutto del Free</div><div class="pf">Obiettivi di risparmio</div><div class="pf">Ricorrenti automatiche</div><div class="pf">Bollette & utenze</div><div class="pf">Viaggi dettagliati</div><div class="pf">Gruppi con PayPal</div>
-      </div>
-      <a href="app.html" class="plan-btn plan-btn-p">Inizia con Pro</a>
-    </div>
-    <div class="plan-card">
-      <div class="plan-name">Business Starter</div><div class="plan-price">€9<span>/mese</span></div><div class="plan-desc">Per freelance e piccole attività</div>
-      <div class="plan-features">
-        <div class="pf">Tutto del Personal Pro</div><div class="pf">Prima Nota + Report</div><div class="pf">Clienti & Fornitori</div><div class="pf">Preventivi PDF</div><div class="pf">Progetti</div><div class="pf">Scadenziario manuale</div>
-      </div>
-      <a href="app.html" class="plan-btn plan-btn-s">Prova Business</a>
-    </div>
-    <div class="plan-card">
-      <div class="plan-name">Business Pro</div><div class="plan-price">€19<span>/mese</span></div><div class="plan-desc">Per team e fatturazione</div>
-      <div class="plan-features">
-        <div class="pf">Tutto del Business Starter</div><div class="pf">IVA trimestrale</div><div class="pf">Note spese</div><div class="pf">Logo aziendale</div><div class="pf">Priorità nel supporto</div>
-      </div>
-      <a href="app.html" class="plan-btn plan-btn-s">Prova Business Pro</a>
-    </div>
+  </section>
+
+  <div class="final-cta">
+    <h2>Pronto a prendere il controllo delle tue finanze?</h2>
+    <p>Gratis, senza pubblicità, i tuoi dati restano tuoi.</p>
+    <a href="app.html" class="cta-btn" style="font-size:16px;padding:14px 32px;">🚀 Inizia ora — è gratis</a>
   </div>
-  <div style="margin-top:20px;padding:14px 20px;background:rgba(255,159,67,.05);border:1px solid rgba(255,159,67,.15);border-radius:14px;display:inline-block">
-    <span style="font-size:13px;color:var(--or)">👑 <strong>Lifetime</strong> — Pagamento unico <strong>€149</strong> · Accesso a tutto per sempre</span>
-  </div>
-</section>
 
-<section id="faq" style="text-align:center">
-  <div class="section-label">FAQ</div>
-  <h2 class="section-title">Domande frequenti</h2>
-  <div class="faq-list">
-    <div class="faq-item open"><div class="faq-q" onclick="toggleFaq(this)">Cosa sono i "Soldi Liberi"?<span class="faq-arrow">▼</span></div><div class="faq-a">Il tuo saldo meno tutte le spese fisse: ricorrenti mensili, bollette, canoni utenze, budget viaggi pianificati e quote mensili degli obiettivi di risparmio. Il risultato è quanto puoi davvero spendere oggi.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Come funzionano gli Obiettivi di Risparmio?<span class="faq-arrow">▼</span></div><div class="faq-a">Crei un obiettivo con target e scadenza, e l'app calcola la quota mensile automaticamente. Aggiungi fondi quando vuoi. Se carichi un'entrata >= €1.000 appare un popup per allocarla agli obiettivi.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Posso dividere le spese solo con alcune persone del gruppo?<span class="faq-arrow">▼</span></div><div class="faq-a">Sì. Quando aggiungi una spesa scegli solo i partecipanti coinvolti. La quota viene divisa equamente tra i selezionati, non tra tutti i membri.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Come funziona PayPal nei gruppi?<span class="faq-arrow">▼</span></div><div class="faq-a">Ogni utente salva la propria email PayPal nel Profilo. Quando sei debitore, gli altri vedono "Paga con PayPal" che apre la pagina con l'importo pre-compilato.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Posso importare transazioni da un file?<span class="faq-arrow">▼</span></div><div class="faq-a">Sì. In Movimenti c'è il pulsante di import CSV. Il file deve avere colonne come descrizione, importo, tipo, categoria, data (accetta nomi italiani e inglesi).</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">La modalità Azienda è separata da quella personale?<span class="faq-arrow">▼</span></div><div class="faq-a">Completamente. Stesso account, doppia vista. Nessun dato aziendale appare nelle sezioni personali. Lo switch è nel menu laterale su mobile e nella barra in alto su desktop.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Le password sono sicure?<span class="faq-arrow">▼</span></div><div class="faq-a">Sì. Le nuove registrazioni usano SHA-256 (standard crittografico). I vecchi account vengono aggiornati al prossimo cambio password.</div></div>
-  </div>
-</section>
-
-<section class="cta-section">
-  <h2 class="cta-title">Pronto a capire davvero<br><span>dove vanno i tuoi soldi?</span></h2>
-  <p class="cta-sub">Inizia gratis in 30 secondi. Nessuna carta richiesta.</p>
-  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-    <a href="app.html" class="btn-hero btn-hero-p">💰 Crea account gratuito</a>
-    <a href="app.html" class="btn-hero btn-hero-s">Accedi →</a>
-  </div>
-</section>
-
-<footer>
-  <a class="footer-logo" href="#"><div class="footer-logo-ico">💰</div><span class="footer-logo-txt">Kazka</span></a>
-  <div class="footer-links"><a href="#features">Funzionalità</a><a href="#business">Azienda</a><a href="#piani">Piani</a><a href="#faq">FAQ</a><a href="app.html">Accedi</a></div>
-  <div class="footer-right">Pro €3 · Biz Starter €9 · Biz Pro €19 · Lifetime €149<br><span style="margin-top:4px;display:block">© 2025 Kazka</span></div>
-</footer>
-
-<script>
-function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
-function toggleFaq(el){el.parentElement.classList.toggle('open');}
-const hero=document.querySelector('.hero');
-for(let i=0;i<12;i++){
-  const p=document.createElement('div');p.className='hp';
-  const sz=Math.random()*4+2;
-  const colors=['rgba(108,99,255,.6)','rgba(0,212,255,.5)','rgba(255,107,157,.4)','rgba(0,229,160,.5)'];
-  p.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-duration:'+(Math.random()*12+8)+'s;animation-delay:'+(Math.random()*8)+'s';
-  hero.appendChild(p);
-}
-window.addEventListener('scroll',()=>{document.querySelector('nav').style.boxShadow=scrollY>30?'0 4px 30px rgba(0,0,0,.4)':'none';});
-
-/* ===== KAZKA LOGO SVG ===== */
-function kazkaLogoSVG(size,glow){
-  var cx=size/2,cy=size/2,r=cx*0.9,pts='';
-  for(var i=0;i<6;i++){var a=Math.PI/3*i-Math.PI/6;pts+=(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)+' ';}
-  var uid='kz'+(Math.random()*99999|0);
-  var shadow=glow?'filter:drop-shadow(0 0 '+(size*0.28|0)+'px rgba(108,77,255,0.65));':'';
-  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="'+shadow+'display:block" xmlns="http://www.w3.org/2000/svg">'
-    +'<defs><linearGradient id="'+uid+'" x1="0%" y1="0%" x2="100%" y2="100%">'
-    +'<stop offset="0%" stop-color="#6c4dff"/><stop offset="50%" stop-color="#8b6cff"/><stop offset="100%" stop-color="#00c8ff"/>'
-    +'</linearGradient></defs>'
-    +'<polygon points="'+pts.trim()+'" fill="url(#'+uid+')" />'
-    +'<text x="'+cx+'" y="'+(cy+size*0.14).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-family="Syne,sans-serif" font-weight="800" font-size="'+(size*0.42).toFixed(0)+'" fill="white" letter-spacing="-0.5">K</text>'
-    +'</svg>';
-}
-var _lm=document.getElementById('idxLogoMark');
-if(_lm)_lm.innerHTML=kazkaLogoSVG(34,true);
-
-/* ===== GEO-LANG DETECTION ===== */
-(function(){
-  var saved=localStorage.getItem('kz_lang');
-  if(saved)return; // User already chose a language in the app
-  var browserLang=(navigator.language||'it').slice(0,2).toLowerCase();
-  var supported=['it','en','es','fr','de'];
-  if(supported.indexOf(browserLang)>=0){
-    // Set from browser
-    localStorage.setItem('kz_lang',browserLang);
-    document.documentElement.lang=browserLang;
-    return;
-  }
-  // Fallback: try IP geolocation (free, no-key API)
-  fetch('https://ipapi.co/json/')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var cc=(d.country_code||'').toLowerCase();
-      var map={it:'it',gb:'en',us:'en',au:'en',ca:'en',ie:'en',nz:'en',es:'es',mx:'es',ar:'es',co:'es',pe:'es',cl:'es',ve:'es',fr:'fr',be:'fr',ch:'it',at:'de',de:'de',lu:'fr'};
-      var lang=map[cc]||browserLang||'it';
-      if(supported.indexOf(lang)<0)lang='it';
-      localStorage.setItem('kz_lang',lang);
-      document.documentElement.lang=lang;
-    })
-    .catch(function(){/* fallback silenzioso */});
-})();
-</script>
+  <footer>
+    <div>💰 <strong>Kazka</strong> v3.0 · Smart Finance Assistant</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5;">© 2024 Michele Adamo · Powered by Firebase</div>
+  </footer>
 </body>
 </html>

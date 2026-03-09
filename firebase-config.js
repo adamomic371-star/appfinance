@@ -1,16 +1,11 @@
-// Firebase Configuration - Carica PRIMA di app.html
-const FB = {
-  apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
-  databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "financeapp-556ae"
-};
+// FIREBASE-CONFIG.JS - Configurazione Firebase standalone
+// Usato da index.html o pagine che non caricano app.html
 
-// Init Firebase quando caricato
-if (typeof firebase !== 'undefined') {
-  try {
-    firebase.initializeApp(FB);
-    console.log('✅ Firebase inizializzato');
-  } catch (e) {
-    console.warn('Firebase already initialized');
-  }
-}
+const firebaseConfigStandalone = {
+  apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
+  authDomain: "financeapp-556ae.firebaseapp.com",
+  databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "financeapp-556ae",
+  storageBucket: "financeapp-556ae.appspot.com",
+  appId: "1:181987533980:web:41c5032990ccede17eb959"
+};

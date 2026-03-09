@@ -1,130 +1,135 @@
+// 15-LOGIN-UI.JS - Login e registrazione UI
 
-// 15-LOGIN-UI.JS - Interfaccia di login con validazione
+let isLoginMode = true;
 
-function isValidEmail(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
+function initLoginUI() {
+  // Toggle form mode button
+  const toggleBtn = document.getElementById('toggleForm');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      isLoginMode = !isLoginMode;
+      updateLoginFormUI();
+    });
+  }
+
+  // Login button
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', handleLogin);
+  }
+
+  // Register button
+  const registerBtn = document.getElementById('registerBtn');
+  if (registerBtn) {
+    registerBtn.addEventListener('click', handleRegister);
+  }
+
+  // Enter key handling
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const loginScreen = document.getElementById('loginScreen');
+      if (loginScreen && loginScreen.style.display !== 'none') {
+        if (isLoginMode) handleLogin();
+        else handleRegister();
+      }
+    }
+  });
+
+  updateLoginFormUI();
 }
 
-function setupLoginForm() {
+function updateLoginFormUI() {
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
   const toggleBtn = document.getElementById('toggleForm');
-  
-  if (!loginForm || !registerForm) {
-    console.warn('⚠️ Login forms not found');
-    return;
+  const toggleText = document.querySelector('.form-toggle');
+
+  if (loginForm && registerForm) {
+    if (isLoginMode) {
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      if (toggleBtn) toggleBtn.textContent = 'Registrati';
+      if (toggleText) toggleText.firstChild.textContent = 'Non hai un account? ';
+    } else {
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      if (toggleBtn) toggleBtn.textContent = 'Accedi';
+      if (toggleText) toggleText.firstChild.textContent = 'Hai già un account? ';
+    }
   }
-  
-  // Toggle tra login e register
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      const isLoginVisible = loginForm.style.display !== 'none';
-      loginForm.style.display = isLoginVisible ? 'none' : 'block';
-      registerForm.style.display = isLoginVisible ? 'block' : 'none';
-      toggleBtn.textContent = isLoginVisible ? 'Accedi' : 'Registrati';
-    });
-  }
-  
-  // Gestisci login
+}
+
+async function handleLogin() {
+  const emailInput = document.getElementById('loginEmail');
+  const passwordInput = document.getElementById('loginPassword');
   const loginBtn = document.getElementById('loginBtn');
+
+  if (!emailInput || !passwordInput) return;
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  if (!email) { showNotification('⚠️ Inserisci la tua email', 'error'); emailInput.focus(); return; }
+  if (!password) { showNotification('⚠️ Inserisci la password', 'error'); passwordInput.focus(); return; }
+  if (!isValidEmail(email)) { showNotification('⚠️ Email non valida', 'error'); return; }
+
   if (loginBtn) {
-    loginBtn.addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail')?.value?.trim();
-      const password = document.getElementById('loginPassword')?.value;
-      
-      // Validazione
-      if (!email) {
-        showNotification('❌ Inserisci email', 'error');
-        return;
-      }
-      
-      if (!isValidEmail(email)) {
-        showNotification('❌ Email non valida (es: nome@email.com)', 'error');
-        return;
-      }
-      
-      if (!password) {
-        showNotification('❌ Inserisci password', 'error');
-        return;
-      }
-      
-      if (password.length < 6) {
-        showNotification('❌ Password deve avere almeno 6 caratteri', 'error');
-        return;
-      }
-      
-      loginBtn.disabled = true;
-      loginBtn.textContent = '⏳ Accedendo...';
-      
-      const result = await loginWithEmail(email, password);
-      
-      if (!result) {
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Accedi';
-      }
-    });
+    loginBtn.textContent = 'Accesso in corso...';
+    loginBtn.disabled = true;
   }
-  
-  // Gestisci registrazione
+
+  try {
+    const result = await loginWithEmail(email, password);
+    if (result) {
+      user = result;
+      hideLoginScreen();
+    }
+  } finally {
+    if (loginBtn) {
+      loginBtn.textContent = 'Accedi';
+      loginBtn.disabled = false;
+    }
+  }
+}
+
+async function handleRegister() {
+  const nameInput = document.getElementById('registerName');
+  const emailInput = document.getElementById('registerEmail');
+  const passwordInput = document.getElementById('registerPassword');
   const registerBtn = document.getElementById('registerBtn');
+
+  if (!nameInput || !emailInput || !passwordInput) return;
+
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  if (!name) { showNotification('⚠️ Inserisci il tuo nome', 'error'); nameInput.focus(); return; }
+  if (!email) { showNotification('⚠️ Inserisci la tua email', 'error'); emailInput.focus(); return; }
+  if (!isValidEmail(email)) { showNotification('⚠️ Email non valida', 'error'); return; }
+  if (!password || password.length < 6) { showNotification('⚠️ Password troppo corta (min 6 caratteri)', 'error'); passwordInput.focus(); return; }
+
   if (registerBtn) {
-    registerBtn.addEventListener('click', async () => {
-      const email = document.getElementById('registerEmail')?.value?.trim();
-      const password = document.getElementById('registerPassword')?.value;
-      const name = document.getElementById('registerName')?.value?.trim();
-      
-      // Validazione
-      if (!name) {
-        showNotification('❌ Inserisci nome', 'error');
-        return;
-      }
-      
-      if (!email) {
-        showNotification('❌ Inserisci email', 'error');
-        return;
-      }
-      
-      if (!isValidEmail(email)) {
-        showNotification('❌ Email non valida (es: nome@email.com)', 'error');
-        return;
-      }
-      
-      if (!password) {
-        showNotification('❌ Inserisci password', 'error');
-        return;
-      }
-      
-      if (password.length < 6) {
-        showNotification('❌ Password deve avere almeno 6 caratteri', 'error');
-        return;
-      }
-      
-      registerBtn.disabled = true;
-      registerBtn.textContent = '⏳ Registrando...';
-      
-      const result = await registerWithEmail(email, password, name);
-      
-      if (!result) {
-        registerBtn.disabled = false;
-        registerBtn.textContent = 'Registrati';
-      }
-    });
+    registerBtn.textContent = 'Registrazione in corso...';
+    registerBtn.disabled = true;
   }
-  
-  // Enter key per login
-  document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      document.getElementById('loginBtn')?.click();
+
+  try {
+    const result = await registerWithEmail(email, password, name);
+    if (result) {
+      user = result;
+      hideLoginScreen();
     }
-  });
-  
-  // Enter key per register password
-  document.getElementById('registerPassword')?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      document.getElementById('registerBtn')?.click();
+  } finally {
+    if (registerBtn) {
+      registerBtn.textContent = 'Registrati';
+      registerBtn.disabled = false;
     }
-  });
+  }
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 console.log('✅ login-ui.js loaded');

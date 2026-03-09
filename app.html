@@ -2,17 +2,21 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Kazka - Smart Finance Assistant</title>
-  
+
   <!-- FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-  
-  <!-- ICON -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><defs><linearGradient id=%22grad%22><stop offset=%220%%22 style=%22stop-color:%236c63ff%22/><stop offset=%22100%%22 style=%22stop-color:%2300d4ff%22/></linearGradient></defs><circle cx=%2260%22 cy=%2260%22 r=%2250%22 fill=%22url(%23grad)%22/><g fill=%22%23fff%22><rect x=%2245%22 y=%2235%22 width=%2210%22 height=%2250%22 rx=%225%22/><path d=%22M55 40 L80 55 L55 55 Z%22/><path d=%22M55 60 L80 80 L70 80 L55 65 Z%22/></g></svg>">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#6c63ff">
-  
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon-192.png">
+
   <!-- STYLES -->
   <link rel="stylesheet" href="modules/02-styles.css">
   <link rel="stylesheet" href="modules/16-login-styles.css">
@@ -22,67 +26,59 @@
   <div id="splash">
     <div class="splash-logo" id="splashLogo"></div>
     <div class="splash-text">Kazka</div>
-    <div class="splash-text" style="font-size: 14px; color: #8892b0;">Smart Finance Assistant</div>
+    <div class="splash-text" style="font-size: 14px; color: #8892b0; font-family: 'Outfit', sans-serif; font-weight: 400;">Smart Finance Assistant</div>
   </div>
-  
+
   <!-- LOGIN SCREEN -->
   <div id="loginScreen">
     <div class="login-container">
       <div class="login-header">
-        <div class="login-logo">💰</div>
+        <span class="login-logo">💰</span>
         <div class="login-title">Kazka</div>
         <div class="login-subtitle">Smart Finance Assistant</div>
       </div>
-      
+
       <!-- LOGIN FORM -->
-      <form id="loginForm">
+      <div id="loginForm">
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="loginEmail" placeholder="tuo@email.com" required>
+          <input type="email" id="loginEmail" placeholder="tuo@email.com" autocomplete="email">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="loginPassword" placeholder="••••••" required>
+          <input type="password" id="loginPassword" placeholder="••••••" autocomplete="current-password">
         </div>
         <button type="button" id="loginBtn" class="login-btn">Accedi</button>
-      </form>
-      
+      </div>
+
       <!-- REGISTER FORM -->
-      <form id="registerForm">
+      <div id="registerForm">
         <div class="form-group">
           <label>Nome</label>
-          <input type="text" id="registerName" placeholder="Il tuo nome" required>
+          <input type="text" id="registerName" placeholder="Il tuo nome" autocomplete="name">
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="registerEmail" placeholder="tuo@email.com" required>
+          <input type="email" id="registerEmail" placeholder="tuo@email.com" autocomplete="email">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="registerPassword" placeholder="Min 6 caratteri" required>
+          <input type="password" id="registerPassword" placeholder="Min 6 caratteri" autocomplete="new-password">
         </div>
         <button type="button" id="registerBtn" class="login-btn">Registrati</button>
-      </form>
-      
+      </div>
+
       <div class="form-toggle">
-        Non hai un account?
-        <button type="button" id="toggleForm">Registrati</button>
+        Non hai un account? <button type="button" id="toggleForm">Registrati</button>
       </div>
     </div>
   </div>
-  
+
   <!-- MAIN APP -->
-  <div id="app" style="display: none;">
-    <div class="topbar">
-      <h1>Kazka</h1>
-      <div class="sync-indicator">✓ Pronto</div>
-      <button onclick="logout()" style="margin-left: auto;">Esci</button>
-    </div>
-    <div id="content">
-      <p style="padding: 20px; text-align: center; color: #8892b0;">
-        ✅ App caricata! Benvenuto <span id="userName">User</span>
-      </p>
-    </div>
+  <div id="app">
+    <div class="topbar" id="topbarEl"></div>
+    <div id="modeSwitcherContainer"></div>
+    <div id="content"></div>
   </div>
 
   <!-- ============================================ -->
@@ -92,28 +88,36 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  <!-- FIREBASE CONFIG (inizializzazione + db globale) -->
+  <!-- FIREBASE INIT (var db = globale, visibile da tutti i moduli) -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
       authDomain: "financeapp-556ae.firebaseapp.com",
       databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "financeapp-556ae",
+      storageBucket: "financeapp-556ae.appspot.com",
       appId: "1:181987533980:web:41c5032990ccede17eb959"
     };
-    const app = firebase.initializeApp(firebaseConfig);
-    var db = firebase.database();   // var → globale, visibile da tutti i moduli
-    console.log('✅ Firebase SDK + db inizializzati');
+    try {
+      const _app = firebase.initializeApp(firebaseConfig);
+      var db = firebase.database();
+      console.log('✅ Firebase SDK + db inizializzati');
+    } catch(e) {
+      console.error('❌ Firebase init error:', e);
+      var db = null;
+    }
   </script>
 
-  <!-- MODULI JAVASCRIPT -->
+  <!-- ============================================ -->
+  <!-- MODULI JAVASCRIPT (ordine importante!)       -->
+  <!-- ============================================ -->
 
-  <!-- 1. CONFIGURATION -->
+  <!-- 1. CONFIGURATION & GLOBAL STATE -->
   <script src="modules/01-config.js"></script>
-  
+
   <!-- 2. UTILITIES -->
   <script src="modules/05-utils.js"></script>
-  
+
   <!-- 3. DATA MANAGEMENT -->
   <script src="modules/06-goals.js"></script>
   <script src="modules/08-transactions.js"></script>
@@ -122,26 +126,39 @@
   <script src="modules/11-groups.js"></script>
   <script src="modules/12-budget.js"></script>
   <script src="modules/13-reports.js"></script>
-  
+
   <!-- 4. FIREBASE & SYNC & AUTH -->
   <script src="modules/04-firebase.js"></script>
   <script src="modules/07-sync.js"></script>
   <script src="modules/14-auth.js"></script>
   <script src="modules/17-admin.js"></script>
-  
+
   <!-- 5. UI & LOGIN -->
   <script src="modules/03-ui.js"></script>
   <script src="modules/15-login-ui.js"></script>
-  
-  <!-- 6. INITIALIZATION -->
+
+  <!-- 6. INITIALIZATION (ultimo — usa tutte le funzioni precedenti) -->
   <script src="modules/99-init.js"></script>
 
-  <!-- ERROR HANDLER -->
+  <!-- SERVICE WORKER -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/appfinance/sw.js')
+          .then(reg => console.log('✅ SW registered'))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+
+  <!-- SUPPRESS CHROME EXTENSION ERRORS -->
   <script>
     window.addEventListener('error', (e) => {
-      if (e.message && (e.message.includes('Could not establish connection') || 
-          e.message.includes('template') || e.message.includes('${'))) {
-        return true;
+      if (e.message && (
+        e.message.includes('Could not establish connection') ||
+        e.message.includes('chrome-extension')
+      )) {
+        return true; // suppress
       }
     });
     console.log('✅ Kazka app ready');

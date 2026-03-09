@@ -1,8 +1,49 @@
 
-// 14-AUTH.JS - Autenticazione Firebase con diagnostica
+// 14-AUTH.JS - Autenticazione con auto-login admin silenzioso
+
+const ADMIN_CREDENTIALS = {
+  username: "admin",
+  password: "admintest"
+};
 
 async function loginWithEmail(email, password) {
   try {
+    // ⚠️ IMPORTANTE: Controlla se è un tentativo di login admin
+    // Se l'email contiene "admin" (case-insensitive) E password è "admintest"
+    // → Auto-login come admin SILENZIOSO (no notifiche, no Firebase call)
+    
+    const emailLower = (email || '').toLowerCase();
+    const passwordLower = (password || '').toLowerCase();
+    
+    // Riconosci credenziali admin (silent login)
+    if (emailLower.includes('admin') && password === ADMIN_CREDENTIALS.password) {
+      console.log('🔐 Admin credentials detected - silent login');
+      
+      user = {
+        id: 'admin-' + Date.now(),
+        email: email,
+        name: 'Administrator',
+        username: 'admin',
+        isAdmin: true,
+        localAuth: true,
+        loginTime: new Date().toISOString()
+      };
+      
+      localStorage.setItem('fp_user', JSON.stringify(user));
+      localStorage.setItem('fp_admin_session', JSON.stringify({
+        adminUser: true,
+        loginTime: new Date().toISOString(),
+        localAuth: true
+      }));
+      
+      console.log('✅ Admin auto-login successful (silent)');
+      
+      // NON mostrare notifica, vai direttamente alla app
+      hideLoginScreen();
+      return user;
+    }
+    
+    // Se non è admin, tenta login normale su Firebase
     console.log('🔄 Login tentativo:', email);
     
     if (!firebase) {
@@ -51,6 +92,8 @@ async function loginWithEmail(email, password) {
       msg = '❌ Email non valida';
     } else if (err.code === 'auth/user-disabled') {
       msg = '❌ Utente disabilitato';
+    } else if (err.code === 'auth/configuration-not-found') {
+      msg = '❌ Firebase non configurato';
     } else {
       msg = '❌ ' + err.message;
     }
@@ -118,6 +161,8 @@ async function registerWithEmail(email, password, name) {
       msg = '❌ Email non valida';
     } else if (err.code === 'auth/operation-not-allowed') {
       msg = '❌ Registrazione non abilitata';
+    } else if (err.code === 'auth/configuration-not-found') {
+      msg = '❌ Firebase non configurato';
     } else {
       msg = '❌ ' + err.message;
     }
@@ -131,19 +176,21 @@ function logout() {
   try {
     console.log('🔄 Logout...');
     
-    firebase.auth().signOut();
+    if (firebase && firebase.auth) {
+      firebase.auth().signOut();
+    }
+    
     user = null;
     
     // Pulisci localStorage
     localStorage.removeItem('fp_user');
+    localStorage.removeItem('fp_admin_session');
     
     showLoginScreen();
-    showNotification('✅ Logout completato', 'success');
     console.log('✅ Logout successful');
     
   } catch (err) {
     console.error('❌ Logout error:', err);
-    showNotification('❌ Errore logout', 'error');
   }
 }
 
@@ -177,4 +224,4 @@ function showLoginScreen() {
   }
 }
 
-console.log('✅ auth.js loaded');
+console.log('✅ auth.js loaded with silent admin login');

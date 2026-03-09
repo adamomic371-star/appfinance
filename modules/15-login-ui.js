@@ -10,7 +10,6 @@ function setupLoginForm() {
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
   const toggleBtn = document.getElementById('toggleForm');
-  const adminBtn = document.getElementById('adminLoginBtn');
   
   if (!loginForm || !registerForm) {
     console.warn('⚠️ Login forms not found');
@@ -24,24 +23,6 @@ function setupLoginForm() {
       loginForm.style.display = isLoginVisible ? 'none' : 'block';
       registerForm.style.display = isLoginVisible ? 'block' : 'none';
       toggleBtn.textContent = isLoginVisible ? 'Accedi' : 'Registrati';
-    });
-  }
-  
-  // Admin login button
-  if (adminBtn) {
-    adminBtn.addEventListener('click', async () => {
-      console.log('🔐 Admin login attempt');
-      adminBtn.disabled = true;
-      adminBtn.textContent = '⏳ Admin...';
-      
-      const result = await loginAsAdmin();
-      
-      if (result) {
-        hideLoginScreen();
-      } else {
-        adminBtn.disabled = false;
-        adminBtn.textContent = '👨‍💼 Admin';
-      }
     });
   }
   
@@ -146,4 +127,4 @@ function setupLoginForm() {
   });
 }
 
-console.log('✅ login-ui.js loaded with validation');
+console.log('✅ login-ui.js loaded');

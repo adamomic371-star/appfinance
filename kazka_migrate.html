@@ -1,288 +1,511 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kazka — Migrazione Dati</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',sans-serif;background:#070b18;color:#f0f4ff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  .card{background:#0d1225;border:1px solid rgba(108,99,255,.3);border-radius:20px;padding:32px;max-width:640px;width:100%}
-  h1{font-size:22px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,#6c63ff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  .sub{color:#8892b0;font-size:14px;margin-bottom:28px}
-  .step{background:#131929;border-radius:12px;padding:16px 20px;margin-bottom:12px;border:1px solid rgba(255,255,255,.06)}
-  .step-title{font-size:13px;font-weight:700;color:#8892b0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
-  .log{background:#070b18;border-radius:10px;padding:16px;font-family:monospace;font-size:13px;max-height:280px;overflow-y:auto;line-height:1.8;margin-top:16px;border:1px solid rgba(255,255,255,.05)}
-  .log-line{display:flex;gap:8px;align-items:flex-start}
-  .log-line.ok .icon{color:#00e5a0}
-  .log-line.warn .icon{color:#ffd166}
-  .log-line.err .icon{color:#ff4f6d}
-  .log-line.info .icon{color:#6c63ff}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:linear-gradient(135deg,#6c63ff,#00d4ff);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:100%;justify-content:center;margin-top:4px;transition:all .2s}
-  .btn:hover{opacity:.9;transform:translateY(-1px)}
-  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-  .btn.danger{background:linear-gradient(135deg,#ff4f6d,#ff9f43)}
-  .progress{height:6px;background:#131929;border-radius:10px;overflow:hidden;margin-top:16px}
-  .progress-bar{height:100%;background:linear-gradient(90deg,#6c63ff,#00d4ff);border-radius:10px;transition:width .4s;width:0%}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
-  .stat{background:#070b18;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.05)}
-  .stat-val{font-size:24px;font-weight:800;color:#6c63ff}
-  .stat-lbl{font-size:11px;color:#8892b0;margin-top:4px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-  .badge.green{background:rgba(0,229,160,.15);color:#00e5a0}
-  .badge.red{background:rgba(255,79,109,.15);color:#ff4f6d}
-  .badge.yellow{background:rgba(255,209,102,.15);color:#ffd166}
-  .divider{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kazka · Migrazione Dati Completa</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background: #0a0f1a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: #141b2b;
+      border: 1px solid #2a344a;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #7c6fff, #00e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background: #1e273a;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #2a344a;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #cbd5e1;
+    }
+    .card-title i {
+      color: #7c6fff;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-item {
+      background: #0a0f1a;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #2a344a;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #7c6fff;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      background: #2a344a;
+      color: #cbd5e1;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c6fff, #00e5ff);
+      color: white;
+      box-shadow: 0 4px 20px rgba(124, 111, 255, 0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(124, 111, 255, 0.5);
+    }
+    .btn-danger {
+      background: #ff6b6b;
+      color: white;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: #ff5252;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #0a0f1a;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c6fff, #00e5ff);
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .log {
+      background: #0a0f1a;
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Menlo', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      border: 1px solid #2a344a;
+    }
+    .log-line {
+      display: flex;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid #1e273a;
+    }
+    .log-line:last-child {
+      border-bottom: none;
+    }
+    .log-info { color: #7c6fff; }
+    .log-success { color: #00e5a0; }
+    .log-warning { color: #fbbf24; }
+    .log-error { color: #ff6b6b; }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #7c6fff;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #2a344a;
+      margin: 20px 0;
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
-<div class="card">
-  <h1>💾 Kazka — Migrazione Dati</h1>
-  <p class="sub">Sposta i tuoi dati dalla vecchia struttura piatta alla nuova struttura per-utente</p>
+<div class="container">
+  <h1>💾 Kazka · Migrazione Dati</h1>
+  <div class="sub">Sposta i tuoi dati dalla vecchia struttura piatta alla nuova organizzazione per utente</div>
 
-  <div class="step">
-    <div class="step-title">📊 Step 1 — Analisi database</div>
-    <button class="btn" id="btnAnalyze" onclick="analyze()">🔍 Analizza database</button>
-    <div class="stats" id="statsBox" style="display:none">
-      <div class="stat"><div class="stat-val" id="statTx">0</div><div class="stat-lbl">Transazioni</div></div>
-      <div class="stat"><div class="stat-val" id="statBills">0</div><div class="stat-lbl">Bollette/Utenze</div></div>
-      <div class="stat"><div class="stat-val" id="statOther">0</div><div class="stat-lbl">Viaggi/Ricorrenti</div></div>
+  <!-- STEP 1: ANALISI -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-search"></i> 1. Analisi database</div>
+    <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">🔍 Analizza nodi esistenti</button>
+    <div id="statsContainer" style="display: none; margin-top: 20px;">
+      <div class="stats-grid" id="statsGrid"></div>
     </div>
   </div>
 
-  <div class="step">
-    <div class="step-title">🚀 Step 2 — Migrazione</div>
-    <button class="btn" id="btnMigrate" onclick="migrate()" disabled>▶ Avvia migrazione</button>
-    <div class="progress" id="progressBox" style="display:none"><div class="progress-bar" id="progressBar"></div></div>
+  <!-- STEP 2: OPZIONI MIGRAZIONE -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-cog"></i> 2. Opzioni migrazione</div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="migrateBiz" checked>
+      <label for="migrateBiz">Includi dati business (clienti, preventivi, progetti, note spese)</label>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="dryRun" checked>
+      <label for="dryRun">🚧 Simulazione (dry run) – non scrive su Firebase</label>
+    </div>
   </div>
 
-  <div class="step">
-    <div class="step-title">🗑️ Step 3 — Pulizia (opzionale)</div>
-    <button class="btn danger" id="btnClean" onclick="cleanup()" disabled>🗑️ Elimina vecchi dati (dopo aver verificato)</button>
+  <!-- STEP 3: MIGRAZIONE -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-sync-alt"></i> 3. Esegui migrazione</div>
+    <button class="btn btn-primary" id="migrateBtn" onclick="migrate()" disabled>▶ Avvia migrazione</button>
+    <div class="progress-bar" id="progressContainer" style="display: none;">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
   </div>
 
-  <hr class="divider">
-  <div class="log" id="log"><div class="log-line info"><span class="icon">ℹ</span><span>Pronto. Clicca "Analizza database" per iniziare.</span></div></div>
+  <!-- STEP 4: PULIZIA (opzionale) -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-trash-alt"></i> 4. Pulizia vecchi dati (dopo verifica)</div>
+    <button class="btn btn-danger" id="cleanupBtn" onclick="cleanup()" disabled>🗑️ Elimina nodi originali</button>
+    <div style="font-size: 12px; color: #fbbf24; margin-top: 8px;">
+      ⚠️ Questa operazione rimuove definitivamente i dati dalla vecchia struttura. Fallo solo dopo aver verificato che la migrazione è andata a buon fine.
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- LOG -->
+  <div class="log" id="log">
+    <div class="log-line"><span class="log-info">ℹ️</span> <span>Pronto. Clicca "Analizza database" per iniziare.</span></div>
+  </div>
 </div>
 
+<!-- Font Awesome per icone (opzionale) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <script>
-const FB = {
-  apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
-  authDomain: "financeapp-556ae.firebaseapp.com",
-  projectId: "financeapp-556ae",
-  databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
-  storageBucket: "financeapp-556ae.firebasestorage.app",
-  messagingSenderId: "181987533980",
-  appId: "1:181987533980:web:41c5032990ccede17eb959"
-};
+  // ==================== CONFIGURAZIONE FIREBASE ====================
+  const firebaseConfig = {
+    apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
+    authDomain: "financeapp-556ae.firebaseapp.com",
+    databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "financeapp-556ae",
+    storageBucket: "financeapp-556ae.firebasestorage.app",
+    messagingSenderId: "181987533980",
+    appId: "1:181987533980:web:41c5032990ccede17eb959"
+  };
 
-firebase.initializeApp(FB);
-const db = firebase.database();
+  // Inizializza Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-let analysisData = {};
-let migrationDone = false;
+  // ==================== STATO GLOBALE ====================
+  let analysis = {
+    users: [],                 // array di userId univoci trovati
+    nodes: {},                 // per ogni nodo, array di record
+    stats: {}                  // conteggi per tipo
+  };
+  let migrationDone = false;
 
-function log(msg, type='info') {
-  const icons = {ok:'✅', warn:'⚠️', err:'❌', info:'ℹ️'};
-  const div = document.getElementById('log');
-  const line = document.createElement('div');
-  line.className = 'log-line ' + type;
-  line.innerHTML = `<span class="icon">${icons[type]||'•'}</span><span>${msg}</span>`;
-  div.appendChild(line);
-  div.scrollTop = div.scrollHeight;
-}
+  // Nodi da migrare (sempre)
+  const STANDARD_NODES = ['transactions', 'bills', 'utilities', 'trips', 'recurring', 'goals', 'budgets'];
 
-function setProgress(pct) {
-  document.getElementById('progressBar').style.width = pct + '%';
-}
+  // Nodi business (opzionali)
+  const BUSINESS_NODES = [
+    { src: 'clients', dest: 'biz/clients' },
+    { src: 'quotes', dest: 'biz/quotes' },
+    { src: 'projects', dest: 'biz/projects' },
+    { src: 'expenseNotes', dest: 'biz/expenseNotes' },
+    { src: 'bizTransactions', dest: 'biz/transactions' } // se usato
+  ];
 
-async function analyze() {
-  document.getElementById('btnAnalyze').disabled = true;
-  log('Connessione a Firebase...', 'info');
-  
-  try {
-    // Read old flat structure
-    const [txSnap, billsSnap, utilSnap, tripsSnap, recSnap, usersSnap] = await Promise.all([
-      db.ref('transactions').once('value'),
-      db.ref('bills').once('value'),
-      db.ref('utilities').once('value'),
-      db.ref('trips').once('value'),
-      db.ref('recurring').once('value'),
-      db.ref('users').once('value'),
-    ]);
+  // ==================== UTILITIES ====================
+  function log(msg, type = 'info') {
+    const logDiv = document.getElementById('log');
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    else if (type === 'warning') icon = '⚠️';
+    else if (type === 'error') icon = '❌';
+    line.innerHTML = `<span class="log-${type}">${icon}</span> <span>${msg}</span>`;
+    logDiv.appendChild(line);
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
 
-    const txData = txSnap.val() || {};
-    const billsData = billsSnap.val() || {};
-    const utilData = utilSnap.val() || {};
-    const tripsData = tripsSnap.val() || {};
-    const recData = recSnap.val() || {};
-    const usersData = usersSnap.val() || {};
+  function setProgress(percent) {
+    document.getElementById('progressFill').style.width = percent + '%';
+  }
 
-    const txArr = Object.entries(txData).map(([id,d])=>({...d,id}));
-    const billsArr = Object.entries(billsData).map(([id,d])=>({...d,id}));
-    const utilArr = Object.entries(utilData).map(([id,d])=>({...d,id}));
-    const tripsArr = Object.entries(tripsData).map(([id,d])=>({...d,id}));
-    const recArr = Object.entries(recData).map(([id,d])=>({...d,id}));
-    const usersArr = Object.entries(usersData).map(([id,d])=>({...d,id}));
+  function enableButtons(analyze = true, migrate = true, cleanup = true) {
+    document.getElementById('analyzeBtn').disabled = !analyze;
+    document.getElementById('migrateBtn').disabled = !migrate;
+    document.getElementById('cleanupBtn').disabled = !cleanup;
+  }
 
-    analysisData = { txArr, billsArr, utilArr, tripsArr, recArr, usersArr };
+  // ==================== ANALISI ====================
+  async function analyze() {
+    log('🔍 Analisi database in corso...', 'info');
+    enableButtons(false, false, false);
+    document.getElementById('statsContainer').style.display = 'none';
 
-    log(`Trovati ${txArr.length} transazioni nella vecchia struttura`, txArr.length > 0 ? 'ok' : 'warn');
-    log(`Trovate ${billsArr.length} bollette + ${utilArr.length} utenze`, 'ok');
-    log(`Trovati ${tripsArr.length} viaggi, ${recArr.length} ricorrenti`, 'ok');
-    log(`Trovati ${usersArr.length} utenti nel database`, 'ok');
+    try {
+      // Legge tutti i nodi standard e business (se esistono)
+      const nodesToCheck = [...STANDARD_NODES, ...BUSINESS_NODES.map(b => b.src)];
+      const snapshots = await Promise.all(
+        nodesToCheck.map(async (node) => {
+          const snap = await db.ref(node).once('value');
+          return { node, data: snap.val() || {} };
+        })
+      );
 
-    // Show which userId each transaction belongs to
-    const userIds = [...new Set(txArr.map(t=>t.userId).filter(Boolean))];
-    log(`Transazioni appartengono a ${userIds.length} utente/i: ${userIds.join(', ')}`, 'info');
+      // Costruisce mappa userId -> conteggi
+      const userMap = new Map();  // userId -> set di tipi
+      analysis.nodes = {};
+      analysis.stats = {};
 
-    // Show stats
-    document.getElementById('statTx').textContent = txArr.length;
-    document.getElementById('statBills').textContent = billsArr.length + utilArr.length;
-    document.getElementById('statOther').textContent = tripsArr.length + recArr.length;
-    document.getElementById('statsBox').style.display = 'grid';
+      for (let { node, data } of snapshots) {
+        const entries = Object.entries(data);
+        if (entries.length === 0) continue;
 
-    if (txArr.length === 0 && billsArr.length === 0 && tripsArr.length === 0) {
-      log('Nessun dato vecchio trovato. La migrazione non è necessaria!', 'warn');
-      document.getElementById('btnAnalyze').disabled = false;
-    } else {
-      log('Analisi completata! Clicca "Avvia migrazione" per procedere.', 'ok');
-      document.getElementById('btnMigrate').disabled = false;
+        analysis.nodes[node] = entries.map(([id, val]) => ({ id, ...val }));
+        analysis.stats[node] = entries.length;
+
+        // Estrae userId da ogni record (se presente)
+        entries.forEach(([_, val]) => {
+          if (val.userId) {
+            if (!userMap.has(val.userId)) userMap.set(val.userId, new Set());
+            userMap.get(val.userId).add(node);
+          }
+        });
+      }
+
+      analysis.users = Array.from(userMap.keys());
+
+      // Mostra statistiche
+      const statsGrid = document.getElementById('statsGrid');
+      statsGrid.innerHTML = '';
+      for (let [node, count] of Object.entries(analysis.stats)) {
+        statsGrid.innerHTML += `
+          <div class="stat-item">
+            <div class="stat-value">${count}</div>
+            <div class="stat-label">${node}</div>
+          </div>
+        `;
+      }
+      if (analysis.users.length > 0) {
+        statsGrid.innerHTML += `
+          <div class="stat-item">
+            <div class="stat-value">${analysis.users.length}</div>
+            <div class="stat-label">utenti coinvolti</div>
+          </div>
+        `;
+      }
+
+      document.getElementById('statsContainer').style.display = 'block';
+
+      if (Object.keys(analysis.stats).length === 0) {
+        log('Nessun dato da migrare trovato.', 'warning');
+        enableButtons(true, false, false);
+      } else {
+        log(`Trovati dati in ${Object.keys(analysis.stats).length} nodi.`, 'success');
+        enableButtons(true, true, false);
+      }
+
+    } catch (e) {
+      log('Errore durante l\'analisi: ' + e.message, 'error');
+      enableButtons(true, false, false);
+    }
+  }
+
+  // ==================== MIGRAZIONE ====================
+  async function migrate() {
+    const dryRun = document.getElementById('dryRun').checked;
+    const includeBiz = document.getElementById('migrateBiz').checked;
+
+    log(`🚀 Avvio migrazione (${dryRun ? 'SIMULAZIONE' : 'REALE'})...`, 'info');
+    enableButtons(false, false, false);
+    document.getElementById('progressContainer').style.display = 'block';
+    setProgress(0);
+
+    // Prepara lista nodi da migrare
+    const nodesToMigrate = [...STANDARD_NODES];
+    if (includeBiz) {
+      BUSINESS_NODES.forEach(b => nodesToMigrate.push(b.src));
     }
 
-  } catch(e) {
-    log('Errore connessione: ' + e.message, 'err');
-    document.getElementById('btnAnalyze').disabled = false;
+    // Filtra solo quelli con dati
+    const activeNodes = nodesToMigrate.filter(node => analysis.stats[node] > 0);
+    const totalRecords = activeNodes.reduce((acc, node) => acc + analysis.stats[node], 0);
+    let processed = 0;
+
+    let successCount = 0;
+    let errorCount = 0;
+    let skippedCount = 0;
+
+    for (let node of activeNodes) {
+      const records = analysis.nodes[node] || [];
+      log(`Migro ${records.length} record da "${node}"...`, 'info');
+
+      for (let rec of records) {
+        try {
+          const userId = rec.userId;
+          if (!userId) {
+            log(`Record ${rec.id} in ${node} senza userId, saltato.`, 'warning');
+            skippedCount++;
+            processed++;
+            setProgress((processed / totalRecords) * 100);
+            continue;
+          }
+
+          // Determina percorso di destinazione
+          let destPath;
+          if (STANDARD_NODES.includes(node)) {
+            destPath = `users/${userId}/${node}/${rec.id}`;
+          } else {
+            // Nodo business: cerca la mappatura
+            const bizMap = BUSINESS_NODES.find(b => b.src === node);
+            if (bizMap) {
+              destPath = `users/${userId}/${bizMap.dest}/${rec.id}`;
+            } else {
+              // Se non mappato, salta
+              log(`Nodo business ${node} non mappato, saltato.`, 'warning');
+              skippedCount++;
+              processed++;
+              setProgress((processed / totalRecords) * 100);
+              continue;
+            }
+          }
+
+          // Prepara dati (rimuovi userId per evitare duplicati, ma lo lasciamo per sicurezza)
+          const { id, userId: _, ...data } = rec;
+
+          if (!dryRun) {
+            await db.ref(destPath).set(data);
+          } else {
+            // In simulazione, logghiamo solo
+            log(`[SIMULAZIONE] ${destPath}`, 'info');
+          }
+
+          successCount++;
+        } catch (e) {
+          log(`Errore migrazione record ${rec.id} in ${node}: ${e.message}`, 'error');
+          errorCount++;
+        }
+
+        processed++;
+        setProgress((processed / totalRecords) * 100);
+      }
+    }
+
+    setProgress(100);
+    log(`✅ Migrazione completata. Successi: ${successCount}, Errori: ${errorCount}, Saltati: ${skippedCount}`, errorCount > 0 ? 'warning' : 'success');
+
+    if (!dryRun && errorCount === 0) {
+      migrationDone = true;
+      enableButtons(true, false, true);  // abilita analisi e cleanup
+    } else if (dryRun) {
+      log('🔍 Simulazione terminata. Se tutto OK, togli la spunta "Simulazione" e avvia la migrazione reale.', 'info');
+      enableButtons(true, true, false);
+    } else {
+      enableButtons(true, true, false);
+    }
   }
-}
 
-async function migrate() {
-  document.getElementById('btnMigrate').disabled = true;
-  document.getElementById('progressBox').style.display = 'block';
-  setProgress(0);
+  // ==================== PULIZIA ====================
+  async function cleanup() {
+    if (!migrationDone && !confirm('Sei sicuro? La migrazione non è stata completata o ci sono errori. Continuare?')) {
+      return;
+    }
+    if (!confirm('🚨 STAI PER ELIMINARE DEFINITIVAMENTE I VECCHI DATI. Sei sicuro?')) {
+      return;
+    }
 
-  const { txArr, billsArr, utilArr, tripsArr, recArr, usersArr } = analysisData;
+    log('🗑️ Pulizia nodi originali...', 'info');
+    enableButtons(false, false, false);
 
-  let total = txArr.length + billsArr.length + utilArr.length + tripsArr.length + recArr.length;
-  let done = 0;
+    const includeBiz = document.getElementById('migrateBiz').checked;
+    const nodesToDelete = [...STANDARD_NODES];
+    if (includeBiz) {
+      BUSINESS_NODES.forEach(b => nodesToDelete.push(b.src));
+    }
+    const activeNodes = nodesToDelete.filter(node => analysis.stats[node] > 0);
 
-  function progress() {
-    done++;
-    setProgress(Math.round((done / total) * 100));
-  }
-
-  log('🚀 Avvio migrazione...', 'info');
-
-  // Helper: get uid from userId field (already is the uid)
-  function getUid(item) {
-    return item.userId || null;
-  }
-
-  let ok = 0, skipped = 0, errors = 0;
-
-  // Migrate transactions
-  log(`Migro ${txArr.length} transazioni...`, 'info');
-  for (const tx of txArr) {
-    const uid = getUid(tx);
-    if (!uid) { log(`Transazione ${tx.id} senza userId — saltata`, 'warn'); skipped++; progress(); continue; }
     try {
-      const { id, userId, ...data } = tx;
-      await db.ref(`users/${uid}/transactions/${id}`).set(data);
-      ok++;
-    } catch(e) { log(`Errore tx ${tx.id}: ${e.message}`, 'err'); errors++; }
-    progress();
+      for (let node of activeNodes) {
+        log(`Elimino nodo "${node}"...`, 'info');
+        await db.ref(node).remove();
+      }
+      log('✅ Pulizia completata. Tutti i vecchi nodi sono stati rimossi.', 'success');
+      // Reset analisi
+      analysis = { users: [], nodes: {}, stats: {} };
+      document.getElementById('statsContainer').style.display = 'none';
+      migrationDone = false;
+      enableButtons(true, false, false);
+    } catch (e) {
+      log('Errore durante la pulizia: ' + e.message, 'error');
+      enableButtons(true, false, true);
+    }
   }
 
-  // Migrate bills
-  log(`Migro ${billsArr.length} bollette...`, 'info');
-  for (const bill of billsArr) {
-    const uid = getUid(bill);
-    if (!uid) { skipped++; progress(); continue; }
-    try {
-      const { id, userId, ...data } = bill;
-      await db.ref(`users/${uid}/bills/${id}`).set(data);
-      ok++;
-    } catch(e) { errors++; }
-    progress();
-  }
-
-  // Migrate utilities
-  log(`Migro ${utilArr.length} utenze...`, 'info');
-  for (const util of utilArr) {
-    const uid = getUid(util);
-    if (!uid) { skipped++; progress(); continue; }
-    try {
-      const { id, userId, ...data } = util;
-      await db.ref(`users/${uid}/utilities/${id}`).set(data);
-      ok++;
-    } catch(e) { errors++; }
-    progress();
-  }
-
-  // Migrate trips
-  log(`Migro ${tripsArr.length} viaggi...`, 'info');
-  for (const trip of tripsArr) {
-    const uid = getUid(trip);
-    if (!uid) { skipped++; progress(); continue; }
-    try {
-      const { id, userId, ...data } = trip;
-      await db.ref(`users/${uid}/trips/${id}`).set(data);
-      ok++;
-    } catch(e) { errors++; }
-    progress();
-  }
-
-  // Migrate recurring
-  log(`Migro ${recArr.length} ricorrenti...`, 'info');
-  for (const rec of recArr) {
-    const uid = getUid(rec);
-    if (!uid) { skipped++; progress(); continue; }
-    try {
-      const { id, userId, ...data } = rec;
-      await db.ref(`users/${uid}/recurring/${id}`).set(data);
-      ok++;
-    } catch(e) { errors++; }
-    progress();
-  }
-
-  setProgress(100);
-  log(`✅ Migrazione completata: ${ok} record migrati, ${skipped} saltati, ${errors} errori`, ok > 0 ? 'ok' : 'warn');
-
-  if (errors === 0) {
-    log('Tutto ok! Puoi ora cliccare "Elimina vecchi dati" per pulire il vecchio database.', 'ok');
-    document.getElementById('btnClean').disabled = false;
-  } else {
-    log('Ci sono stati degli errori. Controlla prima di pulire.', 'warn');
-    document.getElementById('btnClean').disabled = false;
-  }
-
-  migrationDone = true;
-}
-
-async function cleanup() {
-  if (!migrationDone) { log('Completa prima la migrazione!', 'warn'); return; }
-  if (!confirm('Sei sicuro? Verranno eliminati i dati dalla vecchia struttura piatta.\nI dati sono già stati copiati nella nuova struttura.')) return;
-
-  document.getElementById('btnClean').disabled = true;
-  log('🗑️ Pulizia vecchi nodi...', 'info');
-
-  try {
-    await Promise.all([
-      db.ref('transactions').remove(),
-      db.ref('bills').remove(),
-      db.ref('utilities').remove(),
-      db.ref('trips').remove(),
-      db.ref('recurring').remove(),
-    ]);
-    log('Vecchi nodi eliminati: transactions, bills, utilities, trips, recurring', 'ok');
-    log('✅ Database pulito e ottimizzato!', 'ok');
-  } catch(e) {
-    log('Errore pulizia: ' + e.message, 'err');
-    document.getElementById('btnClean').disabled = false;
-  }
-}
+  // Esponi funzioni globali
+  window.analyze = analyze;
+  window.migrate = migrate;
+  window.cleanup = cleanup;
 </script>
 </body>
 </html>

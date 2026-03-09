@@ -559,46 +559,21 @@ canvas{max-width:100%}
   .tb-center{display:none}
 }
 
-/* ────────────────────────────────────────────────────────── */
-/* BUBBLE BUTTONS - PULSANTI STILE BUBBLE                    */
-/* ────────────────────────────────────────────────────────── */
-
-button, .btn, [role="button"], input[type="button"], input[type="submit"] {
-  position: relative;
-  border-radius: 20px !important;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  box-shadow: 0 4px 15px rgba(124, 111, 255, 0.25) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.3px !important;
-}
-
-button:hover, .btn:hover, [role="button"]:hover, input[type="button"]:hover, input[type="submit"]:hover {
-  transform: translateY(-3px) scale(1.02) !important;
-  box-shadow: 0 8px 25px rgba(124, 111, 255, 0.4) !important;
-}
-
-button:active, .btn:active, [role="button"]:active {
-  transform: translateY(-1px) scale(0.98) !important;
-}
-
-/* BUBBLE ANIMATION */
-@keyframes bubblePulse {
-  0% { box-shadow: 0 0 0 0 rgba(124, 111, 255, 0.7); }
-  50% { box-shadow: 0 0 0 10px rgba(124, 111, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(124, 111, 255, 0); }
-}
-
-button.pulse, .btn.pulse {
-  animation: bubblePulse 2s infinite;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* ── KZ LOGO MARK SVG ── */
 .spl-li,.kz-logo-mark>div{display:flex;align-items:center;justify-content:center}
+
+/* LOGIN RESPONSIVE FIX */
+#loginScreen{overflow:auto;padding:20px;}
+#loginScreen .lg-card{width:min(380px,95vw);}
+
+/* BUTTONS STAGING STYLE */
+button, .btn-p, .btn-a, [class*="btn"], input[type="button"], input[type="submit"]{border-radius:10px !important;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;}
+
+button:hover, .btn-p:hover, .btn-a:hover, [class*="btn"]:hover{transform:translateY(-3px) scale(1.02) !important;box-shadow:0 8px 20px rgba(124, 111, 255, 0.3) !important;}
+
+button:active, .btn-p:active, .btn-a:active{transform:translateY(-1px) scale(0.98) !important;}
+
+@media(max-width:480px){#loginScreen .lg-card{width:100%;}.fi{padding:10px 12px 10px 36px;font-size:12px;}.tab-pill{padding:6px 12px;font-size:11px;}}
 
 </style>
 <style>

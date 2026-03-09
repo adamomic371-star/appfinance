@@ -2,130 +2,103 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#020409">
-  <title>Kazka – Control Your Money Mysteriously</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kazka - Personal & Business Finance Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
       --bg: #020409;
       --bg2: #0a0f1a;
+      --bg3: #141b2f;
       --ac: #7c6fff;
       --ac2: #00e5ff;
       --gr: #00f5a8;
       --re: #ff4466;
-      --tx: #e8ecff;
-      --tx2: #6a7189;
-      --purple: #6c3aff;
-      --cyan: #00d9ff;
+      --tx: #f0f4ff;
+      --tx2: #7a8fa3;
+      --tx3: #4a5568;
     }
 
     html, body {
       width: 100%;
-      height: 100%;
       font-family: 'Space Grotesk', sans-serif;
       background: var(--bg);
       color: var(--tx);
       overflow-x: hidden;
       line-height: 1.6;
-      position: relative;
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* BACKGROUND EFFECTS                                            */
-    /* ═════════════════════════════════════════════════════════════ */
-    
+    /* ═══════════════════════════════════════════════════════════ */
+    /* BACKGROUND                                                   */
+    /* ═══════════════════════════════════════════════════════════ */
+
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background: 
-        radial-gradient(ellipse 120% 80% at 20% 30%, rgba(124, 111, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse 100% 100% at 80% 70%, rgba(0, 229, 255, 0.1) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255, 69, 102, 0.05) 0%, transparent 60%);
+        radial-gradient(ellipse 150% 100% at 50% 0%, rgba(124, 111, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 120% 80% at 80% 100%, rgba(0, 229, 255, 0.08) 0%, transparent 60%);
       z-index: 0;
       pointer-events: none;
     }
 
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: 
-        url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
-      z-index: 1;
-      pointer-events: none;
-      animation: noiseShift 8s infinite;
-    }
+    main { position: relative; z-index: 2; }
 
-    @keyframes noiseShift {
-      0%, 100% { opacity: 0.015; }
-      50% { opacity: 0.025; }
-    }
-
-    /* ═════════════════════════════════════════════════════════════ */
-    /* MAIN CONTAINER                                                */
-    /* ═════════════════════════════════════════════════════════════ */
-
-    .container {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ═════════════════════════════════════════════════════════════ */
-    /* NAVIGATION                                                    */
-    /* ═════════════════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════ */
+    /* NAVIGATION                                                   */
+    /* ═══════════════════════════════════════════════════════════ */
 
     nav {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      padding: 16px 20px;
-      background: rgba(2, 4, 9, 0.8);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      height: 70px;
+      background: rgba(2, 4, 9, 0.7);
+      backdrop-filter: blur(30px);
+      border-bottom: 1px solid rgba(124, 111, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      z-index: 100;
-      animation: navIn 0.8s ease;
+      padding: 0 40px;
+      z-index: 1000;
+      animation: slideDown 0.6s ease;
     }
 
-    @keyframes navIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideDown {
+      from { transform: translateY(-70px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
-    .nav-logo {
+    .logo {
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
     }
 
-    .nav-logo img {
-      width: 24px;
-      height: 24px;
-      filter: drop-shadow(0 0 8px rgba(124, 111, 255, 0.4));
+    .logo svg {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 12px rgba(124, 111, 255, 0.5));
     }
 
-    .cta-btn {
-      padding: 10px 22px;
-      background: linear-gradient(135deg, var(--purple), var(--ac2));
+    .nav-cta {
+      padding: 11px 28px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
       border: none;
       border-radius: 12px;
       color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 13px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -136,296 +109,186 @@
       gap: 6px;
     }
 
-    .cta-btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(124, 111, 255, 0.5);
+    .nav-cta:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 36px rgba(124, 111, 255, 0.5);
     }
 
-    .cta-btn:active {
-      transform: translateY(-2px);
+    .nav-cta:active {
+      transform: translateY(-1px) scale(0.98);
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* HERO SECTION                                                  */
-    /* ═════════════════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════ */
+    /* HERO                                                         */
+    /* ═══════════════════════════════════════════════════════════ */
 
     .hero {
-      flex: 1;
-      padding: 100px 20px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      padding: 120px 40px 60px;
       text-align: center;
-      animation: heroFadeIn 0.8s ease 0.2s both;
+      margin-top: 70px;
     }
 
-    @keyframes heroFadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .badge {
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
-      background: rgba(124, 111, 255, 0.1);
+      padding: 8px 18px;
+      background: rgba(124, 111, 255, 0.12);
       border: 1px solid rgba(124, 111, 255, 0.3);
       border-radius: 20px;
       font-size: 12px;
-      font-weight: 600;
       color: var(--ac);
+      font-weight: 700;
+      margin-bottom: 24px;
       letter-spacing: 0.5px;
-      margin-bottom: 20px;
-      animation: badgePulse 3s ease-in-out infinite;
-    }
-
-    @keyframes badgePulse {
-      0%, 100% { 
-        background: rgba(124, 111, 255, 0.1);
-        box-shadow: 0 0 20px rgba(124, 111, 255, 0.2);
-      }
-      50% { 
-        background: rgba(124, 111, 255, 0.15);
-        box-shadow: 0 0 30px rgba(124, 111, 255, 0.4);
-      }
+      animation: fadeInUp 0.8s ease 0.2s both;
     }
 
     h1 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(32px, 8vw, 64px);
-      font-weight: 700;
+      font-size: clamp(40px, 8vw, 64px);
+      font-weight: 800;
       line-height: 1.1;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-      max-width: 600px;
-      color: var(--tx);
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+      animation: fadeInUp 0.8s ease 0.4s both;
     }
 
-    h1 .gradient {
-      background: linear-gradient(120deg, var(--ac) 0%, var(--ac2) 50%, var(--gr) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 4s ease infinite;
-      background-size: 200% 200%;
-    }
-
-    @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    .subtitle {
-      font-size: clamp(14px, 3vw, 18px);
-      color: var(--tx2);
-      max-width: 500px;
-      margin: 0 auto 32px;
-      line-height: 1.7;
-      letter-spacing: 0.3px;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 60px;
-    }
-
-    .cta-secondary {
-      padding: 10px 22px;
-      background: transparent;
-      border: 1px solid rgba(124, 111, 255, 0.4);
-      border-radius: 12px;
-      color: var(--ac);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-
-    .cta-secondary:hover {
-      background: rgba(124, 111, 255, 0.1);
-      border-color: var(--ac);
-      transform: translateY(-2px);
-    }
-
-    /* ═════════════════════════════════════════════════════════════ */
-    /* FLOATING CARD                                                 */
-    /* ═════════════════════════════════════════════════════════════ */
-
-    .floating-card {
-      width: min(360px, 90vw);
-      background: rgba(10, 15, 26, 0.7);
-      border: 1px solid rgba(124, 111, 255, 0.2);
-      border-radius: 24px;
-      padding: 20px;
-      backdrop-filter: blur(20px);
-      box-shadow: 
-        0 0 60px rgba(124, 111, 255, 0.1),
-        0 40px 80px rgba(0, 0, 0, 0.4);
-      animation: float 3s ease-in-out infinite;
-      margin-top: 40px;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      margin-bottom: 16px;
-    }
-
-    .card-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Instrument Serif', serif;
-      font-size: 14px;
-      font-weight: 700;
+    h1 span {
       background: linear-gradient(135deg, var(--ac), var(--ac2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .status {
-      font-size: 10px;
-      color: var(--gr);
-      font-weight: 700;
-    }
-
-    .balance-box {
-      background: linear-gradient(135deg, rgba(124, 111, 255, 0.1), rgba(0, 229, 255, 0.05));
-      border: 1px solid rgba(124, 111, 255, 0.2);
-      border-radius: 16px;
-      padding: 16px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .balance-label {
-      font-size: 10px;
+    .hero-desc {
+      font-size: 18px;
       color: var(--tx2);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
+      max-width: 600px;
+      margin: 0 auto 36px;
+      animation: fadeInUp 0.8s ease 0.6s both;
     }
 
-    .balance-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 28px;
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.8s both;
+    }
+
+    .btn-primary {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border: none;
+      border-radius: 14px;
+      color: #fff;
       font-weight: 700;
-      color: var(--tx);
-      letter-spacing: -0.5px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .stat {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .stat-label {
-      font-size: 9px;
-      color: var(--tx2);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-family: 'JetBrains Mono', monospace;
       font-size: 14px;
-      font-weight: 700;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 10px 32px rgba(124, 111, 255, 0.4);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .action {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--tx2);
+    .btn-primary:hover {
+      transform: translateY(-6px) scale(1.05);
+      box-shadow: 0 16px 48px rgba(124, 111, 255, 0.6);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    .btn-secondary {
+      padding: 14px 32px;
+      background: transparent;
+      border: 1.5px solid rgba(124, 111, 255, 0.5);
+      border-radius: 14px;
+      color: var(--ac);
+      font-weight: 700;
+      font-size: 14px;
       cursor: pointer;
       transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .action:hover {
+    .btn-secondary:hover {
       background: rgba(124, 111, 255, 0.1);
-      border-color: var(--ac);
-      color: var(--ac);
+      border-color: var(--ac2);
+      transform: translateY(-4px);
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* FEATURES SECTION                                              */
-    /* ═════════════════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════ */
+    /* SECTIONS                                                     */
+    /* ═══════════════════════════════════════════════════════════ */
 
-    .features {
-      padding: 80px 20px;
-      max-width: 1000px;
+    section {
+      padding: 80px 40px;
+      max-width: 1200px;
       margin: 0 auto;
-      width: 100%;
-      animation: heroFadeIn 0.8s ease 0.4s both;
     }
 
-    .features h2 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(28px, 6vw, 42px);
-      font-weight: 700;
+    .section-header {
       text-align: center;
-      margin-bottom: 48px;
-      letter-spacing: -0.5px;
+      margin-bottom: 60px;
     }
 
-    .features h2 .gradient {
-      background: linear-gradient(120deg, var(--ac), var(--ac2), var(--gr));
+    .section-header h2 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+
+    .section-header h2 span {
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .grid {
+    .section-header p {
+      font-size: 16px;
+      color: var(--tx2);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /* FEATURES GRID                                                */
+    /* ═══════════════════════════════════════════════════════════ */
+
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
     }
 
     .feature-card {
-      background: rgba(10, 15, 26, 0.5);
-      border: 1px solid rgba(124, 111, 255, 0.15);
-      border-radius: 16px;
-      padding: 24px 16px;
-      transition: all 0.3s ease;
+      background: linear-gradient(135deg, rgba(10, 15, 26, 0.6), rgba(20, 27, 47, 0.4));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
     }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
 
     .feature-card::before {
       content: '';
@@ -437,10 +300,9 @@
     }
 
     .feature-card:hover {
-      border-color: rgba(124, 111, 255, 0.4);
-      background: rgba(10, 15, 26, 0.8);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(124, 111, 255, 0.1);
+      border-color: rgba(0, 229, 255, 0.4);
+      transform: translateY(-12px) scale(1.03);
+      box-shadow: 0 20px 60px rgba(124, 111, 255, 0.3);
     }
 
     .feature-card:hover::before {
@@ -448,280 +310,477 @@
     }
 
     .feature-icon {
-      font-size: 32px;
-      margin-bottom: 12px;
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.2) rotate(10deg);
     }
 
     .feature-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: var(--tx);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
     }
 
     .feature-desc {
-      font-size: 12px;
+      font-size: 14px;
       color: var(--tx2);
-      line-height: 1.6;
+      line-height: 1.7;
+      position: relative;
+      z-index: 2;
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* FINAL CTA SECTION                                             */
-    /* ═════════════════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════ */
+    /* PRICING                                                      */
+    /* ═══════════════════════════════════════════════════════════ */
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 60px;
+    }
+
+    .pricing-card {
+      background: linear-gradient(135deg, rgba(10, 15, 26, 0.6), rgba(20, 27, 47, 0.4));
+      border: 1px solid rgba(124, 111, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      border-color: rgba(0, 229, 255, 0.4);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(124, 111, 255, 0.3);
+    }
+
+    .pricing-tag {
+      display: inline-block;
+      background: rgba(124, 111, 255, 0.15);
+      border: 1px solid rgba(124, 111, 255, 0.3);
+      color: var(--ac);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pricing-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .pricing-desc {
+      font-size: 14px;
+      color: var(--tx2);
+      margin-bottom: 24px;
+    }
+
+    .pricing-price {
+      font-size: 48px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+    }
+
+    .pricing-features {
+      text-align: left;
+      margin-bottom: 32px;
+    }
+
+    .pricing-feature {
+      font-size: 13px;
+      color: var(--tx2);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(124, 111, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pricing-feature::before {
+      content: '✓';
+      color: var(--gr);
+      font-weight: 800;
+    }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /* CTA SECTION                                                  */
+    /* ═══════════════════════════════════════════════════════════ */
 
     .final-cta {
-      padding: 60px 20px;
       text-align: center;
+      padding: 100px 40px;
       background: linear-gradient(135deg, rgba(124, 111, 255, 0.08), rgba(0, 229, 255, 0.04));
       border: 1px solid rgba(124, 111, 255, 0.15);
-      border-radius: 24px;
-      margin: 40px 20px;
-      animation: heroFadeIn 0.8s ease 0.6s both;
+      border-radius: 30px;
+      margin: 60px 40px;
     }
 
     .final-cta h2 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(22px, 5vw, 32px);
-      font-weight: 700;
-      margin-bottom: 12px;
-      letter-spacing: -0.5px;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      margin-bottom: 16px;
     }
 
     .final-cta p {
+      font-size: 16px;
       color: var(--tx2);
-      margin-bottom: 24px;
-      font-size: 14px;
+      margin-bottom: 32px;
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* FOOTER                                                        */
-    /* ═════════════════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════ */
+    /* FOOTER                                                       */
+    /* ═══════════════════════════════════════════════════════════ */
 
     footer {
-      padding: 32px 20px;
       text-align: center;
+      padding: 40px;
       color: var(--tx2);
-      font-size: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      background: rgba(2, 4, 9, 0.4);
+      font-size: 13px;
+      border-top: 1px solid rgba(124, 111, 255, 0.1);
     }
 
-    footer strong {
-      color: var(--tx);
+    .section-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* RESPONSIVE                                                    */
-    /* ═════════════════════════════════════════════════════════════ */
-
-    @media (max-width: 640px) {
-      nav {
-        padding: 12px 16px;
-      }
-
-      .nav-logo {
-        font-size: 16px;
-      }
-
-      .cta-btn {
-        padding: 8px 16px;
-        font-size: 12px;
-      }
-
-      .hero {
-        padding: 80px 16px 40px;
-      }
-
-      h1 {
-        font-size: clamp(28px, 7vw, 40px);
-      }
-
-      .floating-card {
-        margin-top: 30px;
-      }
-
-      .features {
-        padding: 60px 16px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .final-cta {
-        margin: 30px 16px;
-        padding: 40px 16px;
-      }
-
-      footer {
-        padding: 24px 16px;
-      }
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--tx2);
     }
 
-    /* ═════════════════════════════════════════════════════════════ */
-    /* ANIMATIONS ENHANCED                                           */
-    /* ═════════════════════════════════════════════════════════════ */
-
-    @keyframes shimmer {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+      background: rgba(124, 111, 255, 0.2);
+      border: 1px solid rgba(124, 111, 255, 0.3);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    @keyframes glitch {
-      0%, 100% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(-2px, -2px); }
-      60% { transform: translate(2px, 2px); }
-      80% { transform: translate(2px, -2px); }
+    .toggle-switch.active {
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border-color: transparent;
     }
 
-    .glitch-hover:hover {
-      animation: glitch 0.3s ease;
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 14px;
+      transition: all 0.3s ease;
     }
 
+    .toggle-switch.active::after {
+      left: 31px;
+    }
+
+    /* Business colors */
+    .business-section {
+      --ac: #00d4ff;
+      --ac2: #7c6fff;
+    }
+
+    .business-section .feature-card {
+      border-color: rgba(0, 212, 255, 0.2);
+    }
+
+    .business-section .feature-card:hover {
+      border-color: rgba(0, 212, 255, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+    }
+
+    .business-section .section-header h2 span {
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .business-section .btn-primary {
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+    }
+
+    .business-section .btn-primary:hover {
+      box-shadow: 0 16px 48px rgba(0, 212, 255, 0.6);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /* RESPONSIVE                                                   */
+    /* ═══════════════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      section { padding: 60px 20px; }
+      .final-cta { margin: 40px 20px; padding: 60px 20px; }
+      .features-grid { gap: 16px; }
+      .pricing-grid { gap: 20px; }
+      .hero { padding: 100px 20px 40px; }
+    }
+
+    @media (max-width: 480px) {
+      nav { padding: 0 16px; height: 60px; }
+      .logo { font-size: 18px; }
+      .logo svg { width: 20px; height: 20px; }
+      .nav-cta { padding: 10px 18px; font-size: 12px; }
+      section { padding: 40px 16px; }
+      .hero { padding: 80px 16px 30px; }
+      h1 { font-size: clamp(28px, 6vw, 40px); }
+      .hero-desc { font-size: 15px; }
+      .hero-cta { gap: 10px; }
+      .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 13px; }
+      .final-cta { margin: 30px 16px; padding: 40px 16px; }
+    }
+
+    @media (max-width: 360px) {
+      .btn-primary, .btn-secondary { padding: 10px 16px; font-size: 12px; }
+      .nav-cta { padding: 9px 14px; font-size: 11px; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav>
-      <div class="nav-logo">
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="filter: drop-shadow(0 0 8px rgba(124, 111, 255, 0.4))">
-          <defs>
-            <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#7c6fff;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:1" />
-            </linearGradient>
-          </defs>
-          <rect x="42" y="28" width="10" height="64" rx="5" fill="url(#logoGrad1)"/>
-          <rect x="52" y="28" width="34" height="10" rx="5" fill="url(#logoGrad1)" transform="rotate(-32 69 33)"/>
-          <rect x="52" y="76" width="32" height="10" rx="5" fill="url(#logoGrad1)" transform="rotate(32 68 81)"/>
-        </svg>
-      </div>
-      <a href="app.html" class="cta-btn">Apri App →</a>
-    </nav>
 
-    <div class="hero">
-      <div class="badge">✨ Smart Finance Assistant</div>
-      
-      <h1>Controlla il tuo denaro <span class="gradient">misteriosamente</span></h1>
-      
-      <p class="subtitle">Traccia, analizza, domina. Un'app finanziaria costruita per chi vuole il controllo totale senza compromessi.</p>
-      
-      <div class="hero-cta">
-        <a href="app.html" class="cta-btn">Inizia Gratis →</a>
-        <a href="#features" class="cta-secondary">Scopri più</a>
-      </div>
-
-      <div class="floating-card">
-        <div class="card-header">
-          <div class="card-logo">
-            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
-              <defs>
-                <linearGradient id="logo2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#7c6fff;stop-opacity:1" />
-                  <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:1" />
-                </linearGradient>
-              </defs>
-              <rect x="42" y="28" width="10" height="64" rx="5" fill="url(#logo2)"/>
-              <rect x="52" y="28" width="34" height="10" rx="5" fill="url(#logo2)" transform="rotate(-32 69 33)"/>
-              <rect x="52" y="76" width="32" height="10" rx="5" fill="url(#logo2)" transform="rotate(32 68 81)"/>
-            </svg>
-            Kazka
-          </div>
-          <div class="status">✓ Attivo</div>
-        </div>
-
-        <div class="balance-box">
-          <div class="balance-label">Saldo Totale</div>
-          <div class="balance-value">€4.250</div>
-        </div>
-
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-label">Entrate</div>
-            <div class="stat-value" style="color: var(--gr);">+€5.200</div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">Uscite</div>
-            <div class="stat-value" style="color: var(--re);">-€950</div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <div class="action">➕ Entrata</div>
-          <div class="action">➖ Uscita</div>
-          <div class="action">📊 Report</div>
-          <div class="action">🎯 Goals</div>
-        </div>
-      </div>
+  <nav>
+    <div class="logo">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#7c6fff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect x="42" y="28" width="10" height="64" rx="5" fill="url(#logoGrad)"/>
+        <rect x="52" y="28" width="34" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(-32 69 33)"/>
+        <rect x="52" y="76" width="32" height="10" rx="5" fill="url(#logoGrad)" transform="rotate(32 68 81)"/>
+      </svg>
+      KAZKA
     </div>
+    <a href="app.html" class="nav-cta">Apri App →</a>
+  </nav>
 
-    <section class="features" id="features">
-      <h2>Tutto quello che <span class="gradient">serve</span></h2>
-      
-      <div class="grid">
-        <div class="feature-card">
-          <div class="feature-icon">💸</div>
-          <div class="feature-title">Transazioni</div>
-          <div class="feature-desc">Traccia ogni movimento con categorie intelligenti</div>
+  <main>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- HERO                                                         -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section class="hero">
+      <div class="hero-badge">✨ Smart Finance Platform</div>
+      <h1>Gestisci le tue finanze con <span>semplicità e potenza</span></h1>
+      <p class="hero-desc">Una piattaforma unica per personal finance e business accounting. Traccia, analizza, decidi.</p>
+      <div class="hero-cta">
+        <a href="app.html" class="btn-primary">Inizia Gratis →</a>
+        <a href="#features" class="btn-secondary">Scopri di più</a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- PERSONAL FEATURES                                           -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <section id="features">
+      <div class="section-toggle">
+        <span class="toggle-label">Personal</span>
+        <div class="toggle-switch active" id="modeToggle" onclick="toggleMode()"></div>
+        <span class="toggle-label">Business</span>
+      </div>
+
+      <div id="personal-section">
+        <div class="section-header">
+          <h2>Finanza <span>Personale</span></h2>
+          <p>Gestisci le tue entrate, uscite e obiettivi di risparmio in un'unica app</p>
         </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <div class="feature-title">Report Avanzati</div>
-          <div class="feature-desc">Grafici e statistiche dettagliate per analizzare i trend</div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">💸</div>
+            <div class="feature-title">Transazioni Illimitate</div>
+            <div class="feature-desc">Registra ogni movimento con categoria, descrizione e data. Filtra e cerca facilmente.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Report Intelligenti</div>
+            <div class="feature-desc">Grafici mensili e annuali, analisi per categoria, trend spending e previsioni.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-title">Obiettivi di Risparmio</div>
+            <div class="feature-desc">Crea mete finanziarie, traccia il progresso e raggiungi i tuoi sogni economici.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-title">Spese Ricorrenti</div>
+            <div class="feature-desc">Gestisci abbonamenti, stipendi, affitto. Calcolo automatico del costo mensile.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <div class="feature-title">Spese Condivise</div>
+            <div class="feature-desc">Dividi le spese con amici e famiglia. Calcolo automatico di chi deve cosa.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">Bollette & Viaggi</div>
+            <div class="feature-desc">Traccia scadenze bollette e gestisci budget dedicati per i tuoi viaggi.</div>
+          </div>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <div class="feature-title">Obiettivi</div>
-          <div class="feature-desc">Imposta mete finanziarie e monitora il progresso</div>
+      <div id="business-section" class="hidden business-section">
+        <div class="section-header">
+          <h2>Modalità <span>Business</span></h2>
+          <p>Gestisci la tua attività con strumenti professionali e contabilità completa</p>
         </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔄</div>
-          <div class="feature-title">Ricorrenti</div>
-          <div class="feature-desc">Automatizza abbonamenti, stipendi, affitti</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">👥</div>
-          <div class="feature-title">Spese Condivise</div>
-          <div class="feature-desc">Condividi budget con amici e famiglia</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🏢</div>
-          <div class="feature-title">Modalità Business</div>
-          <div class="feature-desc">Prima nota, clienti, preventivi per imprenditori</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔥</div>
-          <div class="feature-title">Cloud Sync</div>
-          <div class="feature-desc">I tuoi dati sincronizzati su tutti i dispositivi</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔒</div>
-          <div class="feature-title">Privacy First</div>
-          <div class="feature-desc">I tuoi dati rimangono tuoi, mai venduti</div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📓</div>
+            <div class="feature-title">Prima Nota Semplice</div>
+            <div class="feature-desc">Registra i movimenti aziendali. Importa da CSV o inserisci manualmente.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <div class="feature-title">Gestione Clienti</div>
+            <div class="feature-desc">Database clienti con contatti, storico transazioni e note personali.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <div class="feature-title">Preventivi PDF</div>
+            <div class="feature-desc">Crea preventivi professionali in PDF da inviare direttamente ai clienti.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <div class="feature-title">Progetti & Margini</div>
+            <div class="feature-desc">Traccia progetti, calcola margini di guadagno, analizza redditività.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <div class="feature-title">Scadenzario IVA</div>
+            <div class="feature-desc">Calcolo trimestrale IVA, dichiarazioni e scadenze fiscali sempre a portata.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Report Aziendali</div>
+            <div class="feature-desc">Bilanci, conto economico, analisi cash flow e performance metriche.</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="final-cta">
-      <h2>Pronto a dominare il tuo denaro?</h2>
-      <p>Gratis, senza pubblicità, nessun tracking. Il controllo è tuo.</p>
-      <a href="app.html" class="cta-btn" style="font-size: 14px; padding: 12px 28px;">Accedi Subito →</a>
-    </div>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- PRICING                                                      -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
 
-    <footer>
-      <div>💰 <strong>Kazka</strong> v3.0 – Smart Finance Assistant</div>
-      <div style="margin-top: 8px; opacity: 0.6; font-size: 11px;">© 2025 · Built with passion · Powered by Firebase</div>
-    </footer>
-  </div>
+    <section>
+      <div class="section-header">
+        <h2>Piani <span>Semplici</span></h2>
+        <p>Scegli il piano che fa per te, sempre con pieno accesso a tutte le feature</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tag">Popular</div>
+          <div class="pricing-title">Personale</div>
+          <div class="pricing-desc">Per gestire le tue finanze</div>
+          <div class="pricing-price">Gratis</div>
+          <div class="pricing-features">
+            <div class="pricing-feature">Transazioni illimitate</div>
+            <div class="pricing-feature">Report e analytics</div>
+            <div class="pricing-feature">Obiettivi di risparmio</div>
+            <div class="pricing-feature">Spese ricorrenti</div>
+            <div class="pricing-feature">Sync cloud</div>
+          </div>
+          <button class="btn-primary" onclick="window.location.href='app.html'">Inizia Gratis</button>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-tag">Pro</div>
+          <div class="pricing-title">Pro+</div>
+          <div class="pricing-desc">Personal + Business features</div>
+          <div class="pricing-price">€9<span style="font-size: 24px;">/mo</span></div>
+          <div class="pricing-features">
+            <div class="pricing-feature">Tutto del piano Personale</div>
+            <div class="pricing-feature">Prima nota aziendali</div>
+            <div class="pricing-feature">Gestione clienti</div>
+            <div class="pricing-feature">Preventivi PDF</div>
+            <div class="pricing-feature">Progetti e margini</div>
+            <div class="pricing-feature">Support prioritario</div>
+          </div>
+          <button class="btn-primary" onclick="window.location.href='app.html'">Prova Gratis 30 giorni</button>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-tag">Enterprise</div>
+          <div class="pricing-title">Enterprise</div>
+          <div class="pricing-desc">Soluzioni custom per team</div>
+          <div class="pricing-price">Contattaci</div>
+          <div class="pricing-features">
+            <div class="pricing-feature">Tutto di Pro+</div>
+            <div class="pricing-feature">Multi-user (team)</div>
+            <div class="pricing-feature">Permessi granulari</div>
+            <div class="pricing-feature">API access</div>
+            <div class="pricing-feature">Dedicated support</div>
+            <div class="pricing-feature">SLA guarantee</div>
+          </div>
+          <button class="btn-secondary" onclick="alert('Contatta il nostro team')">Contatta Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- FINAL CTA                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <div class="final-cta">
+      <h2>Inizia a controllare le tue finanze oggi</h2>
+      <p>Kazka è gratis per i tuoi dati personali. Niente carta di credito richiesta.</p>
+      <a href="app.html" class="btn-primary" style="font-size: 16px; padding: 14px 40px;">Apri Kazka Adesso →</a>
+    </div>
+  </main>
+
+  <footer>
+    <div>💰 <strong>Kazka</strong> v3.0 - Personal & Business Finance Platform</div>
+    <div style="margin-top: 8px;">© 2025 · Powered by Firebase · Privacy & Security First</div>
+  </footer>
+
+  <script>
+    function toggleMode() {
+      const toggle = document.getElementById('modeToggle');
+      const personal = document.getElementById('personal-section');
+      const business = document.getElementById('business-section');
+
+      toggle.classList.toggle('active');
+      personal.classList.toggle('hidden');
+      business.classList.toggle('hidden');
+    }
+  </script>
+
 </body>
 </html>

@@ -8,9 +8,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>Kazka · Finanza intelligente</title>
-  <!-- Font e icone -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <title>Kazka · Finanza completa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* ===== RESET & VARIABILI ===== */
@@ -18,40 +17,31 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
     }
 
     :root {
-      /* Colori base – alti contrasti */
       --bg: #0a0f1a;
       --bg-surface: #141b2b;
       --bg-surface-hover: #1e273a;
       --border: #2a344a;
       --border-strong: #3e4a66;
-
       --text-primary: #ffffff;
       --text-secondary: #cbd5e1;
       --text-tertiary: #94a3b8;
       --text-muted: #64748b;
-
       --accent: #7c6fff;
       --accent-light: #9a8fff;
-      --accent-dark: #5b4fd9;
       --accent-glow: rgba(124, 111, 255, 0.35);
-
       --success: #00e5a0;
       --success-bg: rgba(0, 229, 160, 0.15);
       --warning: #fbbf24;
       --warning-bg: rgba(251, 191, 36, 0.15);
       --danger: #ff6b6b;
       --danger-bg: rgba(255, 107, 107, 0.15);
-
-      /* Layout */
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 24px;
-
       --space-xs: 4px;
       --space-sm: 8px;
       --space-md: 12px;
@@ -59,55 +49,24 @@
       --space-xl: 20px;
       --space-2xl: 24px;
       --space-3xl: 32px;
-
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
       --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
       --shadow-glow: 0 4px 24px var(--accent-glow);
-
       --header-height: 64px;
       --sidebar-width: 260px;
     }
 
-    body.light {
-      --bg: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-surface-hover: #f1f5f9;
-      --border: #e2e8f0;
-      --border-strong: #cbd5e1;
-      --text-primary: #0f172a;
-      --text-secondary: #334155;
-      --text-tertiary: #475569;
-      --text-muted: #64748b;
-      --accent: #6d28d9;
-      --accent-light: #8b5cf6;
-      --accent-dark: #5b21b6;
-      --accent-glow: rgba(109, 40, 217, 0.25);
-    }
-
-    html, body {
-      height: 100%;
-      overflow: hidden;
-    }
-
+    html, body { height: 100%; overflow: hidden; }
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text-primary);
       font-size: 14px;
-      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== TIPOGRAFIA ===== */
-    h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
-    h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
-    h3 { font-size: 16px; font-weight: 600; }
-    .text-xs { font-size: 12px; }
-    .text-sm { font-size: 13px; }
-    .text-lg { font-size: 16px; font-weight: 600; }
-
-    /* ===== BOTTONI – SEMPRE VISIBILI ===== */
+    /* ===== BOTTONI ===== */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -126,20 +85,12 @@
       background: transparent;
       color: inherit;
     }
-
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-light));
       color: white;
       box-shadow: var(--shadow-glow);
     }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px var(--accent-glow);
-    }
-    .btn-primary:active {
-      transform: translateY(0);
-    }
-
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--accent-glow); }
     .btn-secondary {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -150,45 +101,25 @@
       border-color: var(--border-strong);
       color: var(--text-primary);
     }
-
     .btn-outline {
       border: 1px solid var(--border);
       color: var(--text-secondary);
     }
-    .btn-outline:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
     .btn-success {
       background: var(--success-bg);
       color: var(--success);
       border: 1px solid rgba(0, 229, 160, 0.2);
     }
-    .btn-success:hover {
-      background: rgba(0, 229, 160, 0.25);
-    }
-
     .btn-danger {
       background: var(--danger-bg);
       color: var(--danger);
       border: 1px solid rgba(255, 107, 107, 0.2);
     }
-    .btn-danger:hover {
-      background: rgba(255, 107, 107, 0.25);
-    }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: var(--radius-sm); }
+    .btn-block { width: 100%; }
 
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: var(--radius-sm);
-    }
-
-    .btn-block {
-      width: 100%;
-    }
-
-    /* ===== LAYOUT PRINCIPALE ===== */
+    /* ===== LAYOUT ===== */
     #app {
       display: flex;
       height: 100vh;
@@ -196,7 +127,7 @@
       overflow: hidden;
     }
 
-    /* SIDEBAR (desktop) */
+    /* SIDEBAR VERTICALE (DESKTOP) */
     .sidebar {
       width: var(--sidebar-width);
       background: var(--bg-surface);
@@ -205,15 +136,12 @@
       flex-direction: column;
       overflow-y: auto;
       padding: var(--space-xl) 0;
-      transition: transform 0.3s ease;
     }
-
     .sidebar-header {
       padding: 0 var(--space-lg) var(--space-lg);
       border-bottom: 1px solid var(--border);
       margin-bottom: var(--space-lg);
     }
-
     .sidebar-logo {
       display: flex;
       align-items: center;
@@ -224,7 +152,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .sidebar-user {
       padding: var(--space-md) var(--space-lg);
       background: var(--bg);
@@ -232,7 +159,6 @@
       margin: 0 var(--space-lg) var(--space-lg);
       border: 1px solid var(--border);
     }
-
     .nav-item {
       display: flex;
       align-items: center;
@@ -254,21 +180,15 @@
       color: white;
       box-shadow: var(--shadow-glow);
     }
-    .nav-item i {
-      width: 20px;
-      text-align: center;
-    }
+    .nav-item i { width: 20px; text-align: center; }
 
-    /* MAIN CONTENT */
+    /* MAIN */
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: var(--bg);
     }
-
-    /* TOPBAR */
     .topbar {
       height: var(--header-height);
       background: var(--bg-surface);
@@ -279,25 +199,9 @@
       justify-content: space-between;
       flex-shrink: 0;
     }
-
-    .page-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .page-subtitle {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-top: 2px;
-    }
-
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-    }
-
-    /* CONTENUTO SCROLLABILE */
+    .page-title { font-size: 18px; font-weight: 700; }
+    .page-subtitle { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: var(--space-md); }
     .content {
       flex: 1;
       overflow-y: auto;
@@ -312,14 +216,12 @@
       padding: var(--space-xl);
       margin-bottom: var(--space-xl);
     }
-
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: var(--space-lg);
     }
-
     .card-title {
       display: flex;
       align-items: center;
@@ -327,17 +229,18 @@
       font-weight: 600;
       font-size: 15px;
     }
-
-    .card-title i {
-      color: var(--accent);
-    }
+    .card-title i { color: var(--accent); }
 
     /* ===== GRIGLIE ===== */
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-lg); }
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
 
-    /* STAT CARDS */
     .stat-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -359,7 +262,7 @@
     .stat-value.positive { color: var(--success); }
     .stat-value.negative { color: var(--danger); }
 
-    /* TABELLE / LISTE */
+    /* ===== LISTE ===== */
     .item-row {
       display: flex;
       align-items: center;
@@ -397,13 +300,31 @@
       color: var(--text-secondary);
       border: 1px solid var(--border);
     }
-    .badge-success { background: var(--success-bg); color: var(--success); border-color: rgba(0,229,160,0.2); }
-    .badge-warning { background: var(--warning-bg); color: var(--warning); border-color: rgba(251,191,36,0.2); }
-    .badge-danger { background: var(--danger-bg); color: var(--danger); border-color: rgba(255,107,107,0.2); }
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: rgba(0, 229, 160, 0.2);
+    }
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-color: rgba(251, 191, 36, 0.2);
+    }
+    .badge-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: rgba(255, 107, 107, 0.2);
+    }
 
     /* ===== FORM ===== */
     .input-group { margin-bottom: var(--space-lg); }
-    label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
     input, select, textarea {
       width: 100%;
       padding: 10px 12px;
@@ -434,7 +355,10 @@
       pointer-events: none;
       transition: opacity 0.2s;
     }
-    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
     .modal {
       background: var(--bg-surface);
       border: 1px solid var(--border-strong);
@@ -454,7 +378,13 @@
       justify-content: space-between;
       margin-bottom: var(--space-xl);
     }
-    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-tertiary); }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+    }
 
     /* ===== TOAST ===== */
     .toast {
@@ -473,25 +403,9 @@
       display: none;
     }
 
-    /* ===== MOBILE DRAWER ===== */
-    .drawer-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    .drawer-overlay.open { opacity: 1; pointer-events: all; }
-    .drawer {
-      position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
-      background: var(--bg-surface); border-right: 1px solid var(--border);
-      transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1000;
-      overflow-y: auto;
-    }
-    .drawer.open { transform: translateX(0); }
-
-    /* ===== RESPONSIVE ===== */
+    /* ===== MOBILE ===== */
     @media (max-width: 768px) {
       .sidebar { display: none; }
-      .topbar { padding: 0 var(--space-lg); }
-      .content { padding: var(--space-lg); }
       .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 480px) {
@@ -506,781 +420,1027 @@
     .justify-between { justify-content: space-between; }
     .gap-2 { gap: 8px; }
     .w-full { width: 100%; }
+    .text-center { text-align: center; }
     .mt-4 { margin-top: 16px; }
     .mb-4 { margin-bottom: 16px; }
-    .text-center { text-align: center; }
   </style>
 </head>
 <body>
-  <!-- SPLASH SCREEN (breve) -->
-  <div id="splash" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:2000;">
-    <div style="text-align:center;">
-      <div style="font-size:48px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">KAZKA</div>
-      <div style="margin-top:12px; color:var(--text-tertiary);">caricamento...</div>
-    </div>
-  </div>
 
-  <!-- LOGIN SCREEN (inizialmente nascosto) -->
-  <div id="loginScreen" class="hidden" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:1500;">
-    <div class="card" style="max-width:360px; width:90%;">
-      <h2 style="margin-bottom:24px;">Accedi a Kazka</h2>
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="tuo@email.it">
-      </div>
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="••••••••">
-      </div>
-      <button class="btn btn-primary btn-block" onclick="doLogin()">Accedi</button>
-      <p style="margin-top:16px; text-align:center; color:var(--text-tertiary); font-size:12px;">
-        Demo: usa qualsiasi email/password (min 6 caratteri)
-      </p>
-    </div>
-  </div>
+<!-- SPLASH SCREEN (opzionale) -->
+<div id="splash" class="hidden">Caricamento...</div>
 
-  <!-- APP (inizialmente nascosta) -->
-  <div id="app" class="hidden">
-    <!-- DESKTOP SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <i class="fas fa-chart-pie"></i> KAZKA
-        </div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="hidden">
+  <div style="max-width: 400px; margin: 50px auto; padding: var(--space-2xl); background: var(--bg-surface); border-radius: var(--radius-xl); border: 1px solid var(--border);">
+    <h2 class="text-center" style="margin-bottom: 24px;">Accedi a Kazka</h2>
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="tu@email.it">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="handleLogin()">Accedi</button>
+    <p class="text-center" style="margin-top: 16px; color: var(--text-tertiary);">
+      Demo: usa qualsiasi email (min 6 caratteri)
+    </p>
+  </div>
+</div>
+
+<!-- APP PRINCIPALE -->
+<div id="app" class="hidden">
+  <!-- SIDEBAR VERTICALE -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-chart-pie"></i> KAZKA
       </div>
-      <div class="sidebar-user" id="sidebarUser">
-        <div class="text-sm font-medium" id="sidebarName">Caricamento...</div>
-        <div class="text-xs text-muted" id="sidebarPlan">Free</div>
+    </div>
+    <div class="sidebar-user" id="sidebarUser">
+      <div class="text-sm font-medium" id="sidebarName">Caricamento...</div>
+      <div class="text-xs text-muted" id="sidebarPlan">Free</div>
+    </div>
+    <nav id="sidebarNav">
+      <!-- Verrà popolato via JS -->
+    </nav>
+    <div style="margin-top: auto; padding: var(--space-lg);">
+      <button class="btn btn-outline w-full" onclick="handleLogout()">
+        <i class="fas fa-sign-out-alt"></i> Esci
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        <div class="page-subtitle" id="pageSubtitle">Panoramica</div>
       </div>
-      <nav id="sidebarNav" class="flex flex-col"></nav>
-      <div style="margin-top: auto; padding: var(--space-lg);">
-        <button class="btn btn-outline w-full" onclick="logout()">
-          <i class="fas fa-sign-out-alt"></i> Esci
+      <div class="topbar-actions" id="topbarActions">
+        <button class="btn btn-secondary btn-sm" id="themeToggle" onclick="toggleTheme()">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button class="btn btn-secondary btn-sm" id="notifBell" onclick="goToPage('notifiche')">
+          <i class="fas fa-bell"></i>
+          <span class="badge badge-danger hidden" id="notifBadge">0</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+          <i class="fas fa-plus"></i> <span>Nuovo</span>
         </button>
       </div>
-    </aside>
+    </header>
 
-    <!-- MAIN -->
-    <main class="main">
-      <header class="topbar">
-        <button class="btn btn-outline btn-sm" id="menuToggle" style="display: none;">
-          <i class="fas fa-bars"></i>
-        </button>
-        <div>
-          <h1 class="page-title" id="pageTitle">Dashboard</h1>
-          <div class="page-subtitle" id="pageSubtitle">Panoramica</div>
-        </div>
-        <div class="topbar-actions" id="topbarActions">
-          <button class="btn btn-secondary btn-sm" id="themeToggle" onclick="toggleTheme()">
-            <i class="fas fa-moon"></i>
-          </button>
-          <button class="btn btn-secondary btn-sm" id="notifBell" onclick="goToPage('notifiche')">
-            <i class="fas fa-bell"></i>
-            <span class="badge badge-danger hidden" id="notifBadge">0</span>
-          </button>
-          <button class="btn btn-primary btn-sm" onclick="openAddModal()">
-            <i class="fas fa-plus"></i> <span>Nuovo</span>
-          </button>
-        </div>
-      </header>
+    <div class="content" id="content"></div>
+  </main>
+</div>
 
-      <!-- CONTENUTO DINAMICO -->
-      <div class="content" id="content"></div>
-    </main>
-  </div>
+<!-- MODALE GENERICO -->
+<div class="modal-overlay" id="genericModal">
+  <div class="modal" id="modalContent"></div>
+</div>
 
-  <!-- MODAL GENERICA -->
-  <div class="modal-overlay" id="genericModal">
-    <div class="modal" id="modalContent"></div>
-  </div>
+<!-- TOAST NOTIFICHE -->
+<div class="toast" id="toast"></div>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast"></div>
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  // ==================== CONFIGURAZIONE FIREBASE ====================
+  const firebaseConfig = {
+    apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
+    authDomain: "financeapp-556ae.firebaseapp.com",
+    databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "financeapp-556ae",
+    storageBucket: "financeapp-556ae.appspot.com",
+    appId: "1:181987533980:web:41c5032990ccede17eb959"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-  <script>
-    // ==================== CONFIGURAZIONE ====================
-    const firebaseConfig = {
-      apiKey: "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
-      authDomain: "financeapp-556ae.firebaseapp.com",
-      databaseURL: "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "financeapp-556ae",
-      storageBucket: "financeapp-556ae.appspot.com",
-      appId: "1:181987533980:web:41c5032990ccede17eb959"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  // ==================== STATO GLOBALE ====================
+  let currentUser = null;
+  let allUsers = [];
+  let transactions = [];
+  let recurring = [];
+  let bills = [];
+  let utilities = [];
+  let trips = [];
+  let groups = [];
+  let notifs = [];
+  let goals = [];
+  let budgets = {};
+  // Business
+  let bizTx = [];
+  let clients = [];
+  let quotes = [];
+  let projects = [];
+  let expenseNotes = [];
+  let appMode = 'personal'; // 'personal' o 'business'
 
-    // ==================== STATO GLOBALE ====================
-    let currentUser = null;
-    let realUser = null;
-    let allUsers = [];
-    let transactions = [];
-    let bills = [];
-    let utilities = [];
-    let trips = [];
-    let groups = [];
-    let recurring = [];
-    let appNotifs = [];
-    let isAdminMode = false;
-    let impersonating = false;
-    let origAdmin = null;
-    let curGroupId = null;
-    let appMode = 'personal';
-    let bizTx = [];
-    let clients = [];
-    let quotes = [];
-    let projects = [];
-    let expenseNotes = [];
+  // ==================== UTILS ====================
+  function notify(msg, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    toast.style.background = type === 'error' ? 'var(--danger-bg)' : 'var(--bg-surface)';
+    toast.style.color = type === 'error' ? 'var(--danger)' : 'var(--text-primary)';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  }
 
-    // ==================== CATEGORIE ====================
-    const CATS = [
-      { id: 'food', name: 'Cibo & Ristoranti', icon: '🍕', color: '#ff9f43' },
-      { id: 'home', name: 'Casa & Affitto', icon: '🏠', color: '#6c63ff' },
-      { id: 'transport', name: 'Trasporti', icon: '🚗', color: '#00d4ff' },
-      { id: 'health', name: 'Salute & Farmacia', icon: '💊', color: '#00e5a0' },
-      { id: 'fun', name: 'Svago & Hobby', icon: '🎮', color: '#ff6b9d' },
-      { id: 'shopping', name: 'Shopping', icon: '🛍️', color: '#ffd166' },
-      { id: 'work', name: 'Lavoro & Formazione', icon: '💼', color: '#a855f7' },
-      { id: 'travel', name: 'Viaggi', icon: '✈️', color: '#06b6d4' },
-      { id: 'savings', name: 'Risparmi', icon: '🏦', color: '#10b981' },
-      { id: 'pets', name: 'Animali', icon: '🐾', color: '#f59e0b' },
-      { id: 'tech', name: 'Tech & Elettronica', icon: '💻', color: '#3b82f6' },
-      { id: 'other', name: 'Altro', icon: '📦', color: '#8892b0' }
-    ];
+  function formatEuro(amount) {
+    return '€' + Number(amount || 0).toFixed(2);
+  }
 
-    const REC_KINDS = {
-      subscription: { icon: '📱', label: 'Abbonamento' },
-      salary: { icon: '💼', label: 'Stipendio' },
-      bill: { icon: '📄', label: 'Bolletta' },
-      loan: { icon: '🏦', label: 'Mutuo/Prestito' },
-      other: { icon: '🔄', label: 'Spesa Varia' }
-    };
+  function formatDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('it-IT');
+  }
 
-    const FREQS = {
-      daily: 'Giornaliera',
-      weekly: 'Settimanale',
-      monthly: 'Mensile',
-      yearly: 'Annuale'
-    };
-
-    const BIZ_CATS = {
-      vendite: { icon: '💰', label: 'Vendite/Compensi', color: 'var(--success)' },
-      acquisti: { icon: '🛒', label: 'Acquisti', color: 'var(--danger)' },
-      personale: { icon: '👥', label: 'Personale', color: 'var(--accent)' },
-      affitti: { icon: '🏢', label: 'Affitti', color: 'var(--warning)' },
-      marketing: { icon: '📣', label: 'Marketing', color: '#ff6b9d' },
-      software: { icon: '💻', label: 'Software/SaaS', color: '#00d4ff' },
-      trasferte: { icon: '✈️', label: 'Trasferte', color: '#fbbf24' },
-      banche: { icon: '🏦', label: 'Banche', color: '#94a3b8' },
-      tasse: { icon: '🧾', label: 'Imposte', color: '#ff6b6b' },
-      altro: { icon: '📦', label: 'Altro', color: '#64748b' }
-    };
-
-    const PLANS = {
-      free: { name: 'Free', price: 'Gratis', biz: false, features: ['Dashboard personale', 'Movimenti (max 50)', 'Report base'] },
-      personal_pro: { name: 'Personal Pro', price: '€3/mese', biz: false, features: ['Tutto Free illimitato', 'Ricorrenti & Bollette', 'Budget mensile', 'Export CSV', 'Viaggi & Gruppi'] },
-      business_starter: { name: 'Business Starter', price: '€9/mese', biz: true, features: ['Tutto Personal Pro', 'Vista Azienda', 'Clienti & Fornitori', 'Preventivi', 'Prima Nota aziendale', 'Progetti (max 5)'] },
-      business_pro: { name: 'Business Pro', price: '€19/mese', biz: true, features: ['Tutto Business Starter', 'Progetti illimitati', 'Note Spese + approvazione', 'IVA Tracker', 'Scadenziario avanzato', 'Multi-utente (presto)'] },
-      lifetime: { name: 'Lifetime', price: '€149', biz: true, features: ['Tutto Business Pro per sempre', 'Priorità supporto', 'Accesso anticipato nuove funzioni'] }
-    };
-
-    // ==================== NAVIGAZIONE ====================
-    const NAV_PERSONAL = [
-      { id: 'dashboard', icon: '📊', label: 'Dashboard', plans: ['free','personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'transazioni', icon: '💸', label: 'Movimenti', plans: ['free','personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'report', icon: '📈', label: 'Report', plans: ['free','personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'ricorrenti', icon: '🔄', label: 'Ricorrenti', plans: ['personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'bollette', icon: '📄', label: 'Bollette', plans: ['personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'viaggi', icon: '✈️', label: 'Viaggi', plans: ['personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'obiettivi', icon: '🎯', label: 'Obiettivi', plans: ['personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'gruppi', icon: '👥', label: 'Gruppi', plans: ['personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'notifiche', icon: '🔔', label: 'Notifiche', plans: ['free','personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'piani', icon: '🎁', label: 'Piani', plans: ['free','personal_pro','business_starter','business_pro','lifetime'] },
-      { id: 'admin', icon: '⚙️', label: 'Admin', plans: ['admin'] },
-      { id: 'profilo', icon: '👤', label: 'Profilo', plans: ['free','personal_pro','business_starter','business_pro','lifetime'] }
-    ];
-
-    const NAV_BUSINESS = [
-      { id: 'biz_dashboard', icon: '📊', label: 'Dashboard', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'biz_primanota', icon: '💼', label: 'Prima Nota', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'biz_clienti', icon: '👥', label: 'Clienti', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'biz_preventivi', icon: '📋', label: 'Preventivi', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'biz_progetti', icon: '📁', label: 'Progetti', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'biz_spese', icon: '🧾', label: 'Note Spese', plans: ['business_pro','lifetime'] },
-      { id: 'biz_scadenzario', icon: '📅', label: 'Scadenziario', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'biz_iva', icon: '🧮', label: 'IVA Tracker', plans: ['business_pro','lifetime'] },
-      { id: 'notifiche', icon: '🔔', label: 'Notifiche', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'piani', icon: '🎁', label: 'Piani', plans: ['business_starter','business_pro','lifetime'] },
-      { id: 'admin', icon: '⚙️', label: 'Admin', plans: ['admin'] },
-      { id: 'profilo', icon: '👤', label: 'Profilo', plans: ['business_starter','business_pro','lifetime'] }
-    ];
-
-    let NAV = NAV_PERSONAL;
-
-    // ==================== UTILS ====================
-    function notify(msg, type = 'info') {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      toast.style.background = type === 'error' ? 'var(--danger-bg)' : 'var(--bg-surface)';
-      toast.style.color = type === 'error' ? 'var(--danger)' : 'var(--text-primary)';
-      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  // ==================== GESTIONE LOGIN ====================
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    
+    if (!email || pass.length < 6) {
+      notify('Inserisci email e password (min 6 caratteri)', 'error');
+      return;
     }
 
-    function formatEuro(v) {
-      return '€' + parseFloat(v || 0).toFixed(2);
-    }
-
-    function formatDate(d) {
-      try { return new Date(d).toLocaleDateString('it-IT'); } catch { return d; }
-    }
-
-    function catIcon(cid) {
-      const c = CATS.find(x => x.id === cid);
-      return c ? c.icon : '📦';
-    }
-
-    function catName(cid) {
-      const c = CATS.find(x => x.id === cid);
-      return c ? c.name : 'Altro';
-    }
-
-    function es(icon, text) {
-      return `<div class="text-center" style="padding:40px 20px;"><div style="font-size:48px;">${icon}</div><div style="color:var(--text-tertiary);">${text}</div></div>`;
-    }
-
-    // ==================== AUTH ====================
-    async function hashPass(pass) {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
-      return 'sha256:' + Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    async function checkPass(plain, stored) {
-      if (stored.startsWith('sha256:')) {
-        const h = await hashPass(plain);
-        return h === stored;
+    try {
+      const snapshot = await db.ref('users').once('value');
+      const users = snapshot.val() || {};
+      let found = null;
+      
+      for (let id in users) {
+        if (users[id].email === email) {
+          // In produzione usa hash, qui demo accetta qualsiasi password
+          found = { id, ...users[id] };
+          break;
+        }
       }
-      try { return decodeURIComponent(escape(atob(stored))) === plain; } catch { return false; }
-    }
 
-    function doLogin() {
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPassword').value;
-      if (!email || !pass) { notify('Inserisci email e password', 'error'); return; }
-      // Simulazione login – in produzione si farebbe una query Firebase
-      // Per demo, creiamo un utente fittizio
-      currentUser = { id: 'u_' + email.replace(/[^a-z0-9]/g, '_'), name: email.split('@')[0], plan: 'lifetime', role: 'user' };
-      realUser = currentUser;
-      localStorage.setItem('kazka_user', JSON.stringify(currentUser));
+      if (!found) {
+        // Crea nuovo utente automaticamente per demo
+        const newId = 'u_' + email.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const newUser = {
+          email,
+          name: email.split('@')[0],
+          plan: 'free',
+          role: 'user',
+          createdAt: new Date().toISOString()
+        };
+        await db.ref('users/' + newId).set(newUser);
+        found = { id: newId, ...newUser };
+        notify('Account creato! Benvenuto in Kazka', 'success');
+      }
+
+      currentUser = found;
+      localStorage.setItem('kazka_user', JSON.stringify({ id: found.id, name: found.name, plan: found.plan }));
+      
       document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('splash').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
-      loadUserData(currentUser.id);
+      document.getElementById('sidebarName').textContent = found.name;
+      
+      await loadUserData(found.id);
+      buildNav();
+      renderPage('dashboard');
+      
+    } catch (error) {
+      notify('Errore di connessione: ' + error.message, 'error');
     }
+  }
 
-    function logout() {
-      if (confirm('Uscire dall\'account?')) {
-        localStorage.removeItem('kazka_user');
-        currentUser = null;
-        location.reload();
-      }
+  function handleLogout() {
+    if (confirm('Uscire dall\'account?')) {
+      localStorage.removeItem('kazka_user');
+      currentUser = null;
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
     }
+  }
 
-    // ==================== CARICAMENTO DATI ====================
-    async function loadUserData(uid) {
+  // ==================== CARICAMENTO DATI DA FIREBASE ====================
+  async function loadUserData(uid) {
+    try {
       const snap = await db.ref('users/' + uid).once('value');
       const data = snap.val() || {};
+
       transactions = Object.entries(data.transactions || {}).map(([id, d]) => ({ id, ...d }));
+      recurring = Object.entries(data.recurring || {}).map(([id, d]) => ({ id, ...d }));
       bills = Object.entries(data.bills || {}).map(([id, d]) => ({ id, ...d }));
       utilities = Object.entries(data.utilities || {}).map(([id, d]) => ({ id, ...d }));
       trips = Object.entries(data.trips || {}).map(([id, d]) => ({ id, ...d }));
-      recurring = Object.entries(data.recurring || {}).map(([id, d]) => ({ id, ...d }));
-      groups = Object.entries(data.groups || {}).map(([id, d]) => ({ id, ...d }));
+      goals = Object.entries(data.goals || {}).map(([id, d]) => ({ id, ...d }));
+      budgets = data.budgets || {};
+      
+      // Business
       bizTx = Object.entries(data.biz?.transactions || {}).map(([id, d]) => ({ id, ...d }));
       clients = Object.entries(data.biz?.clients || {}).map(([id, d]) => ({ id, ...d }));
       quotes = Object.entries(data.biz?.quotes || {}).map(([id, d]) => ({ id, ...d }));
       projects = Object.entries(data.biz?.projects || {}).map(([id, d]) => ({ id, ...d }));
       expenseNotes = Object.entries(data.biz?.expenseNotes || {}).map(([id, d]) => ({ id, ...d }));
 
-      document.getElementById('sidebarName').textContent = currentUser.name;
-      document.getElementById('sidebarPlan').textContent = PLANS[currentUser.plan]?.name || currentUser.plan;
+      // Gruppi (nodo separato)
+      const groupsSnap = await db.ref('groups').once('value');
+      const allGroups = Object.entries(groupsSnap.val() || {}).map(([id, d]) => ({ id, ...d }));
+      groups = allGroups.filter(g => g.creatorId === uid || (g.members && g.members[uid]));
 
-      buildNav();
-      goToPage('dashboard');
+      notify('Dati caricati da Firebase');
+    } catch (e) {
+      notify('Errore caricamento dati', 'error');
     }
+  }
 
-    function buildNav() {
-      const navEl = document.getElementById('sidebarNav');
-      navEl.innerHTML = '';
-      const visible = NAV.filter(item => {
-        if (item.id === 'admin') return currentUser.role === 'admin';
-        return item.plans.includes(currentUser.plan) || currentUser.role === 'admin';
-      });
-      visible.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'nav-item';
-        div.setAttribute('data-page', item.id);
-        div.innerHTML = `<i class="fas ${item.icon.replace(/[^\w-]/g, '')}"></i> ${item.label}`;
-        div.onclick = () => goToPage(item.id);
-        navEl.appendChild(div);
-      });
-    }
+  // ==================== NAVIGAZIONE ====================
+  const navItems = {
+    personal: [
+      { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
+      { id: 'transazioni', icon: 'fa-exchange-alt', label: 'Movimenti' },
+      { id: 'ricorrenti', icon: 'fa-repeat', label: 'Ricorrenti' },
+      { id: 'bollette', icon: 'fa-file-invoice', label: 'Bollette' },
+      { id: 'viaggi', icon: 'fa-plane', label: 'Viaggi' },
+      { id: 'obiettivi', icon: 'fa-bullseye', label: 'Obiettivi' },
+      { id: 'gruppi', icon: 'fa-users', label: 'Gruppi' },
+      { id: 'report', icon: 'fa-chart-line', label: 'Report' },
+      { id: 'notifiche', icon: 'fa-bell', label: 'Notifiche' },
+      { id: 'profilo', icon: 'fa-user', label: 'Profilo' }
+    ],
+    business: [
+      { id: 'biz_dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
+      { id: 'biz_primanota', icon: 'fa-book', label: 'Prima Nota' },
+      { id: 'biz_clienti', icon: 'fa-handshake', label: 'Clienti' },
+      { id: 'biz_preventivi', icon: 'fa-file-pdf', label: 'Preventivi' },
+      { id: 'biz_progetti', icon: 'fa-diagram-project', label: 'Progetti' },
+      { id: 'biz_spese', icon: 'fa-receipt', label: 'Note Spese' },
+      { id: 'biz_scadenzario', icon: 'fa-calendar-check', label: 'Scadenziario' },
+      { id: 'biz_iva', icon: 'fa-percent', label: 'IVA' },
+      { id: 'notifiche', icon: 'fa-bell', label: 'Notifiche' },
+      { id: 'profilo', icon: 'fa-user', label: 'Profilo' }
+    ]
+  };
 
-    function goToPage(page) {
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
-      renderPage(page);
-    }
+  function buildNav() {
+    const nav = document.getElementById('sidebarNav');
+    const items = appMode === 'business' ? navItems.business : navItems.personal;
+    nav.innerHTML = items.map(item => `
+      <div class="nav-item" onclick="goToPage('${item.id}')">
+        <i class="fas ${item.icon}"></i> ${item.label}
+      </div>
+    `).join('');
+  }
 
-    // ==================== RENDERING PAGINE ====================
-    function renderPage(page) {
-      const container = document.getElementById('content');
-      document.getElementById('pageTitle').textContent = page === 'dashboard' ? 'Dashboard' :
-        page === 'transazioni' ? 'Movimenti' :
-        page === 'ricorrenti' ? 'Ricorrenti' :
-        page === 'biz_dashboard' ? 'Dashboard Aziendale' :
-        page === 'biz_primanota' ? 'Prima Nota' :
-        page === 'biz_clienti' ? 'Clienti' :
-        page === 'biz_preventivi' ? 'Preventivi' :
-        page === 'biz_progetti' ? 'Progetti' :
-        page === 'biz_spese' ? 'Note Spese' :
-        page === 'biz_scadenzario' ? 'Scadenziario' :
-        page === 'biz_iva' ? 'IVA Tracker' :
-        page === 'obiettivi' ? 'Obiettivi' :
-        page === 'gruppi' ? 'Gruppi' :
-        page === 'notifiche' ? 'Notifiche' :
-        page === 'piani' ? 'Piani' :
-        page === 'admin' ? 'Admin' :
-        page === 'profilo' ? 'Profilo' : page;
+  function setMode(mode) {
+    appMode = mode;
+    buildNav();
+    goToPage(mode === 'business' ? 'biz_dashboard' : 'dashboard');
+  }
 
-      if (page === 'dashboard') renderDashboard(container);
-      else if (page === 'transazioni') renderTransactions(container);
-      else if (page === 'ricorrenti') renderRecurring(container);
-      else if (page === 'biz_dashboard') renderBizDashboard(container);
-      else if (page === 'biz_primanota') renderBizPrimanota(container);
-      else if (page === 'biz_clienti') renderBizClienti(container);
-      else if (page === 'biz_preventivi') renderBizPreventivi(container);
-      else if (page === 'biz_progetti') renderBizProgetti(container);
-      else if (page === 'biz_spese') renderBizSpese(container);
-      else if (page === 'biz_scadenzario') renderBizScadenzario(container);
-      else if (page === 'biz_iva') renderBizIva(container);
-      else if (page === 'obiettivi') renderGoals(container);
-      else if (page === 'gruppi') renderGroups(container);
-      else if (page === 'notifiche') renderNotifiche(container);
-      else if (page === 'piani') renderPiani(container);
-      else if (page === 'admin') renderAdmin(container);
-      else if (page === 'profilo') renderProfilo(container);
-      else container.innerHTML = '<div class="card">Pagina in costruzione</div>';
-    }
+  // ==================== ROUTER ====================
+  function goToPage(page) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    const activeEl = Array.from(document.querySelectorAll('.nav-item')).find(el => 
+      el.textContent.includes(page === 'dashboard' ? 'Dashboard' : 
+                             page === 'transazioni' ? 'Movimenti' : 
+                             page === 'biz_dashboard' ? 'Dashboard' : page)
+    );
+    if (activeEl) activeEl.classList.add('active');
 
-    // ==================== DASHBOARD ====================
-    function renderDashboard(container) {
-      const totalBalance = transactions.reduce((sum, t) => sum + (t.type === 'income' ? t.amount : -t.amount), 0);
-      const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-      const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-      const recTotal = recurring.filter(r => r.status === 'active' && r.type === 'expense').reduce((sum, r) => sum + r.amount, 0);
-      const billsTotal = bills.filter(b => !b.paid).reduce((sum, b) => sum + (b.amount || 0), 0);
-      const freeMoney = totalBalance - recTotal - billsTotal;
+    document.getElementById('pageTitle').textContent = 
+      page === 'dashboard' ? 'Dashboard' :
+      page === 'transazioni' ? 'Movimenti' :
+      page === 'ricorrenti' ? 'Ricorrenti' :
+      page === 'bollette' ? 'Bollette' :
+      page === 'viaggi' ? 'Viaggi' :
+      page === 'obiettivi' ? 'Obiettivi' :
+      page === 'gruppi' ? 'Gruppi' :
+      page === 'report' ? 'Report' :
+      page === 'notifiche' ? 'Notifiche' :
+      page === 'profilo' ? 'Profilo' :
+      page === 'biz_dashboard' ? 'Dashboard Aziendale' :
+      page === 'biz_primanota' ? 'Prima Nota' :
+      page === 'biz_clienti' ? 'Clienti' :
+      page === 'biz_preventivi' ? 'Preventivi' :
+      page === 'biz_progetti' ? 'Progetti' :
+      page === 'biz_spese' ? 'Note Spese' :
+      page === 'biz_scadenzario' ? 'Scadenziario' :
+      page === 'biz_iva' ? 'IVA Tracker' : page;
 
-      container.innerHTML = `
-        <div class="grid-4">
-          <div class="stat-card"><div class="stat-label">Saldo</div><div class="stat-value ${totalBalance >= 0 ? 'positive' : 'negative'}">${formatEuro(totalBalance)}</div></div>
-          <div class="stat-card"><div class="stat-label">Entrate</div><div class="stat-value positive">${formatEuro(totalIncome)}</div></div>
-          <div class="stat-card"><div class="stat-label">Uscite</div><div class="stat-value negative">${formatEuro(totalExpense)}</div></div>
-          <div class="stat-card"><div class="stat-label">Ricorrenti/mese</div><div class="stat-value">${formatEuro(recTotal)}</div></div>
+    renderPage(page);
+  }
+
+  // ==================== RENDERING PAGINE ====================
+  function renderPage(page) {
+    const container = document.getElementById('content');
+    
+    if (page === 'dashboard') renderDashboard(container);
+    else if (page === 'transazioni') renderTransactions(container);
+    else if (page === 'ricorrenti') renderRecurring(container);
+    else if (page === 'bollette') renderBills(container);
+    else if (page === 'viaggi') renderTrips(container);
+    else if (page === 'obiettivi') renderGoals(container);
+    else if (page === 'gruppi') renderGroups(container);
+    else if (page === 'report') renderReport(container);
+    else if (page === 'notifiche') renderNotifiche(container);
+    else if (page === 'profilo') renderProfile(container);
+    else if (page === 'biz_dashboard') renderBizDashboard(container);
+    else if (page === 'biz_primanota') renderBizPrimanota(container);
+    else if (page === 'biz_clienti') renderBizClienti(container);
+    else if (page === 'biz_preventivi') renderBizPreventivi(container);
+    else if (page === 'biz_progetti') renderBizProgetti(container);
+    else if (page === 'biz_spese') renderBizSpese(container);
+    else if (page === 'biz_scadenzario') renderBizScadenzario(container);
+    else if (page === 'biz_iva') renderBizIva(container);
+    else container.innerHTML = '<div class="card">Pagina in costruzione</div>';
+  }
+
+  // ==================== PAGINA DASHBOARD ====================
+  function renderDashboard(container) {
+    const totalBalance = transactions.reduce((sum, t) => 
+      t.type === 'income' ? sum + t.amount : sum - t.amount, 0);
+    const totalIncome = transactions.filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+    const totalExpense = transactions.filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    container.innerHTML = `
+      <div class="grid-4">
+        <div class="stat-card">
+          <div class="stat-label">Saldo</div>
+          <div class="stat-value ${totalBalance >= 0 ? 'positive' : 'negative'}">${formatEuro(totalBalance)}</div>
         </div>
-        <div class="card" style="background:linear-gradient(135deg, ${freeMoney >= 0 ? 'rgba(0,229,160,0.1)' : 'rgba(255,107,107,0.1)'}, transparent)">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <div style="font-weight:600;">💰 Soldi Liberi</div>
-            <div style="font-size:28px; font-weight:800; color:${freeMoney >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatEuro(freeMoney)}</div>
+        <div class="stat-card">
+          <div class="stat-label">Entrate</div>
+          <div class="stat-value positive">${formatEuro(totalIncome)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Uscite</div>
+          <div class="stat-value negative">${formatEuro(totalExpense)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Ricorrenti</div>
+          <div class="stat-value">${recurring.length}</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-history"></i> Ultimi movimenti</div>
+            <button class="btn btn-sm btn-outline" onclick="goToPage('transazioni')">Vedi tutti</button>
           </div>
-          <div style="font-size:12px; color:var(--text-tertiary);">Saldo - ricorrenti - bollette</div>
-        </div>
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-header"><div class="card-title"><i class="fas fa-history"></i> Ultimi movimenti</div><button class="btn btn-sm btn-outline" onclick="goToPage('transazioni')">Vedi tutti</button></div>
+          <div>
             ${transactions.slice(-5).reverse().map(t => `
               <div class="item-row">
-                <div class="item-icon"><i class="fas fa-${t.type === 'income' ? 'arrow-up' : 'arrow-down'}"></i></div>
-                <div class="item-content"><div class="item-title">${t.desc || 'Senza descrizione'}</div><div class="item-subtitle">${formatDate(t.createdAt)} · ${catName(t.cat)}</div></div>
-                <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}</div>
-              </div>`).join('')}
+                <div class="item-icon"><i class="fas ${t.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${t.desc || 'Senza descrizione'}</div>
+                  <div class="item-subtitle">${formatDate(t.createdAt)} · ${t.cat || 'altro'}</div>
+                </div>
+                <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+                  ${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}
+                </div>
+              </div>
+            `).join('')}
           </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title"><i class="fas fa-repeat"></i> Prossime ricorrenti</div><button class="btn btn-sm btn-outline" onclick="goToPage('ricorrenti')">Gestisci</button></div>
-            ${recurring.filter(r => r.status === 'active').slice(0,5).map(r => `
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-repeat"></i> Prossime ricorrenti</div>
+            <button class="btn btn-sm btn-outline" onclick="goToPage('ricorrenti')">Gestisci</button>
+          </div>
+          <div>
+            ${recurring.filter(r => r.status !== 'paused').slice(0, 5).map(r => `
               <div class="item-row">
                 <div class="item-icon"><i class="fas fa-calendar"></i></div>
-                <div class="item-content"><div class="item-title">${r.name}</div><div class="item-subtitle">Prossima: ${formatDate(r.nextDate)}</div></div>
-                <div class="item-amount ${r.type === 'income' ? 'amount-positive' : 'amount-negative'}">${r.type === 'income' ? '+' : '-'}${formatEuro(r.amount)}</div>
-              </div>`).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    // ==================== TRANSACTIONI ====================
-    function renderTransactions(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-exchange-alt"></i> Movimenti</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddTxModal()"><i class="fas fa-plus"></i> Nuovo</button>
-          </div>
-          ${transactions.length === 0 ? es('💸', 'Nessuna transazione') : transactions.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(t => `
-            <div class="item-row">
-              <div class="item-icon"><i class="fas fa-${t.type === 'income' ? 'arrow-up' : 'arrow-down'}"></i></div>
-              <div class="item-content">
-                <div class="item-title">${t.desc || 'Senza descrizione'}</div>
-                <div class="item-subtitle">${formatDate(t.createdAt)} · ${catName(t.cat)}</div>
+                <div class="item-content">
+                  <div class="item-title">${r.name}</div>
+                  <div class="item-subtitle">Prossima: ${formatDate(r.nextDate)}</div>
+                </div>
+                <div class="item-amount ${r.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+                  ${r.type === 'income' ? '+' : '-'}${formatEuro(r.amount)}
+                </div>
               </div>
-              <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}</div>
-              <button class="btn btn-sm btn-outline" onclick="editTx('${t.id}')"><i class="fas fa-edit"></i></button>
-            </div>`).join('')}
-        </div>
-      `;
-    }
-
-    // ==================== RICORRENTI ====================
-    function renderRecurring(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-repeat"></i> Ricorrenti</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddRecModal()"><i class="fas fa-plus"></i> Nuovo</button>
+            `).join('')}
           </div>
-          ${recurring.length === 0 ? es('🔄', 'Nessuna ricorrente') : recurring.map(r => `
-            <div class="item-row">
-              <div class="item-icon"><i class="fas fa-calendar"></i></div>
-              <div class="item-content">
-                <div class="item-title">${r.name} <span class="badge ${r.status === 'active' ? 'badge-success' : 'badge-warning'}">${r.status}</span></div>
-                <div class="item-subtitle">${formatDate(r.nextDate)} · ${FREQS[r.freq]}</div>
-              </div>
-              <div class="item-amount ${r.type === 'income' ? 'amount-positive' : 'amount-negative'}">${r.type === 'income' ? '+' : '-'}${formatEuro(r.amount)}</div>
-            </div>`).join('')}
         </div>
-      `;
-    }
+      </div>
 
-    // ==================== BUSINESS DASHBOARD ====================
-    function renderBizDashboard(container) {
-      const totalInc = bizTx.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-      const totalExp = bizTx.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-      const cashFlow = totalInc - totalExp;
-      container.innerHTML = `
-        <div class="grid-4">
-          <div class="stat-card"><div class="stat-label">Cash Flow</div><div class="stat-value ${cashFlow >= 0 ? 'positive' : 'negative'}">${formatEuro(cashFlow)}</div></div>
-          <div class="stat-card"><div class="stat-label">Entrate</div><div class="stat-value positive">${formatEuro(totalInc)}</div></div>
-          <div class="stat-card"><div class="stat-label">Uscite</div><div class="stat-value negative">${formatEuro(totalExp)}</div></div>
-          <div class="stat-card"><div class="stat-label">Preventivi aperti</div><div class="stat-value">${quotes.filter(q => q.status === 'sent').length}</div></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-bullseye"></i> Obiettivi di risparmio</div>
+          <button class="btn btn-sm btn-outline" onclick="goToPage('obiettivi')">Vedi tutti</button>
         </div>
         <div class="grid-2">
-          <div class="card">
-            <div class="card-header"><div class="card-title"><i class="fas fa-briefcase"></i> Ultimi movimenti</div><button class="btn btn-sm btn-outline" onclick="goToPage('biz_primanota')">Vedi tutti</button></div>
-            ${bizTx.slice(-5).reverse().map(t => `<div class="item-row"><div class="item-icon">${BIZ_CATS[t.cat]?.icon || '💼'}</div><div class="item-content"><div class="item-title">${t.desc}</div><div class="item-subtitle">${formatDate(t.createdAt)}</div></div><div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}</div></div>`).join('')}
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title"><i class="fas fa-file-invoice"></i> Preventivi recenti</div><button class="btn btn-sm btn-outline" onclick="goToPage('biz_preventivi')">Vedi tutti</button></div>
-            ${quotes.slice(-5).reverse().map(q => `<div class="item-row"><div class="item-icon">📋</div><div class="item-content"><div class="item-title">${q.title}</div><div class="item-subtitle">${q.clientName || ''} · ${q.status}</div></div><div class="item-amount amount-positive">${formatEuro(q.amount)}</div></div>`).join('')}
+          ${goals.filter(g => g.status !== 'completed').slice(0, 2).map(g => {
+            const pct = Math.min(100, (g.saved / g.target * 100) || 0);
+            return `
+              <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span>${g.name}</span>
+                  <span>${formatEuro(g.saved)} / ${formatEuro(g.target)}</span>
+                </div>
+                <div style="height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                  <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light));"></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA MOVIMENTI ====================
+  function renderTransactions(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-exchange-alt"></i> Tutti i movimenti</div>
+          <button class="btn btn-primary btn-sm" onclick="openTransactionModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
+        </div>
+        <div>
+          ${transactions.length === 0 ? 
+            '<p class="text-center text-muted">Nessuna transazione. Aggiungine una!</p>' : 
+            transactions.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(t => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas ${t.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${t.desc || 'Senza descrizione'}</div>
+                  <div class="item-subtitle">${formatDate(t.createdAt)} · ${t.cat || 'altro'}</div>
+                </div>
+                <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+                  ${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="editTransaction('${t.id}')">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA RICORRENTI ====================
+  function renderRecurring(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-repeat"></i> Operazioni ricorrenti</div>
+          <button class="btn btn-primary btn-sm" onclick="openRecurringModal()">
+            <i class="fas fa-plus"></i> Nuova
+          </button>
+        </div>
+        <div>
+          ${recurring.length === 0 ? 
+            '<p class="text-center text-muted">Nessuna ricorrente.</p>' : 
+            recurring.map(r => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${r.name}</div>
+                  <div class="item-subtitle">
+                    ${r.type === 'income' ? 'Entrata' : 'Uscita'} · ${r.freq || 'mensile'} · 
+                    Prossima: ${formatDate(r.nextDate)}
+                  </div>
+                </div>
+                <div class="item-amount ${r.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+                  ${r.type === 'income' ? '+' : '-'}${formatEuro(r.amount)}
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="toggleRecurring('${r.id}')">
+                  <i class="fas ${r.status === 'paused' ? 'fa-play' : 'fa-pause'}"></i>
+                </button>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA BOLLETTE ====================
+  function renderBills(container) {
+    const today = new Date().toISOString().split('T')[0];
+    const upcomingBills = bills.filter(b => b.date >= today && b.status !== 'paid')
+      .sort((a,b) => new Date(a.date) - new Date(b.date));
+    
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-file-invoice"></i> Bollette in arrivo</div>
+          <button class="btn btn-primary btn-sm" onclick="openBillModal()">
+            <i class="fas fa-plus"></i> Nuova
+          </button>
+        </div>
+        <div>
+          ${upcomingBills.length === 0 ? 
+            '<p class="text-center text-muted">Nessuna bolletta in scadenza.</p>' : 
+            upcomingBills.map(b => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas fa-file-invoice"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${b.name}</div>
+                  <div class="item-subtitle">Scadenza: ${formatDate(b.date)}</div>
+                </div>
+                <div class="item-amount amount-negative">${formatEuro(b.amount)}</div>
+                <button class="btn btn-sm btn-outline" onclick="markBillPaid('${b.id}')">
+                  <i class="fas fa-check"></i>
+                </button>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA VIAGGI ====================
+  function renderTrips(container) {
+    const today = new Date().toISOString().split('T')[0];
+    const upcoming = trips.filter(t => t.dateFrom >= today || !t.dateTo)
+      .sort((a,b) => new Date(a.dateFrom) - new Date(b.dateFrom));
+    
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-plane"></i> Viaggi pianificati</div>
+          <button class="btn btn-primary btn-sm" onclick="openTripModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
+        </div>
+        <div>
+          ${upcoming.length === 0 ? 
+            '<p class="text-center text-muted">Nessun viaggio pianificato.</p>' : 
+            upcoming.map(t => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas fa-plane"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${t.name}</div>
+                  <div class="item-subtitle">${t.dest} · ${formatDate(t.dateFrom)}${t.dateTo ? ' → ' + formatDate(t.dateTo) : ''}</div>
+                </div>
+                <div class="item-amount">${formatEuro(t.budget)}</div>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA OBIETTIVI ====================
+  function renderGoals(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-bullseye"></i> I tuoi obiettivi</div>
+          <button class="btn btn-primary btn-sm" onclick="openGoalModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
+        </div>
+        <div>
+          ${goals.length === 0 ? 
+            '<p class="text-center text-muted">Nessun obiettivo di risparmio.</p>' : 
+            goals.map(g => {
+              const pct = Math.min(100, (g.saved / g.target * 100) || 0);
+              return `
+                <div style="margin-bottom: 20px;">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="font-weight: 600;">${g.name}</span>
+                    <span>${formatEuro(g.saved)} / ${formatEuro(g.target)}</span>
+                  </div>
+                  <div style="height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-bottom: 4px;">
+                    <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light));"></div>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-sm btn-success" onclick="addToGoal('${g.id}')">Aggiungi fondi</button>
+                    <button class="btn btn-sm btn-outline" onclick="editGoal('${g.id}')">Modifica</button>
+                  </div>
+                </div>
+              `;
+            }).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA GRUPPI ====================
+  function renderGroups(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-users"></i> I tuoi gruppi</div>
+          <button class="btn btn-primary btn-sm" onclick="openGroupModal()">
+            <i class="fas fa-plus"></i> Nuovo gruppo
+          </button>
+        </div>
+        <div>
+          ${groups.length === 0 ? 
+            '<p class="text-center text-muted">Non fai parte di nessun gruppo.</p>' : 
+            groups.map(g => `
+              <div class="item-row" onclick="goToGroup('${g.id}')" style="cursor: pointer;">
+                <div class="item-icon"><i class="fas fa-users"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${g.name}</div>
+                  <div class="item-subtitle">${g.desc || ''} · ${Object.keys(g.members || {}).length + 1} membri</div>
+                </div>
+                <span class="badge">Aperto</span>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA REPORT ====================
+  function renderReport(container) {
+    const byCat = {};
+    transactions.filter(t => t.type === 'expense').forEach(t => {
+      byCat[t.cat || 'altro'] = (byCat[t.cat || 'altro'] || 0) + t.amount;
+    });
+    
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-chart-pie"></i> Spese per categoria</div>
+        </div>
+        <div>
+          ${Object.keys(byCat).length === 0 ? 
+            '<p class="text-muted">Nessuna spesa registrata.</p>' : 
+            Object.entries(byCat).map(([cat, amt]) => `
+              <div class="item-row">
+                <div class="item-content">${cat}</div>
+                <div class="item-amount amount-negative">${formatEuro(amt)}</div>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA NOTIFICHE ====================
+  function renderNotifiche(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-bell"></i> Centro notifiche</div>
+          <button class="btn btn-sm btn-outline" onclick="clearAllNotifs()">Pulisci</button>
+        </div>
+        <div>
+          <p class="text-muted text-center">Nessuna notifica al momento.</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINA PROFILO ====================
+  function renderProfile(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-user"></i> Profilo</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div><strong>Nome:</strong> ${currentUser?.name || '—'}</div>
+          <div><strong>Email:</strong> ${currentUser?.email || '—'}</div>
+          <div><strong>Piano:</strong> <span class="badge badge-success">${currentUser?.plan || 'free'}</span></div>
+          <div><strong>ID:</strong> <code>${currentUser?.id || ''}</code></div>
+          <hr style="border-color: var(--border);">
+          <button class="btn btn-outline" onclick="toggleMode()">
+            <i class="fas fa-exchange-alt"></i> Passa a ${appMode === 'personal' ? 'business' : 'personale'}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ==================== PAGINE BUSINESS ====================
+  function renderBizDashboard(container) {
+    const totalIncome = bizTx.filter(t => t.type === 'income').reduce((s,t) => s + t.amount, 0);
+    const totalExpense = bizTx.filter(t => t.type === 'expense').reduce((s,t) => s + t.amount, 0);
+    
+    container.innerHTML = `
+      <div class="grid-4">
+        <div class="stat-card">
+          <div class="stat-label">Cash Flow</div>
+          <div class="stat-value ${totalIncome - totalExpense >= 0 ? 'positive' : 'negative'}">
+            ${formatEuro(totalIncome - totalExpense)}
           </div>
         </div>
-      `;
-    }
+        <div class="stat-card">
+          <div class="stat-label">Entrate</div>
+          <div class="stat-value positive">${formatEuro(totalIncome)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Uscite</div>
+          <div class="stat-value negative">${formatEuro(totalExpense)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Clienti</div>
+          <div class="stat-value">${clients.length}</div>
+        </div>
+      </div>
 
-    // ==================== PRIMA NOTA ====================
-    function renderBizPrimanota(container) {
-      container.innerHTML = `
+      <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><i class="fas fa-briefcase"></i> Prima Nota</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddBizTxModal()"><i class="fas fa-plus"></i> Nuovo</button>
+            <div class="card-title"><i class="fas fa-book"></i> Ultimi movimenti</div>
+            <button class="btn btn-sm btn-outline" onclick="goToPage('biz_primanota')">Vedi tutti</button>
           </div>
-          ${bizTx.length === 0 ? es('💼', 'Nessun movimento') : bizTx.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(t => `
+          ${bizTx.slice(-3).reverse().map(t => `
             <div class="item-row">
-              <div class="item-icon">${BIZ_CATS[t.cat]?.icon || '💼'}</div>
+              <div class="item-icon"><i class="fas ${t.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div>
               <div class="item-content">
                 <div class="item-title">${t.desc}</div>
-                <div class="item-subtitle">${formatDate(t.createdAt)} · ${BIZ_CATS[t.cat]?.label || t.cat}</div>
+                <div class="item-subtitle">${formatDate(t.createdAt)}</div>
               </div>
-              <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}</div>
-            </div>`).join('')}
+              <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+                ${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}
+              </div>
+            </div>
+          `).join('')}
         </div>
-      `;
-    }
 
-    // ==================== CLIENTI ====================
-    function renderBizClienti(container) {
-      container.innerHTML = `
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><i class="fas fa-users"></i> Clienti e Fornitori</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddClientModal()"><i class="fas fa-plus"></i> Nuovo</button>
+            <div class="card-title"><i class="fas fa-file-pdf"></i> Preventivi recenti</div>
+            <button class="btn btn-sm btn-outline" onclick="goToPage('biz_preventivi')">Vedi tutti</button>
           </div>
-          ${clients.length === 0 ? es('👥', 'Nessun cliente') : clients.map(c => `
+          ${quotes.slice(-3).map(q => `
             <div class="item-row">
-              <div class="item-icon">${c.type === 'client' ? '👤' : '🏭'}</div>
-              <div class="item-content">
-                <div class="item-title">${c.name}</div>
-                <div class="item-subtitle">${c.email || ''} · ${c.vat || ''}</div>
-              </div>
-              <button class="btn btn-sm btn-outline" onclick="editClient('${c.id}')"><i class="fas fa-edit"></i></button>
-            </div>`).join('')}
-        </div>
-      `;
-    }
-
-    // ==================== PREVENTIVI ====================
-    function renderBizPreventivi(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-file-invoice"></i> Preventivi</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddQuoteModal()"><i class="fas fa-plus"></i> Nuovo</button>
-          </div>
-          ${quotes.length === 0 ? es('📋', 'Nessun preventivo') : quotes.map(q => `
-            <div class="item-row">
-              <div class="item-icon">📋</div>
+              <div class="item-icon"><i class="fas fa-file-pdf"></i></div>
               <div class="item-content">
                 <div class="item-title">${q.title}</div>
-                <div class="item-subtitle">${q.clientName || ''} · <span class="badge ${q.status === 'accepted' ? 'badge-success' : q.status === 'sent' ? 'badge-warning' : 'badge'}">${q.status}</span></div>
+                <div class="item-subtitle">${formatDate(q.createdAt)}</div>
               </div>
-              <div class="item-amount amount-positive">${formatEuro(q.amount)}</div>
-            </div>`).join('')}
+              <div class="item-amount">${formatEuro(q.amount)}</div>
+            </div>
+          `).join('')}
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== PROGETTI ====================
-    function renderBizProgetti(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-project-diagram"></i> Progetti</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddProjectModal()"><i class="fas fa-plus"></i> Nuovo</button>
-          </div>
-          ${projects.length === 0 ? es('📁', 'Nessun progetto') : projects.map(p => `
-            <div class="item-row">
-              <div class="item-icon">📁</div>
-              <div class="item-content">
-                <div class="item-title">${p.name}</div>
-                <div class="item-subtitle">Budget: ${formatEuro(p.budget)} · <span class="badge ${p.status === 'active' ? 'badge-success' : 'badge-warning'}">${p.status}</span></div>
+  function renderBizPrimanota(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-book"></i> Prima Nota</div>
+          <button class="btn btn-primary btn-sm" onclick="openBizTxModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
+        </div>
+        <div>
+          ${bizTx.length === 0 ? 
+            '<p class="text-muted">Nessun movimento aziendale.</p>' : 
+            bizTx.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(t => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas ${t.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${t.desc}</div>
+                  <div class="item-subtitle">${formatDate(t.createdAt)} · ${t.cat}</div>
+                </div>
+                <div class="item-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+                  ${t.type === 'income' ? '+' : '-'}${formatEuro(t.amount)}
+                </div>
               </div>
-            </div>`).join('')}
+            `).join('')
+          }
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== NOTE SPESE ====================
-    function renderBizSpese(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-receipt"></i> Note Spese</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddExpenseModal()"><i class="fas fa-plus"></i> Nuovo</button>
-          </div>
-          ${expenseNotes.length === 0 ? es('🧾', 'Nessuna nota spese') : expenseNotes.map(e => `
-            <div class="item-row">
-              <div class="item-icon">🧾</div>
-              <div class="item-content">
-                <div class="item-title">${e.desc}</div>
-                <div class="item-subtitle">${formatEuro(e.amount)} · <span class="badge ${e.status === 'approved' ? 'badge-success' : e.status === 'pending' ? 'badge-warning' : 'badge'}">${e.status}</span></div>
+  function renderBizClienti(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-handshake"></i> Clienti e fornitori</div>
+          <button class="btn btn-primary btn-sm" onclick="openClientModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
+        </div>
+        <div>
+          ${clients.length === 0 ? 
+            '<p class="text-muted">Nessun cliente registrato.</p>' : 
+            clients.map(c => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas ${c.type === 'client' ? 'fa-user-tie' : 'fa-truck'}"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${c.name}</div>
+                  <div class="item-subtitle">${c.email || ''} · ${c.type === 'client' ? 'Cliente' : 'Fornitore'}</div>
+                </div>
               </div>
-            </div>`).join('')}
+            `).join('')
+          }
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== SCADENZIARIO ====================
-    function renderBizScadenzario(container) {
-      const today = new Date().toISOString().split('T')[0];
-      const scadenze = [
-        ...quotes.filter(q => q.expiry && q.expiry >= today).map(q => ({ type: 'Preventivo', name: q.title, date: q.expiry })),
-        ...projects.filter(p => p.endDate && p.endDate >= today).map(p => ({ type: 'Progetto', name: p.name, date: p.endDate }))
-      ].sort((a, b) => a.date.localeCompare(b.date));
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-calendar-alt"></i> Scadenziario</div>
-          </div>
-          ${scadenze.length === 0 ? es('📅', 'Nessuna scadenza imminente') : scadenze.map(s => `
-            <div class="item-row">
-              <div class="item-icon">📅</div>
-              <div class="item-content">
-                <div class="item-title">${s.name}</div>
-                <div class="item-subtitle">${s.type} · ${formatDate(s.date)}</div>
+  function renderBizPreventivi(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-file-pdf"></i> Preventivi</div>
+          <button class="btn btn-primary btn-sm" onclick="openQuoteModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
+        </div>
+        <div>
+          ${quotes.length === 0 ? 
+            '<p class="text-muted">Nessun preventivo.</p>' : 
+            quotes.map(q => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas fa-file-pdf"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${q.title}</div>
+                  <div class="item-subtitle">${formatDate(q.createdAt)} · ${q.status || 'bozza'}</div>
+                </div>
+                <div class="item-amount">${formatEuro(q.amount)}</div>
               </div>
-            </div>`).join('')}
+            `).join('')
+          }
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== IVA TRACKER ====================
-    function renderBizIva(container) {
-      const totalIva = bizTx.reduce((sum, t) => sum + (t.iva ? (t.amount * t.iva / 100) : 0), 0);
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-percent"></i> IVA Tracker</div>
-          </div>
-          <div style="font-size:36px; font-weight:800; color:var(--accent);">${formatEuro(totalIva)}</div>
-          <div style="color:var(--text-tertiary);">IVA totale sui movimenti</div>
-          <div class="mt-4">
-            <p class="text-sm">I calcoli sono indicativi. Verifica con il tuo commercialista.</p>
-          </div>
+  function renderBizProgetti(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-diagram-project"></i> Progetti</div>
+          <button class="btn btn-primary btn-sm" onclick="openProjectModal()">
+            <i class="fas fa-plus"></i> Nuovo
+          </button>
         </div>
-      `;
-    }
-
-    // ==================== OBIETTIVI ====================
-    function renderGoals(container) {
-      const goals = JSON.parse(localStorage.getItem('fp_goals_' + currentUser.id) || '[]');
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-bullseye"></i> Obiettivi di risparmio</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddGoalModal()"><i class="fas fa-plus"></i> Nuovo</button>
-          </div>
-          ${goals.length === 0 ? es('🎯', 'Nessun obiettivo. Creane uno!') : goals.map(g => `
-            <div class="item-row">
-              <div class="item-icon">${g.icon || '🎯'}</div>
-              <div class="item-content">
-                <div class="item-title">${g.name}</div>
-                <div class="item-subtitle">${formatEuro(g.saved)} / ${formatEuro(g.target)} · ${Math.round(g.saved/g.target*100)}%</div>
+        <div>
+          ${projects.length === 0 ? 
+            '<p class="text-muted">Nessun progetto.</p>' : 
+            projects.map(p => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas fa-diagram-project"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${p.name}</div>
+                  <div class="item-subtitle">Budget: ${formatEuro(p.budget)}</div>
+                </div>
               </div>
-            </div>`).join('')}
+            `).join('')
+          }
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== GRUPPI ====================
-    function renderGroups(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-users"></i> Gruppi</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddGroupModal()"><i class="fas fa-plus"></i> Nuovo</button>
-          </div>
-          ${groups.length === 0 ? es('👥', 'Nessun gruppo') : groups.map(g => `
-            <div class="item-row">
-              <div class="item-icon">${g.icon || '👥'}</div>
-              <div class="item-content">
-                <div class="item-title">${g.name}</div>
-                <div class="item-subtitle">${g.desc || ''}</div>
+  function renderBizSpese(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-receipt"></i> Note Spese</div>
+          <button class="btn btn-primary btn-sm" onclick="openExpenseNoteModal()">
+            <i class="fas fa-plus"></i> Nuova
+          </button>
+        </div>
+        <div>
+          ${expenseNotes.length === 0 ? 
+            '<p class="text-muted">Nessuna nota spese.</p>' : 
+            expenseNotes.map(e => `
+              <div class="item-row">
+                <div class="item-icon"><i class="fas fa-receipt"></i></div>
+                <div class="item-content">
+                  <div class="item-title">${e.desc}</div>
+                  <div class="item-subtitle">${formatDate(e.date)} · ${e.status || 'pending'}</div>
+                </div>
+                <div class="item-amount amount-negative">${formatEuro(e.amount)}</div>
               </div>
-            </div>`).join('')}
+            `).join('')
+          }
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== NOTIFICHE ====================
-    function renderNotifiche(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-bell"></i> Notifiche</div>
-          </div>
-          ${appNotifs.length === 0 ? es('🔔', 'Nessuna notifica') : appNotifs.map(n => `
-            <div class="item-row">
-              <div class="item-icon">${n.icon || '🔔'}</div>
-              <div class="item-content">
-                <div class="item-title">${n.title}</div>
-                <div class="item-subtitle">${n.sub}</div>
-              </div>
-            </div>`).join('')}
+  function renderBizScadenzario(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-calendar-check"></i> Scadenziario</div>
         </div>
-      `;
-    }
-
-    // ==================== PIANI ====================
-    function renderPiani(container) {
-      container.innerHTML = `
-        <div class="grid-3">
-          ${Object.entries(PLANS).map(([k, p]) => `
-            <div class="card" style="${k === currentUser.plan ? 'border-color:var(--accent);' : ''}">
-              <div class="card-header"><div class="card-title">${p.name}</div></div>
-              <div style="font-size:28px; font-weight:800;">${p.price}</div>
-              <div style="margin:16px 0;">${p.features.map(f => `<div style="padding:4px 0;"><i class="fas fa-check" style="color:var(--success);"></i> ${f}</div>`).join('')}</div>
-            </div>`).join('')}
+        <div>
+          <p class="text-muted">In sviluppo...</p>
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== ADMIN ====================
-    function renderAdmin(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header"><div class="card-title"><i class="fas fa-crown"></i> Admin Panel</div></div>
-          <p class="text-sm">Gestione utenti (solo admin)</p>
+  function renderBizIva(container) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-percent"></i> IVA Tracker</div>
         </div>
-      `;
-    }
-
-    // ==================== PROFILO ====================
-    function renderProfilo(container) {
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header"><div class="card-title"><i class="fas fa-user"></i> Profilo</div></div>
-          <div class="item-row">
-            <div class="item-icon"><i class="fas fa-user"></i></div>
-            <div class="item-content"><div class="item-title">${currentUser.name}</div><div class="item-subtitle">${currentUser.email || ''}</div></div>
-          </div>
-          <div class="item-row">
-            <div class="item-icon"><i class="fas fa-tag"></i></div>
-            <div class="item-content"><div class="item-title">Piano</div><div class="item-subtitle">${PLANS[currentUser.plan]?.name || currentUser.plan}</div></div>
-          </div>
-          <div class="item-row">
-            <div class="item-icon"><i class="fas fa-id-card"></i></div>
-            <div class="item-content"><div class="item-title">ID</div><div class="item-subtitle" style="font-family:monospace;">${currentUser.id}</div></div>
-          </div>
+        <div>
+          <p class="text-muted">In sviluppo...</p>
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    // ==================== MODAL APERTURE (placeholder) ====================
-    function openAddTxModal() { notify('Funzione di aggiunta transazione in arrivo', 'info'); }
-    function openAddRecModal() { notify('Funzione di aggiunta ricorrente in arrivo', 'info'); }
-    function openAddBizTxModal() { notify('Funzione di aggiunta movimento aziendale in arrivo', 'info'); }
-    function openAddClientModal() { notify('Funzione di aggiunta cliente in arrivo', 'info'); }
-    function openAddQuoteModal() { notify('Funzione di aggiunta preventivo in arrivo', 'info'); }
-    function openAddProjectModal() { notify('Funzione di aggiunta progetto in arrivo', 'info'); }
-    function openAddExpenseModal() { notify('Funzione di aggiunta nota spese in arrivo', 'info'); }
-    function openAddGoalModal() { notify('Funzione di aggiunta obiettivo in arrivo', 'info'); }
-    function openAddGroupModal() { notify('Funzione di aggiunta gruppo in arrivo', 'info'); }
+  // ==================== MODAL (placeholder) ====================
+  function openAddModal() {
+    notify('Funzionalità in arrivo!', 'info');
+  }
+  function openTransactionModal() { notify('Aggiungi transazione (presto disponibile)'); }
+  function openRecurringModal() { notify('Aggiungi ricorrente (presto)'); }
+  function openBillModal() { notify('Aggiungi bolletta (presto)'); }
+  function openTripModal() { notify('Aggiungi viaggio (presto)'); }
+  function openGoalModal() { notify('Aggiungi obiettivo (presto)'); }
+  function openGroupModal() { notify('Crea gruppo (presto)'); }
+  function openBizTxModal() { notify('Nuovo movimento aziendale (presto)'); }
+  function openClientModal() { notify('Nuovo cliente (presto)'); }
+  function openQuoteModal() { notify('Nuovo preventivo (presto)'); }
+  function openProjectModal() { notify('Nuovo progetto (presto)'); }
+  function openExpenseNoteModal() { notify('Nuova nota spese (presto)'); }
+  function editTransaction(id) { notify('Modifica transazione ' + id); }
+  function toggleRecurring(id) { notify('Toggle ricorrente ' + id); }
+  function markBillPaid(id) { notify('Bolletta pagata ' + id); }
+  function addToGoal(id) { notify('Aggiungi a obiettivo ' + id); }
+  function editGoal(id) { notify('Modifica obiettivo ' + id); }
+  function goToGroup(id) { notify('Vai al gruppo ' + id); }
+  function clearAllNotifs() { notify('Notifiche cancellate'); }
 
-    // ==================== THEME ====================
-    function toggleTheme() {
-      document.body.classList.toggle('light');
-      const icon = document.querySelector('#themeToggle i');
-      if (icon) icon.className = document.body.classList.contains('light') ? 'fas fa-sun' : 'fas fa-moon';
-    }
+  function toggleMode() {
+    appMode = appMode === 'personal' ? 'business' : 'personal';
+    buildNav();
+    goToPage(appMode === 'business' ? 'biz_dashboard' : 'dashboard');
+  }
 
-    // ==================== AVVIO ====================
-    window.addEventListener('load', async () => {
-      setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 1000);
-      const saved = localStorage.getItem('kazka_user');
-      if (saved) {
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    const icon = document.querySelector('#themeToggle i');
+    if (icon) icon.className = document.body.classList.contains('light') ? 'fas fa-sun' : 'fas fa-moon';
+  }
+
+  // ==================== AVVIO ====================
+  window.addEventListener('load', async () => {
+    const saved = localStorage.getItem('kazka_user');
+    if (saved) {
+      try {
         currentUser = JSON.parse(saved);
-        realUser = currentUser;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
+        document.getElementById('sidebarName').textContent = currentUser.name;
         await loadUserData(currentUser.id);
-      } else {
-        document.getElementById('splash').style.display = 'none';
+        buildNav();
+        renderPage('dashboard');
+      } catch (e) {
+        localStorage.removeItem('kazka_user');
         document.getElementById('loginScreen').classList.remove('hidden');
       }
-    });
+    } else {
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+  });
 
-    // Esponi funzioni globali
-    window.goToPage = goToPage;
-    window.logout = logout;
-    window.doLogin = doLogin;
-    window.toggleTheme = toggleTheme;
-    window.openAddModal = () => notify('Aggiungi rapido', 'info');
-    window.editTx = (id) => notify('Modifica transazione ' + id, 'info');
-  </script>
+  // Esponi funzioni globali
+  window.goToPage = goToPage;
+  window.handleLogin = handleLogin;
+  window.handleLogout = handleLogout;
+  window.toggleTheme = toggleTheme;
+  window.toggleMode = toggleMode;
+  window.openAddModal = openAddModal;
+  window.openTransactionModal = openTransactionModal;
+  window.openRecurringModal = openRecurringModal;
+  window.openBillModal = openBillModal;
+  window.openTripModal = openTripModal;
+  window.openGoalModal = openGoalModal;
+  window.openGroupModal = openGroupModal;
+  window.openBizTxModal = openBizTxModal;
+  window.openClientModal = openClientModal;
+  window.openQuoteModal = openQuoteModal;
+  window.openProjectModal = openProjectModal;
+  window.openExpenseNoteModal = openExpenseNoteModal;
+  window.editTransaction = editTransaction;
+  window.toggleRecurring = toggleRecurring;
+  window.markBillPaid = markBillPaid;
+  window.addToGoal = addToGoal;
+  window.editGoal = editGoal;
+  window.goToGroup = goToGroup;
+  window.clearAllNotifs = clearAllNotifs;
+</script>
 </body>
 </html>

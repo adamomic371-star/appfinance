@@ -790,17 +790,6 @@ canvas{max-width:100%}
 /* ── KZ LOGO MARK SVG ── */
 .spl-li,.kz-logo-mark>div{display:flex;align-items:center;justify-content:center}
 
-/* ===== FAB ===== */
-#fab-wrap{position:fixed;bottom:80px;right:18px;z-index:501;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
-#fab-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;color:#fff;font-size:26px;font-weight:300;cursor:pointer;box-shadow:0 4px 22px rgba(108,99,255,.55);transition:transform .22s,background .22s;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;pointer-events:all}
-#fab-btn.open{transform:rotate(45deg);background:linear-gradient(135deg,var(--re),#ff9f43)}
-.fab-menu{display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:all}
-.fab-menu.hidden{display:none}
-.fab-item{padding:8px 16px;border-radius:22px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:7px;box-shadow:0 3px 14px rgba(0,0,0,.3);transition:transform .12s;white-space:nowrap}
-.fab-item:active{transform:scale(.95)}
-.fab-income{background:linear-gradient(135deg,#00e5a0,#00b4d8);color:#062318}
-.fab-expense{background:linear-gradient(135deg,#ff4f6d,#ff9f43);color:#fff}
-.fab-goal{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff}
 </style>
 
 </head>
@@ -992,16 +981,6 @@ canvas{max-width:100%}
     <div class="imp-bar hidden" id="impBar"><span>👁️ Account di: <strong id="impName">–</strong></span><button onclick="stopImp()">← Torna Admin</button></div>
     <div class="content" id="content"></div>
   </div>
-</div>
-
-<!-- FAB -->
-<div id="fab-wrap">
-  <div id="fab-menu" class="fab-menu hidden">
-    <button class="fab-item fab-income" onclick="openFabTx('income')">📈 Entrata</button>
-    <button class="fab-item fab-expense" onclick="openFabTx('expense')">📉 Uscita</button>
-    <button class="fab-item fab-goal" onclick="closeFab();goTo('obiettivi');setTimeout(openNewGoal,200)">🎯 Obiettivo</button>
-  </div>
-  <button id="fab-btn" onclick="toggleFab()">＋</button>
 </div>
 
 <!-- ONBOARDING -->
@@ -1488,8 +1467,6 @@ const CATS=[
   {id:'savings', name:'Risparmi',           icon:'🏦', color:'#10b981'},
   {id:'pets',    name:'Animali',            icon:'🐾', color:'#f59e0b'},
   {id:'tech',    name:'Tech & Elettronica', icon:'💻', color:'#3b82f6'},
-  {id:'commissioni_bancarie', name:'Commissioni bancarie', icon:'🏦', color:'#4f8ef7'},
-  {id:'telefonia',            name:'Telefonia',            icon:'📞', color:'#34d399'},
   {id:'other',   name:'Altro',              icon:'📦', color:'#8892b0'},
 ];
 const REC_KINDS={subscription:{icon:'📱',label:'Abbonamento'},salary:{icon:'💼',label:'Stipendio'},bill:{icon:'📄',label:'Bolletta'},loan:{icon:'🏦',label:'Mutuo/Prestito'},other:{icon:'🔄',label:'Spesa Varia'}};
@@ -2314,10 +2291,7 @@ function renderPage(p){
   if(p==='dashboard'){
     const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
     const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-    // Ricorrenti: conta solo quelle NON ancora scattate questo mese (nextDate nel mese corrente)
-    // Quelle già scattate hanno nextDate avanzato → non vengono contate due volte col saldo reale
-    const _nowYM=new Date().toISOString().slice(0,7);
-    const recTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense'&&(r.nextDate||'').slice(0,7)===_nowYM).reduce((s,r)=>s+r.amount,0);
+    const recTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+r.amount,0);
     // Soldi liberi = saldo - ricorrenti mensili - bollette attive - budget viaggi futuri - obiettivi mensili
     const billTotal=bills.filter(b=>!b.paid).reduce((s,b)=>s+(b.amount||0),0);
     const utilTotal=utilities.reduce((s,u)=>s+(u.monthlyFee||0),0);
@@ -5500,31 +5474,6 @@ window.addEventListener('appinstalled', () => {
 if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
   setTimeout(_showPwaBanner, 3500);
 }
-
-/* ===== FAB ===== */
-function toggleFab(){
-  const menu=document.getElementById('fab-menu');
-  const btn=document.getElementById('fab-btn');
-  if(!menu||!btn)return;
-  const isOpen=!menu.classList.contains('hidden');
-  if(isOpen){closeFab();}else{menu.classList.remove('hidden');btn.classList.add('open');}
-}
-function closeFab(){
-  const menu=document.getElementById('fab-menu');
-  const btn=document.getElementById('fab-btn');
-  if(menu)menu.classList.add('hidden');
-  if(btn)btn.classList.remove('open');
-}
-function openFabTx(type){
-  closeFab();
-  const sel=document.getElementById('txType');
-  if(sel)sel.value=type;
-  openMo('txModal');
-}
-document.addEventListener('click',function(e){
-  const wrap=document.getElementById('fab-wrap');
-  if(wrap&&!wrap.contains(e.target))closeFab();
-},{passive:true});
 
 </script>
 </body>

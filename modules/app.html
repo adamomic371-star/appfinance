@@ -544,6 +544,17 @@ canvas{max-width:100%}
   .tb-app-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;background:linear-gradient(135deg,#fff,var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
   .tb-page-sub{font-size:10px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
   .tb-date{display:none}
+  /* Nascondi mode switcher e sync testo su mobile — restano nel drawer */
+  #modeSw{display:none!important}
+  .sync-status-text{display:none}
+  .sync-indicator{padding:6px 8px;gap:0}
+  .sync-status-icon{font-size:12px}
+  /* Riduci gap tb-right */
+  .tb-right{gap:4px}
+  /* tb-center layout */
+  .tb-center{flex-direction:column;gap:1px;align-items:flex-start}
+  .tb-app-name{display:flex;align-items:center;gap:5px}
+  .tb-page-name{font-size:10px;color:var(--tx3);margin-left:2px}
   .content{padding:14px}
   .stat-grid{grid-template-columns:1fr 1fr}
   .fg-row{grid-template-columns:1fr}
@@ -802,16 +813,9 @@ button:active, .btn-p:active, .btn-a:active{transform:translateY(-1px) scale(0.9
       <button class="ham-btn" id="hamBtn" onclick="toggleDrawer()">
         <span></span><span></span><span></span>
       </button>
-      <!-- Centro: titolo pagina (desktop) / nome app + sezione (mobile) -->
+      <!-- Centro: nome app (mobile) -->
       <div class="tb-center">
-        <div class="tb-app-name" style="display:flex;align-items:center;gap:6px"><span id="topbarLogoMark"></span><span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</span>
-      <!-- SYNC INDICATOR -->
-      <div class="sync-indicator synced" id="syncIndicator" title="Stato sincronizzazione">
-        <div class="sync-dot"></div>
-        <span class="sync-status-icon" id="syncIcon">✓</span>
-        <span class="sync-status-text" id="syncStatus">Sync</span>
-      </div>
-    </div>
+        <div class="tb-app-name"><span id="topbarLogoMark"></span><span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;background:linear-gradient(135deg,#fff 30%,#8b80ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kazka</span></div>
         <div class="tb-page-name" id="pgTitle">Dashboard</div>
       </div>
       <!-- Desktop: titolo esteso -->
@@ -824,6 +828,12 @@ button:active, .btn-p:active, .btn-a:active{transform:translateY(-1px) scale(0.9
         <div class="mode-sw" id="modeSw">
           <button class="mode-btn active" id="modePersonal" onclick="setMode('personal')">👤 Personale</button>
           <button class="mode-btn biz" id="modeBiz" onclick="setMode('business')">🏢 Azienda</button>
+        </div>
+        <!-- SYNC INDICATOR -->
+        <div class="sync-indicator synced" id="syncIndicator" title="Stato sincronizzazione">
+          <div class="sync-dot"></div>
+          <span class="sync-status-icon" id="syncIcon">✓</span>
+          <span class="sync-status-text" id="syncStatus">Sync</span>
         </div>
         <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Tema">🌙</button>
         <button class="notif-bell" id="notifBell" onclick="goTo('notifiche')" title="Notifiche">

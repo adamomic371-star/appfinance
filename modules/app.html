@@ -339,15 +339,8 @@ nav{flex:1;display:flex;flex-direction:column;gap:2px}
 .btn-d{width:100%;padding:12px;background:rgba(255,68,102,.08);border:1px solid rgba(255,68,102,.2);border-radius:12px;color:var(--re);font-weight:600;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
 .btn-d:hover{background:rgba(255,68,102,.15);border-color:rgba(255,68,102,.35)}
 
-/* Small action buttons */
-.btn-sm{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:5px}
-.btn-sm.prim{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:0 4px 12px rgba(124,111,255,.25)}
-.btn-sm.prim:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(124,111,255,.35)}
-.btn-sm.sec{background:var(--s1);border:1px solid var(--b1);color:var(--tx2)}
-.btn-sm.sec:hover{background:var(--s2);color:var(--tx)}
-.btn-sm.dang{background:rgba(255,68,102,.1);border:1px solid rgba(255,68,102,.2);color:var(--re)}
-.btn-sm.dang:hover{background:rgba(255,68,102,.2)}
-.btn-sm.warn{background:rgba(255,204,68,.1);border:1px solid rgba(255,204,68,.2);color:var(--ye)}
+
+/* Small action buttons — see full definition below in ── SMALL ACTION BUTTONS ── */
 
 /* ── SELECT / INPUT ── */
 select,input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],textarea{
@@ -3802,8 +3795,8 @@ function renderReport(con,bal){
         }).join(' ');
         const first=pts.split(' ')[0];const last=pts.split(' ').pop();
         const fx=first.split(',')[0];const lx=last.split(',')[0];
-// REMOVED -         return `<polyline points="${pts}" fill="none" stroke="${bal>=0?'#00e5a0':'#ff4f6d'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-// REMOVED -         <polygon points="${fx},80 ${pts} ${lx},80" fill="url(#balGrad)"/>`;
+        return `<polyline points="${pts}" fill="none" stroke="${bal>=0?'#00e5a0':'#ff4f6d'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="${fx},80 ${pts} ${lx},80" fill="url(#balGrad)"/>`;
       })()}
     </svg>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-top:4px">

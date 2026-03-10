@@ -35,6 +35,8 @@ const CATEGORIES = {
     { id: 'istruzione', label: 'Istruzione', icon: '📚' },
     { id: 'tecnologia', label: 'Tecnologia', icon: '💻' },
     { id: 'animali', label: 'Animali', icon: '🐾' },
+    { id: 'commissioni_bancarie', label: 'Commissioni bancarie', icon: '🏦' },
+    { id: 'telefonia', label: 'Telefonia', icon: '📞' },
     { id: 'altro', label: 'Altro', icon: '📦' }
   ]
 };

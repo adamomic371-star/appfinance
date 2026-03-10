@@ -857,3 +857,50 @@ html, body {
   #app { max-width: 600px; margin: 0 auto; }
   .nav-bottom { max-width: 600px; left: 50%; transform: translateX(-50%); }
 }
+
+/* ========== FAB BUTTON ========== */
+#kazkaFAB { position: fixed; z-index: 500; }
+
+/* ========== ADMIN PANEL MOBILE FIX ========== */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.admin-stat {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px 10px;
+  text-align: center;
+  word-break: break-word;
+}
+.admin-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ac);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-stat-label {
+  font-size: 10px;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* section-header wrapping on mobile */
+.section-header {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* type-btn small text */
+.type-btn small {
+  display: block;
+  font-size: 10px;
+  opacity: 0.8;
+  margin-top: 2px;
+}

@@ -599,3 +599,166 @@ function renderBizIva() {
 }
 
 console.log('✅ init.js loaded');
+
+/* ═══════════════════════════════════════════════
+   FAB — pulsante rapido + (transazione / obiettivo / ricorrente)
+   ═══════════════════════════════════════════════ */
+function renderFAB() {
+  var existing = document.getElementById('kazkaFAB');
+  if (existing) existing.remove();
+
+  var fab = document.createElement('div');
+  fab.id = 'kazkaFAB';
+  fab.innerHTML =
+    '<div id="fabMenu" style="display:none;position:fixed;bottom:90px;right:18px;z-index:500;display:none;flex-direction:column;gap:8px;align-items:flex-end;">' +
+      '<button class="fab-item" onclick="closeFABMenu();showAddTxModal(\'income\')" style="background:rgba(0,229,160,0.15);border:1px solid rgba(0,229,160,0.4);color:#00e5a0;">➕ Entrata</button>' +
+      '<button class="fab-item" onclick="closeFABMenu();showAddTxModal(\'expense\')" style="background:rgba(255,79,109,0.15);border:1px solid rgba(255,79,109,0.4);color:#ff4f6d;">➖ Uscita</button>' +
+      '<button class="fab-item" onclick="closeFABMenu();showAddGoalModal()" style="background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.4);color:#6c63ff;">🎯 Obiettivo</button>' +
+    '</div>' +
+    '<button id="fabBtn" onclick="toggleFABMenu()" style="position:fixed;bottom:80px;right:18px;z-index:501;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#00d4ff);border:none;color:#fff;font-size:26px;box-shadow:0 4px 20px rgba(108,99,255,0.5);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;">+</button>';
+
+  document.body.appendChild(fab);
+}
+
+function toggleFABMenu() {
+  var menu = document.getElementById('fabMenu');
+  var btn = document.getElementById('fabBtn');
+  if (!menu) return;
+  var isOpen = menu.style.display === 'flex';
+  menu.style.display = isOpen ? 'none' : 'flex';
+  if (btn) btn.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(45deg)';
+}
+
+function closeFABMenu() {
+  var menu = document.getElementById('fabMenu');
+  var btn = document.getElementById('fabBtn');
+  if (menu) menu.style.display = 'none';
+  if (btn) btn.style.transform = 'rotate(0deg)';
+}
+
+/* ═══════════════════════════════════════════════
+   ADMIN PANEL v2 — fix mobile + last login
+   ═══════════════════════════════════════════════ */
+renderAdmin = function() {
+  if (!user || !user.isAdmin) {
+    var c = document.getElementById('content');
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">🔐</div><div class="empty-title">Accesso negato</div></div>';
+    return;
+  }
+
+  // Salva ultimo login
+  var loginKey = 'fp_admin_last_login';
+  var lastLoginRaw = localStorage.getItem(loginKey);
+  var lastLoginStr = lastLoginRaw ? (function(){
+    try {
+      var d = new Date(JSON.parse(lastLoginRaw));
+      return d.toLocaleString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    } catch(e) { return lastLoginRaw; }
+  })() : 'Prima sessione';
+  localStorage.setItem(loginKey, JSON.stringify(new Date().toISOString()));
+
+  var content = document.getElementById('content');
+  var allKeys = Object.keys(localStorage).filter(function(k){ return k.startsWith('fp_'); });
+  var userCount = new Set(allKeys.filter(function(k){ return k.includes('transactions_'); }).map(function(k){ return k.split('transactions_')[1]; })).size;
+  var totalTx = allKeys.filter(function(k){ return k.startsWith('fp_transactions_'); }).reduce(function(sum, key) {
+    try { return sum + (JSON.parse(localStorage.getItem(key) || '[]').length); } catch(e) { return sum; }
+  }, 0);
+  var totalGoals = allKeys.filter(function(k){ return k.startsWith('fp_goals_'); }).reduce(function(sum, key) {
+    try { return sum + (JSON.parse(localStorage.getItem(key) || '[]').length); } catch(e) { return sum; }
+  }, 0);
+  var lsSize = (function(){
+    var total = 0;
+    for (var k in localStorage) { if (localStorage.hasOwnProperty(k)) total += ((localStorage[k].length + k.length) * 2); }
+    return (total / 1024).toFixed(1) + ' KB';
+  })();
+
+  content.innerHTML =
+    '<div class="section-header" style="flex-wrap:wrap;gap:8px;">' +
+      '<h2 class="section-title" style="font-size:18px;">⚙️ Admin Panel</h2>' +
+      '<span class="admin-badge">🔐 Admin</span>' +
+    '</div>' +
+
+    // Last login
+    '<div style="margin-bottom:16px;padding:10px 14px;background:rgba(247,151,30,0.07);border:1px solid rgba(247,151,30,0.2);border-radius:10px;font-size:12px;color:var(--tx2);display:flex;align-items:center;gap:8px;">' +
+      '<span style="font-size:16px;">🕐</span>' +
+      '<span>Ultimo accesso: <strong style="color:var(--ye);">' + lastLoginStr + '</strong></span>' +
+    '</div>' +
+
+    // Stats grid — 2 colonne su mobile
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">' +
+      '<div class="admin-stat"><div class="admin-stat-value">' + userCount + '</div><div class="admin-stat-label">Utenti</div></div>' +
+      '<div class="admin-stat"><div class="admin-stat-value">' + totalTx + '</div><div class="admin-stat-label">Transazioni</div></div>' +
+      '<div class="admin-stat"><div class="admin-stat-value">' + totalGoals + '</div><div class="admin-stat-label">Obiettivi</div></div>' +
+      '<div class="admin-stat"><div class="admin-stat-value">' + lsSize + '</div><div class="admin-stat-label">Storage locale</div></div>' +
+      '<div class="admin-stat" style="grid-column:span 2;"><div class="admin-stat-value" style="font-size:16px;">v' + APP_CONFIG.version + '</div><div class="admin-stat-label">Versione app</div></div>' +
+    '</div>' +
+
+    // Actions
+    '<div class="settings-list">' +
+      '<div class="settings-item" onclick="syncAllToFirebase()">' +
+        '<span class="settings-item-icon">🔄</span>' +
+        '<div class="settings-item-info"><div class="settings-item-label">Sync tutto su Firebase</div><div class="settings-item-desc">Forza sincronizzazione completa</div></div>' +
+        '<span class="settings-item-arrow">›</span>' +
+      '</div>' +
+      '<div class="settings-item" onclick="adminHealthCheck()">' +
+        '<span class="settings-item-icon">🏥</span>' +
+        '<div class="settings-item-info"><div class="settings-item-label">Health Check</div><div class="settings-item-desc">Verifica stato sistema</div></div>' +
+        '<span class="settings-item-arrow">›</span>' +
+      '</div>' +
+      '<div class="settings-item" onclick="adminExportAll()">' +
+        '<span class="settings-item-icon">📤</span>' +
+        '<div class="settings-item-info"><div class="settings-item-label">Esporta tutto (JSON)</div><div class="settings-item-desc">Backup completo localStorage</div></div>' +
+        '<span class="settings-item-arrow">›</span>' +
+      '</div>' +
+    '</div>' +
+
+    '<div style="margin-top:20px;">' +
+      '<button class="btn btn-danger" style="width:100%;" onclick="logoutAdmin()">🚪 Logout Admin</button>' +
+    '</div>';
+};
+
+function adminHealthCheck() {
+  var ok = [];
+  var warn = [];
+  if (typeof loadTransactions === 'function') ok.push('transactions'); else warn.push('transactions');
+  if (typeof loadGoals === 'function') ok.push('goals'); else warn.push('goals');
+  if (typeof saveToFirebase === 'function') ok.push('firebase'); else warn.push('firebase');
+  if (warn.length === 0) {
+    showNotification('✅ Tutto OK — ' + ok.join(', '), 'success');
+  } else {
+    showNotification('⚠️ Moduli mancanti: ' + warn.join(', '), 'error');
+  }
+}
+
+function adminExportAll() {
+  var data = {};
+  Object.keys(localStorage).filter(function(k){ return k.startsWith('fp_'); }).forEach(function(k){
+    try { data[k] = JSON.parse(localStorage.getItem(k)); } catch(e) { data[k] = localStorage.getItem(k); }
+  });
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'kazka_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showNotification('✅ Backup esportato!', 'success');
+}
+
+/* FAB styles inline */
+(function(){
+  var style = document.createElement('style');
+  style.textContent =
+    '.fab-item{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,0.3);transition:transform 0.15s;}' +
+    '.fab-item:hover{transform:scale(1.04);}' +
+    '#fabMenu{position:fixed;bottom:145px;right:18px;z-index:500;display:none;flex-direction:column;gap:8px;align-items:flex-end;}' +
+    '#fabBtn{position:fixed;bottom:80px;right:18px;z-index:501;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#00d4ff);border:none;color:#fff;font-size:26px;box-shadow:0 4px 20px rgba(108,99,255,0.5);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;line-height:1;}';
+  document.head.appendChild(style);
+})();
+
+/* Hook startApp per aggiungere FAB */
+var _origStartApp = startApp;
+startApp = function() {
+  _origStartApp();
+  renderFAB();
+};

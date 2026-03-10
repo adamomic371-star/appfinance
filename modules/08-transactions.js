@@ -372,3 +372,32 @@ function submitTransaction() {
 }
 
 console.log('✅ transactions.js loaded');
+
+// PATCHED submitTransaction — override with goal allocation hook
+submitTransaction = function() {
+  var type = document.getElementById('txType').value;
+  var amount = document.getElementById('txAmount').value;
+  var category = document.getElementById('txCategory').value;
+  var desc = document.getElementById('txDesc').value;
+  var date = document.getElementById('txDate').value;
+
+  if (!amount || parseFloat(amount) <= 0) { showNotification('⚠️ Importo non valido', 'error'); return; }
+
+  addTransaction(type, amount, category, desc, date);
+  document.querySelector('.modal-overlay') && document.querySelector('.modal-overlay').remove();
+
+  if (type === 'income' && typeof showGoalAllocationModal === 'function') {
+    loadGoals();
+    var activeGoals = goals.filter(function(g) { return (g.currentAmount || 0) < g.targetAmount; });
+    if (activeGoals.length > 0) {
+      showGoalAllocationModal(parseFloat(amount), function() {
+        if (currentView === 'dashboard') renderDashboard();
+        else if (currentView === 'transazioni') renderTransactions();
+      });
+      return;
+    }
+  }
+
+  if (currentView === 'dashboard') renderDashboard();
+  else if (currentView === 'transazioni') renderTransactions();
+};

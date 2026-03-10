@@ -345,6 +345,23 @@ select option{background:var(--bg2);color:var(--tx)}
 @keyframes bellShake{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(8deg)}}
 .bell-badge{position:absolute;top:-3px;right:-3px;background:var(--re);color:#fff;font-size:9px;font-weight:700;padding:1px 4px;border-radius:20px;min-width:16px;text-align:center;border:2px solid var(--bg)}
 
+/* ── ACTION BUTTON (btn-a) ── */
+.btn-a{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:10px;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;border:1px solid var(--b1);background:var(--s1);color:var(--tx2);transition:all .2s;white-space:nowrap;flex-shrink:0;line-height:1}
+.btn-a:hover{background:var(--s2);border-color:var(--b2);color:var(--tx);transform:translateY(-1px)}
+.btn-a:active{transform:translateY(0)}
+.btn-a-gr{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.3);color:#00e5a0}
+.btn-a-gr:hover{background:rgba(0,229,160,.18);border-color:rgba(0,229,160,.5)}
+.btn-a-re{background:rgba(255,79,109,.1);border-color:rgba(255,79,109,.3);color:#ff4f6d}
+.btn-a-re:hover{background:rgba(255,79,109,.18);border-color:rgba(255,79,109,.5)}
+.btn-a-ye{background:rgba(255,204,68,.1);border-color:rgba(255,204,68,.3);color:#ffcc44}
+.btn-a-ye:hover{background:rgba(255,204,68,.18);border-color:rgba(255,204,68,.5)}
+.btn-a-ac{background:rgba(124,111,255,.12);border-color:rgba(124,111,255,.3);color:var(--ac)}
+.btn-a-ac:hover{background:rgba(124,111,255,.2);border-color:rgba(124,111,255,.5)}
+.btn-a-cy{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:#00d4ff}
+.btn-a-cy:hover{background:rgba(0,212,255,.18);border-color:rgba(0,212,255,.5)}
+/* ── THEME BUTTON ── */
+.theme-btn{width:38px;height:38px;border-radius:10px;background:var(--s1);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex-shrink:0;transition:all .2s}
+.theme-btn:hover{background:rgba(255,204,68,.08);border-color:rgba(255,204,68,.3);transform:rotate(20deg) scale(1.05)}
 /* ── SYNC INDICATOR ── */
 .sync-indicator{display:flex;align-items:center;gap:5px;padding:6px 11px;background:var(--s1);border:1px solid var(--b1);border-radius:10px;font-size:10px;font-weight:700;transition:all .3s;cursor:default}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--tx3);transition:all .3s;flex-shrink:0}
@@ -2191,7 +2208,7 @@ function renderPage(p){
     </div>
     ${goals.filter(g=>g.status!=='completed').length>0?`
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">🎯</div>Obiettivi di Risparmio</div><button class="btn-a" onclick="goTo('obiettivi')">Vedi tutti</button></div>
+      <div class="ch"><div class="ct"><div class="ct-ico">🎯</div>Obiettivi di Risparmio</div><button class="btn-a btn-a-ac" onclick="goTo('obiettivi')">Vedi tutti</button></div>
       ${goals.filter(g=>g.status!=='completed').slice(0,3).map(g=>{
         const pct=Math.min(100,Math.round((g.saved/g.target)*100));
         return `<div style="margin-bottom:12px">
@@ -2207,7 +2224,7 @@ function renderPage(p){
       }).join('')}
     </div>`:''}
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">🕐</div>Ultimi Movimenti</div><button class="btn-a" onclick="goTo('transazioni')">Vedi tutti</button></div>
+      <div class="ch"><div class="ct"><div class="ct-ico">🕐</div>Ultimi Movimenti</div><button class="btn-a btn-a-ac" onclick="goTo('transazioni')">Vedi tutti</button></div>
       ${transactions.length===0?es('💸','Nessun movimento ancora'):
       [...transactions].reverse().slice(0,5).map(t=>`
       <div class="ir"><div class="ia">${catIcon(t.cat)}</div>
@@ -2215,7 +2232,7 @@ function renderPage(p){
       <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}
     </div>
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Prossime Ricorrenti</div><button class="btn-a" onclick="goTo('ricorrenti')">Vedi tutte</button></div>
+      <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Prossime Ricorrenti</div><button class="btn-a btn-a-ac" onclick="goTo('ricorrenti')">Vedi tutte</button></div>
       ${recurring.filter(r=>r.status==='active').slice(0,3).map(r=>`
       <div class="ir"><div class="ia">${REC_KINDS[r.kind]?.icon||'🔄'}</div>
       <div class="ii"><div class="in">${r.name}</div><div class="id2 rec-next">📅 ${r.nextDate||'N/D'} · ${FREQS[r.freq]||r.freq}</div></div>
@@ -2272,7 +2289,7 @@ function renderPage(p){
         <div style="display:flex;gap:7px;flex-wrap:wrap">
           <label class="export-btn" style="cursor:pointer" title="Importa CSV"><i class="fa fa-upload"></i> CSV<input type="file" accept=".csv" style="display:none" onchange="importCSV(this)"></label>
           <button class="export-btn" onclick="exportCSV()"><i class="fa fa-download"></i> CSV</button>
-          <button class="btn-a" onclick="openMo('txModal')">＋ Aggiungi</button>
+          <button class="btn-a btn-a-gr" onclick="openMo('txModal')">＋ Aggiungi</button>
         </div>
       </div>
       ${filtered.length===0?es('💸','Nessun movimento trovato.'):
@@ -2316,7 +2333,7 @@ function renderPage(p){
     </div>
     ${tab==='bollette'?`
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">📄</div>Bollette</div><button class="btn-a" onclick="openMo('billModal')">＋ Aggiungi</button></div>
+      <div class="ch"><div class="ct"><div class="ct-ico">📄</div>Bollette</div><button class="btn-a btn-a-gr" onclick="openMo('billModal')">＋ Aggiungi</button></div>
       ${bills.length===0?es('📄','Nessuna bolletta registrata'):
       [...bills].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(b=>{
         const today=new Date().toISOString().split('T')[0];
@@ -2330,7 +2347,7 @@ function renderPage(p){
       }).join('')}
     </div>`:`
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">🔌</div>Contratti Utenze</div><button class="btn-a" onclick="openMo('utilModal')">＋ Aggiungi</button></div>
+      <div class="ch"><div class="ct"><div class="ct-ico">🔌</div>Contratti Utenze</div><button class="btn-a btn-a-gr" onclick="openMo('utilModal')">＋ Aggiungi</button></div>
       ${utilities.length===0?es('🔌','Nessun contratto registrato'):
       utilities.map(u=>`
       <div class="ir"><div class="ia">${utIco[u.type]||'🔌'}</div>
@@ -2368,7 +2385,7 @@ function renderPage(p){
     };
     con.innerHTML=`
     <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">✈️</div>Prossimi Viaggi</div><button class="btn-a" onclick="openNewTrip()">＋ Aggiungi</button></div>
+      <div class="ch"><div class="ct"><div class="ct-ico">✈️</div>Prossimi Viaggi</div><button class="btn-a btn-a-gr" onclick="openNewTrip()">＋ Aggiungi</button></div>
       ${upcoming.length===0?es('✈️','Nessun viaggio pianificato'):upcoming.map(renderTrip).join('')}
     </div>
     ${past.length>0?`<div class="card">
@@ -2547,14 +2564,14 @@ function renderBizDashboard(con){
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">💼</div>Ultimi movimenti</div><button class="btn-a" onclick="goTo('biz_primanota')">Vedi tutti</button></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">💼</div>Ultimi movimenti</div><button class="btn-a btn-a-ac" onclick="goTo('biz_primanota')">Vedi tutti</button></div>
     ${bizTx.length===0?es('💼','Nessun movimento aziendale'):[...bizTx].reverse().slice(0,4).map(t=>`
     <div class="ir"><div class="ia">${BIZ_CATS[t.cat]?.icon||'💼'}</div>
     <div class="ii"><div class="in">${t.desc}</div><div class="id2">${fmtDate(t.createdAt)}</div></div>
     <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}
   </div>
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">📋</div>Preventivi recenti</div><button class="btn-a" onclick="goTo('biz_preventivi')">Vedi tutti</button></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">📋</div>Preventivi recenti</div><button class="btn-a btn-a-ac" onclick="goTo('biz_preventivi')">Vedi tutti</button></div>
     ${quotes.length===0?es('📋','Nessun preventivo'):[...quotes].reverse().slice(0,4).map(q=>`
     <div class="ir"><div class="ia">📋</div>
     <div class="ii"><div class="in">${q.title}</div><div class="id2">${statusPill(q.status)}</div></div>
@@ -2686,7 +2703,7 @@ function renderBizPrimanota(con){
       <div class="ct"><div class="ct-ico">💼</div>Movimenti (${filtered.length})</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="export-btn" onclick="exportBizCSV()"><i class="fa fa-download"></i> CSV</button>
-        <button class="btn-a" onclick="openBizTxModal()">＋ Aggiungi</button>
+        <button class="btn-a btn-a-gr" onclick="openBizTxModal()">＋ Aggiungi</button>
       </div>
     </div>
     ${filtered.length===0?es('💼','Nessun movimento trovato.'):
@@ -2720,7 +2737,7 @@ function renderBizClienti(con){
   <div class="card">
     <div class="ch">
       <div class="ct"><div class="ct-ico">${tab==='client'?'👤':'🏭'}</div>${tab==='client'?'Clienti':'Fornitori'}</div>
-      <button class="btn-a" onclick="openClientModal('${tab}')">＋ Aggiungi</button>
+      <button class="btn-a btn-a-gr" onclick="openClientModal('${tab}')">＋ Aggiungi</button>
     </div>
     ${list.length===0?es(tab==='client'?'👤':'🏭',`Nessun ${tab==='client'?'cliente':'fornitore'} ancora.`):
     `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
@@ -2766,8 +2783,8 @@ function showClientDetail(cid){
     </div>
     ${c.note?`<div style="background:var(--s1);border-radius:9px;padding:10px;font-size:12px;color:var(--tx2);margin-bottom:12px">📝 ${c.note}</div>`:''}
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-a" onclick="openBizTxModal('${cid}')">＋ Movimento</button>
-      ${c.type==='client'?`<button class="btn-a" onclick="openQuoteModal('${cid}')">📋 Preventivo</button>`:''}
+      <button class="btn-a btn-a-cy" onclick="openBizTxModal('${cid}')">＋ Movimento</button>
+      ${c.type==='client'?`<button class="btn-a btn-a-ye" onclick="openQuoteModal('${cid}')">📋 Preventivo</button>`:''}
     </div>
   </div>
   ${cliTx.length>0?`<div class="card"><div class="ch"><div class="ct"><div class="ct-ico">💼</div>Movimenti</div></div>${[...cliTx].reverse().map(t=>`<div class="ir"><div class="ia">${BIZ_CATS[t.cat]?.icon||'💼'}</div><div class="ii"><div class="in">${t.desc}</div><div class="id2">${fmtDate(t.createdAt)}</div></div><div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}</div>`:''}
@@ -2797,7 +2814,7 @@ function renderBizPreventivi(con){
       <div class="ct"><div class="ct-ico">📋</div>Preventivi</div>
       <div style="display:flex;gap:6px">
         <button class="btn-a" style="background:linear-gradient(135deg,#f7971e,#ffd200);color:#1a1200" onclick="openBizLogoModal()">🏢 Dati Azienda</button>
-        <button class="btn-a" onclick="openQuoteModal()">＋ Nuovo</button>
+        <button class="btn-a btn-a-gr" onclick="openQuoteModal()">＋ Nuovo</button>
       </div>
     </div>
     ${quotes.length===0?es('📋','Nessun preventivo ancora.'):
@@ -2849,7 +2866,7 @@ function renderBizProgetti(con){
     <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Budget attivi</div><div class="sc-val" style="color:var(--or)">${fmtE(totBudget)}</div></div>
   </div>
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">📁</div>Progetti & Commesse</div><button class="btn-a" onclick="openProjModal()">＋ Nuovo</button></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">📁</div>Progetti & Commesse</div><button class="btn-a btn-a-gr" onclick="openProjModal()">＋ Nuovo</button></div>
     ${projects.length===0?es('📁','Nessun progetto ancora. Organizza il lavoro per commesse.'):
     projects.map(p=>{
       const cli=clients.find(c=>c.id===p.clientId);
@@ -2898,7 +2915,7 @@ function renderBizSpese(con){
     <div class="sc"><div class="sc-ico">💳</div><div class="sc-lbl">Rimborsate</div><div class="sc-val" style="color:var(--ac)">${fmtE(totReimbursed)}</div></div>
   </div>
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">🧾</div>Note Spese</div><button class="btn-a" onclick="openExpenseNoteModal()">＋ Aggiungi</button></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">🧾</div>Note Spese</div><button class="btn-a btn-a-gr" onclick="openExpenseNoteModal()">＋ Aggiungi</button></div>
     ${expenseNotes.length===0?es('🧾','Nessuna nota spese. Registra pranzi, trasferte e altri costi da rimborsare.'):
     [...expenseNotes].reverse().map(e=>{
       const proj=e.projectId?projects.find(p=>p.id===e.projectId):null;
@@ -3683,7 +3700,7 @@ function renderReport(con,bal){
   <div class="card">
     <div class="ch">
       <div class="ct"><div class="ct-ico">🎯</div>Budget Mensile</div>
-      <button class="btn-a" onclick="openBudgetModal()">✏️ Imposta</button>
+      <button class="btn-a btn-a-ac" onclick="openBudgetModal()">✏️ Imposta</button>
     </div>
     ${Object.keys(budgets).length===0?es('🎯','Nessun budget impostato.<br>Clicca "Imposta" per definire i tuoi limiti mensili.'):
     Object.entries(budgets).map(([cid,limit])=>{
@@ -3762,7 +3779,7 @@ function renderRecurring(con){
   </div>
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Operazioni Ricorrenti</div>
-      <button class="btn-a" onclick="openRecModal()">＋ Aggiungi</button>
+      <button class="btn-a btn-a-gr" onclick="openRecModal()">＋ Aggiungi</button>
     </div>
     ${recurring.length===0?es('🔄','Nessuna operazione ricorrente.<br>Aggiungi abbonamenti, stipendio, rate...'):
     recurring.map(r=>{
@@ -3796,7 +3813,7 @@ function renderGroups(con){
   if(curGroupId){renderGroupDetail(con);return;}
   con.innerHTML=`
   <div class="card">
-    <div class="ch"><div class="ct"><div class="ct-ico">👥</div>I tuoi Gruppi</div><button class="btn-a" onclick="openMo('groupModal')">＋ Crea</button></div>
+    <div class="ch"><div class="ct"><div class="ct-ico">👥</div>I tuoi Gruppi</div><button class="btn-a btn-a-gr" onclick="openMo('groupModal')">＋ Crea</button></div>
     ${groups.length===0?es('👥','Nessun gruppo ancora.<br>Creane uno o aspetta un invito!'):
     groups.map(g=>`
     <div class="gc" onclick="curGroupId='${g.id}';goTo('gruppi')">

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazka Repo Cleaner</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: monospace; background:#070b18; color:#e8eeff; min-height:100vh; padding:32px 20px; }
+
+h1 { font-size:20px; font-weight:900; margin-bottom:4px;
+  background:linear-gradient(135deg,#6c63ff,#00d4ff);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.sub { font-size:11px; color:#7a849e; margin-bottom:28px; }
+
+.box { background:#0d1225; border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:20px; margin-bottom:16px; }
+label { display:block; font-size:10px; color:#7a849e; margin-bottom:5px; text-transform:uppercase; letter-spacing:.5px; }
+input { width:100%; background:#111829; border:1px solid rgba(255,255,255,.07); border-radius:8px;
+  color:#e8eeff; font-family:monospace; font-size:12px; padding:9px 12px; outline:none; margin-bottom:12px; }
+input:focus { border-color:#6c63ff; }
+input:last-child { margin-bottom:0; }
+
+.row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.row > div { display:flex; flex-direction:column; }
+.row input { margin-bottom:0; }
+
+.btn { width:100%; padding:11px; border-radius:9px; border:none; cursor:pointer;
+  font-family:monospace; font-size:12px; font-weight:700; transition:all .2s; }
+.btn-scan { background:linear-gradient(135deg,#6c63ff,#00d4ff); color:#fff; margin-top:14px; }
+.btn-scan:hover { opacity:.88; }
+.btn-scan:disabled { opacity:.4; cursor:not-allowed; }
+
+.tip { font-size:10px; color:#4a5568; margin-top:10px; }
+.tip a { color:#6c63ff; text-decoration:none; }
+
+/* file list */
+#results { display:none; }
+.section-lbl { font-size:10px; color:#7a849e; text-transform:uppercase; letter-spacing:1px;
+  margin:18px 0 8px; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,.05); }
+
+.frow { display:flex; align-items:center; gap:10px; padding:9px 14px;
+  background:#0d1225; border:1px solid rgba(255,255,255,.06); border-radius:9px;
+  margin-bottom:5px; transition:border-color .15s; }
+.frow:hover { border-color:rgba(255,255,255,.12); }
+.frow.sel { border-color:rgba(255,79,109,.3); background:rgba(255,79,109,.04); }
+.frow.deleted { border-color:rgba(0,229,160,.2); opacity:.5; }
+
+.cb { width:16px; height:16px; accent-color:#ff4f6d; cursor:pointer; flex-shrink:0; }
+.fname { flex:1; font-size:11px; }
+.fname .path { color:#7a849e; font-size:10px; }
+.fsize { font-size:10px; color:#3a4255; min-width:45px; text-align:right; }
+.tag { font-size:9px; font-weight:700; padding:2px 7px; border-radius:5px; flex-shrink:0; }
+.t-red { background:rgba(255,79,109,.12); color:#ff4f6d; }
+.t-ye  { background:rgba(255,204,68,.1);  color:#ffcc44; }
+
+.btn-del { width:100%; padding:12px; border-radius:9px; border:none; cursor:pointer;
+  font-family:monospace; font-size:12px; font-weight:700;
+  background:linear-gradient(135deg,#ff4f6d,#ff9f43); color:#fff;
+  margin-top:14px; transition:all .2s; display:none; }
+.btn-del:hover { opacity:.88; transform:translateY(-1px); }
+.btn-del:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+#log { background:#0d1225; border:1px solid rgba(255,255,255,.06); border-radius:9px;
+  padding:14px; margin-top:12px; font-size:10px; color:#7a849e; max-height:160px;
+  overflow-y:auto; display:none; line-height:1.9; }
+#log .ok  { color:#00e5a0; }
+#log .err { color:#ff4f6d; }
+
+#status { font-size:11px; color:#7a849e; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1>Kazka Repo Cleaner</h1>
+<p class="sub">Rimuove i file inutili dalla repo GitHub in un click</p>
+
+<div class="box">
+  <div class="row">
+    <div><label>Owner</label><input id="owner" placeholder="es. adamomic371" spellcheck="false"></div>
+    <div><label>Repository</label><input id="repo" placeholder="es. appfinance" spellcheck="false"></div>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <div><label>Branch</label><input id="branch" value="main" spellcheck="false"></div>
+    <div><label>Sottocartella (opzionale)</label><input id="base" placeholder="es. appfinance" spellcheck="false"></div>
+  </div>
+  <label style="margin-top:12px">Token GitHub (scope: repo)</label>
+  <input type="password" id="token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" spellcheck="false">
+  <button class="btn btn-scan" id="btnScan" onclick="scan()">🔍 Scansiona repo</button>
+  <p class="tip">Token → <a href="https://github.com/settings/tokens/new?scopes=repo" target="_blank">github.com/settings/tokens</a> · scope <strong>repo</strong></p>
+</div>
+
+<div id="results">
+  <div id="fileList"></div>
+  <button class="btn btn-del" id="btnDel" onclick="deleteSelected()"></button>
+  <div id="log"></div>
+  <div id="status"></div>
+</div>
+
+<script>
+// ── File da suggerire per eliminazione ──
+const JUNK = [
+  { test: p => p === 'modules/app.html',         tag:'t-red', lbl:'VECCHIA VERSIONE' },
+  { test: p => p === 'firebase-config.js',        tag:'t-ye',  lbl:'NON USATO'       },
+  { test: p => p === 'github-cleaner.html',       tag:'t-red', lbl:'DEV TOOL'        },
+  { test: p => p === 'kazka-cleaner.html',        tag:'t-red', lbl:'DEV TOOL'        },
+  { test: p => /^README.*\.md$/i.test(p.split('/').pop()), tag:'t-ye', lbl:'SOLO DOC' },
+  { test: p => /^SETUP.*\.md$/i.test(p.split('/').pop()),  tag:'t-ye', lbl:'SOLO DOC' },
+  { test: p => p.startsWith('modules/modules/'), tag:'t-red', lbl:'DUPLICATO'        },
+  { test: p => /^modules\/\d{2}-/.test(p),       tag:'t-ye',  lbl:'LEGACY'           },
+  { test: p => p === 'modules/99-init.js',        tag:'t-ye',  lbl:'LEGACY'           },
+];
+
+let allFiles = [], token, owner, repo, branch, base;
+
+async function gh(endpoint, opts = {}) {
+  const r = await fetch('https://api.github.com' + endpoint, {
+    headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', ...opts.headers },
+    ...opts
+  });
+  if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+  return r.json();
+}
+
+async function scan() {
+  token  = document.getElementById('token').value.trim();
+  owner  = document.getElementById('owner').value.trim();
+  repo   = document.getElementById('repo').value.trim();
+  branch = document.getElementById('branch').value.trim() || 'main';
+  base   = document.getElementById('base').value.trim().replace(/^\/|\/$/g,'');
+
+  if (!token || !owner || !repo) { alert('Compila owner, repo e token'); return; }
+
+  const btn = document.getElementById('btnScan');
+  btn.disabled = true; btn.textContent = '⏳ Scansione...';
+
+  try {
+    const branchData = await gh(`/repos/${owner}/${repo}/branches/${branch}`);
+    const tree = await gh(`/repos/${owner}/${repo}/git/trees/${branchData.commit.commit.tree.sha}?recursive=1`);
+    let files = tree.tree.filter(f => f.type === 'blob');
+    if (base) files = files.filter(f => f.path.startsWith(base + '/'));
+
+    allFiles = files.map(f => {
+      const dp = base ? f.path.slice(base.length + 1) : f.path;
+      const junk = JUNK.find(j => j.test(dp));
+      return { path: f.path, dp, sha: f.sha, size: f.size || 0, junk };
+    });
+
+    render();
+  } catch(e) {
+    alert('Errore: ' + e.message);
+  }
+
+  btn.disabled = false; btn.textContent = '🔍 Scansiona repo';
+}
+
+function render() {
+  const junkFiles  = allFiles.filter(f => f.junk);
+  const cleanFiles = allFiles.filter(f => !f.junk);
+  const list = document.getElementById('fileList');
+
+  const makeRow = (f, checked) => {
+    const kb = f.size > 1024 ? (f.size/1024).toFixed(0)+'KB' : f.size+'B';
+    return `<div class="frow ${checked?'sel':''}" id="r-${CSS.escape(f.path)}">
+      <input type="checkbox" class="cb" ${checked?'checked':''} onchange="toggle('${f.path}',this.checked)">
+      <div class="fname">${f.dp.split('/').pop()}<div class="path">${f.dp}</div></div>
+      ${f.junk ? `<span class="tag ${f.junk.tag}">${f.junk.lbl}</span>` : ''}
+      <span class="fsize">${kb}</span>
+    </div>`;
+  };
+
+  list.innerHTML =
+    `<div class="section-lbl">⚠️ Da rimuovere — ${junkFiles.length} file</div>` +
+    (junkFiles.length ? junkFiles.map(f => makeRow(f, true)).join('') : '<div style="font-size:11px;color:#3a4255;padding:8px 0">Nessun file junk trovato 🎉</div>') +
+    `<div class="section-lbl">✅ Da tenere — ${cleanFiles.length} file</div>` +
+    cleanFiles.map(f => makeRow(f, false)).join('');
+
+  document.getElementById('results').style.display = 'block';
+  updateDelBtn();
+}
+
+function toggle(path, checked) {
+  const f = allFiles.find(x => x.path === path);
+  if (f) f.selected = checked;
+  const row = document.getElementById('r-' + CSS.escape(path));
+  if (row) row.className = 'frow' + (checked ? ' sel' : '');
+  updateDelBtn();
+}
+
+function updateDelBtn() {
+  // auto-select junk on first render
+  allFiles.filter(f => f.junk).forEach(f => { if (f.selected === undefined) f.selected = true; });
+  const sel = allFiles.filter(f => f.selected);
+  const btn = document.getElementById('btnDel');
+  if (sel.length > 0) {
+    btn.style.display = 'block';
+    const kb = sel.reduce((s,f)=>s+f.size,0);
+    const sz = kb > 1024*1024 ? (kb/1024/1024).toFixed(1)+' MB' : kb > 1024 ? (kb/1024).toFixed(0)+' KB' : kb+'B';
+    btn.textContent = `🗑️ Elimina ${sel.length} file (${sz})`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+async function deleteSelected() {
+  const sel = allFiles.filter(f => f.selected);
+  if (!sel.length) return;
+  if (!confirm(`Eliminare ${sel.length} file da ${owner}/${repo}?\n\nOperazione irreversibile.`)) return;
+
+  const btn = document.getElementById('btnDel');
+  btn.disabled = true;
+  const log = document.getElementById('log');
+  log.style.display = 'block';
+  log.innerHTML = '';
+
+  let ok = 0, fail = 0;
+  for (const f of sel) {
+    try {
+      await gh(`/repos/${owner}/${repo}/contents/${f.path}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `chore: remove ${f.dp}`, sha: f.sha, branch })
+      });
+      ok++;
+      f.selected = false;
+      const row = document.getElementById('r-' + CSS.escape(f.path));
+      if (row) { row.className = 'frow deleted'; row.querySelector('.cb').disabled = true; }
+      log.innerHTML += `<span class="ok">✓ ${f.dp}</span>\n`;
+    } catch(e) {
+      fail++;
+      log.innerHTML += `<span class="err">✕ ${f.dp} — ${e.message}</span>\n`;
+    }
+    log.scrollTop = log.scrollHeight;
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  document.getElementById('status').textContent = `✓ ${ok} eliminati${fail?' · ✕ '+fail+' errori':''}`;
+  btn.disabled = false;
+  updateDelBtn();
+}
+
+// pre-check junk on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('owner').addEventListener('keydown', e => e.key==='Enter'&&scan());
+  document.getElementById('token').addEventListener('keydown', e => e.key==='Enter'&&scan());
+});
+</script>
+</body>
+</html>

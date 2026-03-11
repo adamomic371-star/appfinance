@@ -2343,34 +2343,23 @@ function renderPage(p){
     const utilTotal=utilities.filter(u=>!utilIds.has(u.id)).reduce((s,u)=>s+(u.monthlyFee||0),0);
 
     // Ricorrenti future (non ancora in bal)
-    // Totale ricorrenti mese intero (già pagate + ancora da pagare) = impegno fisso mensile
+    // Ricorrenti mese: solo quelle NON ancora scattate nel mese corrente
+    // (quelle già scattate sono già nel bal come uscite reali)
     function recMonthFull(r){
       if(r.freq==='monthly'||r.freq==='yearly'){
-        // scatta una volta al mese: cerca se già pagata O se deve ancora pagare
-        const mStart=_nowYM+'-01';
-        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
-        const mEndS=mEnd.toISOString().split('T')[0];
-        const firedThisMonth=[..._paidRecKeys].some(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-','')));
-        const willFire=(r.nextDate||'')>=mStart&&(r.nextDate||'')<=mEndS;
-        return (firedThisMonth||willFire)?r.amount:0;
+        const k='rec_'+r.id+'_'+(r.nextDate||'').replace(/-/g,'');
+        const willFireThisMonth=(r.nextDate||'').slice(0,7)===_nowYM&&!_paidRecKeys.has(k);
+        return willFireThisMonth?r.amount:0;
       }
-      // weekly/daily: conta tutte le occorrenze del mese
       const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
       const mEndS=mEnd.toISOString().split('T')[0];
-      const mStart=_nowYM+'-01';
-      let cur=r.nextDate||today2;
-      // torna indietro all'inizio mese se nextDate è già avanzata
       const step=r.freq==='weekly'?7:1;
-      // conta le già pagate questo mese
-      const paidThisMonth=[..._paidRecKeys].filter(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-',''))).length;
-      // conta le future
-      let futureCnt=0;
-      let next=cur;
+      let next=r.nextDate||today2;let tot=0;
       while(next<=mEndS){
-        if(!_paidRecKeys.has('rec_'+r.id+'_'+next.replace(/-/g,'')))futureCnt++;
+        if(!_paidRecKeys.has('rec_'+r.id+'_'+next.replace(/-/g,'')))tot+=r.amount;
         const d=new Date(next);d.setDate(d.getDate()+step);next=d.toISOString().split('T')[0];
       }
-      return r.amount*(paidThisMonth+futureCnt);
+      return tot;
     }
     const recMonthTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+recMonthFull(r),0);
     const recFutureTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+recFuture(r),0);

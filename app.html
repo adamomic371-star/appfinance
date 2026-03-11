@@ -3885,22 +3885,30 @@ function renderReport(con,bal){
 function renderRecurring(con){
   const active=recurring.filter(r=>r.status==='active');
   const paused=recurring.filter(r=>r.status==='paused');
-  const totalMonthly=active.filter(r=>r.freq==='monthly'&&r.type==='expense').reduce((s,r)=>s+r.amount,0);
   const today=new Date().toISOString().split('T')[0];
+  function monthCost(r){
+    if(r.freq==='monthly')return r.amount;
+    if(r.freq==='yearly')return r.amount/12;
+    if(r.freq==='weekly')return r.amount*4.33;
+    if(r.freq==='daily')return r.amount*30;
+    return r.amount;
+  }
+  const totalMonthly=active.filter(r=>r.type==='expense').reduce((s,r)=>s+monthCost(r),0);
+  const totalIncome=active.filter(r=>r.type==='income').reduce((s,r)=>s+monthCost(r),0);
   con.innerHTML=`
   <div class="stat-grid">
     <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Attive</div><div class="sc-val">${active.length}</div></div>
-    <div class="sc"><div class="sc-ico">💸</div><div class="sc-lbl">Costo/mese</div><div class="sc-val" style="color:var(--re)">${fmtE(totalMonthly)}</div></div>
+    <div class="sc"><div class="sc-ico">💸</div><div class="sc-lbl">Uscite/mese</div><div class="sc-val" style="color:var(--re)">${fmtE(totalMonthly)}</div></div>
+    <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Entrate/mese</div><div class="sc-val" style="color:var(--gr)">${fmtE(totalIncome)}</div></div>
     <div class="sc"><div class="sc-ico">⏸️</div><div class="sc-lbl">In pausa</div><div class="sc-val" style="color:var(--ye)">${paused.length}</div></div>
   </div>
   <div class="card">
     <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Operazioni Ricorrenti</div>
       <button class="btn-a btn-a-gr" onclick="openRecModal()">＋ Aggiungi</button>
     </div>
-    ${recurring.length===0?es('🔄','Nessuna operazione ricorrente.<br>Aggiungi abbonamenti, stipendio, rate...'):
-    recurring.map(r=>{
+    ${recurring.length===0?es('🔄','Nessuna operazione ricorrente.<br>Aggiungi abbonamenti, stipendio, rate...'):    recurring.map(r=>{
       const isExpired=r.expiry&&r.expiry<today;
-      const expiresSOon=r.expiry&&!isExpired&&Math.round((new Date(r.expiry)-new Date(today))/(86400000))<=7;
+      const expiresSoon=r.expiry&&!isExpired&&Math.round((new Date(r.expiry)-new Date(today))/86400000)<=7;
       return `
       <div class="ir" style="${isExpired?'opacity:.55':''}">
         <div class="ia">${REC_KINDS[r.kind]?.icon||'🔄'}</div>
@@ -3908,15 +3916,15 @@ function renderRecurring(con){
           <div class="in">${r.name}
             <span class="badge ${r.status==='active'?'bg':'by'}">${r.status==='active'?'Attiva':'Pausa'}</span>
             ${isExpired?`<span class="badge" style="background:rgba(255,79,109,.15);color:var(--re)">Scaduta</span>`:''}
-            ${expiresSOon?`<span class="badge" style="background:rgba(255,209,102,.15);color:var(--ye)">⚠️ Scade presto</span>`:''}
+            ${expiresSoon?`<span class="badge" style="background:rgba(255,209,102,.15);color:var(--ye)">⚠️ Scade presto</span>`:''}
           </div>
-          <div class="id2">${FREQS[r.freq]||r.freq} · <span class="rec-next">📅 ${r.nextDate||'N/D'}</span> · ${catName(r.cat)}</div>
-          ${r.expiry?`<div style="font-size:10px;color:${isExpired?'var(--re)':expiresSOon?'var(--ye)':'var(--tx3)'};margin-top:2px">🏁 Fine: ${new Date(r.expiry+'T00:00:00').toLocaleDateString('it-IT')}</div>`:''}
+          <div class="id2">${FREQS[r.freq]||r.freq} · 📅 ${r.nextDate||'N/D'}</div>
+          <div class="id2">${catName(r.cat)}${r.expiry?` · <span style="color:${isExpired?'var(--re)':expiresSoon?'var(--ye)':'var(--tx3)'}">🏁 Fine: ${new Date(r.expiry+'T00:00:00').toLocaleDateString('it-IT')}</span>`:''}</div>
         </div>
         <div class="iam ${r.type==='income'?'ain':'aout'}">${r.type==='income'?'+':'-'}${fmtE(r.amount)}</div>
         <div style="display:flex;flex-direction:column;gap:3px">
           <button class="btn-sm ${r.status==='active'?'by':'bs-s'}" onclick="toggleRec('${r.id}','${r.status}')" title="${r.status==='active'?'Metti in pausa':'Riattiva'}">${r.status==='active'?'⏸':'▶'}</button>
-          <button class="btn-sm bs-ac" onclick="editRec('${r.id}')" title="Modifica">✏️ Modifica</button>
+          <button class="btn-sm bs-ac" onclick="editRec('${r.id}')" title="Modifica">✏️</button>
           <button class="btn-sm bs-d" onclick="delRec('${r.id}')" title="Elimina">🗑️</button>
         </div>
       </div>`;
@@ -4926,9 +4934,9 @@ function renderGoals(con){
           <div style="background:var(--s2);border-radius:8px;height:10px;overflow:hidden;margin-bottom:7px">
             <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:8px;transition:width .5s"></div>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);flex-wrap:wrap;gap:4px">
-            <span>${pct}% — manca ${fmtE(rem)}</span>
-            ${monthlyNeeded?`<span>📅 ~${fmtE(monthlyNeeded)}/mese (${monthsLeft} mesi)</span>`:g.deadline?`<span>📅 Scad: ${formatDateIt(g.deadline)}</span>`:''}
+          <div style="display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--tx3)">
+            <div style="display:flex;justify-content:space-between"><span>${pct}% — manca ${fmtE(rem)}</span>${monthlyNeeded?`<span style="color:var(--ac)">~${fmtE(monthlyNeeded)}/mese</span>`:''}</div>
+            ${g.deadline?`<div>📅 Scadenza: ${formatDateIt(g.deadline)}${monthsLeft?` · ${monthsLeft} mesi rimasti`:''}${monthlyNeeded?` · rata ricalcolata`:''}</div>`:''}
           </div>
         </div>
       </div>

@@ -1965,7 +1965,8 @@ function startRealtimeSync(){
   listen(`users/${uid}/trips`, v=>{trips=v;});
   listen(`users/${uid}/recurring`, v=>{recurring=v;});
   listenArr(`users/${uid}/goals`, v=>{
-    localStorage.setItem('fp_goals_'+uid, JSON.stringify(v));
+    if(window._goalsSaving){window._goalsSaving=false;return;} // ignora echo del nostro salvataggio
+    if(v&&v.length>0)localStorage.setItem('fp_goals_'+uid, JSON.stringify(v));
   });
   // Groups (shared)
   const grpRef=db.ref('groups');
@@ -1985,14 +1986,6 @@ function startRealtimeSync(){
     listen(`users/${uid}/biz/expenseNotes`, v=>{expenseNotes=v;});
   }
 
-  // Goals from Firebase → localStorage sync
-  db.ref(`users/${uid}/goals`).once('value',snap=>{
-    const v=snap.val();
-    if(v){
-      const arr=Array.isArray(v)?v:Object.entries(v).map(([id,d])=>({...d,id}));
-      if(arr.length>0)localStorage.setItem('fp_goals_'+uid,JSON.stringify(arr));
-    }
-  });
   // Budgets from Firebase → localStorage sync
   db.ref(`users/${uid}/budgets`).once('value',snap=>{
     const v=snap.val();
@@ -2004,6 +1997,7 @@ function startRealtimeSync(){
 }
 
 /* ===== CHECK RECURRING — scala dal saldo ===== */
+const _recInFlight=new Set();
 function checkRecurring(){
   const today=new Date().toISOString().split('T')[0];
   const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
@@ -2013,7 +2007,8 @@ function checkRecurring(){
   due.forEach(r=>{
     const txKey='rec_'+r.id+'_'+r.nextDate.replace(/-/g,'');
     const alreadyDone=transactions.some(t=>t.recKey===txKey);
-    if(alreadyDone)return;
+    if(alreadyDone||_recInFlight.has(txKey))return;
+    _recInFlight.add(txKey);
     const tx={userId:user.id,desc:r.name+' 🔄',amount:parseFloat(r.amount),type:r.type,cat:r.cat||'other',recKey:txKey,createdAt:new Date().toISOString()};
     db.ref(`users/${user.id}/transactions/${txKey}`).set(tx).then(()=>{
       transactions.push({...tx,id:txKey});
@@ -2029,8 +2024,9 @@ function checkRecurring(){
       const sign=r.type==='expense'?'-':'+';
       notify(`🔄 ${r.name}: ${sign}€${parseFloat(r.amount).toFixed(2)} scalato automaticamente`);
       pushNotif({id:'rec_done_'+txKey,type:'rec',icon:'🔄',title:`Ricorrente eseguita: ${r.name}`,sub:`${r.type==='expense'?'Uscita di':'Entrata di'} €${parseFloat(r.amount).toFixed(2)} registrata automaticamente`,time:Date.now(),read:false,action:'ricorrenti'});
-    });
+    }).catch(()=>_recInFlight.delete(txKey));
   });
+
 
   // ── PUSH BROWSER: scadenza OGGI ──
   recurring.filter(r=>r.status==='active'&&r.nextDate===today).forEach(r=>{
@@ -2316,101 +2312,85 @@ function renderPage(p){
   if(p==='dashboard'){
     const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
     const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-    // RICORRENTI: totale mese e rimanenti
     const _nowYM=new Date().toISOString().slice(0,7);
     const today2=new Date().toISOString().split('T')[0];
     const _paidRecKeys=new Set(transactions.filter(t=>t.recKey).map(t=>t.recKey));
 
-    // Funzione helper: calcola costo mensile totale di una ricorrente (tutte le occorrenze del mese)
-    function recMonthTotal(r){
+    // Ricorrenti future non ancora scattate questo mese (non sono ancora in bal)
+    function recFuture(r){
       if(r.freq==='monthly'||r.freq==='yearly'){
-        // mensile: scatta una volta al mese se nextDate è in questo mese O è già passata (l'ha già scalata)
+        const k='rec_'+r.id+'_'+(r.nextDate||'').replace(/-/g,'');
+        return (r.nextDate||'').slice(0,7)===_nowYM&&!_paidRecKeys.has(k)?r.amount:0;
+      }
+      const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+      const mEndS=mEnd.toISOString().split('T')[0];
+      let next=r.nextDate||today2;let tot=0;
+      const step=r.freq==='weekly'?7:1;
+      while(next<=mEndS){
+        const k='rec_'+r.id+'_'+next.replace(/-/g,'');
+        if(!_paidRecKeys.has(k))tot+=r.amount;
+        const d=new Date(next);d.setDate(d.getDate()+step);next=d.toISOString().split('T')[0];
+      }
+      return tot;
+    }
+
+    // Bollette: solo quelle non ancora pagate E non già presenti come transazione
+    const billTotal=bills.filter(b=>!b.paid&&b.status!=='paid').reduce((s,b)=>s+(b.amount||0),0);
+
+    // Utenze: solo se NON hanno già una ricorrente associata (evita doppio conteggio)
+    // Le utenze con una ricorrente corrispondente sono già conteggiate in recFuture
+    const utilIds=new Set(recurring.filter(r=>r.status==='active').map(r=>r.utilityId).filter(Boolean));
+    const utilTotal=utilities.filter(u=>!utilIds.has(u.id)).reduce((s,u)=>s+(u.monthlyFee||0),0);
+
+    // Ricorrenti future (non ancora in bal)
+    // Totale ricorrenti mese intero (già pagate + ancora da pagare) = impegno fisso mensile
+    function recMonthFull(r){
+      if(r.freq==='monthly'||r.freq==='yearly'){
+        // scatta una volta al mese: cerca se già pagata O se deve ancora pagare
         const mStart=_nowYM+'-01';
         const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
         const mEndS=mEnd.toISOString().split('T')[0];
-        // cerca se questo mese ha già un recKey per questa ricorrente
         const firedThisMonth=[..._paidRecKeys].some(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-','')));
-        // oppure nextDate è nel mese corrente (non ancora scattata)
-        const willFireThisMonth=(r.nextDate||'')>=mStart&&(r.nextDate||'')<=mEndS;
-        return (firedThisMonth||willFireThisMonth)?r.amount:0;
-      } else if(r.freq==='weekly'){
-        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
-        const mEndS=mEnd.toISOString().split('T')[0];
-        const mStart=_nowYM+'-01';
-        // conta tutte le occorrenze nel mese (già pagate + future)
-        let next=r.nextDate||today2;
-        // se nextDate è dopo fine mese non scatta questo mese
-        if(next>mEndS)return 0;
-        // torna indietro fino all'inizio del mese per contare tutte
-        let count=0;
-        // conta occorrenze future ancora da pagare
-        let cur=next;
-        while(cur<=mEndS){count++;const d=new Date(cur);d.setDate(d.getDate()+7);cur=d.toISOString().split('T')[0];}
-        // conta occorrenze già pagate questo mese
-        count+=[..._paidRecKeys].filter(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-',''))).length;
-        // ma le future già conteggiate sopra non devono essere duplicate
-        const futurePaid=[..._paidRecKeys].filter(k=>{const d=k.replace('rec_'+r.id+'_','');const ds=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);return ds>=next&&ds<=mEndS;}).length;
-        return r.amount*(count-futurePaid);
-      } else if(r.freq==='daily'){
-        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
-        const mEndS=mEnd.toISOString().split('T')[0];
-        const mStart=_nowYM+'-01';
-        // giorni totali nel mese
-        const dStart=new Date(mStart),dEnd=new Date(mEndS);
-        const totalDays=Math.round((dEnd-dStart)/86400000)+1;
-        return r.amount*totalDays;
+        const willFire=(r.nextDate||'')>=mStart&&(r.nextDate||'')<=mEndS;
+        return (firedThisMonth||willFire)?r.amount:0;
       }
-      return 0;
-    }
-
-    // Funzione helper: calcola quanto rimane ancora da pagare questo mese
-    function recMonthRemaining(r){
-      if(r.freq==='monthly'||r.freq==='yearly'){
-        const thisMonthKey='rec_'+r.id+'_'+(r.nextDate||'').replace(/-/g,'');
-        if((r.nextDate||'').slice(0,7)===_nowYM&&!_paidRecKeys.has(thisMonthKey))return r.amount;
-        return 0;
-      } else if(r.freq==='weekly'){
-        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
-        const mEndS=mEnd.toISOString().split('T')[0];
-        let next=r.nextDate||today2;let count=0;
-        while(next<=mEndS){
-          const k='rec_'+r.id+'_'+next.replace(/-/g,'');
-          if(!_paidRecKeys.has(k))count++;
-          const d=new Date(next);d.setDate(d.getDate()+7);next=d.toISOString().split('T')[0];
-        }
-        return r.amount*count;
-      } else if(r.freq==='daily'){
-        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
-        const mEndS=mEnd.toISOString().split('T')[0];
-        let next=r.nextDate||today2;let count=0;
-        while(next<=mEndS){
-          const k='rec_'+r.id+'_'+next.replace(/-/g,'');
-          if(!_paidRecKeys.has(k))count++;
-          const d=new Date(next);d.setDate(d.getDate()+1);next=d.toISOString().split('T')[0];
-        }
-        return r.amount*count;
+      // weekly/daily: conta tutte le occorrenze del mese
+      const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+      const mEndS=mEnd.toISOString().split('T')[0];
+      const mStart=_nowYM+'-01';
+      let cur=r.nextDate||today2;
+      // torna indietro all'inizio mese se nextDate è già avanzata
+      const step=r.freq==='weekly'?7:1;
+      // conta le già pagate questo mese
+      const paidThisMonth=[..._paidRecKeys].filter(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-',''))).length;
+      // conta le future
+      let futureCnt=0;
+      let next=cur;
+      while(next<=mEndS){
+        if(!_paidRecKeys.has('rec_'+r.id+'_'+next.replace(/-/g,'')))futureCnt++;
+        const d=new Date(next);d.setDate(d.getDate()+step);next=d.toISOString().split('T')[0];
       }
-      return 0;
+      return r.amount*(paidThisMonth+futureCnt);
     }
+    const recMonthTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+recMonthFull(r),0);
+    const recFutureTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+recFuture(r),0);
 
-    const activeExpRec=recurring.filter(r=>r.status==='active'&&r.type==='expense');
-    const recMonthlyTotal=activeExpRec.reduce((s,r)=>s+recMonthTotal(r),0);
-    const recTotal=activeExpRec.reduce((s,r)=>s+recMonthRemaining(r),0); // usato per soldi liberi = rimanenti
-    // Soldi liberi = saldo - ricorrenti mensili - bollette attive - budget viaggi futuri - obiettivi mensili
-    const billTotal=bills.filter(b=>!b.paid).reduce((s,b)=>s+(b.amount||0),0);
-    const utilTotal=utilities.reduce((s,u)=>s+(u.monthlyFee||0),0);
+    // Viaggi attivi con budget
     const tripTotal=trips.filter(t=>!t.dateTo||t.dateTo>=today2).reduce((s,t)=>s+(t.budget||0),0);
+
+    // Obiettivi: rata informativa (non scala nulla)
     const goals=loadGoals();
     const goalMonthly=goals.filter(g=>g.status!=='completed').reduce((s,g)=>s+(g.monthlyTarget||0),0);
-    const freeMoney=bal-recTotal-billTotal-utilTotal-tripTotal; // obiettivi: solo informativi, non scalano
+
+    // SOLDI LIBERI: saldo reale − intero impegno mensile ricorrenti − bollette − utenze − viaggi
+    const freeMoney=bal-recMonthTotal-billTotal-utilTotal-tripTotal;
     const freeColor=freeMoney>=0?'var(--gr)':'var(--re)';
     con.innerHTML=`
     <div class="stat-grid">
       <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo Totale</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
       <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(inc)}</div></div>
       <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(exp)}</div></div>
-      <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti mese</div><div class="sc-val" style="color:var(--ye)">${fmtE(recMonthlyTotal)}</div></div>
-      <div class="sc"><div class="sc-ico">⏳</div><div class="sc-lbl">Ricorrenti rimanenti</div><div class="sc-val" style="color:${recTotal>0?'var(--re)':'var(--gr)'}">${fmtE(recTotal)}</div></div>
+      <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti mese</div><div class="sc-val" style="color:${recMonthTotal>0?'var(--ye)':'var(--gr)'}">${fmtE(recMonthTotal)}</div></div>
     </div>
     <!-- SOLDI LIBERI BOX -->
     <div class="card" style="background:linear-gradient(135deg,rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.07),rgba(${freeMoney>=0?'0,212,255':'255,107,157'},.04));border-color:rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.2)">
@@ -2420,12 +2400,12 @@ function renderPage(p){
       </div>
       <div style="font-size:32px;font-weight:900;color:${freeColor};letter-spacing:-1px;margin-bottom:10px">${fmtE(freeMoney)}</div>
       <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>💰 Saldo</span><span style="font-weight:700;color:var(--tx)">${fmtE(bal)}</span></div>
-        ${recTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔄 Ricorrenti rimanenti</span><span style="font-weight:700;color:var(--re)">-${fmtE(recTotal)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>💰 Saldo reale</span><span style="font-weight:700;color:var(--tx)">${fmtE(bal)}</span></div>
+        ${recMonthTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔄 Ricorrenti mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(recMonthTotal)}</span></div>`:''}
         ${billTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>📄 Bollette da pagare</span><span style="font-weight:700;color:var(--ye)">-${fmtE(billTotal)}</span></div>`:''}
-        ${utilTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔌 Canoni utenze/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(utilTotal)}</span></div>`:''}
+        ${utilTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔌 Utenze mensili</span><span style="font-weight:700;color:var(--ye)">-${fmtE(utilTotal)}</span></div>`:''}
         ${tripTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>✈️ Budget viaggi</span><span style="font-weight:700;color:var(--ac2)">-${fmtE(tripTotal)}</span></div>`:''}
-        ${goalMonthly>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🎯 Rata obiettivi (consigliata)</span><span style="font-weight:700;color:var(--ac)">${fmtE(goalMonthly)}</span></div>`:''}
+        ${goalMonthly>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3)"><span>🎯 Rata obiettivi (info)</span><span style="font-weight:600;color:var(--ac)">${fmtE(goalMonthly)}</span></div>`:''}
         <div style="border-top:1px solid var(--b1);margin-top:4px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:800"><span style="color:var(--tx)">= Disponibile</span><span style="color:${freeColor}">${fmtE(freeMoney)}</span></div>
       </div>
     </div>
@@ -2442,26 +2422,10 @@ function renderPage(p){
           <div style="background:var(--s2);border-radius:6px;height:8px;overflow:hidden">
             <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:6px;transition:width .5s"></div>
           </div>
-          <div style="font-size:10px;color:var(--tx3);margin-top:3px">${pct}% completato</div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px"><span>${pct}% completato</span>${g.monthlyTarget?`<span style="color:var(--ac)">rata: ${fmtE(g.monthlyTarget)}/mese</span>`:''}</div>
         </div>`;
       }).join('')}
     </div>`:''}
-    <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">🕐</div>Ultimi Movimenti</div><button class="btn-a btn-a-ac" onclick="goTo('transazioni')">Vedi tutti</button></div>
-      ${transactions.length===0?es('💸','Nessun movimento ancora'):
-      [...transactions].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5).map(t=>`
-      <div class="ir"><div class="ia">${catIcon(t.cat)}</div>
-      <div class="ii"><div class="in">${t.desc}</div><div class="id2">${fmtDate(t.createdAt)} · ${catName(t.cat)}</div></div>
-      <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}
-    </div>
-    <div class="card">
-      <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Prossime Ricorrenti</div><button class="btn-a btn-a-ac" onclick="goTo('ricorrenti')">Vedi tutte</button></div>
-      ${recurring.filter(r=>r.status==='active').slice(0,3).map(r=>`
-      <div class="ir"><div class="ia">${REC_KINDS[r.kind]?.icon||'🔄'}</div>
-      <div class="ii"><div class="in">${r.name}</div><div class="id2 rec-next">📅 ${r.nextDate||'N/D'} · ${FREQS[r.freq]||r.freq}</div></div>
-      <div class="iam ${r.type==='income'?'ain':'aout'}">${r.type==='income'?'+':'-'}${fmtE(r.amount)}</div></div>`).join('')||es('🔄','Nessuna ricorrente attiva')}
-    </div>`;
-
   } else if(p==='transazioni'){
     let txPage=parseInt(sessionStorage.getItem('txPage')||'0');
     const txSearch=(sessionStorage.getItem('txSearch')||'').toLowerCase();
@@ -4915,7 +4879,7 @@ async function doChangePass(){
 function loadGoals(){try{return JSON.parse(localStorage.getItem('fp_goals_'+user.id)||'[]');}catch(e){return [];}}
 function saveGoals(goals){
   localStorage.setItem('fp_goals_'+user.id,JSON.stringify(goals));
-  if(db&&user)db.ref(`users/${user.id}/goals`).set(goals||[]);
+  if(db&&user){window._goalsSaving=true;db.ref(`users/${user.id}/goals`).set(goals||[]);}
 }
 function renderGoals(con){
   const goals=loadGoals();

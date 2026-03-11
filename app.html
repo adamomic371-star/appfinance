@@ -786,7 +786,7 @@ canvas{max-width:100%}
 .spl-li,.kz-logo-mark>div{display:flex;align-items:center;justify-content:center}
 
 /* ===== FAB ===== */
-#fab-wrap{position:fixed;bottom:80px;right:18px;z-index:501;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
+#fab-wrap{position:fixed;bottom:80px;right:18px;z-index:501;display:none;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
 #fab-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 22px rgba(108,99,255,.55);transition:transform .22s,background .22s;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;pointer-events:all;line-height:1}
 #fab-btn.open{transform:rotate(45deg);background:linear-gradient(135deg,#ff4f6d,#ff9f43)}
 .fab-menu{display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:all}
@@ -991,11 +991,7 @@ canvas{max-width:100%}
 
 <!-- FAB -->
 <div id="fab-wrap">
-  <div id="fab-menu" class="fab-menu hidden">
-    <button class="fab-item fab-income" onclick="openFabTx('income')">📈 Entrata</button>
-    <button class="fab-item fab-expense" onclick="openFabTx('expense')">📉 Uscita</button>
-    <button class="fab-item fab-goal" onclick="closeFab();goTo('obiettivi');setTimeout(openNewGoal,300)">🎯 Obiettivo</button>
-  </div>
+  <div id="fab-menu" class="fab-menu hidden"></div>
   <button id="fab-btn" onclick="toggleFab()">＋</button>
 </div>
 
@@ -1760,7 +1756,7 @@ function showApp(){
   // init lang buttons
   _updateLangBtns();
   var ll=document.getElementById('langLabel');if(ll)ll.textContent=t('language');
-  setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();},1500);
+  setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();recalcGoalRates();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
@@ -1870,6 +1866,7 @@ function buildNav(){
 
 function goTo(p){
   document.querySelectorAll('.ni,.drawer-ni').forEach(e=>e.classList.toggle('active',e.dataset.p===p));
+  updateFabVisibility(p);
   renderPage(p);
 }
 
@@ -2309,44 +2306,86 @@ function renderPage(p){
   if(p==='dashboard'){
     const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
     const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-    // SOLDI IMPEGNATI: ricorrenti ancora da pagare questo mese
-    // Usa recKey per escludere esattamente quelle già eseguite (indipendente dalla freq)
+    // RICORRENTI: totale mese e rimanenti
     const _nowYM=new Date().toISOString().slice(0,7);
     const today2=new Date().toISOString().split('T')[0];
     const _paidRecKeys=new Set(transactions.filter(t=>t.recKey).map(t=>t.recKey));
-    // Per ogni ricorrente attiva calcola il costo mensile stimato e quanto rimane
-    const recTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>{
+
+    // Funzione helper: calcola costo mensile totale di una ricorrente (tutte le occorrenze del mese)
+    function recMonthTotal(r){
       if(r.freq==='monthly'||r.freq==='yearly'){
-        // Mensile/annuale: è già stata pagata questo mese se il suo recKey di questo mese è in _paidRecKeys
-        const thisMonthKey='rec_'+r.id+'_'+(r.nextDate||'').replace(/-/g,'');
-        // Se nextDate è nel mese corrente non è ancora stata eseguita → la contiamo
-        if((r.nextDate||'').slice(0,7)===_nowYM&&!_paidRecKeys.has(thisMonthKey))return s+r.amount;
-        return s;
+        // mensile: scatta una volta al mese se nextDate è in questo mese O è già passata (l'ha già scalata)
+        const mStart=_nowYM+'-01';
+        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+        const mEndS=mEnd.toISOString().split('T')[0];
+        // cerca se questo mese ha già un recKey per questa ricorrente
+        const firedThisMonth=[..._paidRecKeys].some(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-','')));
+        // oppure nextDate è nel mese corrente (non ancora scattata)
+        const willFireThisMonth=(r.nextDate||'')>=mStart&&(r.nextDate||'')<=mEndS;
+        return (firedThisMonth||willFireThisMonth)?r.amount:0;
       } else if(r.freq==='weekly'){
-        // Settimanale: quante occorrenze restano nel mese corrente?
-        const monthEnd=new Date(_nowYM+'-01');monthEnd.setMonth(monthEnd.getMonth()+1);monthEnd.setDate(monthEnd.getDate()-1);
-        const monthEndS=monthEnd.toISOString().split('T')[0];
+        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+        const mEndS=mEnd.toISOString().split('T')[0];
+        const mStart=_nowYM+'-01';
+        // conta tutte le occorrenze nel mese (già pagate + future)
+        let next=r.nextDate||today2;
+        // se nextDate è dopo fine mese non scatta questo mese
+        if(next>mEndS)return 0;
+        // torna indietro fino all'inizio del mese per contare tutte
+        let count=0;
+        // conta occorrenze future ancora da pagare
+        let cur=next;
+        while(cur<=mEndS){count++;const d=new Date(cur);d.setDate(d.getDate()+7);cur=d.toISOString().split('T')[0];}
+        // conta occorrenze già pagate questo mese
+        count+=[..._paidRecKeys].filter(k=>k.startsWith('rec_'+r.id+'_'+_nowYM.replace('-',''))).length;
+        // ma le future già conteggiate sopra non devono essere duplicate
+        const futurePaid=[..._paidRecKeys].filter(k=>{const d=k.replace('rec_'+r.id+'_','');const ds=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);return ds>=next&&ds<=mEndS;}).length;
+        return r.amount*(count-futurePaid);
+      } else if(r.freq==='daily'){
+        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+        const mEndS=mEnd.toISOString().split('T')[0];
+        const mStart=_nowYM+'-01';
+        // giorni totali nel mese
+        const dStart=new Date(mStart),dEnd=new Date(mEndS);
+        const totalDays=Math.round((dEnd-dStart)/86400000)+1;
+        return r.amount*totalDays;
+      }
+      return 0;
+    }
+
+    // Funzione helper: calcola quanto rimane ancora da pagare questo mese
+    function recMonthRemaining(r){
+      if(r.freq==='monthly'||r.freq==='yearly'){
+        const thisMonthKey='rec_'+r.id+'_'+(r.nextDate||'').replace(/-/g,'');
+        if((r.nextDate||'').slice(0,7)===_nowYM&&!_paidRecKeys.has(thisMonthKey))return r.amount;
+        return 0;
+      } else if(r.freq==='weekly'){
+        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+        const mEndS=mEnd.toISOString().split('T')[0];
         let next=r.nextDate||today2;let count=0;
-        while(next<=monthEndS){
+        while(next<=mEndS){
           const k='rec_'+r.id+'_'+next.replace(/-/g,'');
           if(!_paidRecKeys.has(k))count++;
           const d=new Date(next);d.setDate(d.getDate()+7);next=d.toISOString().split('T')[0];
         }
-        return s+r.amount*count;
+        return r.amount*count;
       } else if(r.freq==='daily'){
-        // Giornaliera: conta i giorni restanti nel mese
-        const monthEnd2=new Date(_nowYM+'-01');monthEnd2.setMonth(monthEnd2.getMonth()+1);monthEnd2.setDate(monthEnd2.getDate()-1);
-        const monthEndS2=monthEnd2.toISOString().split('T')[0];
-        let next2=r.nextDate||today2;let count2=0;
-        while(next2<=monthEndS2){
-          const k='rec_'+r.id+'_'+next2.replace(/-/g,'');
-          if(!_paidRecKeys.has(k))count2++;
-          const d=new Date(next2);d.setDate(d.getDate()+1);next2=d.toISOString().split('T')[0];
+        const mEnd=new Date(_nowYM+'-01');mEnd.setMonth(mEnd.getMonth()+1);mEnd.setDate(mEnd.getDate()-1);
+        const mEndS=mEnd.toISOString().split('T')[0];
+        let next=r.nextDate||today2;let count=0;
+        while(next<=mEndS){
+          const k='rec_'+r.id+'_'+next.replace(/-/g,'');
+          if(!_paidRecKeys.has(k))count++;
+          const d=new Date(next);d.setDate(d.getDate()+1);next=d.toISOString().split('T')[0];
         }
-        return s+r.amount*count2;
+        return r.amount*count;
       }
-      return s;
-    },0);
+      return 0;
+    }
+
+    const activeExpRec=recurring.filter(r=>r.status==='active'&&r.type==='expense');
+    const recMonthlyTotal=activeExpRec.reduce((s,r)=>s+recMonthTotal(r),0);
+    const recTotal=activeExpRec.reduce((s,r)=>s+recMonthRemaining(r),0); // usato per soldi liberi = rimanenti
     // Soldi liberi = saldo - ricorrenti mensili - bollette attive - budget viaggi futuri - obiettivi mensili
     const billTotal=bills.filter(b=>!b.paid).reduce((s,b)=>s+(b.amount||0),0);
     const utilTotal=utilities.reduce((s,u)=>s+(u.monthlyFee||0),0);
@@ -2360,7 +2399,8 @@ function renderPage(p){
       <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo Totale</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
       <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(inc)}</div></div>
       <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(exp)}</div></div>
-      <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti/mese</div><div class="sc-val" style="color:var(--ye)">${fmtE(recTotal)}</div></div>
+      <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti mese</div><div class="sc-val" style="color:var(--ye)">${fmtE(recMonthlyTotal)}</div></div>
+      <div class="sc"><div class="sc-ico">⏳</div><div class="sc-lbl">Ricorrenti rimanenti</div><div class="sc-val" style="color:${recTotal>0?'var(--re)':'var(--gr)'}">${fmtE(recTotal)}</div></div>
     </div>
     <!-- SOLDI LIBERI BOX -->
     <div class="card" style="background:linear-gradient(135deg,rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.07),rgba(${freeMoney>=0?'0,212,255':'255,107,157'},.04));border-color:rgba(${freeMoney>=0?'0,229,160':'255,79,109'},.2)">
@@ -2371,7 +2411,7 @@ function renderPage(p){
       <div style="font-size:32px;font-weight:900;color:${freeColor};letter-spacing:-1px;margin-bottom:10px">${fmtE(freeMoney)}</div>
       <div style="display:flex;flex-direction:column;gap:5px">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>💰 Saldo</span><span style="font-weight:700;color:var(--tx)">${fmtE(bal)}</span></div>
-        ${recTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔄 Ricorrenti/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(recTotal)}</span></div>`:''}
+        ${recTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔄 Ricorrenti rimanenti</span><span style="font-weight:700;color:var(--re)">-${fmtE(recTotal)}</span></div>`:''}
         ${billTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>📄 Bollette da pagare</span><span style="font-weight:700;color:var(--ye)">-${fmtE(billTotal)}</span></div>`:''}
         ${utilTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>🔌 Canoni utenze/mese</span><span style="font-weight:700;color:var(--ye)">-${fmtE(utilTotal)}</span></div>`:''}
         ${tripTotal>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>✈️ Budget viaggi</span><span style="font-weight:700;color:var(--ac2)">-${fmtE(tripTotal)}</span></div>`:''}
@@ -2399,7 +2439,7 @@ function renderPage(p){
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">🕐</div>Ultimi Movimenti</div><button class="btn-a btn-a-ac" onclick="goTo('transazioni')">Vedi tutti</button></div>
       ${transactions.length===0?es('💸','Nessun movimento ancora'):
-      [...transactions].reverse().slice(0,5).map(t=>`
+      [...transactions].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5).map(t=>`
       <div class="ir"><div class="ia">${catIcon(t.cat)}</div>
       <div class="ii"><div class="in">${t.desc}</div><div class="id2">${fmtDate(t.createdAt)} · ${catName(t.cat)}</div></div>
       <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div></div>`).join('')}
@@ -2421,7 +2461,7 @@ function renderPage(p){
     const PAGE_SIZE=15;
     // Build month options
     const months=[...new Set(transactions.map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
-    let filtered=[...transactions].reverse().filter(t=>{
+    let filtered=[...transactions].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).filter(t=>{
       const matchSearch=!txSearch||t.desc.toLowerCase().includes(txSearch)||fmtE(t.amount).includes(txSearch);
       const matchType=txFilter==='all'||(txFilter==='income'&&t.type==='income')||(txFilter==='expense'&&t.type==='expense');
       const matchCat=txCatFilter==='all'||t.cat===txCatFilter;
@@ -4953,12 +4993,34 @@ function saveGoal(){
   saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
 }
 function addToGoal(id){
-  const amt=parseFloat(prompt('Quanti € vuoi aggiungere a questo obiettivo?'));
-  if(!amt||amt<=0)return;
   const goals=loadGoals();const idx=goals.findIndex(g=>g.id===id);if(idx<0)return;
-  goals[idx].saved=(goals[idx].saved||0)+amt;
-  if(goals[idx].saved>=goals[idx].target){goals[idx].status='completed';notify('🏆 Obiettivo raggiunto!');}
-  saveGoals(goals);goTo('obiettivi');
+  const g=goals[idx];
+  const rem=Math.max(0,g.target-(g.saved||0));
+  const amt=parseFloat(prompt(`Quanti € vuoi aggiungere a "${g.name}"?\nManca ancora: €${rem.toFixed(2)}`));
+  if(!amt||amt<=0)return;
+  const addAmt=Math.min(amt,rem);
+  const txKey='goal_'+id+'_'+Date.now();
+  const tx={userId:user.id,desc:`🎯 Obiettivo: ${g.name}`,amount:addAmt,type:'expense',cat:'obiettivi',goalKey:txKey,createdAt:new Date().toISOString()};
+  db.ref(`users/${user.id}/transactions/${txKey}`).set(tx).then(()=>{
+    transactions.push({...tx,id:txKey});
+    goals[idx].saved=(g.saved||0)+addAmt;
+    if(g.deadline){
+      const monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-new Date())/2592000000));
+      goals[idx].monthlyTarget=Math.max(0,goals[idx].target-goals[idx].saved)/monthsLeft;
+    }
+    if(goals[idx].saved>=goals[idx].target){goals[idx].status='completed';notify('🏆 Obiettivo raggiunto!');}
+    saveGoals(goals);goTo('obiettivi');notify(`✅ €${addAmt.toFixed(2)} aggiunti e scalati dal saldo`);
+  });
+}
+function recalcGoalRates(){
+  const goals=loadGoals();let changed=false;
+  goals.filter(g=>g.status!=='completed'&&g.deadline).forEach(g=>{
+    const idx=goals.findIndex(x=>x.id===g.id);
+    const monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-new Date())/2592000000));
+    const newRate=Math.max(0,g.target-(g.saved||0))/monthsLeft;
+    if(Math.abs((goals[idx].monthlyTarget||0)-newRate)>0.01){goals[idx].monthlyTarget=newRate;changed=true;}
+  });
+  if(changed)saveGoals(goals);
 }
 function completeGoal(id){const goals=loadGoals();const idx=goals.findIndex(g=>g.id===id);if(idx<0)return;goals[idx].status='completed';saveGoals(goals);goTo('obiettivi');notify('🏆 Completato!');}
 function delGoal(id){if(!confirm('Eliminare?'))return;saveGoals(loadGoals().filter(g=>g.id!==id));goTo('obiettivi');notify('🗑️ Eliminato');}
@@ -5322,6 +5384,35 @@ if (_isIos && !_isInStandalone && !localStorage.getItem('fp_pwa_installed')) {
 }
 
 /* ===== FAB ===== */
+// FAB items per mode
+const FAB_PERSONAL=[
+  {label:'📈 Entrata',     fn:"openFabTx('income')"},
+  {label:'📉 Uscita',      fn:"openFabTx('expense')"},
+  {label:'🎯 Obiettivo',   fn:"closeFab();goTo('obiettivi');setTimeout(openNewGoal,300)"},
+  {label:'🔄 Ricorrente',  fn:"closeFab();goTo('ricorrenti');setTimeout(()=>openMo('recModal'),300)"},
+  {label:'📄 Bolletta',    fn:"closeFab();goTo('bollette');setTimeout(()=>openMo('billModal'),300)"},
+  {label:'✈️ Viaggio',     fn:"closeFab();goTo('viaggi');setTimeout(()=>openMo('tripModal'),300)"},
+];
+const FAB_BUSINESS=[
+  {label:'💼 Prima Nota',  fn:"closeFab();goTo('biz_primanota');setTimeout(openBizTxModal,300)"},
+  {label:'📋 Preventivo',  fn:"closeFab();goTo('biz_preventivi');setTimeout(openQuoteModal,300)"},
+  {label:'👤 Cliente',     fn:"closeFab();goTo('biz_clienti');setTimeout(()=>openClientModal(),300)"},
+  {label:'📁 Progetto',    fn:"closeFab();goTo('biz_progetti');setTimeout(()=>openMo('projModal'),300)"},
+];
+
+function updateFabVisibility(page){
+  const wrap=document.getElementById('fab-wrap');
+  if(!wrap)return;
+  const isHome=page==='dashboard'||page==='biz_dashboard';
+  wrap.style.display=isHome?'flex':'none';
+  if(isHome){
+    const menu=document.getElementById('fab-menu');
+    const items=appMode==='business'?FAB_BUSINESS:FAB_PERSONAL;
+    menu.innerHTML=items.map(i=>`<button class="fab-item" onclick="${i.fn}">${i.label}</button>`).join('');
+  }
+  closeFab();
+}
+
 function toggleFab(){
   const menu=document.getElementById('fab-menu');
   const btn=document.getElementById('fab-btn');

@@ -1495,7 +1495,7 @@ function fillCatSelects(){
 
 /* ===== STATE ===== */
 let realUser=null,user=null,db=null;
-let allUsers=[],transactions=[],bills=[],utilities=[],trips=[],groups=[],recurring=[],appNotifs=[];
+let allUsers=[],transactions=[],bills=[],utilities=[],trips=[],groups=[],recurring=[],appNotifs=[],goals=[];
 let isAdminMode=false,impersonating=false,origAdmin=null,curGroupId=null;
 // BUSINESS state
 let appMode='personal'; // 'personal' | 'business'
@@ -1756,7 +1756,7 @@ function showApp(){
   // init lang buttons
   _updateLangBtns();
   var ll=document.getElementById('langLabel');if(ll)ll.textContent=t('language');
-  setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();recalcGoalRates();checkEndOfMonthInvest();},1500);
+  setTimeout(()=>{checkRecurring();checkGroupDebts();buildNotifs();checkBudgetAlerts();checkQuoteAlerts();recalcGoalRates();checkEndOfMonthInvest();migrateRecurringDuplicates();},1500);
     startGroupListener();
     setTimeout(showOnboarding,800);
   });
@@ -1955,7 +1955,8 @@ function startRealtimeSync(){
   listen(`users/${uid}/trips`, v=>{trips=v;});
   listen(`users/${uid}/recurring`, v=>{recurring=v;});
   listenArr(`users/${uid}/goals`, v=>{
-    localStorage.setItem('fp_goals_'+uid, JSON.stringify(v));
+    goals=v;
+    updateSyncIndicator('synced',new Date().toISOString());
   });
   // Groups (shared)
   const grpRef=db.ref('groups');
@@ -1975,12 +1976,11 @@ function startRealtimeSync(){
     listen(`users/${uid}/biz/expenseNotes`, v=>{expenseNotes=v;});
   }
 
-  // Goals from Firebase → localStorage sync
+  // Goals from Firebase → in-memory sync
   db.ref(`users/${uid}/goals`).once('value',snap=>{
     const v=snap.val();
     if(v){
-      const arr=Array.isArray(v)?v:Object.entries(v).map(([id,d])=>({...d,id}));
-      if(arr.length>0)localStorage.setItem('fp_goals_'+uid,JSON.stringify(arr));
+      goals=Array.isArray(v)?v:Object.entries(v).map(([id,d])=>({...d,id}));
     }
   });
   // Budgets from Firebase → localStorage sync
@@ -1991,6 +1991,66 @@ function startRealtimeSync(){
 
 
   updateSyncIndicator('synced',new Date().toISOString());
+}
+
+/* ===== MIGRAZIONE RICORRENTI — rimuove doppi addebiti da dati precedenti ===== */
+function migrateRecurringDuplicates(){
+  if(!db||!user)return;
+  const migKey='recMigrationV2';
+  db.ref(`users/${user.id}/migrations/${migKey}`).once('value',snap=>{
+    if(snap.val())return; // migrazione già eseguita
+
+    // Trova tutte le transazioni auto-create (hanno recKey e amount > 0)
+    const autoRec=transactions.filter(t=>t.recKey&&parseFloat(t.amount)>0&&!t.manualMark);
+    if(autoRec.length===0){
+      db.ref(`users/${user.id}/migrations/${migKey}`).set(true);
+      return;
+    }
+
+    let fixed=0;
+    const updates={};
+
+    autoRec.forEach(autoTx=>{
+      // Estrai id ricorrente e data dal recKey: formato rec_{rid}_{YYYYMMDD}
+      const parts=autoTx.recKey.replace('rec_','').split('_');
+      const ridRaw=parts.slice(0,-1).join('_'); // tutto tranne l'ultimo pezzo (data)
+      const dateRaw=parts[parts.length-1]; // YYYYMMDD
+      const txMonth=dateRaw.slice(0,4)+'-'+dateRaw.slice(4,6); // YYYY-MM
+
+      // Cerca transazioni manuali (senza recKey) dello stesso tipo/importo/mese
+      const duplicate=transactions.find(t=>
+        !t.recKey &&
+        !t.manualMark &&
+        t.type===autoTx.type &&
+        Math.abs(parseFloat(t.amount)-parseFloat(autoTx.amount))<0.01 &&
+        (t.createdAt||'').slice(0,7)===txMonth &&
+        t.id!==autoTx.id
+      );
+
+      if(duplicate){
+        // Converti la transazione automatica in marcatore neutro (amount=0, manualMark=true)
+        updates[`users/${user.id}/transactions/${autoTx.id}/amount`]=0;
+        updates[`users/${user.id}/transactions/${autoTx.id}/manualMark`]=true;
+        updates[`users/${user.id}/transactions/${autoTx.id}/desc`]=(autoTx.desc||'')+' [migrato]';
+        // Aggiorna in memoria
+        const idx=transactions.findIndex(t=>t.id===autoTx.id);
+        if(idx!==-1){transactions[idx].amount=0;transactions[idx].manualMark=true;}
+        fixed++;
+      }
+    });
+
+    if(fixed>0){
+      db.ref().update(updates).then(()=>{
+        db.ref(`users/${user.id}/migrations/${migKey}`).set(true);
+        notify(`🔧 Migrazione completata: corretti ${fixed} doppi addebiti ricorrenti`);
+        // Aggiorna la dashboard
+        const con=document.getElementById('pgContent');
+        if(con)try{goTo('dashboard');}catch(e){}
+      });
+    } else {
+      db.ref(`users/${user.id}/migrations/${migKey}`).set(true);
+    }
+  });
 }
 
 /* ===== CHECK RECURRING — scala dal saldo ===== */
@@ -2301,11 +2361,11 @@ function renderPage(p){
   const pgTN=document.getElementById('pgTitle');
   if(pgTN)pgTN.textContent=TITLES[p]||p;
 
-  let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
+  let bal=0;transactions.filter(t=>!t.manualMark).forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
 
   if(p==='dashboard'){
-    const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-    const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    const inc=transactions.filter(t=>t.type==='income'&&!t.manualMark).reduce((s,t)=>s+t.amount,0);
+    const exp=transactions.filter(t=>t.type==='expense'&&!t.manualMark).reduce((s,t)=>s+t.amount,0);
     // RICORRENTI: totale mese e rimanenti
     const _nowYM=new Date().toISOString().slice(0,7);
     const today2=new Date().toISOString().split('T')[0];
@@ -2459,8 +2519,8 @@ function renderPage(p){
     const txMonthFilter=sessionStorage.getItem('txMonthFilter')||'all';
     const PAGE_SIZE=15;
     // Build month options
-    const months=[...new Set(transactions.map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
-    let filtered=[...transactions].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).filter(t=>{
+    const months=[...new Set(transactions.filter(t=>!t.manualMark).map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
+    let filtered=[...transactions].filter(t=>!t.manualMark).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).filter(t=>{
       const matchSearch=!txSearch||t.desc.toLowerCase().includes(txSearch)||fmtE(t.amount).includes(txSearch);
       const matchType=txFilter==='all'||(txFilter==='income'&&t.type==='income')||(txFilter==='expense'&&t.type==='expense');
       const matchCat=txCatFilter==='all'||t.cat===txCatFilter;
@@ -3759,8 +3819,8 @@ function exportBizCSV(){
 
 /* ===== REPORT PAGE ===== */
 function renderReport(con,bal){
-  const expenses=transactions.filter(t=>t.type==='expense');
-  const income=transactions.filter(t=>t.type==='income');
+  const expenses=transactions.filter(t=>t.type==='expense'&&!t.manualMark);
+  const income=transactions.filter(t=>t.type==='income'&&!t.manualMark);
   const totalExp=expenses.reduce((s,t)=>s+t.amount,0);
   const totalInc=income.reduce((s,t)=>s+t.amount,0);
   const byCat={};
@@ -4423,7 +4483,7 @@ function renderAdmin(con){
 function saveTx(){
   const desc=document.getElementById('txDesc').value.trim(),amt=parseFloat(document.getElementById('txAmt').value),type=document.getElementById('txType').value,cat=document.getElementById('txCat').value;
   if(!desc||!amt||amt<=0){notify('❌ Compila tutti i campi');return;}
-  let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
+  let bal=0;transactions.filter(t=>!t.manualMark).forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
   if(type==='expense'&&amt>bal){document.getElementById('txWarn').style.display='block';notify('❌ Saldo insufficiente!');return;}
   db.ref(`users/${user.id}/transactions/${Date.now()}`).set({desc,amount:amt,type,cat,createdAt:new Date().toISOString()}).then(()=>{
     closeMo('txModal');
@@ -4770,7 +4830,7 @@ function checkBudgetAlerts(){
   if(!Object.keys(budgets).length)return;
   const thisMonth=new Date().toISOString().slice(0,7);
   const spentByCat={};
-  transactions.filter(t=>t.type==='expense'&&t.createdAt.startsWith(thisMonth)).forEach(t=>{
+  transactions.filter(t=>t.type==='expense'&&!t.manualMark&&t.createdAt.startsWith(thisMonth)).forEach(t=>{
     const c=t.cat||'other';spentByCat[c]=(spentByCat[c]||0)+t.amount;
   });
   Object.entries(budgets).forEach(([cid,limit])=>{
@@ -4928,10 +4988,10 @@ async function doChangePass(){
 }
 
 /* ===== SAVINGS GOALS ===== */
-function loadGoals(){try{return JSON.parse(localStorage.getItem('fp_goals_'+user.id)||'[]');}catch(e){return [];}}
-function saveGoals(goals){
-  localStorage.setItem('fp_goals_'+user.id,JSON.stringify(goals));
-  if(db&&user)db.ref(`users/${user.id}/goals`).set(goals||[]);
+function loadGoals(){return goals;}
+function saveGoals(g){
+  goals=g||[];
+  if(db&&user)db.ref(`users/${user.id}/goals`).set(goals);
 }
 function renderGoals(con){
   const goals=loadGoals();
@@ -5067,40 +5127,41 @@ function checkInvestModal(amount){
 
 /* Controlla se siamo a fine mese e mostra popup investimento obiettivi */
 function checkEndOfMonthInvest(){
-  const goals=loadGoals().filter(g=>g.status!=='completed');
-  if(goals.length===0)return;
+  const activeGoals=loadGoals().filter(g=>g.status!=='completed');
+  if(activeGoals.length===0)return;
 
   const now=new Date();
-  const today=now.toISOString().split('T')[0];
   const lastDayOfMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
   const isLastDays=now.getDate()>=lastDayOfMonth-2; // ultimi 3 giorni del mese
   if(!isLastDays)return;
 
   const monthKey='eom_invest_'+now.getFullYear()+'_'+(now.getMonth()+1);
-  if(localStorage.getItem('fp_'+user.id+'_'+monthKey))return; // già mostrato questo mese
-  localStorage.setItem('fp_'+user.id+'_'+monthKey,'1');
+  // Controlla su Firebase se già mostrato questo mese
+  db.ref(`users/${user.id}/eomFlags/${monthKey}`).once('value',snap=>{
+    if(snap.val())return; // già mostrato
+    // Segna su Firebase
+    db.ref(`users/${user.id}/eomFlags/${monthKey}`).set(true);
 
-  // Calcola soldi liberi attuali
-  const bal=transactions.reduce((s,t)=>s+(t.type==='income'?1:-1)*parseFloat(t.amount||0),0);
-  const freeMoney=bal; // semplificato: usiamo il saldo attuale
+    // Calcola saldo attuale
+    const bal=transactions.reduce((s,t)=>s+(t.amount===0&&t.manualMark?0:(t.type==='income'?1:-1)*parseFloat(t.amount||0)),0);
+    if(bal<=0)return;
 
-  if(freeMoney<=0)return;
-
-  document.getElementById('investAmt').textContent=fmtE(freeMoney);
-  document.getElementById('investGoalsList').innerHTML=goals.map(g=>{
-    const rem=Math.max(0,g.target-g.saved);
-    const suggested=Math.min(rem,Math.round(freeMoney*0.3*100)/100); // suggerisce 30%
-    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1)">
-      <div style="font-size:20px">${g.icon}</div>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700">${g.name}</div>
-        <div style="font-size:11px;color:var(--tx2)">Manca ${fmtE(rem)} · suggerito ${fmtE(suggested)}</div>
-        <div style="background:var(--b1);border-radius:4px;height:4px;margin-top:4px"><div style="background:var(--ac);height:4px;border-radius:4px;width:${Math.min(100,Math.round((g.saved/g.target)*100))}%"></div></div>
-      </div>
-      <input type="number" placeholder="€" step="0.01" value="${suggested.toFixed(2)}" max="${rem.toFixed(2)}" id="inv_${g.id}" style="width:80px;padding:7px 8px;background:var(--s1);border:1px solid var(--b1);border-radius:8px;color:var(--tx);font-size:12px;font-family:'Outfit',sans-serif">
-    </div>`;
-  }).join('')+`<div style="margin-top:12px"><button class="bms" style="width:100%" onclick="confirmInvest()">🎯 Investi negli obiettivi</button></div>`;
-  setTimeout(()=>openMo('investModal'),1200);
+    document.getElementById('investAmt').textContent=fmtE(bal);
+    document.getElementById('investGoalsList').innerHTML=activeGoals.map(g=>{
+      const rem=Math.max(0,g.target-g.saved);
+      const suggested=Math.min(rem,Math.round(bal*0.3*100)/100);
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1)">
+        <div style="font-size:20px">${g.icon}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700">${g.name}</div>
+          <div style="font-size:11px;color:var(--tx2)">Manca ${fmtE(rem)} · suggerito ${fmtE(suggested)}</div>
+          <div style="background:var(--b1);border-radius:4px;height:4px;margin-top:4px"><div style="background:var(--ac);height:4px;border-radius:4px;width:${Math.min(100,Math.round((g.saved/g.target)*100))}%"></div></div>
+        </div>
+        <input type="number" placeholder="€" step="0.01" value="${suggested.toFixed(2)}" max="${rem.toFixed(2)}" id="inv_${g.id}" style="width:80px;padding:7px 8px;background:var(--s1);border:1px solid var(--b1);border-radius:8px;color:var(--tx);font-size:12px;font-family:'Outfit',sans-serif">
+      </div>`;
+    }).join('')+`<div style="margin-top:12px"><button class="bms" style="width:100%" onclick="confirmInvest()">🎯 Investi negli obiettivi</button></div>`;
+    setTimeout(()=>openMo('investModal'),1200);
+  });
 }
 function confirmInvest(){
   const goals=loadGoals();

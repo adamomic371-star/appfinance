@@ -11,6 +11,8 @@
         "recurring":    { ".read": "auth == null || true", ".write": "auth == null || true" },
         "goals":        { ".read": "auth == null || true", ".write": "auth == null || true" },
         "budgets":      { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "eomFlags":     { ".read": "auth == null || true", ".write": "auth == null || true" },
+        "migrations":   { ".read": "auth == null || true", ".write": "auth == null || true" },
         "biz":          { ".read": "auth == null || true", ".write": "auth == null || true" }
       }
     },

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kazka — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e14;--bg2:#111520;--bg3:#181e2c;--bg4:#1e2535;
+  --border:#1e2535;--border2:#2a3045;
+  --primary:#00d4aa;--accent:#5b6ef5;
+  --text:#e8eaf2;--text2:#8b93b0;--text3:#4a5270;
+  --success:#3ecf8e;--warning:#f6a324;--danger:#f56565;--info:#4299e1;
+  --grad:linear-gradient(135deg,#00d4aa,#5b6ef5);
+  --shadow:0 20px 60px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* ─── LOGIN ─── */
+#loginScreen{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -5%,rgba(0,212,170,.1) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 40% at 80% 100%,rgba(91,110,245,.08) 0%,transparent 60%);
+}
+.login-box{
+  width:440px;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:24px;box-shadow:var(--shadow);overflow:hidden;
+}
+.login-head{background:var(--grad);padding:2.5rem;text-align:center}
+.login-head .logo{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:.25rem}
+.login-head p{color:rgba(255,255,255,.8);font-size:.875rem}
+.login-body{padding:2.5rem}
+.form-group{margin-bottom:1.25rem}
+label{display:block;margin-bottom:.5rem;font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em}
+.form-input{
+  width:100%;padding:.9rem 1.1rem;
+  background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;
+  color:var(--text);font-size:.95rem;font-family:inherit;
+  transition:border-color .2s,box-shadow .2s;
+}
+.form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,212,170,.1)}
+.form-input::placeholder{color:var(--text3)}
+.login-btn{
+  width:100%;padding:1rem;background:var(--grad);color:#fff;border:none;
+  border-radius:10px;font-weight:700;font-size:.95rem;font-family:inherit;
+  cursor:pointer;transition:opacity .2s,transform .2s;
+}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.login-err{
+  display:none;margin-top:1rem;padding:.75rem 1rem;
+  background:rgba(245,101,101,.1);border:1px solid rgba(245,101,101,.3);
+  border-radius:8px;color:var(--danger);font-size:.875rem;text-align:center;
+}
+
+/* ─── ADMIN PANEL ─── */
+#adminPanel{display:none;min-height:100vh}
+
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2rem;
+  background:rgba(11,14,20,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-left{display:flex;align-items:center;gap:.75rem}
+.t-logo{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.t-badge{padding:.2rem .6rem;background:rgba(245,101,101,.15);color:var(--danger);border:1px solid rgba(245,101,101,.3);border-radius:5px;font-size:.7rem;font-weight:700;letter-spacing:.08em}
+.topbar-right{display:flex;align-items:center;gap:1.5rem}
+.t-stat{display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.t-stat-n{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--primary)}
+.t-stat-l{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.btn-logout{
+  padding:.5rem 1.1rem;background:transparent;border:1px solid var(--border2);
+  border-radius:8px;color:var(--text2);font-size:.85rem;font-family:inherit;
+  cursor:pointer;transition:all .2s;
+}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger)}
+
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 61px)}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  background:var(--bg2);border-right:1px solid var(--border);
+  padding:1.5rem 0;position:sticky;top:61px;height:calc(100vh - 61px);overflow-y:auto;
+}
+.nav-sect{
+  padding:.4rem 1.5rem;font-size:.65rem;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem;
+}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.7rem 1.5rem;cursor:pointer;font-size:.875rem;font-weight:500;color:var(--text2);
+  transition:all .15s;border-left:3px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--primary);background:rgba(0,212,170,.05);border-left-color:var(--primary)}
+.nav-icon{font-size:1rem;width:20px;text-align:center}
+
+/* ─── MAIN ─── */
+.main{padding:2rem;overflow:hidden}
+.page{display:none}
+.page.active{display:block}
+
+/* ─── STATS ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:1.5rem;text-align:center;
+}
+.s-icon{font-size:1.75rem;margin-bottom:.5rem}
+.s-value{font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--primary)}
+.s-label{font-size:.8rem;color:var(--text3);margin-top:.25rem;text-transform:uppercase;letter-spacing:.05em}
+
+/* ─── CARDS ─── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:1.5rem;overflow:hidden}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)}
+.card-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text)}
+.card-body{padding:1.5rem}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.25rem;border-radius:8px;font-weight:600;font-size:.875rem;font-family:inherit;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:var(--grad);color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:rgba(245,101,101,.1);color:var(--danger);border:1px solid rgba(245,101,101,.3)}
+.btn-danger:hover{background:rgba(245,101,101,.2)}
+.btn-sm{padding:.4rem .8rem;font-size:.8rem}
+
+/* ─── TABLE ─── */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+.tbl{width:100%;border-collapse:collapse;font-size:.875rem}
+.tbl thead tr{background:var(--bg3)}
+.tbl th{padding:.8rem 1rem;text-align:left;font-size:.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.tbl td{padding:.9rem 1rem;border-top:1px solid var(--border);color:var(--text2)}
+.tbl tbody tr:hover{background:rgba(255,255,255,.02)}
+
+/* ─── BADGES ─── */
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:5px;font-size:.7rem;font-weight:700;letter-spacing:.04em}
+.badge-ok{background:rgba(62,207,142,.15);color:var(--success);border:1px solid rgba(62,207,142,.3)}
+.badge-info{background:rgba(66,153,225,.15);color:var(--info);border:1px solid rgba(66,153,225,.3)}
+.badge-warn{background:rgba(246,163,36,.15);color:var(--warning);border:1px solid rgba(246,163,36,.3)}
+.badge-err{background:rgba(245,101,101,.15);color:var(--danger);border:1px solid rgba(245,101,101,.3)}
+
+/* ─── FORM ─── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+select.form-input{cursor:pointer}
+textarea.form-input{resize:vertical}
+
+/* ─── SEARCH ─── */
+.search-row{margin-bottom:1rem}
+.search-in{
+  width:100%;max-width:400px;padding:.7rem 1rem;
+  background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;
+  color:var(--text);font-size:.875rem;font-family:inherit;
+  transition:border-color .2s;
+}
+.search-in:focus{outline:none;border-color:var(--primary)}
+.search-in::placeholder{color:var(--text3)}
+
+/* ─── EMPTY STATE ─── */
+.empty{text-align:center;padding:3rem;color:var(--text3)}
+.empty p:first-child{font-size:2.5rem;margin-bottom:.5rem}
+
+/* ─── STATUS DOT ─── */
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem}
+.status-dot.green{background:var(--success);box-shadow:0 0 6px var(--success)}
+.status-dot.red{background:var(--danger);box-shadow:0 0 6px var(--danger)}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:9999;
+  padding:.9rem 1.5rem;border-radius:10px;font-weight:600;font-size:.875rem;
+  background:var(--bg2);border:1px solid var(--border2);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{border-color:rgba(62,207,142,.4);color:var(--success)}
+.toast.err{border-color:rgba(245,101,101,.4);color:var(--danger)}
+.toast.warn{border-color:rgba(246,163,36,.4);color:var(--warning)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;display:flex;flex-wrap:wrap;padding:.5rem;gap:.25rem}
+  .nav-sect{display:none}
+  .nav-item{padding:.5rem .75rem;border-left:none;border-radius:8px;font-size:.8rem}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-head">
+      <div class="logo">⚡ Kazka Admin</div>
+      <p>Pannello di Amministrazione</p>
+    </div>
+    <div class="login-body">
+      <form onsubmit="doLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email Admin</label>
+          <input type="email" id="loginEmail" class="form-input" placeholder="admin@kazka.app" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPass">Password</label>
+          <input type="password" id="loginPass" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">Accedi al Pannello</button>
+        <div id="loginErr" class="login-err"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN PANEL ── -->
+<div id="adminPanel">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="t-logo">⚡ Kazka</span>
+      <span class="t-badge">ADMIN</span>
+    </div>
+    <div class="topbar-right">
+      <div class="t-stat"><span class="t-stat-n" id="statTotal">–</span><span class="t-stat-l">Utenti</span></div>
+      <div class="t-stat"><span class="t-stat-n" id="statPro">–</span><span class="t-stat-l">Pro+</span></div>
+      <button class="btn-logout" onclick="doLogout()">⏏ Esci</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-sect">Pannello</div>
+      <div class="nav-item active" onclick="goPage('dashboard',this)"><span class="nav-icon">📊</span>Dashboard</div>
+      <div class="nav-item" onclick="goPage('users',this)"><span class="nav-icon">👥</span>Utenti</div>
+      <div class="nav-item" onclick="goPage('piani',this)"><span class="nav-icon">🎁</span>Piani</div>
+      <div class="nav-item" onclick="goPage('rinnovi',this)"><span class="nav-icon">🔄</span>Rinnovi</div>
+      <div class="nav-sect">Azioni</div>
+      <div class="nav-item" onclick="goPage('crea',this)"><span class="nav-icon">➕</span>Crea Utente</div>
+      <div class="nav-item" onclick="goPage('impersonate',this)"><span class="nav-icon">👤</span>Impersona</div>
+      <div class="nav-item" onclick="goPage('notifiche',this)"><span class="nav-icon">🔔</span>Notifiche</div>
+      <div class="nav-item" onclick="goPage('db',this)"><span class="nav-icon">🗄️</span>Database Raw</div>
+      <div class="nav-item" onclick="goPage('cleaner',this)"><span class="nav-icon">🧹</span>File Cleaner</div>
+    </div>
+
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="s-icon">👥</div><div class="s-value" id="totalUsers">–</div><div class="s-label">Utenti Totali</div></div>
+          <div class="stat-card"><div class="s-icon">⭐</div><div class="s-value" id="proUsers">–</div><div class="s-label">Utenti Pro+</div></div>
+          <div class="stat-card"><div class="s-icon">🏢</div><div class="s-value" id="bizUsers">–</div><div class="s-label">Business</div></div>
+          <div class="stat-card"><div class="s-icon">🔐</div><div class="s-value" id="adminUsers">–</div><div class="s-label">Admin</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Stato Sistema</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadUsers()">🔄 Aggiorna</button>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+              <div><span class="status-dot green"></span><strong>Firebase:</strong> <span class="badge badge-ok" id="fbStatus">Connesso</span></div>
+              <div>👤 <strong>Admin:</strong> <span id="adminEmail" style="color:var(--text2);font-size:.875rem">–</span></div>
+              <div>🕐 <strong>Login:</strong> <span id="loginTime" style="color:var(--text2);font-size:.875rem">–</span></div>
+              <div>🆔 <strong>Sessione:</strong> <span id="sessionId" style="font-family:monospace;font-size:.75rem;color:var(--text3)">–</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UTENTI -->
+      <div class="page" id="page-users">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Gestione Utenti</div>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-secondary btn-sm" onclick="loadUsers()">🔄 Ricarica</button>
+              <button class="btn btn-danger btn-sm" onclick="goPage('cleaner',document.querySelector('[onclick*=cleaner]'))">🧹 Cleaner</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-row">
+              <input class="search-in" id="userSearch" type="text" placeholder="Cerca per email o nome…" oninput="filterUsers()">
+            </div>
+            <div class="tbl-wrap" id="usersTableWrap">
+              <div class="empty"><p>⏳</p><p>Caricamento utenti…</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIANI -->
+      <div class="page" id="page-piani">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Distribuzione Piani</div></div>
+          <div class="card-body">
+            <div class="tbl-wrap" id="pianiTableWrap">
+              <div class="empty"><p>📊</p><p>Vai in Utenti per caricare i dati prima.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RINNOVI -->
+      <div class="page" id="page-rinnovi">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Rinnovi in Scadenza</div></div>
+          <div class="card-body">
+            <div class="empty"><p>🔄</p><p>Funzionalità in sviluppo — disponibile prossimamente.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CREA UTENTE -->
+      <div class="page" id="page-crea">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Crea Nuovo Utente</div></div>
+          <div class="card-body">
+            <form onsubmit="createUser(event)" style="max-width:480px">
+              <div class="form-row">
+                <div class="form-group" style="margin:0">
+                  <label>Nome</label>
+                  <input class="form-input" id="newName" type="text" placeholder="Mario Rossi" required>
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label>Email</label>
+                  <input class="form-input" id="newEmail" type="email" placeholder="mario@email.com" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group" style="margin:0">
+                  <label>Password</label>
+                  <input class="form-input" id="newPass" type="password" placeholder="min 6 caratteri" required minlength="6">
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label>Piano</label>
+                  <select class="form-input" id="newPlan">
+                    <option value="free">Free</option>
+                    <option value="personal_pro">Personal Pro</option>
+                    <option value="business">Business</option>
+                    <option value="business_pro">Business Pro</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">➕ Crea Utente</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPERSONA -->
+      <div class="page" id="page-impersonate">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Impersona Utente</div></div>
+          <div class="card-body">
+            <p style="color:var(--text2);font-size:.9rem;margin-bottom:1.25rem">
+              Apri l'app con l'UID di un utente per visualizzarne la dashboard.
+              <strong style="color:var(--warning)"> ⚠️ Solo per debug — non modifica dati.</strong>
+            </p>
+            <div class="search-row">
+              <input class="search-in" id="impSearch" type="text" placeholder="Cerca email…" oninput="filterImpersonate()">
+            </div>
+            <div id="impList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICHE -->
+      <div class="page" id="page-notifiche">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Invia Notifica</div></div>
+          <div class="card-body">
+            <form onsubmit="sendNotification(event)" style="max-width:480px">
+              <div class="form-group">
+                <label>Destinatario</label>
+                <select class="form-input" id="notifTarget">
+                  <option value="all">Tutti gli utenti</option>
+                  <option value="pro">Solo Pro+</option>
+                  <option value="free">Solo Free</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Titolo</label>
+                <input class="form-input" id="notifTitle" type="text" placeholder="💰 Kazka" required>
+              </div>
+              <div class="form-group">
+                <label>Messaggio</label>
+                <textarea class="form-input" id="notifBody" rows="3" placeholder="Testo della notifica…" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">🔔 Invia Notifica</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATABASE RAW -->
+      <div class="page" id="page-db">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Database Raw (JSON)</div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm" onclick="loadRaw('users')">users</button>
+              <button class="btn btn-secondary btn-sm" onclick="loadRaw('groups')">groups</button>
+              <button class="btn btn-secondary btn-sm" onclick="loadRaw('admin_data')">admin_data</button>
+              <button class="btn btn-secondary btn-sm" onclick="loadRaw('notifications')">notifications</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <pre id="rawOutput" style="background:var(--bg3);padding:1rem;border-radius:8px;overflow-x:auto;font-size:.75rem;color:var(--text2);max-height:60vh;overflow-y:auto;white-space:pre-wrap">Seleziona un nodo sopra…</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILE CLEANER -->
+      <div class="page" id="page-cleaner">
+        <div class="card" style="border-color:rgba(246,163,36,.3)">
+          <div class="card-hd" style="background:rgba(246,163,36,.04)">
+            <div class="card-title" style="color:var(--warning)">🧹 File Cleaner — Rimozione File Duplicati</div>
+            <span class="badge badge-warn">Solo lettura — nessun dato Firebase modificato</span>
+          </div>
+          <div class="card-body">
+            <p style="color:var(--text2);margin-bottom:1.5rem;font-size:.9rem">
+              Questo strumento identifica i file ridondanti presenti nel progetto. I file elencati come
+              <strong style="color:var(--danger)">DA ELIMINARE</strong> sono duplicati o versioni legacy
+              che non fanno parte della struttura pulita di Kazka v4.
+            </p>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">
+              <!-- KEEP -->
+              <div>
+                <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+                  <span class="badge badge-ok">✅ DA TENERE</span>
+                  <span style="color:var(--text3);font-size:.8rem">Struttura pulita v4</span>
+                </div>
+                <div id="keepList"></div>
+              </div>
+              <!-- DELETE -->
+              <div>
+                <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+                  <span class="badge badge-err">🗑️ DA ELIMINARE</span>
+                  <span style="color:var(--text3);font-size:.8rem">File duplicati / legacy</span>
+                </div>
+                <div id="deleteList"></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin:0;background:var(--bg3)">
+              <div class="card-hd"><div class="card-title" style="font-size:.875rem">📋 Comandi Shell da eseguire</div></div>
+              <div class="card-body" style="padding:1rem">
+                <pre id="shellCommands" style="font-size:.78rem;color:var(--primary);line-height:1.8;overflow-x:auto"></pre>
+                <button class="btn btn-secondary btn-sm" style="margin-top:.75rem" onclick="copyShell()">📋 Copia Comandi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /adminPanel -->
+
+<div id="toast" class="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+'use strict';
+
+/* ── FIREBASE CONFIG ──
+   Sostituisci con le tue credenziali Firebase
+   (non committare mai il file .env su git)
+── */
+const FB_CONFIG = {
+  apiKey:            "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
+  authDomain:        "financeapp-556ae.firebaseapp.com",
+  databaseURL:       "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "financeapp-556ae",
+  storageBucket:     "financeapp-556ae.firebasestorage.app",
+  messagingSenderId: "181987533980",
+  appId:             "1:181987533980:web:41c5032990ccede17eb959"
+};
+
+firebase.initializeApp(FB_CONFIG);
+const db   = firebase.database();
+const auth = firebase.auth();
+
+let allUsers = [];
+let adminUid = null;
+
+/* ── VERIFY ADMIN ROLE ──
+   Controlla che l'utente loggato abbia role === 'admin' nel DB.
+   Questo check avviene SERVER-SIDE su Firebase.
+── */
+async function verifyAdminRole(uid) {
+  const snap = await db.ref(`users/${uid}/profile/role`).once('value');
+  // fallback: controlla anche users/{uid}/role per retrocompatibilità
+  if (snap.val() === 'admin') return true;
+  const snap2 = await db.ref(`users/${uid}/role`).once('value');
+  return snap2.val() === 'admin';
+}
+
+/* ── LOGIN ── */
+async function doLogin(e) {
+  e.preventDefault();
+  const email  = document.getElementById('loginEmail').value.trim();
+  const pass   = document.getElementById('loginPass').value;
+  const errEl  = document.getElementById('loginErr');
+  const btn    = document.getElementById('loginBtn');
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Verifica in corso…';
+
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email, pass);
+    const isAdmin = await verifyAdminRole(cred.user.uid);
+
+    if (!isAdmin) {
+      await auth.signOut();
+      throw new Error('Accesso negato: ruolo admin non trovato.');
+    }
+
+    adminUid = cred.user.uid;
+    document.getElementById('adminEmail').textContent = cred.user.email;
+    document.getElementById('loginTime').textContent  = new Date().toLocaleString('it-IT');
+    document.getElementById('sessionId').textContent  = 'adm_' + Math.random().toString(36).substr(2,9);
+
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display  = 'block';
+    initPanel();
+    showToast('Accesso effettuato ✓', 'ok');
+
+  } catch(err) {
+    const msgs = {
+      'auth/user-not-found':     'Email non trovata.',
+      'auth/wrong-password':     'Password errata.',
+      'auth/invalid-credential': 'Credenziali non valide.',
+      'auth/invalid-email':      'Email non valida.',
+      'auth/too-many-requests':  'Troppi tentativi — riprova tra poco.',
+    };
+    errEl.textContent = msgs[err.code] || err.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Accedi al Pannello';
+  }
+}
+
+/* ── LOGOUT ── */
+async function doLogout() {
+  await auth.signOut();
+  document.getElementById('adminPanel').style.display  = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPass').value = '';
+  adminUid = null;
+  allUsers = [];
+}
+
+/* ── INIT PANEL ── */
+async function initPanel() {
+  await loadUsers();
+  renderCleanerTool();
+}
+
+/* ── LOAD USERS ── */
+async function loadUsers() {
+  try {
+    const snap = await db.ref('users').once('value');
+    const data = snap.val() || {};
+
+    // Normalizza: supporta struttura flat e nested (profile sub-key)
+    allUsers = Object.entries(data).map(([uid, u]) => {
+      const profile = (u && u.profile) ? { ...u, ...u.profile, uid } : { ...u, uid };
+      return profile;
+    });
+
+    const total = allUsers.length;
+    const pro   = allUsers.filter(u => u.plan && u.plan !== 'free').length;
+    const biz   = allUsers.filter(u => u.plan && (u.plan.includes('business'))).length;
+    const adm   = allUsers.filter(u => u.role === 'admin').length;
+
+    setEl('statTotal', total);
+    setEl('totalUsers', total);
+    setEl('statPro', pro);
+    setEl('proUsers', pro);
+    setEl('bizUsers', biz);
+    setEl('adminUsers', adm);
+
+    renderUsersTable();
+    renderPianiTable();
+    renderImpersonateList();
+  } catch(err) {
+    showToast('Errore caricamento utenti: ' + err.message, 'err');
+  }
+}
+
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+/* ── USERS TABLE ── */
+function renderUsersTable(filter = '') {
+  const wrap = document.getElementById('usersTableWrap');
+  if (!wrap) return;
+  const list = filter
+    ? allUsers.filter(u =>
+        (u.email||'').toLowerCase().includes(filter) ||
+        (u.displayName||u.name||'').toLowerCase().includes(filter))
+    : allUsers;
+
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty"><p>🔍</p><p>Nessun utente trovato.</p></div>';
+    return;
+  }
+
+  const planBadge = p => {
+    const map = {free:'badge-info',personal_pro:'badge-ok',business:'badge-warn',business_pro:'badge-err'};
+    return `<span class="badge ${map[p]||'badge-info'}">${p||'free'}</span>`;
+  };
+  const roleBadge = r => r === 'admin'
+    ? '<span class="badge badge-err">ADMIN</span>'
+    : '<span class="badge badge-info">user</span>';
+
+  wrap.innerHTML = `<table class="tbl">
+    <thead><tr><th>Email</th><th>Nome</th><th>Piano</th><th>Ruolo</th><th>Creato</th><th>UID</th></tr></thead>
+    <tbody>
+      ${list.map(u=>`<tr>
+        <td>${u.email||'–'}</td>
+        <td>${u.displayName||u.name||'–'}</td>
+        <td>${planBadge(u.plan)}</td>
+        <td>${roleBadge(u.role)}</td>
+        <td style="font-size:.8rem;color:var(--text3)">${u.createdAt ? new Date(u.createdAt).toLocaleDateString('it-IT') : '–'}</td>
+        <td style="font-family:monospace;font-size:.72rem;color:var(--text3)">${(u.uid||'').substring(0,10)}…</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function filterUsers() {
+  renderUsersTable(document.getElementById('userSearch').value.trim().toLowerCase());
+}
+
+/* ── PIANI TABLE ── */
+function renderPianiTable() {
+  const wrap = document.getElementById('pianiTableWrap');
+  if (!wrap || !allUsers.length) return;
+  const counts = allUsers.reduce((acc,u) => {
+    const p = u.plan || 'free';
+    acc[p] = (acc[p]||0)+1;
+    return acc;
+  }, {});
+  const total = allUsers.length;
+  wrap.innerHTML = `<table class="tbl">
+    <thead><tr><th>Piano</th><th>Utenti</th><th>%</th></tr></thead>
+    <tbody>
+      ${Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([p,n])=>`<tr>
+        <td>${p}</td><td>${n}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <div style="flex:1;background:var(--bg3);border-radius:4px;height:6px;overflow:hidden">
+              <div style="height:100%;background:var(--grad);width:${Math.round(n/total*100)}%"></div>
+            </div>
+            ${Math.round(n/total*100)}%
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+/* ── IMPERSONATE ── */
+function renderImpersonateList(filter = '') {
+  const wrap = document.getElementById('impList');
+  if (!wrap) return;
+  const list = filter
+    ? allUsers.filter(u => (u.email||'').toLowerCase().includes(filter))
+    : allUsers.slice(0,25);
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty"><p>🔍</p><p>Nessun utente trovato.</p></div>';
+    return;
+  }
+  wrap.innerHTML = `<table class="tbl">
+    <thead><tr><th>Email</th><th>UID</th><th></th></tr></thead>
+    <tbody>
+      ${list.map(u=>`<tr>
+        <td>${u.email||'–'}</td>
+        <td style="font-family:monospace;font-size:.72rem;color:var(--text3)">${u.uid||'–'}</td>
+        <td><button class="btn btn-secondary btn-sm" onclick="impersonate('${u.uid}')">👤 Apri</button></td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function filterImpersonate() {
+  renderImpersonateList(document.getElementById('impSearch').value.trim().toLowerCase());
+}
+
+function impersonate(uid) {
+  window.open(`app/index.html?impersonate=${uid}`, '_blank');
+  showToast('Apertura dashboard utente…', 'ok');
+}
+
+/* ── CREATE USER ── */
+async function createUser(e) {
+  e.preventDefault();
+  const name  = document.getElementById('newName').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  const pass  = document.getElementById('newPass').value;
+  const plan  = document.getElementById('newPlan').value;
+  const btn   = e.submitter;
+  btn.disabled = true;
+  btn.textContent = 'Creazione…';
+  try {
+    // NOTA: in produzione usa Firebase Admin SDK via Cloud Function
+    // per evitare che l'admin venga sloggato durante la creazione
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.updateProfile({ displayName: name });
+    await db.ref(`users/${cred.user.uid}/profile`).set({
+      uid: cred.user.uid, email, name, plan,
+      role: 'user', createdAt: Date.now(), createdBy: adminUid
+    });
+    showToast(`Utente ${email} creato ✓`, 'ok');
+    e.target.reset();
+    await loadUsers();
+  } catch(err) {
+    showToast('Errore: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '➕ Crea Utente';
+  }
+}
+
+/* ── SEND NOTIFICATION ── */
+async function sendNotification(e) {
+  e.preventDefault();
+  const target = document.getElementById('notifTarget').value;
+  const title  = document.getElementById('notifTitle').value;
+  const body   = document.getElementById('notifBody').value;
+  try {
+    await db.ref('admin_data/notifications').push({
+      title, body, target, sentAt: Date.now(), sentBy: adminUid
+    });
+    showToast('Notifica salvata nel DB ✓', 'ok');
+    e.target.reset();
+  } catch(err) {
+    showToast('Errore: ' + err.message, 'err');
+  }
+}
+
+/* ── DB RAW ── */
+async function loadRaw(node) {
+  const pre = document.getElementById('rawOutput');
+  pre.textContent = 'Caricamento…';
+  try {
+    const snap = await db.ref(node).once('value');
+    pre.textContent = JSON.stringify(snap.val(), null, 2);
+  } catch(err) {
+    pre.textContent = 'Errore: ' + err.message;
+    showToast('Errore DB: ' + err.message, 'err');
+  }
+}
+
+/* ── FILE CLEANER ──
+   Lista statica dei file del progetto con classificazione keep/delete.
+   Aggiorna manualmente se aggiungi nuovi file al progetto.
+── */
+const CLEANER_DATA = {
+  keep: [
+    { file: 'index.html',           desc: 'Landing page principale' },
+    { file: 'admin.html',           desc: 'Admin panel (questo file — versione unica)' },
+    { file: 'manifest.json',        desc: 'PWA manifest' },
+    { file: 'sw.js',                desc: 'Service Worker (cache versioning)' },
+    { file: 'database.rules.json',  desc: 'Regole Firebase Realtime DB' },
+    { file: 'modules/auth.js',      desc: 'Autenticazione Firebase' },
+    { file: 'modules/balance-calculator.js', desc: 'Calcolo saldo e transazioni' },
+    { file: 'modules/notifications.js',      desc: 'Notifiche push' },
+    { file: 'modules/multi-account.js',      desc: 'Gestione multi-account' },
+    { file: 'modules/advanced-reporting.js', desc: 'Report avanzati' },
+    { file: 'modules/chat.js',      desc: 'Modulo chat' },
+    { file: 'modules/pac-savings.js', desc: 'Piano di accumulo capitale' },
+    { file: 'modules/theme.js',     desc: 'Dark/Light mode' },
+    { file: 'assets/icons/icon-192.png', desc: 'Icona PWA 192px' },
+    { file: 'assets/icons/icon-512.png', desc: 'Icona PWA 512px' },
+  ],
+  delete: [
+    { file: 'kazka-admin.html',       reason: 'Duplicato — usa admin.html' },
+    { file: 'kazka-admin-simple.html', reason: 'Versione legacy semplificata — sostituita' },
+    { file: 'app/kazka-admin.html',    reason: 'Copia duplicata nella sottocartella app/' },
+    { file: 'app/kazka-admin-simple.html', reason: 'Copia duplicata legacy in app/' },
+    { file: 'app/admin/kazka-admin.html', reason: 'Copia duplicata in app/admin/' },
+    { file: 'app/index.html',          reason: 'Placeholder vuoto — contenuto non implementato' },
+    { file: 'appfinance-master/',      reason: 'Cartella del vecchio progetto master — non necessaria' },
+    { file: 'cleanup-repository.html', reason: 'Tool di cleanup vecchio — integrato in admin.html' },
+    { file: 'kazka-cleaner.html',      reason: 'Tool cleaner legacy — integrato in admin.html' },
+    { file: 'kazka-cleanup-tool.html', reason: 'Tool cleanup duplicato — integrato in admin.html' },
+    { file: 'remove-users.html',       reason: 'Tool rimozione utenti standalone — usa il pannello admin' },
+    { file: 'database_rules.json',     reason: 'Duplicato di database.rules.json (nome diverso)' },
+    { file: 'CLEANUP.js',              reason: 'Script di migrazione — non serve in produzione' },
+    { file: 'README-CLEANUP.md',       reason: 'Documentazione migrazione — eliminabile in produzione' },
+    { file: 'README-PROJECT.md',       reason: 'README duplicato — usa solo README.md' },
+    { file: 'start-server.bat',        reason: 'Script Windows per dev locale — non necessario in produzione' },
+  ]
+};
+
+function renderCleanerTool() {
+  const keepWrap   = document.getElementById('keepList');
+  const deleteWrap = document.getElementById('deleteList');
+  if (!keepWrap || !deleteWrap) return;
+
+  const itemStyle = `
+    padding:.6rem .75rem;border-radius:8px;margin-bottom:.4rem;
+    font-size:.8rem;display:flex;flex-direction:column;gap:.15rem;
+  `;
+
+  keepWrap.innerHTML = CLEANER_DATA.keep.map(f => `
+    <div style="${itemStyle}background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.2)">
+      <span style="font-family:monospace;color:var(--success)">${f.file}</span>
+      <span style="color:var(--text3)">${f.desc}</span>
+    </div>`).join('');
+
+  deleteWrap.innerHTML = CLEANER_DATA.delete.map(f => `
+    <div style="${itemStyle}background:rgba(245,101,101,.06);border:1px solid rgba(245,101,101,.2)">
+      <span style="font-family:monospace;color:var(--danger)">${f.file}</span>
+      <span style="color:var(--text3)">${f.reason}</span>
+    </div>`).join('');
+
+  // Genera comandi shell
+  const cmds = [
+    '# Esegui dalla cartella radice del progetto (appfinance-main/)',
+    '# ─── Rimozione file duplicati ───────────────────────────────',
+    ...CLEANER_DATA.delete.map(f => `rm -rf "${f.file}"`),
+    '',
+    '# ─── Verifica struttura finale ──────────────────────────────',
+    'find . -maxdepth 3 -not -path "./.git/*" | sort',
+  ].join('\n');
+  document.getElementById('shellCommands').textContent = cmds;
+}
+
+function copyShell() {
+  const text = document.getElementById('shellCommands').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Comandi copiati negli appunti ✓', 'ok');
+  }).catch(() => {
+    showToast('Copia manuale: seleziona il testo sopra', 'warn');
+  });
+}
+
+/* ── NAVIGATION ── */
+function goPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+/* ── TOAST ── */
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('loginEmail').focus();
+  // Ripristina sessione Firebase se già loggato
+  auth.onAuthStateChanged(async user => {
+    if (user && !adminUid) {
+      const isAdmin = await verifyAdminRole(user.uid);
+      if (isAdmin) {
+        adminUid = user.uid;
+        document.getElementById('adminEmail').textContent = user.email;
+        document.getElementById('loginTime').textContent  = new Date().toLocaleString('it-IT');
+        document.getElementById('sessionId').textContent  = 'adm_' + Math.random().toString(36).substr(2,9);
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display  = 'block';
+        initPanel();
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -2,562 +2,160 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kazka — Gestione Finanziaria Intelligente</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazka — Smart Finance Assistant</title>
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:     #0b0e14;
-  --bg2:    #111520;
-  --bg3:    #181e2c;
-  --border: #1e2535;
-  --primary:#00d4aa;
-  --accent: #5b6ef5;
-  --text:   #e8eaf2;
-  --text2:  #8b93b0;
-  --text3:  #4a5270;
-  --success:#3ecf8e;
-  --danger: #f56565;
-  --grad:   linear-gradient(135deg,#00d4aa,#5b6ef5);
-}
-
 *{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#050912;--bg2:#090f1e;--bg3:#0d1528;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF)}
 html{scroll-behavior:smooth}
-
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.6;
-  overflow-x:hidden;
-}
-
-/* ── NAV ── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:1.25rem 2rem;
-  background:rgba(11,14,20,.85);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-}
-.nav-logo{
-  font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.nav-links{display:flex;gap:2rem;align-items:center}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
-.nav-links a:hover{color:var(--primary)}
-.nav-cta{
-  padding:.6rem 1.4rem;
-  background:var(--grad);
-  color:#fff!important;border-radius:8px;font-weight:600;font-size:.875rem!important;
-  transition:opacity .2s,transform .2s;
-}
-.nav-cta:hover{opacity:.9;transform:translateY(-1px)}
-
-/* ── HERO ── */
-.hero{
-  min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  padding:6rem 2rem 4rem;
-  position:relative;overflow:hidden;text-align:center;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,212,170,.12) 0%,transparent 70%),
-    radial-gradient(ellipse 50% 40% at 80% 80%,rgba(91,110,245,.1) 0%,transparent 60%);
-  pointer-events:none;
-}
-.hero-content{position:relative;z-index:1;max-width:780px;margin:0 auto}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.4rem 1rem;border:1px solid rgba(0,212,170,.3);border-radius:20px;
-  font-size:.8rem;color:var(--primary);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
-  margin-bottom:2rem;background:rgba(0,212,170,.05);
-}
-h1{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;
-  letter-spacing:-2px;margin-bottom:1.5rem;color:var(--text);
-}
-h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-desc{font-size:1.15rem;color:var(--text2);max-width:520px;margin:0 auto 3rem;line-height:1.8}
-.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-
-/* ── BUTTONS ── */
-.btn{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.9rem 1.8rem;border-radius:10px;font-weight:600;font-size:.95rem;
-  text-decoration:none;border:none;cursor:pointer;transition:all .25s;
-}
-.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 20px rgba(0,212,170,.25)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,212,170,.35)}
-.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:rgba(0,212,170,.05)}
-.btn-full{width:100%;justify-content:center}
-.btn-outline{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-
-/* ── FEATURES ── */
-.section{padding:6rem 2rem}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-label{
-  font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--primary);margin-bottom:1rem;
-}
-.section-title{
-  font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;
-  color:var(--text);margin-bottom:1rem;line-height:1.15;letter-spacing:-1px;
-}
-.section-sub{font-size:1.05rem;color:var(--text2);max-width:520px;line-height:1.7}
-
-.features-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;
-  margin-top:3.5rem;
-}
-.feat-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
-  padding:1.75rem;transition:all .3s;
-}
-.feat-card:hover{border-color:rgba(0,212,170,.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,212,170,.08)}
-.feat-icon{
-  width:52px;height:52px;border-radius:12px;
-  background:var(--grad);display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;margin-bottom:1.25rem;
-}
-.feat-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.6rem;color:var(--text)}
-.feat-desc{font-size:.9rem;color:var(--text2);line-height:1.65}
-
-/* ── PRICING ── */
-.pricing-bg{background:var(--bg2)}
-.pricing-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;
-  margin-top:3.5rem;
-}
-.price-card{
-  background:var(--bg);border:1px solid var(--border);border-radius:16px;
-  padding:2rem;text-align:center;position:relative;transition:all .3s;
-}
-.price-card.featured{
-  border-color:var(--primary);
-  box-shadow:0 0 0 1px rgba(0,212,170,.3),0 20px 50px rgba(0,212,170,.12);
-}
-.price-card:hover{transform:translateY(-4px);border-color:rgba(0,212,170,.4)}
-.price-badge{
-  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
-  background:var(--grad);color:#fff;padding:.35rem 1.1rem;border-radius:20px;
-  font-size:.75rem;font-weight:700;letter-spacing:.05em;white-space:nowrap;
-}
-.price-name{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.25rem}
-.price-amount{
-  font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;
-  color:var(--primary);line-height:1;margin:.75rem 0 .25rem;
-}
-.price-period{font-size:.85rem;color:var(--text3);margin-bottom:1.5rem}
-.price-features{list-style:none;margin-bottom:1.75rem;text-align:left}
-.price-features li{
-  display:flex;align-items:center;gap:.6rem;
-  padding:.45rem 0;font-size:.875rem;color:var(--text2);
-  border-bottom:1px solid var(--border);
-}
-.price-features li:last-child{border:none}
-.price-features li::before{content:'✓';color:var(--success);font-weight:700;flex-shrink:0}
-
-/* ── LOGIN ── */
-.login-wrap{
-  max-width:420px;margin:3.5rem auto 0;
-  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
-  overflow:hidden;
-}
-.login-head{
-  background:var(--grad);padding:2rem;text-align:center;
-}
-.login-head h3{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.25rem}
-.login-head p{color:rgba(255,255,255,.75);font-size:.875rem}
-.login-body{padding:2rem}
-.form-group{margin-bottom:1.25rem}
-label{display:block;margin-bottom:.5rem;font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em}
-input[type=email],input[type=password]{
-  width:100%;padding:.875rem 1rem;
-  background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;
-  color:var(--text);font-size:.95rem;font-family:inherit;
-  transition:border-color .2s,box-shadow .2s;
-}
-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,212,170,.1)}
-input::placeholder{color:var(--text3)}
-.login-btn{
-  width:100%;padding:1rem;background:var(--grad);
-  color:#fff;border:none;border-radius:10px;
-  font-weight:700;font-size:.95rem;font-family:inherit;
-  cursor:pointer;transition:opacity .2s,transform .2s;
-  display:flex;align-items:center;justify-content:center;gap:.5rem;
-}
-.login-btn:hover{opacity:.9;transform:translateY(-1px)}
-.login-meta{text-align:center;margin-top:1.25rem;font-size:.875rem}
-.login-meta a{color:var(--primary);text-decoration:none}
-.login-meta a:hover{text-decoration:underline}
-.login-sep{color:var(--text3);margin:0 .75rem}
-#loginError{
-  margin-top:1rem;padding:.875rem;
-  background:rgba(245,101,101,.1);border:1px solid var(--danger);
-  border-radius:8px;color:var(--danger);font-size:.875rem;
-  display:none;
-}
-
-/* ── FOOTER ── */
-footer{
-  background:var(--bg2);border-top:1px solid var(--border);
-  padding:2.5rem;text-align:center;
-}
-.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
-.footer-logo{font-family:'Syne',sans-serif;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.footer-links{display:flex;gap:1.75rem;flex-wrap:wrap}
-.footer-links a{color:var(--text3);text-decoration:none;font-size:.875rem;transition:color .2s}
-.footer-links a:hover{color:var(--primary)}
-.footer-copy{color:var(--text3);font-size:.8rem}
-
-/* ── SPINNER ── */
-.spin{
-  width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff;border-radius:50%;
-  animation:spin .8s linear infinite;display:none;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:1.5rem;right:1.5rem;
-  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
-  padding:.9rem 1.4rem;color:var(--text);font-size:.875rem;
-  box-shadow:0 8px 30px rgba(0,0,0,.3);
-  transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);
-  z-index:9999;max-width:320px;
-}
-.toast.show{transform:translateX(0)}
-.toast.ok{border-color:var(--success)}
-.toast.err{border-color:var(--danger)}
-
-/* ── SCROLL REVEAL ── */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-.reveal.visible{opacity:1;transform:none}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  nav{padding:1rem}
-  .nav-links{display:none}
-  h1{letter-spacing:-1px}
-  .features-grid,.pricing-grid{grid-template-columns:1fr}
-  .footer-inner{flex-direction:column;text-align:center}
-  .footer-links{justify-content:center}
-}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.875rem 2rem;background:rgba(5,9,18,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:1.5rem}
+.nav-links a{font-size:.875rem;color:var(--tx2);transition:color .2s}
+.nav-links a:hover{color:var(--tx)}
+.btn-cta{padding:.65rem 1.4rem;background:var(--grad);color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;transition:opacity .2s}
+.btn-cta:hover{opacity:.88}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:6rem 1rem 4rem;background:radial-gradient(ellipse 80% 60% at 50% -5%,rgba(123,104,238,.18) 0%,transparent 70%)}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border-radius:20px;background:rgba(123,104,238,.12);border:1px solid rgba(123,104,238,.25);font-size:.8rem;font-weight:600;color:var(--ac);margin-bottom:1.5rem}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,7vw,5rem);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:1.25rem}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.1rem;color:var(--tx2);max-width:500px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.btn-main{padding:.875rem 2rem;background:var(--grad);color:#fff;border-radius:10px;font-size:1rem;font-weight:700;transition:opacity .2s,transform .15s}
+.btn-main:hover{opacity:.9;transform:translateY(-1px)}
+.btn-sec{padding:.875rem 2rem;background:var(--b1);border:1px solid var(--b2);color:var(--tx);border-radius:10px;font-size:1rem;font-weight:600;transition:border-color .2s}
+.btn-sec:hover{border-color:var(--ac)}
+.preview{max-width:860px;margin:0 auto;border-radius:16px;border:1px solid var(--b2);box-shadow:0 30px 100px rgba(0,0,0,.5);background:var(--bg2);padding:1.5rem}
+.prev-bar{display:flex;gap:.4rem;margin-bottom:1rem}
+.prev-dot{width:10px;height:10px;border-radius:50%}
+.prev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.prev-card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:1rem}
+.prev-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.4rem}
+.prev-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700}
+.prev-s{font-size:.7rem;color:var(--tx3);margin-top:.15rem}
+.prev-pb{height:4px;background:var(--b1);border-radius:2px;margin-top:.75rem;overflow:hidden}
+.prev-pf{height:100%;border-radius:2px}
+.strip{display:flex;align-items:center;justify-content:center;gap:3rem;padding:2.5rem 2rem;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);background:var(--bg2);flex-wrap:wrap}
+.strip-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center}
+.strip-l{font-size:.75rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-top:.15rem}
+.section{padding:5rem 2rem;max-width:1100px;margin:0 auto}
+.sec-tag{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);margin-bottom:.75rem}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.2;margin-bottom:.75rem}
+.sec-sub{font-size:1rem;color:var(--tx2);max-width:500px;line-height:1.7}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem}
+.feat{background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:1.5rem;transition:border-color .2s,transform .2s}
+.feat:hover{border-color:var(--b2);transform:translateY(-3px)}
+.feat-ic{font-size:1.75rem;margin-bottom:.875rem}
+.feat-t{font-weight:700;font-size:1rem;margin-bottom:.4rem}
+.feat-d{font-size:.875rem;color:var(--tx2);line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3rem;text-align:center}
+.step-n{width:48px;height:48px;border-radius:50%;background:var(--grad);color:#fff;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.step-t{font-weight:700;margin-bottom:.4rem}
+.step-d{font-size:.875rem;color:var(--tx2);line-height:1.6}
+.cta-sec{text-align:center;padding:5rem 2rem;background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(123,104,238,.12) 0%,transparent 70%);border-top:1px solid var(--b1)}
+.cta-sec h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:1rem}
+.cta-sec p{color:var(--tx2);margin-bottom:2rem;font-size:1rem}
+footer{text-align:center;padding:2rem;border-top:1px solid var(--b1);font-size:.825rem;color:var(--tx3)}
+footer span{color:var(--ac)}
+@media(max-width:600px){nav{padding:.875rem 1rem}.nav-links a{display:none}.prev-grid>:last-child{display:none}.prev-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
 <nav>
   <div class="nav-logo">⚡ Kazka</div>
   <div class="nav-links">
     <a href="#features">Funzioni</a>
-    <a href="#pricing">Prezzi</a>
-    <a href="#login">Accedi</a>
-    <a href="app/index.html" class="nav-cta">Apri App →</a>
+    <a href="#how">Come funziona</a>
+    <a href="app/" class="btn-cta">Apri app →</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <div class="hero-badge">⚡ Kazka v4.0 — Ora disponibile</div>
-    <h1>Finanze sotto<br><span>controllo totale</span></h1>
-    <p class="hero-desc">
-      La piattaforma completa per gestire le tue finanze personali e aziendali.
-      Dashboard smart, multi-account, import CSV e molto altro.
-    </p>
+  <div style="width:100%">
+    <div class="hero-tag">🚀 Gratuita · Nessuna pubblicità · PWA installabile</div>
+    <h1>Prendi il controllo<br>delle tue <span>finanze</span></h1>
+    <p class="hero-sub">Traccia entrate e uscite, gestisci budget, obiettivi e fatture — tutto in un posto. Gratis, sempre.</p>
     <div class="hero-btns">
-      <a href="app/index.html" class="btn btn-primary">🚀 Inizia gratis</a>
-      <a href="#features" class="btn btn-ghost">Scopri le funzioni</a>
+      <a href="app/" class="btn-main">Inizia gratis →</a>
+      <a href="#features" class="btn-sec">Scopri le funzioni</a>
     </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="section" id="features">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-label">Funzionalità</div>
-      <h2 class="section-title">Tutto ciò che ti serve,<br>in un unico posto</h2>
-      <p class="section-sub">Dall'home banking alla gestione aziendale, Kazka copre ogni aspetto delle tue finanze.</p>
-    </div>
-    <div class="features-grid">
-      <div class="feat-card reveal">
-        <div class="feat-icon">💰</div>
-        <h3 class="feat-title">Dashboard Personale</h3>
-        <p class="feat-desc">Controlla entrate, uscite e budget in tempo reale con grafici interattivi e analisi dettagliate.</p>
+    <div class="preview">
+      <div class="prev-bar">
+        <div class="prev-dot" style="background:#FF5F57"></div>
+        <div class="prev-dot" style="background:#FFBD2E"></div>
+        <div class="prev-dot" style="background:#28CA41"></div>
       </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">🏢</div>
-        <h3 class="feat-title">Business Platform</h3>
-        <p class="feat-desc">Prima nota, clienti, preventivi, fatturazione e reportistica avanzata per la tua azienda.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">🏦</div>
-        <h3 class="feat-title">Multi-Account</h3>
-        <p class="feat-desc">Gestisci conti correnti, carte di credito, PayPal e crypto con saldi automatici aggiornati.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">👥</div>
-        <h3 class="feat-title">Condivisione Spese</h3>
-        <p class="feat-desc">Crea gruppi, dividi le spese automaticamente e invita amici e famiglia via email.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">🎯</div>
-        <h3 class="feat-title">Obiettivi di Risparmio</h3>
-        <p class="feat-desc">Imposta obiettivi finanziari, piani di risparmio automatici e traccia i progressi con milestone.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">📊</div>
-        <h3 class="feat-title">Report Avanzati</h3>
-        <p class="feat-desc">Analisi complete, insights personalizzati, report mensili/annuali e previsioni intelligenti.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">📥</div>
-        <h3 class="feat-title">Import CSV Banca</h3>
-        <p class="feat-desc">Parser intelligente per importare movimenti da qualsiasi banca italiana con mapping colonne.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">📱</div>
-        <h3 class="feat-title">PWA Installabile</h3>
-        <p class="feat-desc">Funziona offline, si installa su iOS e Android come app nativa, con notifiche push.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="section pricing-bg" id="pricing">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-label">Piani</div>
-      <h2 class="section-title">Scegli il piano giusto</h2>
-      <p class="section-sub">Dal gratuito al professionale, un piano per ogni esigenza.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="price-card reveal">
-        <div class="price-name">Free</div>
-        <div class="price-amount">€0</div>
-        <div class="price-period">per sempre</div>
-        <ul class="price-features">
-          <li>Dashboard personale</li>
-          <li>Max 50 movimenti</li>
-          <li>Report base</li>
-          <li>Import CSV</li>
-        </ul>
-        <a href="app/index.html" class="btn btn-outline btn-full">Inizia gratis</a>
-      </div>
-
-      <div class="price-card featured reveal">
-        <div class="price-badge">Più Popolare</div>
-        <div class="price-name">Personal Pro</div>
-        <div class="price-amount">€3</div>
-        <div class="price-period">al mese</div>
-        <ul class="price-features">
-          <li>Tutto Free, illimitato</li>
-          <li>Ricorrenti &amp; Bollette</li>
-          <li>Budget mensile</li>
-          <li>Export PDF / CSV</li>
-          <li>Viaggi &amp; Gruppi</li>
-          <li>Notifiche push</li>
-        </ul>
-        <a href="app/index.html" class="btn btn-primary btn-full">Prova ora</a>
-      </div>
-
-      <div class="price-card reveal">
-        <div class="price-name">Business</div>
-        <div class="price-amount">€9</div>
-        <div class="price-period">al mese</div>
-        <ul class="price-features">
-          <li>Tutto Personal Pro</li>
-          <li>Vista Azienda</li>
-          <li>Clienti &amp; Preventivi</li>
-          <li>Prima Nota aziendale</li>
-          <li>Report business</li>
-        </ul>
-        <a href="app/index.html" class="btn btn-outline btn-full">Inizia prova</a>
-      </div>
-
-      <div class="price-card reveal">
-        <div class="price-name">Business Pro</div>
-        <div class="price-amount">€19</div>
-        <div class="price-period">al mese</div>
-        <ul class="price-features">
-          <li>Tutto Business</li>
-          <li>Note spese dipendenti</li>
-          <li>Gestione IVA</li>
-          <li>Report avanzati</li>
-          <li>Supporto prioritario</li>
-        </ul>
-        <a href="app/index.html" class="btn btn-outline btn-full">Contatta Sales</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LOGIN -->
-<section class="section" id="login">
-  <div class="section-inner" style="max-width:480px">
-    <div class="reveal" style="text-align:center">
-      <div class="section-label">Accesso</div>
-      <h2 class="section-title">Bentornato</h2>
-    </div>
-    <div class="login-wrap reveal">
-      <div class="login-head">
-        <h3>⚡ Kazka</h3>
-        <p>Accedi alla tua area personale</p>
-      </div>
-      <div class="login-body">
-        <form id="loginForm" onsubmit="doLogin(event)">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="la.tua@email.com" required autocomplete="email">
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
-          </div>
-          <button type="submit" class="login-btn" id="loginBtn">
-            <span id="loginBtnText">Accedi</span>
-            <span class="spin" id="loginSpinner"></span>
-          </button>
-        </form>
-        <div id="loginError"></div>
-        <div class="login-meta">
-          <a href="#" onclick="doPasswordReset(event)">Password dimenticata?</a>
-          <span class="login-sep">|</span>
-          <a href="app/index.html">Registrati</a>
+      <div class="prev-grid">
+        <div class="prev-card">
+          <div class="prev-lbl">Saldo totale</div>
+          <div class="prev-val" style="color:#00F0A0">€ 8.420</div>
+          <div class="prev-s">+€ 340 questo mese</div>
+          <div class="prev-pb"><div class="prev-pf" style="width:72%;background:linear-gradient(90deg,#7B68EE,#00E5FF)"></div></div>
+        </div>
+        <div class="prev-card">
+          <div class="prev-lbl">Uscite mese</div>
+          <div class="prev-val" style="color:#FF3355">€ 1.860</div>
+          <div class="prev-s">Budget: € 2.000</div>
+          <div class="prev-pb"><div class="prev-pf" style="width:93%;background:#FF3355"></div></div>
+        </div>
+        <div class="prev-card">
+          <div class="prev-lbl">Obiettivo</div>
+          <div class="prev-val" style="color:#7B68EE">68%</div>
+          <div class="prev-s">Vacanze estate 🏖️</div>
+          <div class="prev-pb"><div class="prev-pf" style="width:68%;background:linear-gradient(90deg,#7B68EE,#00E5FF)"></div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-logo">⚡ Kazka</div>
-    <div class="footer-links">
-      <a href="#features">Funzioni</a>
-      <a href="#pricing">Prezzi</a>
-      <a href="kazka-admin.html">Admin</a>
-      <a href="#" onclick="showToast('Privacy policy in arrivo','ok')">Privacy</a>
-      <a href="#" onclick="showToast('Termini in arrivo','ok')">Termini</a>
-    </div>
-    <div class="footer-copy">© 2024 Kazka. Tutti i diritti riservati.</div>
+<div class="strip">
+  <div><div class="strip-n">100%</div><div class="strip-l">Gratuita</div></div>
+  <div><div class="strip-n">0</div><div class="strip-l">Pubblicità</div></div>
+  <div><div class="strip-n">8</div><div class="strip-l">Sezioni</div></div>
+  <div><div class="strip-n">PWA</div><div class="strip-l">Installabile</div></div>
+</div>
+
+<section class="section" id="features">
+  <div class="sec-tag">Funzionalità</div>
+  <h2 class="sec-title">Tutto quello che ti serve</h2>
+  <p class="sec-sub">Finanza personale e business in un'unica app semplice e veloce.</p>
+  <div class="feat-grid">
+    <div class="feat"><div class="feat-ic">📊</div><div class="feat-t">Dashboard live</div><div class="feat-d">Saldo, grafici entrate/uscite e ultime transazioni sempre aggiornati.</div></div>
+    <div class="feat"><div class="feat-ic">💸</div><div class="feat-t">Transazioni veloci</div><div class="feat-d">Aggiungi entrate e uscite in secondi. Importa CSV dalla tua banca.</div></div>
+    <div class="feat"><div class="feat-ic">🎯</div><div class="feat-t">Budget per categoria</div><div class="feat-d">Imposta limiti mensili con avvisi automatici quando stai per sforare.</div></div>
+    <div class="feat"><div class="feat-ic">🏆</div><div class="feat-t">Obiettivi di risparmio</div><div class="feat-d">Crea traguardi, traccia il progresso e raggiungi i tuoi sogni.</div></div>
+    <div class="feat"><div class="feat-ic">🏦</div><div class="feat-t">Multi-account</div><div class="feat-d">Banca, PayPal, contanti, crypto — tutti i conti in un posto.</div></div>
+    <div class="feat"><div class="feat-ic">🧾</div><div class="feat-t">Fatture & IVA</div><div class="feat-d">Crea fatture con IVA automatica, gestisci clienti e pagamenti.</div></div>
+    <div class="feat"><div class="feat-ic">🔁</div><div class="feat-t">Spese ricorrenti</div><div class="feat-d">Abbonamenti, bollette e rate — nessuna scadenza dimenticata.</div></div>
+    <div class="feat"><div class="feat-ic">✈️</div><div class="feat-t">Viaggi & Trasferte</div><div class="feat-d">Note spese per trasferte di lavoro o vacanze con budget dedicati.</div></div>
+    <div class="feat"><div class="feat-ic">📈</div><div class="feat-t">Report & PDF</div><div class="feat-d">Statistiche per categoria e periodo. Esporta PDF o CSV con un click.</div></div>
   </div>
-</footer>
+</section>
 
-<div id="toast" class="toast"></div>
+<section class="section" id="how" style="padding-top:0">
+  <div class="sec-tag">Come funziona</div>
+  <h2 class="sec-title">Inizia in 3 minuti</h2>
+  <div class="steps">
+    <div><div class="step-n">1</div><div class="step-t">Crea un account</div><div class="step-d">Registrati con email o Google. Gratis, nessuna carta richiesta.</div></div>
+    <div><div class="step-n">2</div><div class="step-t">Aggiungi i tuoi conti</div><div class="step-d">Inserisci banca, PayPal, contanti o importa il CSV della banca.</div></div>
+    <div><div class="step-n">3</div><div class="step-t">Traccia e pianifica</div><div class="step-d">Aggiungi transazioni, imposta budget e crea obiettivi di risparmio.</div></div>
+  </div>
+</section>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<section class="cta-sec">
+  <h2>Pronto a iniziare?</h2>
+  <p>Kazka è gratuita, senza pubblicità, sempre.</p>
+  <a href="app/" class="btn-main" style="display:inline-block">Inizia gratis →</a>
+</section>
 
-<script>
-'use strict';
+<footer><p>© 2025 <span>Kazka</span> — Smart Finance Assistant</p></footer>
 
-/* ── FIREBASE ── */
-const FB_CONFIG = {
-  apiKey:            "AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
-  authDomain:        "financeapp-556ae.firebaseapp.com",
-  databaseURL:       "https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:         "financeapp-556ae",
-  storageBucket:     "financeapp-556ae.firebasestorage.app",
-  messagingSenderId: "181987533980",
-  appId:             "1:181987533980:web:41c5032990ccede17eb959"
-};
-
-let auth = null;
-try {
-  firebase.initializeApp(FB_CONFIG);
-  auth = firebase.auth();
-  // Se già loggato, redirect diretto all'app
-  auth.onAuthStateChanged(user => {
-    if (user) window.location.href = 'app/index.html';
-  });
-} catch(e) {
-  console.error('Firebase init error:', e);
-}
-
-/* ── LOGIN ── */
-async function doLogin(e) {
-  e.preventDefault();
-  const email    = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const errDiv   = document.getElementById('loginError');
-  const btnText  = document.getElementById('loginBtnText');
-  const spinner  = document.getElementById('loginSpinner');
-
-  errDiv.style.display = 'none';
-  btnText.style.display = 'none';
-  spinner.style.display = 'inline-block';
-
-  try {
-    if (!auth) throw new Error('Firebase non disponibile');
-    await auth.signInWithEmailAndPassword(email, password);
-    window.location.href = 'app/index.html';
-  } catch (err) {
-    const msgs = {
-      'auth/user-not-found':      'Nessun account con questa email.',
-      'auth/wrong-password':      'Password errata.',
-      'auth/invalid-email':       'Email non valida.',
-      'auth/too-many-requests':   'Troppi tentativi — riprova tra qualche minuto.',
-      'auth/network-request-failed': 'Nessuna connessione internet.',
-      'auth/invalid-credential':  'Credenziali non valide.',
-    };
-    errDiv.textContent = msgs[err.code] || 'Errore di accesso. Riprova.';
-    errDiv.style.display = 'block';
-  } finally {
-    btnText.style.display = 'inline';
-    spinner.style.display = 'none';
-  }
-}
-
-/* ── PASSWORD RESET ── */
-async function doPasswordReset(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  if (!email) { showToast('Inserisci prima la tua email', 'err'); return; }
-  try {
-    await auth.sendPasswordResetEmail(email);
-    showToast('Email di reset inviata ✓', 'ok');
-  } catch(err) {
-    showToast('Errore: ' + (err.message || err.code), 'err');
-  }
-}
-
-/* ── TOAST ── */
-function showToast(msg, type = 'ok') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + type + ' show';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-/* ── SCROLL REVEAL ── */
-const ro = new IntersectionObserver(entries => {
-  entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
-
-/* ── SERVICE WORKER ── */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
-</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}</script>
 </body>
 </html>

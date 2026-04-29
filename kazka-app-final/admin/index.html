@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazka — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090f;--bg2:#0e1220;--bg3:#141929;--bg4:#1a2035;
+  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);--b3:rgba(255,255,255,.18);
+  --ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;
+  --tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;
+  --grad:linear-gradient(135deg,#7B68EE,#00E5FF);
+  --danger-grad:linear-gradient(135deg,#FF3355,#FF8C42);
+  --r:12px;--rsm:7px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit}
+
+/* ══════════ LOGIN ══════════ */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%);
+}
+.login-box{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.login-head{background:var(--grad);padding:2rem;text-align:center}
+.login-logo{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff}
+.login-sub{color:rgba(255,255,255,.75);font-size:.8rem;margin-top:.25rem}
+.admin-badge{display:inline-block;margin-top:.5rem;padding:.2rem .75rem;background:rgba(0,0,0,.2);border-radius:20px;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.08em}
+.login-body{padding:1.75rem}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:.4rem}
+.fg input{width:100%;padding:.8rem 1rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.9rem;transition:border-color .2s}
+.fg input:focus{outline:none;border-color:var(--ac)}
+.fg input::placeholder{color:var(--tx3)}
+.login-btn{width:100%;padding:.95rem;background:var(--grad);color:#fff;border-radius:var(--rsm);font-weight:700;font-size:.95rem;transition:opacity .2s;margin-top:.25rem}
+.login-btn:hover{opacity:.9}
+.login-err{margin-top:.75rem;padding:.75rem;background:rgba(255,51,85,.1);border:1px solid rgba(255,51,85,.3);border-radius:var(--rsm);color:var(--re);font-size:.8rem;display:none}
+.admin-only-note{text-align:center;margin-top:1rem;font-size:.75rem;color:var(--tx3)}
+
+/* ══════════ MAIN LAYOUT ══════════ */
+#admin-panel{display:none}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1.5rem;
+  background:rgba(7,9,15,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--b1);
+}
+.topbar-left{display:flex;align-items:center;gap:.75rem}
+.t-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.t-badge{padding:.2rem .6rem;background:rgba(255,51,85,.15);color:var(--re);border:1px solid rgba(255,51,85,.25);border-radius:5px;font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.t-stat{text-align:center}
+.t-stat-n{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--gr);display:block}
+.t-stat-l{font-size:.6rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.btn-logout{padding:.45rem 1rem;background:none;border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx2);font-size:.8rem;transition:all .2s}
+.btn-logout:hover{border-color:var(--re);color:var(--re)}
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 53px)}
+
+/* ══════════ SIDEBAR ══════════ */
+.sidebar{background:var(--bg2);border-right:1px solid var(--b1);padding:1rem 0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;display:flex;flex-direction:column}
+.nav-sect{padding:.35rem 1rem .2rem;font-size:.6rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1rem;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--tx2);transition:all .15s;border-left:3px solid transparent;margin:.1rem .5rem;border-radius:0 var(--rsm) var(--rsm) 0}
+.nav-item:hover{color:var(--tx);background:var(--b1)}
+.nav-item.active{color:var(--ac);background:rgba(123,104,238,.1);border-left-color:var(--ac)}
+.nav-item .ic{font-size:14px;flex-shrink:0;width:16px;text-align:center}
+.nav-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--b1)}
+.admin-user{display:flex;align-items:center;gap:.6rem}
+.admin-av{width:32px;height:32px;border-radius:50%;background:var(--danger-grad);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0}
+.admin-name{font-size:.8rem;font-weight:600;color:var(--tx)}
+.admin-role{font-size:.65rem;color:var(--re)}
+
+/* ══════════ MAIN CONTENT ══════════ */
+.main{padding:1.5rem;overflow-y:auto}
+.view{display:none}
+.view.active{display:block}
+.page-hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem}
+.page-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700}
+.page-sub{font-size:.8rem;color:var(--tx2);margin-top:.15rem}
+
+/* ══════════ COMPONENTS ══════════ */
+.card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:.875rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1rem}
+.stat{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.1rem;transition:transform .2s}
+.stat:hover{transform:translateY(-2px)}
+.stat-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.4rem}
+.stat-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800}
+.stat-sub{font-size:.75rem;color:var(--tx2);margin-top:.2rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border-radius:var(--rsm);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.btn-primary{background:var(--grad);color:#fff}
+.btn-primary:hover{opacity:.88}
+.btn-danger{background:rgba(255,51,85,.15);border:1px solid rgba(255,51,85,.3);color:var(--re)}
+.btn-danger:hover{background:rgba(255,51,85,.25)}
+.btn-secondary{background:var(--bg3);border:1px solid var(--b2);color:var(--tx)}
+.btn-secondary:hover{border-color:var(--ac);color:var(--ac)}
+.btn-sm{padding:.4rem .8rem;font-size:.75rem}
+.btn-icon{width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:var(--rsm)}
+.badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:20px;font-size:.68rem;font-weight:700}
+.badge-green{background:rgba(0,240,160,.12);color:var(--gr)}
+.badge-red{background:rgba(255,51,85,.12);color:var(--re)}
+.badge-yellow{background:rgba(255,209,102,.12);color:var(--ye)}
+.badge-blue{background:rgba(0,229,255,.12);color:var(--ac2)}
+.badge-purple{background:rgba(123,104,238,.12);color:var(--ac)}
+.badge-gray{background:var(--b1);color:var(--tx2)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{padding:.65rem 1rem;text-align:left;font-size:.65rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--b1)}
+td{padding:.8rem 1rem;border-bottom:1px solid var(--b1);color:var(--tx2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--b1)}
+.td-main{color:var(--tx);font-weight:500}
+.table-wrap{overflow-x:auto}
+.empty{text-align:center;padding:2.5rem;color:var(--tx3);font-size:.875rem}
+.empty-icon{font-size:2rem;margin-bottom:.5rem}
+
+/* ══════════ SEARCH BAR ══════════ */
+.search-bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+.search-input{flex:1;min-width:200px;padding:.65rem 1rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.85rem}
+.search-input:focus{outline:none;border-color:var(--ac)}
+.search-input::placeholder{color:var(--tx3)}
+
+/* ══════════ USER ROW DETAILS ══════════ */
+.user-row-expand{background:var(--bg3);border-bottom:1px solid var(--b1);display:none}
+.user-row-expand.open{display:table-row}
+.user-detail-inner{padding:1rem 1rem 1rem 3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem}
+.udet{background:var(--bg4);border-radius:var(--rsm);padding:.75rem}
+.udet-l{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.25rem}
+.udet-v{font-size:.9rem;font-weight:600;color:var(--tx)}
+
+/* ══════════ MODAL ══════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1)}
+.modal-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700}
+.modal-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:6px;color:var(--tx2);cursor:pointer;font-size:.9rem}
+.modal-close:hover{color:var(--re)}
+.modal-body{padding:1.1rem 1.4rem}
+.modal-footer{padding:.875rem 1.4rem;border-top:1px solid var(--b1);display:flex;gap:.6rem;justify-content:flex-end}
+.form-group{margin-bottom:.875rem}
+.form-group label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:.35rem}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:.7rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.875rem;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--ac)}
+.form-group select option{background:var(--bg3)}
+
+/* ══════════ LOGS ══════════ */
+.log-entry{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--b1);font-size:.8rem}
+.log-entry:last-child{border-bottom:none}
+.log-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.log-info{flex:1}
+.log-msg{color:var(--tx);margin-bottom:.15rem}
+.log-meta{color:var(--tx3);font-size:.72rem}
+.log-type{margin-left:auto;flex-shrink:0}
+
+/* ══════════ SETTINGS ══════════ */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--b1)}
+.setting-row:last-child{border-bottom:none}
+.setting-info{}
+.setting-title{font-weight:600;font-size:.9rem;margin-bottom:.2rem}
+.setting-desc{font-size:.8rem;color:var(--tx2)}
+.toggle{width:44px;height:24px;background:var(--b2);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--ac)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(20px)}
+
+/* ══════════ TOAST ══════════ */
+#toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:.8rem 1.1rem;color:var(--tx);font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:280px;display:flex;align-items:center;gap:.5rem}
+#toast.show{transform:translateX(0)}
+#toast.ok{border-left:3px solid var(--gr)}
+#toast.err{border-left:3px solid var(--re)}
+#toast.warn{border-left:3px solid var(--ye)}
+
+/* ══════════ CHART ══════════ */
+.chart-wrap{position:relative;height:220px}
+
+/* ══════════ CONFIRM DANGER ══════════ */
+.confirm-input{width:100%;padding:.75rem;background:var(--bg3);border:1.5px solid rgba(255,51,85,.4);border-radius:var(--rsm);color:var(--tx);font-size:.875rem;margin-top:.75rem}
+.confirm-input:focus{outline:none;border-color:var(--re)}
+
+/* ══════════ RESPONSIVE ══════════ */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .grid2{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-head">
+      <div class="login-logo">⚡ Kazka</div>
+      <div class="login-sub">Smart Finance Assistant</div>
+      <div class="admin-badge">🔐 ADMIN PANEL</div>
+    </div>
+    <div class="login-body">
+      <div class="fg">
+        <label>Email amministratore</label>
+        <input type="email" id="l-email" placeholder="admin@email.com" autocomplete="email">
+      </div>
+      <div class="fg">
+        <label>Password</label>
+        <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()" id="login-btn">Accedi al pannello</button>
+      <div class="login-err" id="login-err"></div>
+      <div class="admin-only-note">⚠ Accesso riservato agli amministratori</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN PANEL ══════════ -->
+<div id="admin-panel">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="t-logo">⚡ Kazka</div>
+      <div class="t-badge">ADMIN</div>
+    </div>
+    <div class="topbar-right">
+      <div class="t-stat"><span class="t-stat-n" id="tb-users">—</span><span class="t-stat-l">Utenti</span></div>
+      <div class="t-stat"><span class="t-stat-n" id="tb-tx">—</span><span class="t-stat-l">Transazioni</span></div>
+      <button class="btn-logout" onclick="doLogout()">Esci</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="nav-sect">Panoramica</div>
+        <div class="nav-item active" onclick="showView('dashboard')" id="nav-dashboard"><span class="ic">📊</span>Dashboard</div>
+        <div class="nav-item" onclick="showView('users')" id="nav-users"><span class="ic">👥</span>Utenti</div>
+        <div class="nav-item" onclick="showView('transactions')" id="nav-transactions"><span class="ic">💸</span>Transazioni</div>
+        <div class="nav-item" onclick="showView('accounts')" id="nav-accounts"><span class="ic">🏦</span>Conti</div>
+
+        <div class="nav-sect">Analytics</div>
+        <div class="nav-item" onclick="showView('analytics')" id="nav-analytics"><span class="ic">📈</span>Statistiche</div>
+        <div class="nav-item" onclick="showView('invoices')" id="nav-invoices"><span class="ic">🧾</span>Fatture</div>
+
+        <div class="nav-sect">Sistema</div>
+        <div class="nav-item" onclick="showView('logs')" id="nav-logs"><span class="ic">📋</span>Log attività</div>
+        <div class="nav-item" onclick="showView('settings')" id="nav-settings"><span class="ic">⚙️</span>Impostazioni</div>
+        <div class="nav-item" onclick="showView('danger')" id="nav-danger"><span class="ic">⚠️</span><span style="color:var(--re)">Zona Pericolo</span></div>
+      </div>
+      <div class="nav-bottom">
+        <div class="admin-user">
+          <div class="admin-av" id="admin-av">A</div>
+          <div>
+            <div class="admin-name" id="admin-name">Admin</div>
+            <div class="admin-role">Super Admin</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- ─── DASHBOARD ─── -->
+      <div class="view active" id="view-dashboard">
+        <div class="page-hd">
+          <div>
+            <div class="page-title">Dashboard</div>
+            <div class="page-sub" id="dash-date">Caricamento...</div>
+          </div>
+          <button class="btn btn-secondary" onclick="reloadAll()">🔄 Aggiorna</button>
+        </div>
+        <div class="stats-grid" id="dash-stats">
+          <div class="stat"><div class="stat-lbl">Utenti totali</div><div class="stat-val" id="d-users">—</div><div class="stat-sub">registrati</div></div>
+          <div class="stat"><div class="stat-lbl">Transazioni</div><div class="stat-val" id="d-tx">—</div><div class="stat-sub">totali sistema</div></div>
+          <div class="stat"><div class="stat-lbl">Entrate totali</div><div class="stat-val" style="color:var(--gr)" id="d-income">—</div><div class="stat-sub">tutti gli utenti</div></div>
+          <div class="stat"><div class="stat-lbl">Uscite totali</div><div class="stat-val" style="color:var(--re)" id="d-expense">—</div><div class="stat-sub">tutti gli utenti</div></div>
+          <div class="stat"><div class="stat-lbl">Fatture emesse</div><div class="stat-val" style="color:var(--ye)" id="d-invoices">—</div><div class="stat-sub">nel sistema</div></div>
+          <div class="stat"><div class="stat-lbl">Conti registrati</div><div class="stat-val" style="color:var(--ac2)" id="d-accounts">—</div><div class="stat-sub">bancari e virtuali</div></div>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Utenti recenti</div>
+            <div id="recent-users-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Ultime transazioni (tutti gli utenti)</div>
+            <div id="recent-tx-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── USERS ─── -->
+      <div class="view" id="view-users">
+        <div class="page-hd">
+          <div><div class="page-title">Gestione Utenti</div><div class="page-sub" id="users-count">Caricamento...</div></div>
+          <button class="btn btn-primary" onclick="openModal('modal-new-user')">+ Nuovo utente</button>
+        </div>
+        <div class="card">
+          <div class="search-bar">
+            <input class="search-input" id="user-search" placeholder="🔍 Cerca per nome o email..." oninput="filterUsers()">
+            <select class="btn btn-secondary" id="user-filter-plan" onchange="filterUsers()" style="padding:.6rem .875rem">
+              <option value="">Tutti i piani</option>
+              <option value="free">Free</option>
+              <option value="pro">Pro</option>
+              <option value="business">Business</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Utente</th>
+                  <th>Email</th>
+                  <th>Piano</th>
+                  <th>Registrato</th>
+                  <th>Transazioni</th>
+                  <th>Azioni</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="users-empty" style="display:none">
+            <div class="empty-icon">👥</div>
+            Nessun utente trovato
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TRANSACTIONS ─── -->
+      <div class="view" id="view-transactions">
+        <div class="page-hd">
+          <div><div class="page-title">Tutte le Transazioni</div><div class="page-sub" id="tx-count-label">Caricamento...</div></div>
+          <button class="btn btn-secondary" onclick="exportAllCSV()">📥 Esporta CSV</button>
+        </div>
+        <div class="card">
+          <div class="search-bar">
+            <input class="search-input" id="tx-search" placeholder="🔍 Cerca transazioni..." oninput="filterTx()">
+            <select class="btn btn-secondary" id="tx-filter-type" onchange="filterTx()" style="padding:.6rem .875rem">
+              <option value="">Tutte</option>
+              <option value="income">Entrate</option>
+              <option value="expense">Uscite</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Utente</th><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Tipo</th><th>Importo</th><th>Azioni</th></tr></thead>
+              <tbody id="tx-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="tx-empty" style="display:none"><div class="empty-icon">💸</div>Nessuna transazione</div>
+        </div>
+      </div>
+
+      <!-- ─── ACCOUNTS ─── -->
+      <div class="view" id="view-accounts">
+        <div class="page-hd">
+          <div><div class="page-title">Conti Registrati</div><div class="page-sub" id="acc-count-label">Caricamento...</div></div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Utente</th><th>Nome conto</th><th>Tipo</th><th>Saldo</th><th>Creato</th></tr></thead>
+              <tbody id="acc-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="acc-empty" style="display:none"><div class="empty-icon">🏦</div>Nessun conto</div>
+        </div>
+      </div>
+
+      <!-- ─── ANALYTICS ─── -->
+      <div class="view" id="view-analytics">
+        <div class="page-hd">
+          <div><div class="page-title">Statistiche Globali</div><div class="page-sub">Dati aggregati di tutti gli utenti</div></div>
+        </div>
+        <div class="stats-grid" id="analytics-stats"></div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Distribuzione piani</div>
+            <div id="plan-distribution"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Top categorie spesa (sistema)</div>
+            <div id="top-categories"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Utenti per mese di registrazione</div>
+          <div class="chart-wrap"><canvas id="chart-users"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ─── INVOICES ─── -->
+      <div class="view" id="view-invoices">
+        <div class="page-hd">
+          <div><div class="page-title">Fatture Sistema</div><div class="page-sub" id="inv-count-label">Caricamento...</div></div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Utente</th><th>Cliente</th><th>N° Fattura</th><th>Data</th><th>IVA</th><th>Totale</th><th>Stato</th></tr></thead>
+              <tbody id="inv-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="inv-empty" style="display:none"><div class="empty-icon">🧾</div>Nessuna fattura</div>
+        </div>
+      </div>
+
+      <!-- ─── LOGS ─── -->
+      <div class="view" id="view-logs">
+        <div class="page-hd">
+          <div><div class="page-title">Log Attività</div><div class="page-sub">Accessi e operazioni amministrative</div></div>
+          <button class="btn btn-danger btn-sm" onclick="clearLogs()">🗑 Cancella log</button>
+        </div>
+        <div class="card">
+          <div id="logs-list"></div>
+          <div class="empty" id="logs-empty" style="display:none"><div class="empty-icon">📋</div>Nessun log disponibile</div>
+        </div>
+      </div>
+
+      <!-- ─── SETTINGS ─── -->
+      <div class="view" id="view-settings">
+        <div class="page-hd"><div><div class="page-title">Impostazioni</div><div class="page-sub">Configurazione del sistema</div></div></div>
+        <div class="card">
+          <div class="card-title">Applicazione</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">Registrazioni aperte</div><div class="setting-desc">Permetti a nuovi utenti di registrarsi</div></div>
+            <div class="toggle on" id="tog-reg" onclick="toggleSetting('registration')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">Modalità manutenzione</div><div class="setting-desc">Mostra avviso di manutenzione agli utenti</div></div>
+            <div class="toggle" id="tog-maint" onclick="toggleSetting('maintenance')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">Log attività utenti</div><div class="setting-desc">Registra le operazioni degli utenti</div></div>
+            <div class="toggle on" id="tog-logs" onclick="toggleSetting('activityLogs')"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Database Firebase</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">Progetto</div><div class="setting-desc">financeapp-556ae</div></div>
+            <span class="badge badge-green">Connesso</span>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">Region</div><div class="setting-desc">europe-west1</div></div>
+            <span class="badge badge-blue">EU</span>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">Auth</div><div class="setting-desc">Email/Password + Google</div></div>
+            <span class="badge badge-green">Attivo</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Export dati</div>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="exportAllCSV()">📥 Export CSV completo</button>
+            <button class="btn btn-secondary" onclick="exportUsersCSV()">👥 Export utenti</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── DANGER ZONE ─── -->
+      <div class="view" id="view-danger">
+        <div class="page-hd"><div><div class="page-title" style="color:var(--re)">⚠ Zona Pericolo</div><div class="page-sub">Operazioni irreversibili — massima attenzione</div></div></div>
+
+        <div class="card" style="border-color:rgba(255,51,85,.25)">
+          <div class="card-title" style="color:var(--re)">Operazioni distruttive</div>
+
+          <div style="display:flex;flex-direction:column;gap:.875rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--b1)">
+              <div>
+                <div style="font-weight:600;margin-bottom:.25rem">Elimina utente specifico</div>
+                <div style="font-size:.8rem;color:var(--tx2)">Rimuove profilo e tutti i dati di un utente</div>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="openModal('modal-delete-user')">Elimina utente</button>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--b1)">
+              <div>
+                <div style="font-weight:600;margin-bottom:.25rem">Reset transazioni utente</div>
+                <div style="font-size:.8rem;color:var(--tx2)">Cancella tutte le transazioni di un utente specifico</div>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="openModal('modal-reset-user-tx')">Reset transazioni</button>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(255,51,85,.05);border-radius:var(--rsm);border:1px solid rgba(255,51,85,.25)">
+              <div>
+                <div style="font-weight:600;margin-bottom:.25rem;color:var(--re)">⚠ Cancella TUTTI i dati</div>
+                <div style="font-size:.8rem;color:var(--tx2)">Rimuove tutti gli utenti e i loro dati dal database</div>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="openModal('modal-nuke')">CANCELLA TUTTO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- NEW USER -->
+<div class="modal-overlay" id="modal-new-user">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Nuovo utente</div><div class="modal-close" onclick="closeModal('modal-new-user')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nome</label><input type="text" id="nu-name" placeholder="Nome Cognome"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="nu-email" placeholder="email@dominio.com"></div>
+      <div class="form-group"><label>Piano</label>
+        <select id="nu-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option></select>
+      </div>
+      <div class="form-group"><label>Ruolo</label>
+        <select id="nu-role"><option value="user">Utente</option><option value="admin">Admin</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-user')">Annulla</button>
+      <button class="btn btn-primary" onclick="createUser()">Crea utente</button>
+    </div>
+  </div>
+</div>
+
+<!-- USER DETAIL -->
+<div class="modal-overlay" id="modal-user-detail">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-head"><div class="modal-title" id="ud-title">Dettaglio utente</div><div class="modal-close" onclick="closeModal('modal-user-detail')">✕</div></div>
+    <div class="modal-body" id="ud-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="ud-delete-btn">Elimina utente</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-user-detail')">Chiudi</button>
+      <button class="btn btn-primary" id="ud-save-btn">Salva modifiche</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE USER (danger) -->
+<div class="modal-overlay" id="modal-delete-user">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" style="color:var(--re)">⚠ Elimina utente</div><div class="modal-close" onclick="closeModal('modal-delete-user')">✕</div></div>
+    <div class="modal-body">
+      <p style="font-size:.875rem;color:var(--tx2);margin-bottom:1rem">Inserisci l'UID o l'email dell'utente da eliminare. Questa operazione è irreversibile.</p>
+      <div class="form-group"><label>UID o Email utente</label><input type="text" id="del-user-id" placeholder="uid o email@..."></div>
+      <p style="font-size:.75rem;color:var(--re)">⚠ Verranno eliminati: profilo, transazioni, conti, obiettivi, fatture.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-delete-user')">Annulla</button>
+      <button class="btn btn-danger" onclick="deleteUserData()">Elimina definitivamente</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESET USER TX -->
+<div class="modal-overlay" id="modal-reset-user-tx">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" style="color:var(--ye)">Reset transazioni</div><div class="modal-close" onclick="closeModal('modal-reset-user-tx')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-group"><label>UID o Email utente</label><input type="text" id="reset-tx-uid" placeholder="uid o email@..."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-reset-user-tx')">Annulla</button>
+      <button class="btn btn-danger" onclick="resetUserTransactions()">Cancella transazioni</button>
+    </div>
+  </div>
+</div>
+
+<!-- NUKE -->
+<div class="modal-overlay" id="modal-nuke">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" style="color:var(--re)">🚨 CANCELLA TUTTO</div><div class="modal-close" onclick="closeModal('modal-nuke')">✕</div></div>
+    <div class="modal-body">
+      <p style="font-size:.875rem;color:var(--tx2);margin-bottom:.75rem">Questa operazione cancella <strong style="color:var(--re)">TUTTI</strong> i dati degli utenti dal database. Non è possibile annullare.</p>
+      <p style="font-size:.875rem;margin-bottom:.5rem">Digita <strong>CANCELLA TUTTO</strong> per confermare:</p>
+      <input class="confirm-input" type="text" id="nuke-confirm" placeholder="CANCELLA TUTTO">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-nuke')">Annulla</button>
+      <button class="btn btn-danger" onclick="nukeAllData()">Esegui cancellazione</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══════════ SCRIPTS ══════════ -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script>
+'use strict';
+
+/* ─── FIREBASE ─── */
+firebase.initializeApp({
+  apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
+  authDomain:"financeapp-556ae.firebaseapp.com",
+  databaseURL:"https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"financeapp-556ae",
+  storageBucket:"financeapp-556ae.firebasestorage.app",
+  messagingSenderId:"181987533980",
+  appId:"1:181987533980:web:41c5032990ccede17eb959"
+});
+const auth = firebase.auth();
+const db   = firebase.database();
+
+/* ─── ADMIN UID WHITELIST ─── */
+const ADMIN_EMAILS = ['admin@kazka.app','adamomic371@gmail.com'];
+
+/* ─── STATE ─── */
+let ADMIN_USER = null;
+let ALL_USERS = {};
+let ALL_TX = [];
+let ALL_ACC = [];
+let ALL_INV = [];
+let settings = { registration:true, maintenance:false, activityLogs:true };
+
+/* ─── AUTH ─── */
+auth.onAuthStateChanged(async user => {
+  if (user) {
+    // Check if admin
+    if (!ADMIN_EMAILS.includes(user.email)) {
+      showToast('Accesso non autorizzato','err');
+      await auth.signOut();
+      return;
+    }
+    ADMIN_USER = user;
+    showPanel();
+    await loadAll();
+  } else {
+    ADMIN_USER = null;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('admin-panel').style.display = 'none';
+  }
+});
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  if (!email||!pass) { showErr(err,'Compila tutti i campi'); return; }
+  if (!ADMIN_EMAILS.includes(email)) { showErr(err,'Email non autorizzata come amministratore'); return; }
+  btn.textContent='Accesso in corso...'; btn.disabled=true;
+  try { await auth.signInWithEmailAndPassword(email,pass); }
+  catch(e){ showErr(err,friendlyErr(e.code)); btn.textContent='Accedi al pannello'; btn.disabled=false; }
+}
+
+async function doLogout() {
+  if(!confirm('Esci dal pannello admin?'))return;
+  writeLog('logout','Uscita dal pannello admin');
+  await auth.signOut();
+}
+
+function showPanel() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-panel').style.display = 'block';
+  const initials = (ADMIN_USER.email||'A').charAt(0).toUpperCase();
+  document.getElementById('admin-av').textContent = initials;
+  document.getElementById('admin-name').textContent = ADMIN_USER.displayName || ADMIN_USER.email.split('@')[0];
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  writeLog('login','Accesso al pannello admin');
+  loadSettings();
+}
+
+/* ─── LOAD ALL DATA ─── */
+async function loadAll() {
+  try {
+    const snap = await db.ref('users').once('value');
+    const raw = snap.val() || {};
+    ALL_USERS = raw;
+    ALL_TX = [];
+    ALL_ACC = [];
+    ALL_INV = [];
+
+    Object.entries(raw).forEach(([uid, userData]) => {
+      const profile = userData.profile || {};
+      const txMap = userData.transactions || {};
+      const accMap = userData.accounts || {};
+      const invMap = userData.invoices || {};
+
+      Object.entries(txMap).forEach(([id,t])=>ALL_TX.push({...t,id,uid,userEmail:profile.email||uid,userName:profile.name||'—'}));
+      Object.entries(accMap).forEach(([id,a])=>ALL_ACC.push({...a,id,uid,userEmail:profile.email||uid,userName:profile.name||'—'}));
+      Object.entries(invMap).forEach(([id,i])=>ALL_INV.push({...i,id,uid,userEmail:profile.email||uid,userName:profile.name||'—'}));
+    });
+
+    ALL_TX.sort((a,b)=>new Date(b.date||b.createdAt||0)-new Date(a.date||a.createdAt||0));
+
+    updateTopbar();
+    renderDashboard();
+    renderUsers();
+    renderTransactions();
+    renderAccounts();
+    renderAnalytics();
+    renderInvoices();
+    loadLogs();
+  } catch(e) {
+    showToast('Errore caricamento dati: '+e.message,'err');
+  }
+}
+
+function reloadAll(){ showToast('Aggiornamento...','warn'); loadAll(); }
+
+/* ─── TOPBAR ─── */
+function updateTopbar() {
+  const uCount = Object.keys(ALL_USERS).length;
+  document.getElementById('tb-users').textContent = uCount;
+  document.getElementById('tb-tx').textContent = ALL_TX.length;
+}
+
+/* ─── DASHBOARD ─── */
+function renderDashboard() {
+  const uCount = Object.keys(ALL_USERS).length;
+  const income  = ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const expense = ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+
+  document.getElementById('d-users').textContent = uCount;
+  document.getElementById('d-tx').textContent = ALL_TX.length;
+  document.getElementById('d-income').textContent = fmt(income);
+  document.getElementById('d-expense').textContent = fmt(expense);
+  document.getElementById('d-invoices').textContent = ALL_INV.length;
+  document.getElementById('d-accounts').textContent = ALL_ACC.length;
+
+  /* Recent users */
+  const users = Object.values(ALL_USERS).filter(u=>u.profile).slice(0,6);
+  document.getElementById('recent-users-list').innerHTML = users.length ? users.map(u=>`
+    <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">${(u.profile.name||'?').charAt(0).toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.875rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.profile.name||'—'}</div>
+        <div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div>
+      </div>
+      <span class="badge ${u.profile.plan==='pro'?'badge-purple':u.profile.plan==='business'?'badge-blue':'badge-gray'}">${u.profile.plan||'free'}</span>
+    </div>`).join('') : '<div class="empty">Nessun utente</div>';
+
+  /* Recent tx */
+  const recent = ALL_TX.slice(0,8);
+  document.getElementById('recent-tx-list').innerHTML = recent.length ? recent.map(t=>`
+    <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.82rem">
+      <span style="font-size:1rem">${{alimentari:'🛒',trasporti:'🚗',casa:'🏠',svago:'🎬',lavoro:'💼',altro:'📦'}[t.category]||'📦'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.description||'—'}</div>
+        <div style="color:var(--tx3);font-size:.72rem">${t.userName} · ${fmtDate(t.date)}</div>
+      </div>
+      <div style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">
+        ${t.type==='income'?'+':'-'}${fmt(t.amount)}
+      </div>
+    </div>`).join('') : '<div class="empty">Nessuna transazione</div>';
+}
+
+/* ─── USERS ─── */
+function renderUsers(filter='', plan='') {
+  const users = Object.entries(ALL_USERS).filter(([uid,u])=>{
+    const p = u.profile || {};
+    const q = filter.toLowerCase();
+    const matchQ = !q || (p.name||'').toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q);
+    const matchP = !plan || p.plan === plan;
+    return matchQ && matchP;
+  });
+
+  document.getElementById('users-count').textContent = `${users.length} utenti trovati`;
+  const tbody = document.getElementById('users-tbody');
+  const empty = document.getElementById('users-empty');
+  if(!users.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  const txCount = (uid) => ALL_TX.filter(t=>t.uid===uid).length;
+
+  tbody.innerHTML = users.map(([uid,u])=>{
+    const p = u.profile || {};
+    const planCls = p.plan==='pro'?'badge-purple':p.plan==='business'?'badge-blue':'badge-gray';
+    return `<tr style="cursor:pointer" onclick="showUserDetail('${uid}')">
+      <td><div style="width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div></td>
+      <td class="td-main">${p.name||'—'}</td>
+      <td>${p.email||'—'}</td>
+      <td><span class="badge ${planCls}">${p.plan||'free'}</span></td>
+      <td>${fmtDate(p.createdAt)}</td>
+      <td>${txCount(uid)}</td>
+      <td>
+        <div style="display:flex;gap:.3rem" onclick="event.stopPropagation()">
+          <button class="btn btn-secondary btn-icon btn-sm" onclick="showUserDetail('${uid}')" title="Dettagli">👁</button>
+          <button class="btn btn-danger btn-icon btn-sm" onclick="confirmDeleteUser('${uid}')" title="Elimina">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterUsers(){
+  renderUsers(
+    document.getElementById('user-search').value,
+    document.getElementById('user-filter-plan').value
+  );
+}
+
+function showUserDetail(uid) {
+  const u = ALL_USERS[uid];
+  if(!u) return;
+  const p = u.profile||{};
+  const txCount = ALL_TX.filter(t=>t.uid===uid).length;
+  const accCount = ALL_ACC.filter(a=>a.uid===uid).length;
+  const income = ALL_TX.filter(t=>t.uid===uid&&t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const expense = ALL_TX.filter(t=>t.uid===uid&&t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+
+  document.getElementById('ud-title').textContent = p.name||'Utente';
+  document.getElementById('ud-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+      <div class="udet"><div class="udet-l">UID</div><div class="udet-v" style="font-size:.7rem;word-break:break-all">${uid}</div></div>
+      <div class="udet"><div class="udet-l">Email</div><div class="udet-v" style="font-size:.8rem">${p.email||'—'}</div></div>
+      <div class="udet"><div class="udet-l">Registrato</div><div class="udet-v">${fmtDate(p.createdAt)}</div></div>
+      <div class="udet"><div class="udet-l">Piano</div>
+        <select id="ud-plan" style="background:var(--bg3);border:1px solid var(--b2);border-radius:6px;color:var(--tx);padding:.3rem .6rem;font-size:.8rem">
+          <option value="free" ${p.plan==='free'?'selected':''}>Free</option>
+          <option value="pro" ${p.plan==='pro'?'selected':''}>Pro</option>
+          <option value="business" ${p.plan==='business'?'selected':''}>Business</option>
+        </select>
+      </div>
+      <div class="udet"><div class="udet-l">Transazioni</div><div class="udet-v">${txCount}</div></div>
+      <div class="udet"><div class="udet-l">Conti</div><div class="udet-v">${accCount}</div></div>
+      <div class="udet"><div class="udet-l">Entrate totali</div><div class="udet-v" style="color:var(--gr)">${fmt(income)}</div></div>
+      <div class="udet"><div class="udet-l">Uscite totali</div><div class="udet-v" style="color:var(--re)">${fmt(expense)}</div></div>
+    </div>`;
+
+  document.getElementById('ud-save-btn').onclick = () => saveUserPlan(uid);
+  document.getElementById('ud-delete-btn').onclick = () => { closeModal('modal-user-detail'); confirmDeleteUser(uid); };
+  openModal('modal-user-detail');
+}
+
+async function saveUserPlan(uid) {
+  const plan = document.getElementById('ud-plan').value;
+  await db.ref(`users/${uid}/profile/plan`).set(plan);
+  closeModal('modal-user-detail');
+  await loadAll();
+  showToast('Piano aggiornato','ok');
+  writeLog('update',`Piano utente ${uid} → ${plan}`);
+}
+
+async function createUser() {
+  const name  = document.getElementById('nu-name').value.trim();
+  const email = document.getElementById('nu-email').value.trim();
+  const plan  = document.getElementById('nu-plan').value;
+  const role  = document.getElementById('nu-role').value;
+  if(!name||!email){showToast('Compila nome ed email','err');return}
+  const profile = {name,email,plan,role,createdAt:new Date().toISOString(),uid:'manual-'+Date.now()};
+  await db.ref(`users/${profile.uid}/profile`).set(profile);
+  closeModal('modal-new-user');
+  await loadAll();
+  showToast('Utente creato','ok');
+  writeLog('create',`Utente creato: ${email}`);
+}
+
+async function confirmDeleteUser(uid) {
+  const u = ALL_USERS[uid];
+  const email = u?.profile?.email||uid;
+  if(!confirm(`Eliminare definitivamente l'utente ${email} e tutti i suoi dati?`))return;
+  await db.ref(`users/${uid}`).remove();
+  await loadAll();
+  showToast('Utente eliminato','ok');
+  writeLog('delete',`Utente eliminato: ${email}`);
+}
+
+async function deleteUserData() {
+  const input = document.getElementById('del-user-id').value.trim();
+  if(!input){showToast('Inserisci UID o email','err');return}
+  const uid = Object.entries(ALL_USERS).find(([,u])=>u.profile?.email===input)?.[0] || input;
+  await db.ref(`users/${uid}`).remove();
+  closeModal('modal-delete-user');
+  await loadAll();
+  showToast('Dati utente eliminati','ok');
+  writeLog('delete',`Dati utente eliminati: ${input}`);
+}
+
+async function resetUserTransactions() {
+  const input = document.getElementById('reset-tx-uid').value.trim();
+  if(!input){showToast('Inserisci UID o email','err');return}
+  const uid = Object.entries(ALL_USERS).find(([,u])=>u.profile?.email===input)?.[0] || input;
+  await db.ref(`users/${uid}/transactions`).remove();
+  closeModal('modal-reset-user-tx');
+  await loadAll();
+  showToast('Transazioni resettate','ok');
+  writeLog('reset',`Transazioni utente resettate: ${input}`);
+}
+
+async function nukeAllData() {
+  const confirm_text = document.getElementById('nuke-confirm').value;
+  if(confirm_text !== 'CANCELLA TUTTO'){showToast('Testo di conferma errato','err');return}
+  await db.ref('users').remove();
+  closeModal('modal-nuke');
+  await loadAll();
+  showToast('Tutti i dati eliminati','ok');
+  writeLog('nuke','⚠ CANCELLAZIONE TOTALE ESEGUITA');
+}
+
+/* ─── TRANSACTIONS ─── */
+function renderTransactions(q='',type='') {
+  let tx = ALL_TX;
+  if(q) tx = tx.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.userName||'').toLowerCase().includes(q));
+  if(type) tx = tx.filter(t=>t.type===type);
+
+  document.getElementById('tx-count-label').textContent = `${tx.length} transazioni`;
+  const tbody = document.getElementById('tx-tbody');
+  const empty = document.getElementById('tx-empty');
+  if(!tx.length){tbody.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+
+  const CAT = {alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',altro:'📦'};
+  tbody.innerHTML = tx.slice(0,200).map(t=>`
+    <tr>
+      <td>${t.userName}</td>
+      <td>${fmtDate(t.date)}</td>
+      <td class="td-main">${CAT[t.category]||'📦'} ${t.description||'—'}</td>
+      <td>${cap(t.category||'altro')}</td>
+      <td><span class="badge ${t.type==='income'?'badge-green':'badge-red'}">${t.type==='income'?'Entrata':'Uscita'}</span></td>
+      <td style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">
+        ${t.type==='income'?'+':'-'}${fmt(t.amount)}
+      </td>
+      <td>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteTx('${t.uid}','${t.id}')" title="Elimina">🗑</button>
+      </td>
+    </tr>`).join('');
+}
+function filterTx(){renderTransactions(document.getElementById('tx-search').value.toLowerCase(),document.getElementById('tx-filter-type').value)}
+async function deleteTx(uid,id){
+  if(!confirm('Eliminare questa transazione?'))return;
+  await db.ref(`users/${uid}/transactions/${id}`).remove();
+  await loadAll();
+  showToast('Transazione eliminata','ok');
+}
+
+/* ─── ACCOUNTS ─── */
+function renderAccounts() {
+  const tbody = document.getElementById('acc-tbody');
+  const empty = document.getElementById('acc-empty');
+  const TYPES = {bank:'🏦 Banca',card:'💳 Carta',paypal:'🟦 PayPal',cash:'💵 Contanti',crypto:'₿ Crypto',investment:'📈 Invest.'};
+
+  document.getElementById('acc-count-label').textContent = `${ALL_ACC.length} conti registrati`;
+  if(!ALL_ACC.length){tbody.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  tbody.innerHTML = ALL_ACC.map(a=>`
+    <tr>
+      <td>${a.userName}</td>
+      <td class="td-main">${a.name}</td>
+      <td>${TYPES[a.type]||a.type}</td>
+      <td style="font-weight:700;color:${Number(a.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(a.balance||0)}</td>
+      <td>${fmtDate(a.createdAt)}</td>
+    </tr>`).join('');
+}
+
+/* ─── ANALYTICS ─── */
+function renderAnalytics() {
+  const income  = ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const expense = ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+  const avgTxPerUser = ALL_USERS && Object.keys(ALL_USERS).length ? Math.round(ALL_TX.length/Object.keys(ALL_USERS).length) : 0;
+
+  document.getElementById('analytics-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Volume entrate</div><div class="stat-val" style="color:var(--gr)">${fmt(income)}</div></div>
+    <div class="stat"><div class="stat-lbl">Volume uscite</div><div class="stat-val" style="color:var(--re)">${fmt(expense)}</div></div>
+    <div class="stat"><div class="stat-lbl">Saldo netto</div><div class="stat-val">${fmt(income-expense)}</div></div>
+    <div class="stat"><div class="stat-lbl">Media tx/utente</div><div class="stat-val">${avgTxPerUser}</div></div>`;
+
+  /* Plan distribution */
+  const plans = {};
+  Object.values(ALL_USERS).forEach(u=>{ const p=u.profile?.plan||'free'; plans[p]=(plans[p]||0)+1; });
+  const PLAN_COLORS={free:'var(--tx2)',pro:'var(--ac)',business:'var(--ac2)'};
+  document.getElementById('plan-distribution').innerHTML = Object.entries(plans).map(([p,n])=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)">
+      <span style="font-size:.875rem;font-weight:500;color:${PLAN_COLORS[p]||'var(--tx)'}">${cap(p)}</span>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${Math.round((n/Object.keys(ALL_USERS).length)*100)}%;background:${PLAN_COLORS[p]||'var(--ac)'};border-radius:3px"></div>
+        </div>
+        <span style="font-size:.875rem;font-weight:700">${n}</span>
+      </div>
+    </div>`).join('') || '<div class="empty">Nessun dato</div>';
+
+  /* Top categories */
+  const cats = {};
+  ALL_TX.filter(t=>t.type==='expense').forEach(t=>{ cats[t.category]=(cats[t.category]||0)+Number(t.amount||0); });
+  const sortedCats = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxCat = sortedCats[0]?.[1]||1;
+  const CAT_IC = {alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};
+  document.getElementById('top-categories').innerHTML = sortedCats.map(([c,v])=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)">
+      <span style="font-size:.875rem">${CAT_IC[c]||'📦'} ${cap(c)}</span>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${Math.round((v/maxCat)*100)}%;background:var(--re);border-radius:3px"></div>
+        </div>
+        <span style="font-size:.875rem;font-weight:700">${fmt(v)}</span>
+      </div>
+    </div>`).join('') || '<div class="empty">Nessun dato</div>';
+
+  /* Chart users by month */
+  const byMonth = {};
+  Object.values(ALL_USERS).forEach(u=>{
+    const d = u.profile?.createdAt;
+    if(!d)return;
+    const m = new Date(d).toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
+    byMonth[m]=(byMonth[m]||0)+1;
+  });
+  const labels = Object.keys(byMonth).slice(-12);
+  const data   = labels.map(l=>byMonth[l]);
+  const ctx = document.getElementById('chart-users');
+  if(ctx){
+    if(ctx._chart) ctx._chart.destroy();
+    ctx._chart = new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Nuovi utenti',data,backgroundColor:'rgba(123,104,238,.7)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}  }}}});
+  }
+}
+
+/* ─── INVOICES ─── */
+function renderInvoices() {
+  const tbody = document.getElementById('inv-tbody');
+  const empty = document.getElementById('inv-empty');
+  const STATUS = {draft:{l:'Bozza',c:'badge-gray'},sent:{l:'Inviata',c:'badge-yellow'},paid:{l:'Pagata',c:'badge-green'},overdue:{l:'Scaduta',c:'badge-red'}};
+
+  document.getElementById('inv-count-label').textContent = `${ALL_INV.length} fatture nel sistema`;
+  if(!ALL_INV.length){tbody.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  tbody.innerHTML = ALL_INV.map(i=>{
+    const total = Number(i.amount||0)*(1+(Number(i.vat||22)/100));
+    const s = STATUS[i.status]||STATUS.draft;
+    return `<tr>
+      <td>${i.userName}</td>
+      <td class="td-main">${i.client||'—'}</td>
+      <td>${i.invoiceNum||'—'}</td>
+      <td>${fmtDate(i.date)}</td>
+      <td>${i.vat||22}%</td>
+      <td style="font-weight:700">${fmt(total)}</td>
+      <td><span class="badge ${s.c}">${s.l}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── LOGS ─── */
+async function writeLog(type, msg) {
+  await db.ref('admin_logs').push({type,msg,admin:ADMIN_USER?.email||'?',ts:new Date().toISOString()}).catch(()=>{});
+}
+async function loadLogs() {
+  try {
+    const snap = await db.ref('admin_logs').limitToLast(50).once('value');
+    const raw = snap.val()||{};
+    const logs = Object.entries(raw).map(([id,l])=>({id,...l})).reverse();
+    const container = document.getElementById('logs-list');
+    const empty = document.getElementById('logs-empty');
+    if(!logs.length){container.innerHTML='';empty.style.display='block';return}
+    empty.style.display='none';
+    const ICONS={login:'🔑',logout:'🚪',create:'✅',delete:'🗑',update:'✏️',reset:'🔄',nuke:'🚨',export:'📥'};
+    const COLS={login:'badge-green',logout:'badge-gray',create:'badge-green',delete:'badge-red',update:'badge-blue',reset:'badge-yellow',nuke:'badge-red',export:'badge-blue'};
+    container.innerHTML = logs.map(l=>`
+      <div class="log-entry">
+        <div class="log-icon" style="background:var(--bg3)">${ICONS[l.type]||'📋'}</div>
+        <div class="log-info">
+          <div class="log-msg">${l.msg}</div>
+          <div class="log-meta">${l.admin} · ${fmtDateTime(l.ts)}</div>
+        </div>
+        <div class="log-type"><span class="badge ${COLS[l.type]||'badge-gray'}">${l.type}</span></div>
+      </div>`).join('');
+  } catch(e) {}
+}
+async function clearLogs() {
+  if(!confirm('Cancellare tutti i log?'))return;
+  await db.ref('admin_logs').remove();
+  loadLogs();
+  showToast('Log cancellati','ok');
+}
+
+/* ─── SETTINGS ─── */
+async function loadSettings() {
+  const snap = await db.ref('admin_settings').once('value').catch(()=>null);
+  if(snap?.val()) settings = {...settings,...snap.val()};
+  ['registration','maintenance','activityLogs'].forEach(k=>{
+    const el=document.getElementById('tog-'+{registration:'reg',maintenance:'maint',activityLogs:'logs'}[k]);
+    if(el) el.classList.toggle('on',!!settings[k]);
+  });
+}
+async function toggleSetting(key) {
+  settings[key]=!settings[key];
+  await db.ref(`admin_settings/${key}`).set(settings[key]);
+  loadSettings();
+  showToast(`${key}: ${settings[key]?'attivo':'disattivo'}`,'ok');
+}
+
+/* ─── EXPORTS ─── */
+function exportAllCSV() {
+  const rows=[['UID','Utente','Email','Data','Descrizione','Tipo','Categoria','Importo']];
+  ALL_TX.forEach(t=>rows.push([t.uid,t.userName,t.userEmail,t.date,t.description||'',t.type,t.category||'',(t.type==='income'?'':'-')+t.amount]));
+  dl('kazka-admin-tx.csv','text/csv',rows.map(r=>r.join(';')).join('\n'));
+  showToast('CSV esportato','ok');
+  writeLog('export','Export CSV transazioni');
+}
+function exportUsersCSV() {
+  const rows=[['UID','Nome','Email','Piano','Ruolo','Registrato','N° Transazioni']];
+  Object.entries(ALL_USERS).forEach(([uid,u])=>{
+    const p=u.profile||{};
+    const txN=ALL_TX.filter(t=>t.uid===uid).length;
+    rows.push([uid,p.name||'',p.email||'',p.plan||'free',p.role||'user',p.createdAt||'',txN]);
+  });
+  dl('kazka-admin-users.csv','text/csv',rows.map(r=>r.join(';')).join('\n'));
+  showToast('CSV utenti esportato','ok');
+}
+
+/* ─── NAVIGATION ─── */
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+name)?.classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+}
+
+/* ─── MODAL ─── */
+function openModal(id){ document.getElementById(id).style.display='flex'; document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).style.display='none'; document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')) e.target.style.display='none'; });
+
+/* ─── UTILS ─── */
+function fmt(v){ return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(v)||0); }
+function fmtDate(d){ if(!d)return'—'; try{return new Date(d).toLocaleDateString('it-IT');}catch{return d;} }
+function fmtDateTime(d){ if(!d)return'—'; try{return new Date(d).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return d;} }
+function cap(s){ return s?s.charAt(0).toUpperCase()+s.slice(1):s; }
+function showErr(el,msg){ el.textContent=msg; el.style.display='block'; }
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  const icons={ok:'✓',err:'✕',warn:'⚠'};
+  t.innerHTML=`<span>${icons[type]}</span> ${msg}`;
+  t.className='toast '+type+' show';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3500);
+}
+function dl(name,type,content){
+  const b=new Blob([content],{type});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+function friendlyErr(code){
+  const m={'auth/wrong-password':'Password errata','auth/user-not-found':'Email non trovata','auth/invalid-credential':'Credenziali non valide','auth/too-many-requests':'Troppi tentativi, riprova tra qualche minuto'};
+  return m[code]||'Errore: '+code;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazka — Smart Finance Assistant</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#050912;--bg2:#090f1e;--bg3:#0d1528;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF)}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.875rem 2rem;background:rgba(5,9,18,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:1.5rem}
+.nav-links a{font-size:.875rem;color:var(--tx2);transition:color .2s}
+.nav-links a:hover{color:var(--tx)}
+.btn-cta{padding:.65rem 1.4rem;background:var(--grad);color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;transition:opacity .2s}
+.btn-cta:hover{opacity:.88}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:6rem 1rem 4rem;background:radial-gradient(ellipse 80% 60% at 50% -5%,rgba(123,104,238,.18) 0%,transparent 70%)}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border-radius:20px;background:rgba(123,104,238,.12);border:1px solid rgba(123,104,238,.25);font-size:.8rem;font-weight:600;color:var(--ac);margin-bottom:1.5rem}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,7vw,5rem);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:1.25rem}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.1rem;color:var(--tx2);max-width:500px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.btn-main{padding:.875rem 2rem;background:var(--grad);color:#fff;border-radius:10px;font-size:1rem;font-weight:700;transition:opacity .2s,transform .15s}
+.btn-main:hover{opacity:.9;transform:translateY(-1px)}
+.btn-sec{padding:.875rem 2rem;background:var(--b1);border:1px solid var(--b2);color:var(--tx);border-radius:10px;font-size:1rem;font-weight:600;transition:border-color .2s}
+.btn-sec:hover{border-color:var(--ac)}
+.preview{max-width:860px;margin:0 auto;border-radius:16px;border:1px solid var(--b2);box-shadow:0 30px 100px rgba(0,0,0,.5);background:var(--bg2);padding:1.5rem}
+.prev-bar{display:flex;gap:.4rem;margin-bottom:1rem}
+.prev-dot{width:10px;height:10px;border-radius:50%}
+.prev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.prev-card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:1rem}
+.prev-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.4rem}
+.prev-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700}
+.prev-s{font-size:.7rem;color:var(--tx3);margin-top:.15rem}
+.prev-pb{height:4px;background:var(--b1);border-radius:2px;margin-top:.75rem;overflow:hidden}
+.prev-pf{height:100%;border-radius:2px}
+.strip{display:flex;align-items:center;justify-content:center;gap:3rem;padding:2.5rem 2rem;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);background:var(--bg2);flex-wrap:wrap}
+.strip-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center}
+.strip-l{font-size:.75rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-top:.15rem}
+.section{padding:5rem 2rem;max-width:1100px;margin:0 auto}
+.sec-tag{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);margin-bottom:.75rem}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.2;margin-bottom:.75rem}
+.sec-sub{font-size:1rem;color:var(--tx2);max-width:500px;line-height:1.7}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem}
+.feat{background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:1.5rem;transition:border-color .2s,transform .2s}
+.feat:hover{border-color:var(--b2);transform:translateY(-3px)}
+.feat-ic{font-size:1.75rem;margin-bottom:.875rem}
+.feat-t{font-weight:700;font-size:1rem;margin-bottom:.4rem}
+.feat-d{font-size:.875rem;color:var(--tx2);line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3rem;text-align:center}
+.step-n{width:48px;height:48px;border-radius:50%;background:var(--grad);color:#fff;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.step-t{font-weight:700;margin-bottom:.4rem}
+.step-d{font-size:.875rem;color:var(--tx2);line-height:1.6}
+.cta-sec{text-align:center;padding:5rem 2rem;background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(123,104,238,.12) 0%,transparent 70%);border-top:1px solid var(--b1)}
+.cta-sec h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:1rem}
+.cta-sec p{color:var(--tx2);margin-bottom:2rem;font-size:1rem}
+footer{text-align:center;padding:2rem;border-top:1px solid var(--b1);font-size:.825rem;color:var(--tx3)}
+footer span{color:var(--ac)}
+@media(max-width:600px){nav{padding:.875rem 1rem}.nav-links a{display:none}.prev-grid>:last-child{display:none}.prev-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">⚡ Kazka</div>
+  <div class="nav-links">
+    <a href="#features">Funzioni</a>
+    <a href="#how">Come funziona</a>
+    <a href="app/" class="btn-cta">Apri app →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div style="width:100%">
+    <div class="hero-tag">🚀 Gratuita · Nessuna pubblicità · PWA installabile</div>
+    <h1>Prendi il controllo<br>delle tue <span>finanze</span></h1>
+    <p class="hero-sub">Traccia entrate e uscite, gestisci budget, obiettivi e fatture — tutto in un posto. Gratis, sempre.</p>
+    <div class="hero-btns">
+      <a href="app/" class="btn-main">Inizia gratis →</a>
+      <a href="#features" class="btn-sec">Scopri le funzioni</a>
+    </div>
+    <div class="preview">
+      <div class="prev-bar">
+        <div class="prev-dot" style="background:#FF5F57"></div>
+        <div class="prev-dot" style="background:#FFBD2E"></div>
+        <div class="prev-dot" style="background:#28CA41"></div>
+      </div>
+      <div class="prev-grid">
+        <div class="prev-card">
+          <div class="prev-lbl">Saldo totale</div>
+          <div class="prev-val" style="color:#00F0A0">€ 8.420</div>
+          <div class="prev-s">+€ 340 questo mese</div>
+          <div class="prev-pb"><div class="prev-pf" style="width:72%;background:linear-gradient(90deg,#7B68EE,#00E5FF)"></div></div>
+        </div>
+        <div class="prev-card">
+          <div class="prev-lbl">Uscite mese</div>
+          <div class="prev-val" style="color:#FF3355">€ 1.860</div>
+          <div class="prev-s">Budget: € 2.000</div>
+          <div class="prev-pb"><div class="prev-pf" style="width:93%;background:#FF3355"></div></div>
+        </div>
+        <div class="prev-card">
+          <div class="prev-lbl">Obiettivo</div>
+          <div class="prev-val" style="color:#7B68EE">68%</div>
+          <div class="prev-s">Vacanze estate 🏖️</div>
+          <div class="prev-pb"><div class="prev-pf" style="width:68%;background:linear-gradient(90deg,#7B68EE,#00E5FF)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div><div class="strip-n">100%</div><div class="strip-l">Gratuita</div></div>
+  <div><div class="strip-n">0</div><div class="strip-l">Pubblicità</div></div>
+  <div><div class="strip-n">8</div><div class="strip-l">Sezioni</div></div>
+  <div><div class="strip-n">PWA</div><div class="strip-l">Installabile</div></div>
+</div>
+
+<section class="section" id="features">
+  <div class="sec-tag">Funzionalità</div>
+  <h2 class="sec-title">Tutto quello che ti serve</h2>
+  <p class="sec-sub">Finanza personale e business in un'unica app semplice e veloce.</p>
+  <div class="feat-grid">
+    <div class="feat"><div class="feat-ic">📊</div><div class="feat-t">Dashboard live</div><div class="feat-d">Saldo, grafici entrate/uscite e ultime transazioni sempre aggiornati.</div></div>
+    <div class="feat"><div class="feat-ic">💸</div><div class="feat-t">Transazioni veloci</div><div class="feat-d">Aggiungi entrate e uscite in secondi. Importa CSV dalla tua banca.</div></div>
+    <div class="feat"><div class="feat-ic">🎯</div><div class="feat-t">Budget per categoria</div><div class="feat-d">Imposta limiti mensili con avvisi automatici quando stai per sforare.</div></div>
+    <div class="feat"><div class="feat-ic">🏆</div><div class="feat-t">Obiettivi di risparmio</div><div class="feat-d">Crea traguardi, traccia il progresso e raggiungi i tuoi sogni.</div></div>
+    <div class="feat"><div class="feat-ic">🏦</div><div class="feat-t">Multi-account</div><div class="feat-d">Banca, PayPal, contanti, crypto — tutti i conti in un posto.</div></div>
+    <div class="feat"><div class="feat-ic">🧾</div><div class="feat-t">Fatture & IVA</div><div class="feat-d">Crea fatture con IVA automatica, gestisci clienti e pagamenti.</div></div>
+    <div class="feat"><div class="feat-ic">🔁</div><div class="feat-t">Spese ricorrenti</div><div class="feat-d">Abbonamenti, bollette e rate — nessuna scadenza dimenticata.</div></div>
+    <div class="feat"><div class="feat-ic">✈️</div><div class="feat-t">Viaggi & Trasferte</div><div class="feat-d">Note spese per trasferte di lavoro o vacanze con budget dedicati.</div></div>
+    <div class="feat"><div class="feat-ic">📈</div><div class="feat-t">Report & PDF</div><div class="feat-d">Statistiche per categoria e periodo. Esporta PDF o CSV con un click.</div></div>
+  </div>
+</section>
+
+<section class="section" id="how" style="padding-top:0">
+  <div class="sec-tag">Come funziona</div>
+  <h2 class="sec-title">Inizia in 3 minuti</h2>
+  <div class="steps">
+    <div><div class="step-n">1</div><div class="step-t">Crea un account</div><div class="step-d">Registrati con email o Google. Gratis, nessuna carta richiesta.</div></div>
+    <div><div class="step-n">2</div><div class="step-t">Aggiungi i tuoi conti</div><div class="step-d">Inserisci banca, PayPal, contanti o importa il CSV della banca.</div></div>
+    <div><div class="step-n">3</div><div class="step-t">Traccia e pianifica</div><div class="step-d">Aggiungi transazioni, imposta budget e crea obiettivi di risparmio.</div></div>
+  </div>
+</section>
+
+<section class="cta-sec">
+  <h2>Pronto a iniziare?</h2>
+  <p>Kazka è gratuita, senza pubblicità, sempre.</p>
+  <a href="app/" class="btn-main" style="display:inline-block">Inizia gratis →</a>
+</section>
+
+<footer><p>© 2025 <span>Kazka</span> — Smart Finance Assistant</p></footer>
+
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}</script>
+</body>
+</html>

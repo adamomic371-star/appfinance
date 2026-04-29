@@ -1,0 +1,35 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read":  "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        "transactions": {
+          ".read":  "$uid === auth.uid",
+          ".write": "$uid === auth.uid",
+          ".validate": "newData.hasChildren(['amount','type','createdAt'])"
+        },
+        "bills":        { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "utilities":    { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "trips":        { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "recurring":    { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "goals":        { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "budgets":      { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "accounts":     { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "eomFlags":     { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "migrations":   { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" },
+        "biz":          { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" }
+      }
+    },
+    "groups": {
+      "$gid": {
+        ".read":  "auth != null && (data.child('creatorId').val() === auth.uid || data.child('members').child(auth.uid).exists())",
+        ".write": "auth != null && (data.child('creatorId').val() === auth.uid || !data.exists())"
+      }
+    },
+    "admin_data": {
+      ".read":  "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    }
+  }
+}

@@ -127,6 +127,12 @@ ul{list-style:none}
 .nav-search input:focus{outline:none}
 .nav-search svg{color:var(--tx3);flex-shrink:0}
 .nav-actions{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+/* CONTEXT TOGGLE */
+.ctx-toggle{display:flex;align-items:center;background:var(--bg4);border:1.5px solid var(--b2);border-radius:var(--radius-sm);padding:3px;gap:2px;flex-shrink:0}
+.ctx-btn{padding:.3rem .8rem;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;color:var(--tx2);white-space:nowrap;background:transparent;border:none}
+.ctx-btn:hover{color:var(--tx)}
+.ctx-btn.active-personal{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(123,104,238,.4)}
+.ctx-btn.active-business{background:var(--or);color:#fff;box-shadow:0 2px 8px rgba(255,140,66,.4)}
 .nav-btn{
   width:36px;height:36px;display:flex;align-items:center;justify-content:center;
   background:var(--bg3);border:1px solid var(--b1);border-radius:var(--radius-sm);
@@ -398,6 +404,8 @@ tr:hover td{background:var(--b1)}
   .form-row{grid-template-columns:1fr}
   .fab{display:flex}
   .sidebar-overlay{display:block}
+  .ctx-btn{padding:.22rem .5rem;font-size:.7rem}
+  #notif-btn{display:none}
 }
 .sidebar-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:85;
@@ -480,6 +488,10 @@ tr:hover td{background:var(--b1)}
       <input type="text" placeholder="Cerca transazioni..." id="search-input" oninput="filterTransactions()">
     </div>
     <div class="nav-actions">
+      <div class="ctx-toggle">
+        <button class="ctx-btn active-personal" id="ctx-personal" onclick="setContext('personal')">👤 Personal</button>
+        <button class="ctx-btn" id="ctx-business" onclick="setContext('business')">💼 Business</button>
+      </div>
       <button class="nav-btn" onclick="toggleTheme()" id="theme-btn" title="Cambia tema">🌙</button>
       <button class="nav-btn" onclick="showView('reports')" title="Notifiche" id="notif-btn">
         🔔
@@ -562,7 +574,7 @@ tr:hover td{background:var(--b1)}
     <div class="view active" id="view-dashboard">
       <div class="page-header">
         <div>
-          <div class="page-title">Buongiorno! 👋</div>
+          <div class="page-title">Buongiorno! 👋 <span id="dash-ctx-label" style="font-size:.9rem;font-weight:600;opacity:.7"></span></div>
           <div class="page-sub" id="dash-date"></div>
         </div>
         <button class="btn btn-primary" onclick="openModal('modal-tx')">+ Transazione</button>
@@ -803,6 +815,7 @@ tr:hover td{background:var(--b1)}
       </div>
       <input type="hidden" id="tx-id">
       <input type="hidden" id="tx-type" value="expense">
+      <input type="hidden" id="tx-context" value="personal">
       <div class="form-row">
         <div class="form-group">
           <label>Importo (€)</label>
@@ -859,6 +872,13 @@ tr:hover td{background:var(--b1)}
     </div>
     <div class="modal-body">
       <input type="hidden" id="acc-id">
+      <div class="form-group">
+        <label>Ambito</label>
+        <select id="acc-context">
+          <option value="personal">👤 Personal</option>
+          <option value="business">💼 Business</option>
+        </select>
+      </div>
       <div class="form-group">
         <label>Nome conto</label>
         <input type="text" id="acc-name" placeholder="Es. Conto Intesa, PayPal, Contanti...">
@@ -1177,6 +1197,7 @@ let UID = null, USER_PROFILE = null;
 let STATE = { transactions:[], accounts:[], budgets:{}, goals:[], recurring:[], invoices:[], travel:[] };
 let charts = {};
 let currentTheme = localStorage.getItem('kz_theme') || 'dark';
+let currentContext = localStorage.getItem('kz_context') || 'personal';
 
 /* ─── AUTH GUARD ─── */
 auth.onAuthStateChanged(async user => {
@@ -1269,6 +1290,7 @@ function showApp() {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   applyTheme(currentTheme);
+  setContext(currentContext, false);
 }
 
 /* ─── NAVIGATION ─── */
@@ -1349,10 +1371,12 @@ function toggleTheme() { applyTheme(currentTheme==='dark'?'light':'dark'); }
 function renderDashboard() {
   const now = new Date();
   const month = now.toISOString().slice(0,7);
-  const txMonth = STATE.transactions.filter(t=>t.date&&t.date.startsWith(month));
+  const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
+  const ctxAcc = STATE.accounts.filter(a=>!a.context||a.context===currentContext);
+  const txMonth = ctxTx.filter(t=>t.date&&t.date.startsWith(month));
   const income  = txMonth.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0);
   const expense = txMonth.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0);
-  const totalBalance = STATE.accounts.reduce((s,a)=>s+Number(a.balance||0),0);
+  const totalBalance = ctxAcc.reduce((s,a)=>s+Number(a.balance||0),0);
 
   document.getElementById('ds-total').textContent = fmt(totalBalance);
   document.getElementById('ds-income').textContent = fmt(income);
@@ -1361,8 +1385,8 @@ function renderDashboard() {
 
   /* Accounts mini */
   const el = document.getElementById('dash-accounts');
-  if(!STATE.accounts.length){ el.innerHTML='<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun conto — aggiungine uno</div>'; }
-  else el.innerHTML = STATE.accounts.map(a=>`
+  if(!ctxAcc.length){ el.innerHTML='<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun conto — aggiungine uno</div>'; }
+  else el.innerHTML = ctxAcc.map(a=>`
     <div class="acc-mini-row">
       <div class="acc-mini-left">
         <div class="acc-mini-icon" style="background:${a.color||'var(--ac)'}22">${ACC_ICONS[a.type]||'🏦'}</div>
@@ -1373,7 +1397,7 @@ function renderDashboard() {
 
   /* Recent transactions */
   const rt = document.getElementById('dash-recent');
-  const recent = STATE.transactions.slice(0,6);
+  const recent = ctxTx.slice(0,6);
   if(!recent.length){ rt.innerHTML='<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessuna transazione</div>'; }
   else rt.innerHTML = recent.map(t=>`
     <div class="tx-row">
@@ -1393,12 +1417,13 @@ function renderDashboard() {
 }
 
 function renderDashboardCharts() {
+  const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
   const labels=[], incomes=[], expenses=[];
   for(let i=5;i>=0;i--){
     const d=new Date(); d.setMonth(d.getMonth()-i);
     const m=d.toISOString().slice(0,7);
     labels.push(d.toLocaleDateString('it-IT',{month:'short'}));
-    const txM=STATE.transactions.filter(t=>t.date&&t.date.startsWith(m));
+    const txM=ctxTx.filter(t=>t.date&&t.date.startsWith(m));
     incomes.push(txM.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0));
     expenses.push(txM.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0));
   }
@@ -1408,7 +1433,7 @@ function renderDashboardCharts() {
 
   /* Cat pie */
   const catMap={};
-  STATE.transactions.filter(t=>t.type==='expense').forEach(t=>{ catMap[t.category]=(catMap[t.category]||0)+Number(t.amount); });
+  ctxTx.filter(t=>t.type==='expense').forEach(t=>{ catMap[t.category]=(catMap[t.category]||0)+Number(t.amount); });
   const cats=Object.keys(catMap);
   if(cats.length){
     mkChart('chart-cat','doughnut',{
@@ -1424,12 +1449,14 @@ function renderTransactions() {
   const type=(document.getElementById('filter-type')||{}).value||'';
   const cat=(document.getElementById('filter-cat')||{}).value||'';
 
+  const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
+
   /* Populate category filter */
-  const cats=[...new Set(STATE.transactions.map(t=>t.category).filter(Boolean))];
+  const cats=[...new Set(ctxTx.map(t=>t.category).filter(Boolean))];
   const fc=document.getElementById('filter-cat');
   if(fc){ const cur=fc.value; fc.innerHTML='<option value="">Categoria</option>'+cats.map(c=>`<option value="${c}">${CAT_ICONS[c]||''} ${cap(c)}</option>`).join(''); fc.value=cur; }
 
-  let tx=STATE.transactions;
+  let tx=ctxTx;
   if(q) tx=tx.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.category||'').toLowerCase().includes(q));
   if(type) tx=tx.filter(t=>t.type===type);
   if(cat) tx=tx.filter(t=>t.category===cat);
@@ -1469,12 +1496,16 @@ function filterTransactions(){ renderTransactions(); }
 function renderAccounts() {
   const grid=document.getElementById('accounts-grid');
   const empty=document.getElementById('accounts-empty');
-  if(!STATE.accounts.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+  const ctxAcc = STATE.accounts.filter(a=>!a.context||a.context===currentContext);
+  if(!ctxAcc.length){ grid.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
 
-  grid.innerHTML = STATE.accounts.map(a=>`
+  grid.innerHTML = ctxAcc.map(a=>`
     <div class="account-card">
-      <div class="acc-type-badge" style="color:${a.color||'var(--ac)'}">${ACC_ICONS[a.type]||'🏦'} ${cap(a.type||'bank')}</div>
+      <div class="acc-type-badge" style="color:${a.color||'var(--ac)'}">
+        ${ACC_ICONS[a.type]||'🏦'} ${cap(a.type||'bank')}
+        <span style="margin-left:auto;font-size:.65rem;opacity:.6">${a.context==='business'?'💼':'👤'}</span>
+      </div>
       <div class="acc-name">${a.name}</div>
       <div class="acc-balance" style="color:${Number(a.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(a.balance||0)}</div>
       <div class="acc-actions">
@@ -1483,7 +1514,6 @@ function renderAccounts() {
       </div>
     </div>`).join('');
 }
-
 /* ─── BUDGET ─── */
 function renderBudget() {
   const month = new Date().toISOString().slice(0,7);
@@ -1634,8 +1664,9 @@ function renderTravel() {
 
 /* ─── REPORTS ─── */
 function renderReports() {
-  const allExpense = STATE.transactions.filter(t=>t.type==='expense');
-  const allIncome  = STATE.transactions.filter(t=>t.type==='income');
+  const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
+  const allExpense = ctxTx.filter(t=>t.type==='expense');
+  const allIncome  = ctxTx.filter(t=>t.type==='income');
   const totExp = allExpense.reduce((s,t)=>s+Number(t.amount),0);
   const totInc = allIncome.reduce((s,t)=>s+Number(t.amount),0);
 
@@ -1643,16 +1674,15 @@ function renderReports() {
     <div class="stat-card"><div class="stat-label">Totale entrate</div><div class="stat-value stat-up">${fmt(totInc)}</div></div>
     <div class="stat-card"><div class="stat-label">Totale uscite</div><div class="stat-value stat-down">${fmt(totExp)}</div></div>
     <div class="stat-card"><div class="stat-label">Saldo netto</div><div class="stat-value">${fmt(totInc-totExp)}</div></div>
-    <div class="stat-card"><div class="stat-label">Transazioni</div><div class="stat-value">${STATE.transactions.length}</div></div>`;
+    <div class="stat-card"><div class="stat-label">Transazioni</div><div class="stat-value">${ctxTx.length}</div></div>`;
 
-  /* Cat table */
   const catMap={};
   allExpense.forEach(t=>{ catMap[t.category]=(catMap[t.category]||{count:0,total:0}); catMap[t.category].count++; catMap[t.category].total+=Number(t.amount); });
   const tbody=document.getElementById('report-cat-tbody');
   const sorted=Object.entries(catMap).sort((a,b)=>b[1].total-a[1].total);
   tbody.innerHTML = sorted.map(([c,d])=>`
     <tr>
-      <td class="td-main">${CAT_ICONS[c]||'📦'} ${cap(c)}</td>
+      <td class="td-main">${CAT_ICONS[c]||'\u{1F4E6}'} ${cap(c)}</td>
       <td>${d.count}</td>
       <td style="font-weight:700">${fmt(d.total)}</td>
       <td>${totExp>0?Math.round((d.total/totExp)*100):0}%</td>
@@ -1660,12 +1690,13 @@ function renderReports() {
 }
 
 function renderReportCharts() {
+  const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
   const labels=[], incomes=[], expenses=[];
   for(let i=11;i>=0;i--){
     const d=new Date(); d.setMonth(d.getMonth()-i);
     const m=d.toISOString().slice(0,7);
     labels.push(d.toLocaleDateString('it-IT',{month:'short',year:'2-digit'}));
-    const txM=STATE.transactions.filter(t=>t.date&&t.date.startsWith(m));
+    const txM=ctxTx.filter(t=>t.date&&t.date.startsWith(m));
     incomes.push(txM.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0));
     expenses.push(txM.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0));
   }
@@ -1673,7 +1704,7 @@ function renderReportCharts() {
   mkChart('chart-report-trend','line',{labels,datasets:[{label:'Entrate',data:incomes,borderColor:'var(--gr)',backgroundColor:'rgba(0,240,160,.1)',fill:true,tension:.4},{label:'Uscite',data:expenses,borderColor:'var(--re)',backgroundColor:'rgba(255,51,85,.1)',fill:true,tension:.4}]},opts);
 
   const catMap={};
-  STATE.transactions.filter(t=>t.type==='expense').forEach(t=>{ catMap[t.category]=(catMap[t.category]||0)+Number(t.amount); });
+  ctxTx.filter(t=>t.type==='expense').forEach(t=>{ catMap[t.category]=(catMap[t.category]||0)+Number(t.amount); });
   const cats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
   if(cats.length){
     mkChart('chart-report-cat','bar',{
@@ -1694,12 +1725,27 @@ function closeModal(id) {
 }
 
 /* ─── TX CRUD ─── */
+function setContext(ctx, rerender=true) {
+  currentContext = ctx;
+  localStorage.setItem('kz_context', ctx);
+  document.getElementById('ctx-personal').className = 'ctx-btn' + (ctx==='personal' ? ' active-personal' : '');
+  document.getElementById('ctx-business').className = 'ctx-btn' + (ctx==='business' ? ' active-business' : '');
+  document.getElementById('tx-context').value = ctx;
+  const lbl = document.getElementById('dash-ctx-label');
+  if(lbl) lbl.textContent = ctx==='business' ? '— 💼 Business' : '— 👤 Personal';
+  const accCtx = document.getElementById('acc-context');
+  if(accCtx) accCtx.value = ctx;
+  if(rerender) renderAll();
+}
+
 function setTxType(t) {
   document.getElementById('tx-type').value=t;
-  document.getElementById('btn-expense').classList.toggle('active expense',t==='expense');
-  document.getElementById('btn-income').classList.toggle('active income',t==='income');
-  document.getElementById('btn-expense').classList.toggle('active',t==='expense');
-  document.getElementById('btn-income').classList.toggle('active',t==='income');
+  const btnExp = document.getElementById('btn-expense');
+  const btnInc = document.getElementById('btn-income');
+  btnExp.classList.toggle('active', t==='expense');
+  btnExp.classList.toggle('expense', t==='expense');
+  btnInc.classList.toggle('active', t==='income');
+  btnInc.classList.toggle('income', t==='income');
 }
 async function saveTx() {
   const id=document.getElementById('tx-id').value;
@@ -1711,6 +1757,7 @@ async function saveTx() {
     category:document.getElementById('tx-cat').value,
     account:document.getElementById('tx-account').value,
     note:document.getElementById('tx-note').value.trim(),
+    context:document.getElementById('tx-context').value||currentContext,
     updatedAt:new Date().toISOString()
   };
   if(!tx.amount||!tx.date||!tx.description){showToast('Compila importo, data e descrizione','err');return}
@@ -1725,6 +1772,7 @@ async function saveTx() {
 function resetTxForm() {
   ['tx-id','tx-amount','tx-desc','tx-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('tx-date').value=todayStr();
+  document.getElementById('tx-context').value=currentContext;
   setTxType('expense');
   document.getElementById('tx-modal-title').textContent='Nuova transazione';
 }
@@ -1747,6 +1795,7 @@ function editTx(id) {
   document.getElementById('tx-cat').value=t.category||'altro';
   document.getElementById('tx-account').value=t.account||'';
   document.getElementById('tx-note').value=t.note||'';
+  document.getElementById('tx-context').value=t.context||currentContext;
   document.getElementById('tx-modal-title').textContent='Modifica transazione';
   openModal('modal-tx');
 }
@@ -1764,6 +1813,7 @@ async function saveAccount() {
     type:document.getElementById('acc-type').value,
     balance:parseFloat(document.getElementById('acc-balance').value)||0,
     color:document.getElementById('acc-color').value,
+    context:document.getElementById('acc-context').value||currentContext,
     updatedAt:new Date().toISOString()
   };
   if(!acc.name){showToast('Inserisci il nome del conto','err');return}
@@ -1781,6 +1831,7 @@ function editAccount(id) {
   document.getElementById('acc-type').value=a.type;
   document.getElementById('acc-balance').value=a.balance;
   document.getElementById('acc-color').value=a.color||'var(--ac)';
+  document.getElementById('acc-context').value=a.context||'personal';
   openModal('modal-account');
 }
 async function deleteAccount(id) {
@@ -1986,9 +2037,10 @@ async function importCSV() {
 function exportCSV() {
   const rows=[['Data','Descrizione','Tipo','Categoria','Conto','Importo','Note']];
   const accName=(id)=>STATE.accounts.find(a=>a.id===id)?.name||'';
-  STATE.transactions.forEach(t=>rows.push([t.date,t.description,t.type,t.category,accName(t.account),(t.type==='income'?'':'-')+t.amount,t.note||'']));
+  const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
+  ctxTx.forEach(t=>rows.push([t.date,t.description,t.type,t.category,accName(t.account),(t.type==='income'?'':'-')+t.amount,t.note||'']));
   const csv=rows.map(r=>r.join(';')).join('\n');
-  dl('kazka-transazioni.csv','text/csv',csv);
+  dl(`kazka-${currentContext}-transazioni.csv`,'text/csv',csv);
 }
 
 /* ─── PDF EXPORT ─── */
@@ -1996,21 +2048,23 @@ function exportPDF() {
   try {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const ctxTx = STATE.transactions.filter(t=>!t.context||t.context===currentContext);
+    const ctxLabel = currentContext==='business'?'Business':'Personal';
     doc.setFontSize(20);
-    doc.text('Kazka — Report Finanziario', 14, 22);
+    doc.text(`Kazka — Report ${ctxLabel}`, 14, 22);
     doc.setFontSize(11);
     doc.setTextColor(120);
     doc.text(new Date().toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'}), 14, 30);
     doc.setTextColor(0);
     doc.setFontSize(13);
     doc.text('Riepilogo', 14, 42);
-    const totInc=STATE.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0);
-    const totExp=STATE.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0);
+    const totInc=ctxTx.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0);
+    const totExp=ctxTx.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0);
     doc.setFontSize(10);
     doc.text(`Totale entrate: ${fmt(totInc)}`, 14, 52);
     doc.text(`Totale uscite: ${fmt(totExp)}`, 14, 60);
     doc.text(`Saldo netto: ${fmt(totInc-totExp)}`, 14, 68);
-    doc.text(`Numero transazioni: ${STATE.transactions.length}`, 14, 76);
+    doc.text(`Numero transazioni: ${ctxTx.length}`, 14, 76);
     doc.setFontSize(13);
     doc.text('Ultime 20 transazioni', 14, 90);
     doc.setFontSize(9);
@@ -2018,7 +2072,7 @@ function exportPDF() {
     doc.text('Data         Descrizione                       Importo', 14, 98);
     doc.setTextColor(0);
     let y=106;
-    STATE.transactions.slice(0,20).forEach(t=>{
+    ctxTx.slice(0,20).forEach(t=>{
       if(y>270){doc.addPage();y=20}
       const sign=t.type==='income'?'+':'-';
       doc.text(`${t.date||'—'}`, 14, y);
@@ -2033,8 +2087,9 @@ function exportPDF() {
 
 /* ─── UTILS ─── */
 function populateAccountSelects() {
+  const ctxAcc = STATE.accounts.filter(a=>!a.context||a.context===currentContext);
   const sel=['tx-account'];
-  sel.forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=STATE.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')||'<option value="">—</option>'; });
+  sel.forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=ctxAcc.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')||'<option value="">—</option>'; });
 }
 function fmt(v){ return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(v)||0); }
 function fmtDate(d){ if(!d)return '—'; try{return new Date(d).toLocaleDateString('it-IT');}catch{return d;} }

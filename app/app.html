@@ -1804,6 +1804,15 @@ function showApp(){
 }
 
 /* ===== MODE SWITCHER ===== */
+/* ── CONTEXT FILTER: filtra dati per modalità corrente ── */
+// I dati senza campo "mode" (vecchi) vengono sempre mostrati in Personal
+function ctx(arr){
+  return arr.filter(item => {
+    if(!item.mode) return appMode==='personal'; // legacy → solo personal
+    return item.mode === appMode;
+  });
+}
+
 function setMode(mode){
   const hasBiz=PLANS[user.plan]?.biz;
   if(mode==='business'&&!hasBiz){
@@ -1837,6 +1846,9 @@ function applyMode(){
   // Update mobile logo badge
   const badge=document.getElementById('tbLogoMode');
   if(badge){badge.textContent=isBiz?'🏢':'👤';badge.className='tb-logo-mode '+(isBiz?'biz':'personal');}
+  // Visual emphasis on active mode button
+  if(bp){bp.style.fontWeight=!isBiz?'800':'600';}
+  if(bb){bb.style.fontWeight=isBiz?'800':'600';}
 }
 function updateUI(){
   document.getElementById('sbName').textContent=user.name;
@@ -2035,7 +2047,7 @@ function checkRecurring(){
   const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
   const tomorrowS=tomorrow.toISOString().split('T')[0];
 
-  const due=recurring.filter(r=>r.status==='active'&&r.nextDate&&r.nextDate<=today);
+  const due=ctx(recurring).filter(r=>r.status==='active'&&r.nextDate&&r.nextDate<=today);
   due.forEach(r=>{
     const txKey='rec_'+r.id+'_'+r.nextDate.replace(/-/g,'');
     const alreadyDone=transactions.some(t=>t.recKey===txKey);
@@ -2329,7 +2341,7 @@ function renderPage(p){
   const con=document.getElementById('content');
   const _tk=id=>t('title_'+id)||t('nav_'+id)||id;
   const TITLES={conti:'Conti & Carte',dashboard:_tk('dashboard'),transazioni:_tk('transazioni'),report:_tk('report'),ricorrenti:_tk('ricorrenti'),bollette:_tk('bollette'),viaggi:_tk('viaggi'),obiettivi:_tk('obiettivi'),gruppi:_tk('gruppi'),notifiche:_tk('notifiche'),piani:_tk('piani'),admin:_tk('admin'),profilo:_tk('profilo'),biz_dashboard:_tk('biz_dashboard'),biz_primanota:_tk('biz_primanota'),biz_clienti:_tk('biz_clienti'),biz_preventivi:_tk('biz_preventivi'),biz_progetti:_tk('biz_progetti'),biz_spese:_tk('biz_spese'),biz_scadenzario:_tk('biz_scadenzario'),biz_iva:_tk('biz_iva')};
-  const SUBS={conti:`${accounts.length} conti`,dashboard:t('sub_dashboard'),transazioni:`${transactions.length} ${t('sub_transazioni')}`,report:t('sub_report'),ricorrenti:`${recurring.length} ${t('sub_ricorrenti')}`,bollette:`${bills.length} ${t('sub_bollette')} · ${utilities.length}`,viaggi:`${trips.length} ${t('sub_viaggi')}`,obiettivi:`${loadGoals().filter(g=>g.status!=='completed').length} ${t('sub_obiettivi')}`,gruppi:`${groups.length} ${t('sub_gruppi')}`,notifiche:t('sub_notifiche'),piani:t('sub_piani'),admin:t('sub_admin'),profilo:t('sub_profilo'),biz_dashboard:t('sub_biz_dashboard'),biz_primanota:`${bizTx.length} ${t('sub_biz_primanota')}`,biz_clienti:`${clients.length} ${t('sub_biz_clienti')}`,biz_preventivi:`${quotes.length} ${t('sub_biz_preventivi')}`,biz_progetti:`${projects.length} ${t('sub_biz_progetti')}`,biz_spese:`${expenseNotes.length} ${t('sub_biz_spese')}`,biz_scadenzario:t('sub_biz_scadenzario'),biz_iva:t('sub_biz_iva')};
+  const SUBS={conti:`${accounts.length} conti`,dashboard:t('sub_dashboard'),transazioni:`${ctx(transactions).length} ${t('sub_transazioni')}`,report:t('sub_report'),ricorrenti:`${ctx(recurring).length} ${t('sub_ricorrenti')}`,bollette:`${ctx(bills).length} ${t('sub_bollette')} · ${utilities.length}`,viaggi:`${trips.length} ${t('sub_viaggi')}`,obiettivi:`${loadGoals().filter(g=>(!g.mode||g.mode===appMode)&&g.status!=='completed').length} ${t('sub_obiettivi')}`,gruppi:`${groups.length} ${t('sub_gruppi')}`,notifiche:t('sub_notifiche'),piani:t('sub_piani'),admin:t('sub_admin'),profilo:t('sub_profilo'),biz_dashboard:t('sub_biz_dashboard'),biz_primanota:`${bizTx.length} ${t('sub_biz_primanota')}`,biz_clienti:`${clients.length} ${t('sub_biz_clienti')}`,biz_preventivi:`${quotes.length} ${t('sub_biz_preventivi')}`,biz_progetti:`${projects.length} ${t('sub_biz_progetti')}`,biz_spese:`${expenseNotes.length} ${t('sub_biz_spese')}`,biz_scadenzario:t('sub_biz_scadenzario'),biz_iva:t('sub_biz_iva')};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
   // Desktop title
@@ -2339,16 +2351,15 @@ function renderPage(p){
   const pgTN=document.getElementById('pgTitle');
   if(pgTN)pgTN.textContent=TITLES[p]||p;
 
-  let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
+  let bal=0;ctx(transactions).forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
 
   if(p==='conti'){renderConti(con);return;}
   if(p==='dashboard'){
-    const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-    const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    const inc=ctx(transactions).filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const exp=ctx(transactions).filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
     const _nowYM=new Date().toISOString().slice(0,7);
     const today2=new Date().toISOString().split('T')[0];
 
-    // Costo mensile fisso di una ricorrente (normalizzato al mese)
     function recMonthlyCost(r){
       if(r.freq==='monthly')return r.amount;
       if(r.freq==='yearly')return r.amount/12;
@@ -2357,39 +2368,36 @@ function renderPage(p){
       return 0;
     }
 
-    // Totale impegni mensili fissi ricorrenti (tutte, a prescindere da quando scattano)
-    const recMonthTotal=recurring
+    const recMonthTotal=ctx(recurring)
       .filter(r=>r.status==='active'&&r.type==='expense')
       .reduce((s,r)=>s+recMonthlyCost(r),0);
 
-    // Bollette non ancora pagate
-    const billTotal=bills.filter(b=>!b.paid&&b.status!=='paid').reduce((s,b)=>s+(b.amount||0),0);
+    const billTotal=ctx(bills).filter(b=>!b.paid&&b.status!=='paid').reduce((s,b)=>s+(b.amount||0),0);
 
-    // Utenze mensili (solo quelle senza ricorrente collegata per evitare doppio conteggio)
-    const utilIds=new Set(recurring.filter(r=>r.status==='active').map(r=>r.utilityId).filter(Boolean));
-    const utilTotal=utilities.filter(u=>!utilIds.has(u.id)).reduce((s,u)=>s+(u.monthlyFee||0),0);
+    const utilIds=new Set(ctx(recurring).filter(r=>r.status==='active').map(r=>r.utilityId).filter(Boolean));
+    const utilTotal=ctx(utilities).filter(u=>!utilIds.has(u.id)).reduce((s,u)=>s+(u.monthlyFee||0),0);
 
-    // Viaggi attivi
-    const tripTotal=trips.filter(t=>!t.dateTo||t.dateTo>=today2).reduce((s,t)=>s+(t.budget||0),0);
+    const tripTotal=ctx(trips).filter(t=>!t.dateTo||t.dateTo>=today2).reduce((s,t)=>s+(t.budget||0),0);
 
-    // Obiettivi: solo informativo
-    const goals=loadGoals();
+    const goals=loadGoals().filter(g=>!g.mode||g.mode===appMode);
     const goalMonthly=goals.filter(g=>g.status!=='completed').reduce((s,g)=>s+(g.monthlyTarget||0),0);
 
-    // SOLDI LIBERI = entrate mensili − ricorrenti (costo fisso mensile) − bollette − utenze − viaggi
-    // Base: entrate totali del mese corrente
-    const incThisMonth=transactions
+    const incThisMonth=ctx(transactions)
       .filter(t=>t.type==='income'&&(t.createdAt||'').slice(0,7)===_nowYM)
       .reduce((s,t)=>s+t.amount,0);
-    // Se non ci sono entrate questo mese usa il saldo disponibile come base
     const freeBase=incThisMonth>0?incThisMonth:bal;
     const freeMoney=freeBase-recMonthTotal-billTotal-utilTotal-tripTotal;
     const freeColor=freeMoney>=0?'var(--gr)':'var(--re)';
+
+    // Ultime transazioni del contesto corrente
+    const recentTx=ctx(transactions).slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5);
+    const catMap={}; ctx(transactions).filter(t=>t.type==='expense').forEach(t=>{catMap[t.cat||'altro']=(catMap[t.cat||'altro']||0)+t.amount;});
+    const topCats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,4);
     con.innerHTML=`
     <div class="stat-grid">
-      <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo Totale</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
-      <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate</div><div class="sc-val" style="color:var(--gr)">${fmtE(inc)}</div></div>
-      <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite</div><div class="sc-val" style="color:var(--re)">${fmtE(exp)}</div></div>
+      <div class="sc"><div class="sc-ico">💰</div><div class="sc-lbl">Saldo ${appMode==='business'?'Azienda':'Personale'}</div><div class="sc-val" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmtE(bal)}</div></div>
+      <div class="sc"><div class="sc-ico">📈</div><div class="sc-lbl">Entrate totali</div><div class="sc-val" style="color:var(--gr)">${fmtE(inc)}</div></div>
+      <div class="sc"><div class="sc-ico">📉</div><div class="sc-lbl">Uscite totali</div><div class="sc-val" style="color:var(--re)">${fmtE(exp)}</div></div>
       <div class="sc"><div class="sc-ico">🔄</div><div class="sc-lbl">Ricorrenti/mese</div><div class="sc-val" style="color:${recMonthTotal>0?'var(--ye)':'var(--gr)'}">${fmtE(recMonthTotal)}</div></div>
     </div>
     <!-- SOLDI LIBERI BOX -->
@@ -2409,6 +2417,46 @@ function renderPage(p){
         <div style="border-top:1px solid var(--b1);margin-top:4px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:800"><span style="color:var(--tx)">= Disponibile</span><span style="color:${freeColor}">${fmtE(freeMoney)}</span></div>
       </div>
     </div>
+
+    <!-- TOP CATEGORIE SPESA -->
+    ${topCats.length>0?`<div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">📊</div>Top Categorie Spesa</div><button class="btn-a btn-a-ac" onclick="goTo('report')">Vedi report</button></div>
+      ${topCats.map(([cid,val])=>{
+        const cat=CATS.find(c=>c.id===cid)||{icon:'📦',name:cid,color:'var(--tx3)'};
+        const pct=exp>0?Math.round((val/exp)*100):0;
+        return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--b1)">
+          <div style="font-size:18px;width:28px;text-align:center">${cat.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:600">${cat.name||cid}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--re)">${fmtE(val)}</span>
+            </div>
+            <div style="background:var(--s2);border-radius:4px;height:5px;overflow:hidden">
+              <div style="width:${pct}%;height:100%;background:${cat.color||'var(--re)'};border-radius:4px"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;color:var(--tx3);flex-shrink:0">${pct}%</span>
+        </div>`;
+      }).join('')}
+    </div>`:''}
+
+    <!-- ULTIME TRANSAZIONI -->
+    ${recentTx.length>0?`<div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">💸</div>Ultimi movimenti</div><button class="btn-a btn-a-ac" onclick="goTo('transazioni')">Tutti</button></div>
+      ${recentTx.map(t=>{
+        const cat=CATS.find(c=>c.id===t.cat)||{icon:'📦'};
+        return `<div class="ir">
+          <div class="ia">${cat.icon}</div>
+          <div class="ii">
+            <div class="in">${t.desc}</div>
+            <div class="id2">${fmtDate(t.createdAt)} · ${catName(t.cat)}</div>
+          </div>
+          <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div>
+        </div>`;
+      }).join('')}
+    </div>`:''}
+
+    <!-- OBIETTIVI -->
     ${goals.filter(g=>g.status!=='completed').length>0?`
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">🎯</div>Obiettivi di Risparmio</div><button class="btn-a btn-a-ac" onclick="goTo('obiettivi')">Vedi tutti</button></div>
@@ -2426,6 +2474,7 @@ function renderPage(p){
         </div>`;
       }).join('')}
     </div>`:''}
+  
   } else if(p==='transazioni'){
     let txPage=parseInt(sessionStorage.getItem('txPage')||'0');
     const txSearch=(sessionStorage.getItem('txSearch')||'').toLowerCase();
@@ -2434,8 +2483,8 @@ function renderPage(p){
     const txMonthFilter=sessionStorage.getItem('txMonthFilter')||'all';
     const PAGE_SIZE=15;
     // Build month options
-    const months=[...new Set(transactions.map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
-    let filtered=[...transactions].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).filter(t=>{
+    const months=[...new Set(ctx(transactions).map(t=>(t.createdAt||'').slice(0,7)))].sort().reverse();
+    let filtered=[...ctx(transactions)].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).filter(t=>{
       const matchSearch=!txSearch||t.desc.toLowerCase().includes(txSearch)||fmtE(t.amount).includes(txSearch);
       const matchType=txFilter==='all'||(txFilter==='income'&&t.type==='income')||(txFilter==='expense'&&t.type==='expense');
       const matchCat=txCatFilter==='all'||t.cat===txCatFilter;
@@ -2476,7 +2525,7 @@ function renderPage(p){
         <div style="display:flex;gap:7px;flex-wrap:wrap">
           <label class="export-btn" style="cursor:pointer" title="Importa CSV"><i class="fa fa-upload"></i> CSV<input type="file" accept=".csv" style="display:none" onchange="importCSV(this)"></label>
           <button class="export-btn" onclick="exportCSV()"><i class="fa fa-download"></i> CSV</button>
-          <button class="btn-a btn-a-gr" onclick="openMo('txModal')">＋ Aggiungi</button>
+          <button class="btn-a btn-a-gr" onclick="fillCatSelects();document.getElementById('txModalTitle').textContent='💸 Nuova Transazione';document.getElementById('txAccId').value='';openMo('txModal')">＋ Aggiungi</button>
         </div>
       </div>
       ${filtered.length===0?es('💸','Nessun movimento trovato.'):
@@ -2515,14 +2564,14 @@ function renderPage(p){
     const tab=sessionStorage.getItem('buTab')||'bollette';
     con.innerHTML=`
     <div style="display:flex;gap:8px;margin-bottom:14px">
-      <button class="pg-btn ${tab==='bollette'?'cur':''}" onclick="sessionStorage.setItem('buTab','bollette');goTo('bollette')">📄 Bollette (${bills.length})</button>
-      <button class="pg-btn ${tab==='utenze'?'cur':''}" onclick="sessionStorage.setItem('buTab','utenze');goTo('bollette')">🔌 Utenze (${utilities.length})</button>
+      <button class="pg-btn ${tab==='bollette'?'cur':''}" onclick="sessionStorage.setItem('buTab','bollette');goTo('bollette')">📄 Bollette (${ctx(bills).length})</button>
+      <button class="pg-btn ${tab==='utenze'?'cur':''}" onclick="sessionStorage.setItem('buTab','utenze');goTo('bollette')">🔌 Utenze (${ctx(utilities).length})</button>
     </div>
     ${tab==='bollette'?`
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">📄</div>Bollette</div><button class="btn-a btn-a-gr" onclick="openMo('billModal')">＋ Aggiungi</button></div>
-      ${bills.length===0?es('📄','Nessuna bolletta registrata'):
-      [...bills].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(b=>{
+      ${ctx(bills).length===0?es('📄','Nessuna bolletta registrata'):
+      [...ctx(bills)].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(b=>{
         const today=new Date().toISOString().split('T')[0];
         const daysLeft=b.date?Math.round((new Date(b.date)-new Date(today))/(1000*60*60*24)):null;
         const urgency=daysLeft!==null&&daysLeft<=3?'var(--re)':daysLeft<=7?'var(--ye)':'var(--tx2)';
@@ -2535,8 +2584,8 @@ function renderPage(p){
     </div>`:`
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">🔌</div>Contratti Utenze</div><button class="btn-a btn-a-gr" onclick="openMo('utilModal')">＋ Aggiungi</button></div>
-      ${utilities.length===0?es('🔌','Nessun contratto registrato'):
-      utilities.map(u=>`
+      ${ctx(utilities).length===0?es('🔌','Nessun contratto registrato'):
+      ctx(utilities).map(u=>`
       <div class="ir"><div class="ia">${utIco[u.type]||'🔌'}</div>
       <div class="ii"><div class="in">${u.provider}</div><div class="id2">Contratto: <span style="font-family:monospace">${u.contract}</span></div></div>
       <span class="badge bc">${u.type}</span>
@@ -2545,8 +2594,8 @@ function renderPage(p){
 
   } else if(p==='viaggi'){
     const today=new Date().toISOString().split('T')[0];
-    const upcoming=trips.filter(t=>!t.dateTo||t.dateTo>=today).sort((a,b)=>(a.dateFrom||'9').localeCompare(b.dateFrom||'9'));
-    const past=trips.filter(t=>t.dateTo&&t.dateTo<today);
+    const upcoming=ctx(trips).filter(t=>!t.dateTo||t.dateTo>=today).sort((a,b)=>(a.dateFrom||'9').localeCompare(b.dateFrom||'9'));
+    const past=ctx(trips).filter(t=>t.dateTo&&t.dateTo<today);
     const renderTrip=(t)=>{
       const daysLeft=t.dateFrom?Math.ceil((new Date(t.dateFrom)-new Date())/86400000):null;
       const duration=t.dateFrom&&t.dateTo?Math.ceil((new Date(t.dateTo)-new Date(t.dateFrom))/86400000)+1:null;
@@ -2600,11 +2649,11 @@ function renderPage(p){
     renderAdmin(con);
 
   } else if(p==='profilo'){
-    const goals=loadGoals();
+    const goals=loadGoals().filter(g=>!g.mode||g.mode===appMode);
     const activeGoals=goals.filter(g=>g.status!=='completed').length;
-    const bal2=transactions.reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
-    const txCount=transactions.length;
-    const recCount=recurring.filter(r=>r.status==='active').length;
+    const bal2=ctx(transactions).reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+    const txCount=ctx(transactions).length;
+    const recCount=ctx(recurring).filter(r=>r.status==='active').length;
     const joinDate=user.createdAt?new Date(user.createdAt).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'}):'N/D';
     const avatarColors=['#6c63ff','#00d4ff','#f7971e','#00e5a0','#ff4f6d'];
     const avatarColor=avatarColors[user.name?.charCodeAt(0)%avatarColors.length]||avatarColors[0];
@@ -3734,8 +3783,8 @@ function exportBizCSV(){
 
 /* ===== REPORT PAGE ===== */
 function renderReport(con,bal){
-  const expenses=transactions.filter(t=>t.type==='expense');
-  const income=transactions.filter(t=>t.type==='income');
+  const expenses=ctx(transactions).filter(t=>t.type==='expense');
+  const income=ctx(transactions).filter(t=>t.type==='income');
   const totalExp=expenses.reduce((s,t)=>s+t.amount,0);
   const totalInc=income.reduce((s,t)=>s+t.amount,0);
   const byCat={};
@@ -3752,7 +3801,7 @@ function renderReport(con,bal){
   });
   const maxM=Math.max(...monthlyData.map(m=>Math.max(m.exp,m.inc)),1);
   // Saldo cumulativo giorno per giorno (ultimi 30 gg)
-  const last30=[...transactions].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+  const last30=[...ctx(transactions)].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
   let running=0;const balPoints=last30.map(t=>{running+=t.type==='income'?t.amount:-t.amount;return running;});
   const maxBal=Math.max(...balPoints.map(Math.abs),1);
   // Budget
@@ -3857,8 +3906,8 @@ function renderReport(con,bal){
 
 /* ===== RICORRENTI PAGE ===== */
 function renderRecurring(con){
-  const active=recurring.filter(r=>r.status==='active');
-  const paused=recurring.filter(r=>r.status==='paused');
+  const active=ctx(recurring).filter(r=>r.status==='active');
+  const paused=ctx(recurring).filter(r=>r.status==='paused');
   const today=new Date().toISOString().split('T')[0];
   function monthCost(r){
     if(r.freq==='monthly')return r.amount;
@@ -3880,7 +3929,7 @@ function renderRecurring(con){
     <div class="ch"><div class="ct"><div class="ct-ico">🔄</div>Operazioni Ricorrenti</div>
       <button class="btn-a btn-a-gr" onclick="openRecModal()">＋ Aggiungi</button>
     </div>
-    ${recurring.length===0?es('🔄','Nessuna operazione ricorrente.<br>Aggiungi abbonamenti, stipendio, rate...'):    recurring.map(r=>{
+    ${ctx(recurring).length===0?es('🔄','Nessuna operazione ricorrente.<br>Aggiungi abbonamenti, stipendio, rate...'):    ctx(recurring).map(r=>{
       const isExpired=r.expiry&&r.expiry<today;
       const expiresSoon=r.expiry&&!isExpired&&Math.round((new Date(r.expiry)-new Date(today))/86400000)<=7;
       return `
@@ -4507,7 +4556,7 @@ function saveTx(){
   if(!desc||!amt||amt<=0){notify('❌ Compila tutti i campi');return;}
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
   if(type==='expense'&&amt>bal&&!accId){document.getElementById('txWarn').style.display='block';notify('❌ Saldo insufficiente!');return;}
-  const txData={desc,amount:amt,type,cat,createdAt:new Date().toISOString()};
+  const txData={desc,amount:amt,type,cat,mode:appMode,createdAt:new Date().toISOString()};
   if(accId) txData.accountId=accId;
   db.ref(`users/${user.id}/transactions/${Date.now()}`).set(txData).then(()=>{
     // Update account balance if linked
@@ -4527,12 +4576,12 @@ function saveTx(){
 function saveBill(){
   const n=document.getElementById('bName').value.trim(),a=parseFloat(document.getElementById('bAmt').value),d=document.getElementById('bDate').value;
   if(!n||!a||!d){notify('❌ Compila tutto');return;}
-  db.ref(`users/${user.id}/bills/${Date.now()}`).set({name:n,amount:a,date:d,status:'pending',createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');loadData(()=>goTo('bollette'));notify('✅ Aggiunto!');});
+  db.ref(`users/${user.id}/bills/${Date.now()}`).set({name:n,amount:a,date:d,status:'pending',mode:appMode,createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');loadData(()=>goTo('bollette'));notify('✅ Aggiunto!');});
 }
 function saveUtil(){
   const t=document.getElementById('utType').value,p=document.getElementById('utProv').value.trim(),c=document.getElementById('utCon').value.trim();
   if(!p||!c){notify('❌ Compila tutto');return;}
-  db.ref(`users/${user.id}/utilities/${Date.now()}`).set({type:t,provider:p,contract:c,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('✅ Aggiunto!');});
+  db.ref(`users/${user.id}/utilities/${Date.now()}`).set({type:t,provider:p,contract:c,mode:appMode,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('✅ Aggiunto!');});
 }
 function openNewTrip(){
   document.getElementById('trEditId').value='';
@@ -4563,7 +4612,7 @@ function saveTrip(){
   const b=parseFloat(document.getElementById('trBudget').value)||0;
   if(!n||!d){notify('❌ Inserisci almeno nome e destinazione');return;}
   const data={
-    name:n,dest:d,budget:b,userId:user.id,
+    name:n,dest:d,budget:b,userId:user.id,mode:appMode,
     dateFrom:document.getElementById('trDateFrom').value||'',
     dateTo:document.getElementById('trDateTo').value||'',
     hotel:document.getElementById('trHotel').value.trim(),
@@ -4623,7 +4672,7 @@ function saveRec(){
   const k=document.getElementById('recKind').value;
   const expiry=document.getElementById('recExpiry').value||null;
   if(!n||!a||!nd){notify('❌ Compila nome, importo e prossima scadenza');return;}
-  const data={name:n,amount:a,type:t,cat:c,freq:f,nextDate:nd,kind:k,expiry,status:'active',userId:user.id};
+  const data={name:n,amount:a,type:t,cat:c,freq:f,nextDate:nd,kind:k,expiry,status:'active',mode:appMode,userId:user.id};
   if(editId){
     db.ref(`users/${user.id}/recurring/${editId}`).update(data).then(()=>{
       closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiornata!');
@@ -4838,7 +4887,7 @@ function checkBudgetAlerts(){
   if(!Object.keys(budgets).length)return;
   const thisMonth=new Date().toISOString().slice(0,7);
   const spentByCat={};
-  transactions.filter(t=>t.type==='expense'&&t.createdAt.startsWith(thisMonth)).forEach(t=>{
+  ctx(transactions).filter(t=>t.type==='expense'&&t.createdAt.startsWith(thisMonth)).forEach(t=>{
     const c=t.cat||'other';spentByCat[c]=(spentByCat[c]||0)+t.amount;
   });
   Object.entries(budgets).forEach(([cid,limit])=>{
@@ -4882,7 +4931,7 @@ function saveEditTx(){
 /* ===== EXPORT CSV ===== */
 function exportCSV(){
   const rows=[['Data','Descrizione','Tipo','Categoria','Importo (€)']];
-  [...transactions].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(t=>{
+  [...ctx(transactions)].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(t=>{
     rows.push([
       fmtDate(t.createdAt),
       '"'+t.desc.replace(/"/g,'""')+'"',
@@ -5002,7 +5051,7 @@ function saveGoals(goals){
   if(db&&user){window._goalsSaving=true;db.ref(`users/${user.id}/goals`).set(goals||[]);}
 }
 function renderGoals(con){
-  const goals=loadGoals();
+  const goals=loadGoals().filter(g=>!g.mode||g.mode===appMode);
   const active=goals.filter(g=>g.status!=='completed');
   const done=goals.filter(g=>g.status==='completed');
   const priColor={high:'var(--re)',medium:'var(--ye)',low:'var(--gr)'};
@@ -5090,7 +5139,7 @@ function saveGoal(){
     const idx=goals.findIndex(g=>g.id===editId);
     if(idx>=0)goals[idx]={...goals[idx],name,target,saved,icon,deadline,priority,monthlyTarget};
   } else {
-    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,status:'active',createdAt:new Date().toISOString()});
+    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,mode:appMode,status:'active',createdAt:new Date().toISOString()});
   }
   saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
 }
@@ -5128,7 +5177,7 @@ function checkEndOfMonth(){
 
   // Calcola saldo disponibile (stessa logica dashboard)
   let bal=0;transactions.forEach(t=>bal+=t.type==='income'?t.amount:-t.amount);
-  const _paidRecKeys=new Set(transactions.filter(t=>t.recKey).map(t=>t.recKey));
+  const _paidRecKeys=new Set(ctx(transactions).filter(t=>t.recKey).map(t=>t.recKey));
   const today2=today.toISOString().split('T')[0];
   const _nowYM2=_nowYM;
 
@@ -5149,14 +5198,14 @@ function checkEndOfMonth(){
     return r.amount*count;
   }
 
-  const recTotal=recurring.filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+recRemaining(r),0);
-  const billTotal=bills.filter(b=>!b.paid).reduce((s,b)=>s+(b.amount||0),0);
+  const recTotal=ctx(recurring).filter(r=>r.status==='active'&&r.type==='expense').reduce((s,r)=>s+recRemaining(r),0);
+  const billTotal=ctx(bills).filter(b=>!b.paid).reduce((s,b)=>s+(b.amount||0),0);
   const utilTotal=utilities.reduce((s,u)=>s+(u.monthlyFee||0),0);
   const freeMoney=bal-recTotal-billTotal-utilTotal;
 
   if(freeMoney<=0)return; // nessun saldo libero, non mostrare
 
-  const goals=loadGoals().filter(g=>g.status!=='completed'&&g.monthlyTarget>0);
+  const goals=loadGoals().filter(g=>(!g.mode||g.mode===appMode)&&g.status!=='completed'&&g.monthlyTarget>0);
   if(goals.length===0)return;
 
   // Mesi nome
@@ -5652,8 +5701,11 @@ function closeFab(){
 }
 function openFabTx(type){
   closeFab();
+  fillCatSelects();
   const sel=document.getElementById('txType');
   if(sel)sel.value=type;
+  document.getElementById('txModalTitle').textContent=type==='income'?'📈 Nuova Entrata':'📉 Nuova Uscita';
+  document.getElementById('txAccId').value='';
   openMo('txModal');
 }
 document.addEventListener('click',function(e){

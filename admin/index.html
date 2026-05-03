@@ -4,25 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kazka — Admin Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#07090f;--bg2:#0e1220;--bg3:#141929;--bg4:#1a2035;
-  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);--b3:rgba(255,255,255,.18);
-  --ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;
-  --tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;
-  --grad:linear-gradient(135deg,#7B68EE,#00E5FF);
-  --danger-grad:linear-gradient(135deg,#FF3355,#FF8C42);
-  --r:12px;--rsm:7px;
-}
-html{scroll-behavior:smooth}
+:root{--bg:#07090f;--bg2:#0e1220;--bg3:#141929;--bg4:#1a2035;--b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF);--r:12px;--rsm:7px}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
-a{text-decoration:none;color:inherit}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
-
-/* ══ LOGIN ══ */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%)}
 .login-box{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
 .login-head{background:var(--grad);padding:2rem;text-align:center}
@@ -35,240 +23,97 @@ input,select,textarea{font-family:inherit}
 .fg input{width:100%;padding:.8rem 1rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.9rem;transition:border-color .2s}
 .fg input:focus{outline:none;border-color:var(--ac)}
 .fg input::placeholder{color:var(--tx3)}
-.login-btn{width:100%;padding:.95rem;background:var(--grad);color:#fff;border-radius:var(--rsm);font-weight:700;font-size:.95rem;transition:opacity .2s;margin-top:.25rem}
+.login-btn{width:100%;padding:.95rem;background:var(--grad);color:#fff;border-radius:var(--rsm);font-weight:700;font-size:.95rem;transition:opacity .2s}
 .login-btn:hover{opacity:.9}
 .login-err{margin-top:.75rem;padding:.75rem;background:rgba(255,51,85,.1);border:1px solid rgba(255,51,85,.3);border-radius:var(--rsm);color:var(--re);font-size:.8rem;display:none}
-.admin-only-note{text-align:center;margin-top:1rem;font-size:.75rem;color:var(--tx3)}
-
-/* ══ LAYOUT ══ */
 #admin-panel{display:none}
 .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:rgba(7,9,15,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1)}
-.topbar-left{display:flex;align-items:center;gap:.75rem}
 .t-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .t-badge{padding:.2rem .6rem;background:rgba(255,51,85,.15);color:var(--re);border:1px solid rgba(255,51,85,.25);border-radius:5px;font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.topbar-right{display:flex;align-items:center;gap:1rem}
 .t-stat{text-align:center}
 .t-stat-n{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--gr);display:block}
 .t-stat-l{font-size:.6rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
-.btn-logout{padding:.45rem 1rem;background:none;border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx2);font-size:.8rem;transition:all .2s}
+.btn-logout{padding:.45rem 1rem;border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx2);font-size:.8rem;transition:all .2s}
 .btn-logout:hover{border-color:var(--re);color:var(--re)}
-.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 53px)}
-
-/* ══ SIDEBAR ══ */
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 53px)}
 .sidebar{background:var(--bg2);border-right:1px solid var(--b1);padding:1rem 0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;display:flex;flex-direction:column}
 .nav-sect{padding:.35rem 1rem .2rem;font-size:.6rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem}
-.nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1rem;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--tx2);transition:all .15s;border-left:3px solid transparent;margin:.1rem .5rem;border-radius:0 var(--rsm) var(--rsm) 0}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1rem;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--tx2);transition:all .15s;border-left:3px solid transparent;margin:.1rem .5rem;border-radius:0 7px 7px 0}
 .nav-item:hover{color:var(--tx);background:var(--b1)}
 .nav-item.active{color:var(--ac);background:rgba(123,104,238,.1);border-left-color:var(--ac)}
-.nav-item .ic{font-size:14px;flex-shrink:0;width:16px;text-align:center}
-.nav-item .nav-badge{margin-left:auto;background:var(--re);color:#fff;font-size:.6rem;font-weight:800;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
 .nav-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--b1)}
-.admin-user{display:flex;align-items:center;gap:.6rem}
-.admin-av{width:32px;height:32px;border-radius:50%;background:var(--danger-grad);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0}
-.admin-name{font-size:.8rem;font-weight:600;color:var(--tx)}
-.admin-role{font-size:.65rem;color:var(--re)}
-
-/* ══ MAIN ══ */
-.main{padding:1.5rem;overflow-y:auto}
+.admin-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF3355,#FF8C42);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0}
+.main{padding:1.5rem}
 .view{display:none}
 .view.active{display:block}
 .page-hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem}
 .page-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700}
 .page-sub{font-size:.8rem;color:var(--tx2);margin-top:.15rem}
-
-/* ══ COMPONENTS ══ */
 .card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
-.card-title{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:.875rem;display:flex;align-items:center;justify-content:space-between}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1rem}
-.stat{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.1rem;transition:transform .2s;position:relative;overflow:hidden}
+.card-title{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:.875rem}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1rem}
+.stat{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.1rem;transition:transform .2s}
 .stat:hover{transform:translateY(-2px)}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:opacity .2s}
-.stat:hover::before{opacity:1}
 .stat-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.4rem}
 .stat-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800}
 .stat-sub{font-size:.75rem;color:var(--tx2);margin-top:.2rem}
-.stat-trend{font-size:.72rem;font-weight:700;margin-top:.3rem}
-.stat-trend.up{color:var(--gr)}
-.stat-trend.down{color:var(--re)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border-radius:var(--rsm);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-.btn-primary{background:var(--grad);color:#fff}
-.btn-primary:hover{opacity:.88}
-.btn-danger{background:rgba(255,51,85,.15);border:1px solid rgba(255,51,85,.3);color:var(--re)}
-.btn-danger:hover{background:rgba(255,51,85,.25)}
-.btn-secondary{background:var(--bg3);border:1px solid var(--b2);color:var(--tx)}
-.btn-secondary:hover{border-color:var(--ac);color:var(--ac)}
+.btn-primary{background:var(--grad);color:#fff}.btn-primary:hover{opacity:.88}
+.btn-danger{background:rgba(255,51,85,.15);border:1px solid rgba(255,51,85,.3);color:var(--re)}.btn-danger:hover{background:rgba(255,51,85,.25)}
 .btn-success{background:rgba(0,240,160,.15);border:1px solid rgba(0,240,160,.3);color:var(--gr)}
-.btn-success:hover{background:rgba(0,240,160,.25)}
-.btn-warn{background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.3);color:var(--ye)}
+.btn-sec{background:var(--bg3);border:1px solid var(--b2);color:var(--tx)}.btn-sec:hover{border-color:var(--ac);color:var(--ac)}
 .btn-sm{padding:.4rem .8rem;font-size:.75rem}
 .btn-icon{width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:var(--rsm)}
 .badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:20px;font-size:.68rem;font-weight:700}
-.badge-green{background:rgba(0,240,160,.12);color:var(--gr)}
-.badge-red{background:rgba(255,51,85,.12);color:var(--re)}
-.badge-yellow{background:rgba(255,209,102,.12);color:var(--ye)}
-.badge-blue{background:rgba(0,229,255,.12);color:var(--ac2)}
-.badge-purple{background:rgba(123,104,238,.12);color:var(--ac)}
-.badge-orange{background:rgba(255,140,66,.12);color:var(--or)}
-.badge-gray{background:var(--b1);color:var(--tx2)}
+.bg{background:rgba(0,240,160,.12);color:var(--gr)} .br{background:rgba(255,51,85,.12);color:var(--re)} .by{background:rgba(255,209,102,.12);color:var(--ye)} .bb{background:rgba(0,229,255,.12);color:var(--ac2)} .bp{background:rgba(123,104,238,.12);color:var(--ac)} .bgy{background:var(--b1);color:var(--tx2)}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 th{padding:.65rem 1rem;text-align:left;font-size:.65rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--b1)}
-td{padding:.8rem 1rem;border-bottom:1px solid var(--b1);color:var(--tx2)}
+td{padding:.75rem 1rem;border-bottom:1px solid var(--b1);color:var(--tx2)}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--b1)}
-.td-main{color:var(--tx);font-weight:500}
-.table-wrap{overflow-x:auto}
+.tdm{color:var(--tx);font-weight:500}
+.tw{overflow-x:auto}
 .empty{text-align:center;padding:2.5rem;color:var(--tx3);font-size:.875rem}
-.empty-icon{font-size:2rem;margin-bottom:.5rem}
-.search-bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
-.search-input{flex:1;min-width:200px;padding:.65rem 1rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.85rem}
-.search-input:focus{outline:none;border-color:var(--ac)}
-.search-input::placeholder{color:var(--tx3)}
-
-/* ══ USER DETAIL ══ */
-.udet{background:var(--bg4);border-radius:var(--rsm);padding:.75rem}
-.udet-l{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.25rem}
-.udet-v{font-size:.9rem;font-weight:600;color:var(--tx)}
-
-/* ══ MODAL ══ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
-.modal-overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.modal-lg{max-width:620px}
-.modal-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1)}
-.modal-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700}
-.modal-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:6px;color:var(--tx2);cursor:pointer;font-size:.9rem}
-.modal-close:hover{color:var(--re)}
-.modal-body{padding:1.1rem 1.4rem}
-.modal-footer{padding:.875rem 1.4rem;border-top:1px solid var(--b1);display:flex;gap:.6rem;justify-content:flex-end}
-.form-group{margin-bottom:.875rem}
-.form-group label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:.35rem}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:.7rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.875rem;transition:border-color .2s}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--ac)}
-.form-group select option{background:var(--bg3)}
-.form-group textarea{resize:vertical;min-height:80px}
-
-/* ══ LOGS ══ */
-.log-entry{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--b1);font-size:.8rem}
-.log-entry:last-child{border-bottom:none}
-.log-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;background:var(--bg3)}
-.log-info{flex:1}
-.log-msg{color:var(--tx);margin-bottom:.15rem}
-.log-meta{color:var(--tx3);font-size:.72rem}
-.log-type{margin-left:auto;flex-shrink:0}
-
-/* ══ SETTINGS ══ */
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--b1)}
-.setting-row:last-child{border-bottom:none}
-.setting-title{font-weight:600;font-size:.9rem;margin-bottom:.2rem}
-.setting-desc{font-size:.8rem;color:var(--tx2)}
+.si{flex:1;min-width:200px;padding:.65rem 1rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.85rem}
+.si:focus{outline:none;border-color:var(--ac)}
+.si::placeholder{color:var(--tx3)}
+.sb{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.mo.open{display:flex}
+.md{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1)}
+.mt{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700}
+.mc{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:6px;color:var(--tx2);cursor:pointer}
+.mc:hover{color:var(--re)}
+.mb{padding:1.25rem 1.4rem}
+.mf{padding:.875rem 1.4rem;border-top:1px solid var(--b1);display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap}
+.fg2{margin-bottom:.875rem}
+.fg2 label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:.35rem}
+.fg2 input,.fg2 select,.fg2 textarea{width:100%;padding:.7rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.875rem;transition:border-color .2s}
+.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{outline:none;border-color:var(--ac)}
+.fg2 select option{background:var(--bg3)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 .toggle{width:44px;height:24px;background:var(--b2);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
 .toggle.on{background:var(--ac)}
 .toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
 .toggle.on::after{transform:translateX(20px)}
-
-/* ══ TOAST ══ */
-#toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:.8rem 1.1rem;color:var(--tx);font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:300px;display:flex;align-items:center;gap:.5rem}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--b1)}
+.sr:last-child{border-bottom:none}
+.log-e{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--b1);font-size:.8rem}
+.log-e:last-child{border-bottom:none}
+.log-ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;background:var(--bg3)}
+#toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:.8rem 1.1rem;color:var(--tx);font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:280px;display:flex;align-items:center;gap:.5rem}
 #toast.show{transform:translateX(0)}
 #toast.ok{border-left:3px solid var(--gr)}
 #toast.err{border-left:3px solid var(--re)}
 #toast.warn{border-left:3px solid var(--ye)}
-
-/* ══ CHART ══ */
 .chart-wrap{position:relative;height:220px}
-.chart-wrap-lg{position:relative;height:280px}
-
-/* ══ CONFIRM DANGER ══ */
-.confirm-input{width:100%;padding:.75rem;background:var(--bg3);border:1.5px solid rgba(255,51,85,.4);border-radius:var(--rsm);color:var(--tx);font-size:.875rem;margin-top:.75rem}
-.confirm-input:focus{outline:none;border-color:var(--re)}
-
-/* ══ BROADCAST ══ */
-.segment-btn{padding:.5rem 1rem;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;border:1.5px solid var(--b2);color:var(--tx2);transition:all .2s}
-.segment-btn.sel{border-color:var(--ac);color:var(--ac);background:rgba(123,104,238,.12)}
-.msg-preview{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rsm);padding:1rem;margin-top:.75rem;font-size:.85rem;line-height:1.5;color:var(--tx2);white-space:pre-wrap}
-
-/* ══ REVENUE ══ */
-.revenue-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem}
-.kpi-card{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:1.25rem;position:relative;overflow:hidden}
-.kpi-card::after{content:'';position:absolute;inset:0;background:var(--grad);opacity:.04;pointer-events:none}
-.kpi-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.5rem}
-.kpi-value{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;line-height:1}
-.kpi-sub{font-size:.78rem;color:var(--tx2);margin-top:.4rem}
-.kpi-delta{display:inline-flex;align-items:center;gap:.25rem;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:20px;margin-top:.5rem}
-.kpi-delta.pos{background:rgba(0,240,160,.12);color:var(--gr)}
-.kpi-delta.neg{background:rgba(255,51,85,.12);color:var(--re)}
-
-/* ══ GLOBAL SEARCH ══ */
-.search-result{display:flex;align-items:center;gap:.875rem;padding:.875rem;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rsm);margin-bottom:.5rem;cursor:pointer;transition:border-color .2s}
-.search-result:hover{border-color:var(--ac)}
-.search-result-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.search-result-info{flex:1;min-width:0}
-.search-result-title{font-size:.9rem;font-weight:600;color:var(--tx)}
-.search-result-sub{font-size:.75rem;color:var(--tx3);margin-top:.1rem}
-.search-result-meta{font-size:.78rem;font-weight:700;color:var(--tx2);white-space:nowrap}
-
-/* ══ SECURITY ══ */
-.session-row{display:flex;align-items:center;gap:.75rem;padding:.875rem;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rsm);margin-bottom:.5rem}
-.session-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.session-dot.active{background:var(--gr);box-shadow:0 0 6px var(--gr)}
-.session-dot.inactive{background:var(--tx3)}
-.risk-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;font-weight:700}
-.risk-high{background:rgba(255,51,85,.15);color:var(--re)}
-.risk-medium{background:rgba(255,209,102,.15);color:var(--ye)}
-.risk-low{background:rgba(0,240,160,.15);color:var(--gr)}
-
-/* ══ BACKUP ══ */
-.backup-item{display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rsm);margin-bottom:.5rem}
-.backup-info{display:flex;flex-direction:column;gap:.2rem}
-.backup-name{font-size:.9rem;font-weight:600;color:var(--tx)}
-.backup-meta{font-size:.75rem;color:var(--tx3)}
-.backup-size{font-size:.8rem;font-weight:700;color:var(--tx2);margin-right:1rem}
-
-/* ══ SUPPORT ══ */
-.ticket-card{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:1rem;margin-bottom:.75rem;cursor:pointer;transition:border-color .2s}
-.ticket-card:hover{border-color:var(--ac)}
-.ticket-card.open-ticket{border-left:3px solid var(--re)}
-.ticket-card.resolved-ticket{border-left:3px solid var(--gr)}
-.ticket-card.pending-ticket{border-left:3px solid var(--ye)}
-.ticket-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
-.ticket-user{font-size:.875rem;font-weight:600;color:var(--tx)}
-.ticket-preview{font-size:.8rem;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ticket-meta{font-size:.72rem;color:var(--tx3);margin-top:.35rem}
-.chat-bubble{padding:.75rem 1rem;border-radius:12px;margin-bottom:.5rem;max-width:85%;font-size:.875rem;line-height:1.5}
-.chat-bubble.user{background:var(--bg3);border:1px solid var(--b1);align-self:flex-start}
-.chat-bubble.admin{background:rgba(123,104,238,.15);border:1px solid rgba(123,104,238,.25);align-self:flex-end;margin-left:auto}
-.chat-wrap{display:flex;flex-direction:column;gap:.25rem;max-height:340px;overflow-y:auto;padding:.5rem 0;margin-bottom:1rem}
-.chat-meta{font-size:.68rem;color:var(--tx3);margin-top:.2rem}
-
-/* ══ PLAN MANAGEMENT ══ */
-.plan-card{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:1.25rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
-.plan-card:hover{transform:translateY(-2px)}
-.plan-card.plan-free{border-color:rgba(122,133,168,.3)}
-.plan-card.plan-pro{border-color:rgba(123,104,238,.35)}
-.plan-card.plan-business{border-color:rgba(0,229,255,.35)}
-.plan-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.3rem}
-.plan-price{font-size:1.8rem;font-weight:800;font-family:'Syne',sans-serif;margin:.5rem 0}
-.plan-price span{font-size:.9rem;font-weight:400;color:var(--tx2)}
-.plan-feature{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--tx2);padding:.3rem 0;border-bottom:1px solid var(--b1)}
-.plan-feature:last-child{border-bottom:none}
-.plan-feature .ok{color:var(--gr)}
-.plan-feature .no{color:var(--tx3)}
-.plan-users-count{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--ac)}
-.plan-badge-strip{position:absolute;top:0;left:0;right:0;height:3px}
-
-/* ══ RESPONSIVE ══ */
-@media(max-width:768px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .grid2,.grid3{grid-template-columns:1fr}
-  .stats-grid{grid-template-columns:1fr 1fr}
-}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.g2,.fr{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-head">
@@ -277,26 +122,25 @@ tr:hover td{background:var(--b1)}
       <div class="admin-badge">🔐 ADMIN PANEL</div>
     </div>
     <div class="login-body">
-      <div class="fg"><label>Email amministratore</label><input type="email" id="l-email" placeholder="admin@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label>Email amministratore</label><input type="email" id="l-email" placeholder="admin@email.com"></div>
+      <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="login-btn" onclick="doLogin()" id="login-btn">Accedi al pannello</button>
       <div class="login-err" id="login-err"></div>
-      <div class="admin-only-note">⚠ Accesso riservato agli amministratori</div>
+      <div style="text-align:center;margin-top:1rem;font-size:.75rem;color:var(--tx3)">⚠ Accesso riservato agli amministratori</div>
     </div>
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div id="admin-panel">
   <div class="topbar">
-    <div class="topbar-left">
+    <div style="display:flex;align-items:center;gap:.75rem">
       <div class="t-logo">⚡ Kazka</div>
       <div class="t-badge">ADMIN</div>
     </div>
-    <div class="topbar-right">
+    <div style="display:flex;align-items:center;gap:1rem">
       <div class="t-stat"><span class="t-stat-n" id="tb-users">—</span><span class="t-stat-l">Utenti</span></div>
       <div class="t-stat"><span class="t-stat-n" id="tb-tx">—</span><span class="t-stat-l">Transazioni</span></div>
-      <div class="t-stat"><span class="t-stat-n" id="tb-mrr" style="color:var(--ye)">—</span><span class="t-stat-l">MRR</span></div>
+      <div class="t-stat"><span class="t-stat-n" id="tb-grp">—</span><span class="t-stat-l">Gruppi</span></div>
       <button class="btn-logout" onclick="doLogout()">Esci</button>
     </div>
   </div>
@@ -305,530 +149,216 @@ tr:hover td{background:var(--b1)}
     <aside class="sidebar">
       <div>
         <div class="nav-sect">Panoramica</div>
-        <div class="nav-item active" onclick="showView('dashboard')" id="nav-dashboard"><span class="ic">📊</span>Dashboard</div>
-        <div class="nav-item" onclick="showView('users')" id="nav-users"><span class="ic">👥</span>Utenti</div>
-        <div class="nav-item" onclick="showView('plans')" id="nav-plans"><span class="ic">🎯</span>Gestione Piani</div>
-        <div class="nav-item" onclick="showView('transactions')" id="nav-transactions"><span class="ic">💸</span>Transazioni</div>
-        <div class="nav-item" onclick="showView('accounts')" id="nav-accounts"><span class="ic">🏦</span>Conti</div>
-
-        <div class="nav-sect">Business</div>
-        <div class="nav-item" onclick="showView('revenue')" id="nav-revenue"><span class="ic">💰</span>Revenue</div>
-        <div class="nav-item" onclick="showView('analytics')" id="nav-analytics"><span class="ic">📈</span>Statistiche</div>
-        <div class="nav-item" onclick="showView('invoices')" id="nav-invoices"><span class="ic">🧾</span>Fatture</div>
-
-        <div class="nav-sect">Comunicazione</div>
-        <div class="nav-item" onclick="showView('broadcast')" id="nav-broadcast"><span class="ic">📣</span>Broadcast</div>
-        <div class="nav-item" onclick="showView('support')" id="nav-support"><span class="ic">💬</span>Supporto <span class="nav-badge" id="support-badge" style="display:none">0</span></div>
-
+        <div class="nav-item active" onclick="sv('dashboard')" id="nav-dashboard">📊 Dashboard</div>
+        <div class="nav-item" onclick="sv('users')" id="nav-users">👥 Utenti & Ruoli</div>
+        <div class="nav-item" onclick="sv('subscriptions')" id="nav-subscriptions">💳 Abbonamenti</div>
+        <div class="nav-item" onclick="sv('groups')" id="nav-groups">🫂 Gruppi & Chat</div>
+        <div class="nav-item" onclick="sv('transactions')" id="nav-transactions">💸 Transazioni</div>
+        <div class="nav-sect">Analytics</div>
+        <div class="nav-item" onclick="sv('analytics')" id="nav-analytics">📈 Statistiche</div>
+        <div class="nav-item" onclick="sv('invoices')" id="nav-invoices">🧾 Fatture</div>
         <div class="nav-sect">Sistema</div>
-        <div class="nav-item" onclick="showView('search')" id="nav-search"><span class="ic">🔍</span>Ricerca Globale</div>
-        <div class="nav-item" onclick="showView('security')" id="nav-security"><span class="ic">🛡️</span>Sicurezza</div>
-        <div class="nav-item" onclick="showView('backup')" id="nav-backup"><span class="ic">📤</span>Backup & Restore</div>
-        <div class="nav-item" onclick="showView('logs')" id="nav-logs"><span class="ic">📋</span>Log attività</div>
-        <div class="nav-item" onclick="showView('settings')" id="nav-settings"><span class="ic">⚙️</span>Impostazioni</div>
-        <div class="nav-item" onclick="showView('danger')" id="nav-danger"><span class="ic">⚠️</span><span style="color:var(--re)">Zona Pericolo</span></div>
+        <div class="nav-item" onclick="sv('logs')" id="nav-logs">📋 Log attività</div>
+        <div class="nav-item" onclick="sv('settings')" id="nav-settings">⚙️ Impostazioni</div>
+        <div class="nav-item" onclick="sv('danger')" id="nav-danger"><span style="color:var(--re)">⚠️ Zona Pericolo</span></div>
       </div>
       <div class="nav-bottom">
-        <div class="admin-user">
+        <div style="display:flex;align-items:center;gap:.6rem">
           <div class="admin-av" id="admin-av">A</div>
-          <div>
-            <div class="admin-name" id="admin-name">Admin</div>
-            <div class="admin-role">Super Admin</div>
-          </div>
+          <div><div style="font-size:.8rem;font-weight:600" id="admin-name">Admin</div><div style="font-size:.65rem;color:var(--re)">Super Admin</div></div>
         </div>
       </div>
     </aside>
 
     <main class="main">
 
-      <!-- ── DASHBOARD ── -->
+      <!-- DASHBOARD -->
       <div class="view active" id="view-dashboard">
         <div class="page-hd">
-          <div><div class="page-title">Dashboard</div><div class="page-sub" id="dash-date">Caricamento...</div></div>
-          <button class="btn btn-secondary" onclick="reloadAll()">🔄 Aggiorna</button>
+          <div><div class="page-title">Dashboard</div><div class="page-sub" id="dash-date"></div></div>
+          <button class="btn btn-sec" onclick="loadAll()">🔄 Aggiorna</button>
         </div>
-        <div class="stats-grid" id="dash-stats">
-          <div class="stat"><div class="stat-lbl">Utenti totali</div><div class="stat-val" id="d-users">—</div><div class="stat-sub">registrati</div></div>
-          <div class="stat"><div class="stat-lbl">Utenti attivi</div><div class="stat-val" id="d-active" style="color:var(--gr)">—</div><div class="stat-sub">ultimi 30 giorni</div></div>
-          <div class="stat"><div class="stat-lbl">Transazioni</div><div class="stat-val" id="d-tx">—</div><div class="stat-sub">totali sistema</div></div>
-          <div class="stat"><div class="stat-lbl">Entrate totali</div><div class="stat-val" style="color:var(--gr)" id="d-income">—</div><div class="stat-sub">tutti gli utenti</div></div>
-          <div class="stat"><div class="stat-lbl">Uscite totali</div><div class="stat-val" style="color:var(--re)" id="d-expense">—</div><div class="stat-sub">tutti gli utenti</div></div>
-          <div class="stat"><div class="stat-lbl">MRR stimato</div><div class="stat-val" style="color:var(--ye)" id="d-mrr">—</div><div class="stat-sub">piani a pagamento</div></div>
+        <div class="sgrid">
+          <div class="stat"><div class="stat-lbl">Utenti totali</div><div class="stat-val" id="d-users">—</div></div>
+          <div class="stat"><div class="stat-lbl">Admin</div><div class="stat-val" style="color:var(--re)" id="d-admins">—</div></div>
+          <div class="stat"><div class="stat-lbl">Pro/Business</div><div class="stat-val" style="color:var(--ac)" id="d-pro">—</div></div>
+          <div class="stat"><div class="stat-lbl">Transazioni</div><div class="stat-val" id="d-tx">—</div></div>
+          <div class="stat"><div class="stat-lbl">Entrate totali</div><div class="stat-val" style="color:var(--gr)" id="d-income">—</div></div>
+          <div class="stat"><div class="stat-lbl">Gruppi attivi</div><div class="stat-val" style="color:var(--ac2)" id="d-grp">—</div></div>
         </div>
-        <div class="grid2">
-          <div class="card">
-            <div class="card-title">Utenti recenti</div>
-            <div id="recent-users-list"></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Ultime transazioni (sistema)</div>
-            <div id="recent-tx-list"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Attività ultimi 6 mesi</div>
-          <div class="chart-wrap"><canvas id="chart-dash-activity"></canvas></div>
+        <div class="g2">
+          <div class="card"><div class="card-title">Ultimi utenti</div><div id="recent-users"></div></div>
+          <div class="card"><div class="card-title">Abbonamenti in scadenza (30gg)</div><div id="expiring-subs"></div></div>
         </div>
       </div>
 
-      <!-- ── USERS ── -->
+      <!-- USERS -->
       <div class="view" id="view-users">
         <div class="page-hd">
-          <div><div class="page-title">Gestione Utenti</div><div class="page-sub" id="users-count">Caricamento...</div></div>
+          <div><div class="page-title">Utenti & Ruoli</div><div class="page-sub" id="users-count"></div></div>
           <div style="display:flex;gap:.5rem">
-            <button class="btn btn-secondary" onclick="exportUsersCSV()">📥 Export CSV</button>
-            <button class="btn btn-primary" onclick="openModal('modal-new-user')">+ Nuovo utente</button>
+            <button class="btn btn-sec btn-sm" onclick="exportUsersCSV()">📥 Export</button>
+            <button class="btn btn-primary" onclick="om('modal-new-user')">+ Nuovo</button>
           </div>
         </div>
         <div class="card">
-          <div class="search-bar">
-            <input class="search-input" id="user-search" placeholder="🔍 Cerca per nome o email..." oninput="filterUsers()">
-            <select class="btn btn-secondary" id="user-filter-plan" onchange="filterUsers()" style="padding:.6rem .875rem">
-              <option value="">Tutti i piani</option>
-              <option value="free">Free</option>
-              <option value="pro">Pro</option>
-              <option value="business">Business</option>
+          <div class="sb">
+            <input class="si" id="user-search" placeholder="🔍 Cerca nome, email, UID..." oninput="filterUsers()">
+            <select class="btn btn-sec" id="uf-role" onchange="filterUsers()" style="padding:.6rem .875rem">
+              <option value="">Tutti i ruoli</option><option value="admin">Admin</option><option value="user">Utente</option>
             </select>
-            <select class="btn btn-secondary" id="user-filter-sort" onchange="filterUsers()" style="padding:.6rem .875rem">
-              <option value="date">Più recenti</option>
-              <option value="tx">Più transazioni</option>
-              <option value="name">Nome A-Z</option>
+            <select class="btn btn-sec" id="uf-plan" onchange="filterUsers()" style="padding:.6rem .875rem">
+              <option value="">Tutti i piani</option><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option>
             </select>
           </div>
-          <div class="table-wrap">
+          <div class="tw">
             <table>
-              <thead><tr><th></th><th>Utente</th><th>Email</th><th>Piano</th><th>Registrato</th><th>Tx</th><th>Stato</th><th>Azioni</th></tr></thead>
+              <thead><tr><th>Utente</th><th>Ruolo</th><th>Piano</th><th>Scadenza</th><th>Stato sub</th><th>Registrato</th><th>Tx</th><th>Azioni</th></tr></thead>
               <tbody id="users-tbody"></tbody>
             </table>
           </div>
-          <div class="empty" id="users-empty" style="display:none"><div class="empty-icon">👥</div>Nessun utente trovato</div>
+          <div class="empty" id="users-empty" style="display:none">Nessun utente</div>
         </div>
       </div>
 
-      <!-- ── PLAN MANAGEMENT ── -->
-      <div class="view" id="view-plans">
-        <div class="page-hd">
-          <div><div class="page-title">Gestione Piani</div><div class="page-sub">Upgrade, downgrade e configurazione piani</div></div>
-          <button class="btn btn-primary" onclick="openModal('modal-bulk-plan')">⚡ Modifica piano in blocco</button>
+      <!-- SUBSCRIPTIONS -->
+      <div class="view" id="view-subscriptions">
+        <div class="page-hd"><div><div class="page-title">Abbonamenti</div></div><button class="btn btn-sec btn-sm" onclick="exportSubsCSV()">📥 Export CSV</button></div>
+        <div class="sgrid">
+          <div class="stat"><div class="stat-lbl">Free</div><div class="stat-val" id="s-free">—</div></div>
+          <div class="stat"><div class="stat-lbl">Pro</div><div class="stat-val" style="color:var(--ac)" id="s-pro">—</div></div>
+          <div class="stat"><div class="stat-lbl">Business</div><div class="stat-val" style="color:var(--ac2)" id="s-biz">—</div></div>
+          <div class="stat"><div class="stat-lbl">Scaduti</div><div class="stat-val" style="color:var(--re)" id="s-exp">—</div></div>
         </div>
-        <div class="grid3" id="plan-cards" style="margin-bottom:1.5rem"></div>
         <div class="card">
-          <div class="card-title">Cambio piano individuale</div>
-          <div class="search-bar">
-            <input class="search-input" id="plan-user-search" placeholder="🔍 Cerca utente..." oninput="filterPlanUsers()">
-          </div>
-          <div class="table-wrap">
+          <div class="tw">
             <table>
-              <thead><tr><th>Utente</th><th>Email</th><th>Piano attuale</th><th>Da</th><th>Scadenza</th><th>Azioni</th></tr></thead>
-              <tbody id="plan-tbody"></tbody>
+              <thead><tr><th>Utente</th><th>Email</th><th>Piano</th><th>Inizio</th><th>Scadenza</th><th>Stato</th><th>Azioni</th></tr></thead>
+              <tbody id="subs-tbody"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- ── TRANSACTIONS ── -->
+      <!-- GROUPS -->
+      <div class="view" id="view-groups">
+        <div class="page-hd"><div><div class="page-title">Gruppi & Chat</div><div class="page-sub" id="grp-count"></div></div></div>
+        <div class="card">
+          <div class="tw">
+            <table>
+              <thead><tr><th>Nome gruppo</th><th>Creatore</th><th>Membri</th><th>Spese</th><th>Totale</th><th>Messaggi</th><th>Creato</th><th>Azioni</th></tr></thead>
+              <tbody id="grp-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="grp-empty" style="display:none">Nessun gruppo</div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
       <div class="view" id="view-transactions">
         <div class="page-hd">
-          <div><div class="page-title">Tutte le Transazioni</div><div class="page-sub" id="tx-count-label">Caricamento...</div></div>
-          <button class="btn btn-secondary" onclick="exportAllCSV()">📥 Esporta CSV</button>
+          <div><div class="page-title">Transazioni</div><div class="page-sub" id="tx-count"></div></div>
+          <button class="btn btn-sec" onclick="exportAllCSV()">📥 CSV</button>
         </div>
         <div class="card">
-          <div class="search-bar">
-            <input class="search-input" id="tx-search" placeholder="🔍 Cerca transazioni..." oninput="filterTx()">
-            <select class="btn btn-secondary" id="tx-filter-type" onchange="filterTx()" style="padding:.6rem .875rem">
-              <option value="">Tutte</option>
-              <option value="income">Entrate</option>
-              <option value="expense">Uscite</option>
-            </select>
-            <select class="btn btn-secondary" id="tx-filter-ctx" onchange="filterTx()" style="padding:.6rem .875rem">
-              <option value="">Tutti i contesti</option>
-              <option value="personal">Personal</option>
-              <option value="business">Business</option>
+          <div class="sb">
+            <input class="si" id="tx-search" placeholder="🔍 Cerca..." oninput="filterTx()">
+            <select class="btn btn-sec" id="tx-type-f" onchange="filterTx()" style="padding:.6rem .875rem">
+              <option value="">Tutte</option><option value="income">Entrate</option><option value="expense">Uscite</option>
             </select>
           </div>
-          <div class="table-wrap">
+          <div class="tw">
             <table>
-              <thead><tr><th>Utente</th><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Tipo</th><th>Contesto</th><th>Importo</th><th>Azioni</th></tr></thead>
+              <thead><tr><th>Utente</th><th>Data</th><th>Descrizione</th><th>Cat.</th><th>Tipo</th><th>Importo</th><th></th></tr></thead>
               <tbody id="tx-tbody"></tbody>
             </table>
           </div>
-          <div class="empty" id="tx-empty" style="display:none"><div class="empty-icon">💸</div>Nessuna transazione</div>
+          <div class="empty" id="tx-empty" style="display:none">Nessuna transazione</div>
         </div>
       </div>
 
-      <!-- ── ACCOUNTS ── -->
-      <div class="view" id="view-accounts">
-        <div class="page-hd">
-          <div><div class="page-title">Conti Registrati</div><div class="page-sub" id="acc-count-label">Caricamento...</div></div>
-        </div>
-        <div class="card">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Utente</th><th>Nome conto</th><th>Tipo</th><th>Contesto</th><th>Saldo</th><th>Creato</th></tr></thead>
-              <tbody id="acc-tbody"></tbody>
-            </table>
-          </div>
-          <div class="empty" id="acc-empty" style="display:none"><div class="empty-icon">🏦</div>Nessun conto</div>
-        </div>
-      </div>
-
-      <!-- ── REVENUE ── -->
-      <div class="view" id="view-revenue">
-        <div class="page-hd">
-          <div><div class="page-title">Revenue Dashboard</div><div class="page-sub">MRR, ARR e conversioni piani</div></div>
-        </div>
-        <div class="revenue-kpi" id="revenue-kpis"></div>
-        <div class="grid2">
-          <div class="card">
-            <div class="card-title">Distribuzione piani</div>
-            <div class="chart-wrap"><canvas id="chart-plan-dist"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Conversioni (Free → Pro → Business)</div>
-            <div id="conversion-funnel"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Utenti attivi / inattivi (30 giorni)</div>
-          <div id="active-inactive-list"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Crescita utenti (12 mesi)</div>
-          <div class="chart-wrap-lg"><canvas id="chart-revenue-growth"></canvas></div>
-        </div>
-      </div>
-
-      <!-- ── ANALYTICS ── -->
+      <!-- ANALYTICS -->
       <div class="view" id="view-analytics">
-        <div class="page-hd">
-          <div><div class="page-title">Statistiche Globali</div><div class="page-sub">Dati aggregati di tutti gli utenti</div></div>
+        <div class="page-hd"><div><div class="page-title">Statistiche</div></div></div>
+        <div class="sgrid" id="an-stats"></div>
+        <div class="g2">
+          <div class="card"><div class="card-title">Distribuzione piani</div><div id="plan-dist"></div></div>
+          <div class="card"><div class="card-title">Top categorie spesa</div><div id="top-cats"></div></div>
         </div>
-        <div class="stats-grid" id="analytics-stats"></div>
-        <div class="grid2">
-          <div class="card">
-            <div class="card-title">Top categorie spesa (sistema)</div>
-            <div id="top-categories"></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Personal vs Business</div>
-            <div id="ctx-split"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Trend mensile entrate / uscite (sistema)</div>
-          <div class="chart-wrap-lg"><canvas id="chart-analytics-trend"></canvas></div>
-        </div>
+        <div class="card"><div class="card-title">Utenti per mese</div><div class="chart-wrap"><canvas id="chart-users"></canvas></div></div>
       </div>
 
-      <!-- ── INVOICES ── -->
+      <!-- INVOICES -->
       <div class="view" id="view-invoices">
-        <div class="page-hd">
-          <div><div class="page-title">Fatture Sistema</div><div class="page-sub" id="inv-count-label">Caricamento...</div></div>
-        </div>
+        <div class="page-hd"><div><div class="page-title">Fatture</div><div class="page-sub" id="inv-count"></div></div></div>
         <div class="card">
-          <div class="table-wrap">
+          <div class="tw">
             <table>
-              <thead><tr><th>Utente</th><th>Cliente</th><th>N° Fattura</th><th>Data</th><th>IVA</th><th>Totale</th><th>Stato</th></tr></thead>
+              <thead><tr><th>Utente</th><th>Cliente</th><th>N°</th><th>Data</th><th>IVA</th><th>Totale</th><th>Stato</th></tr></thead>
               <tbody id="inv-tbody"></tbody>
             </table>
           </div>
-          <div class="empty" id="inv-empty" style="display:none"><div class="empty-icon">🧾</div>Nessuna fattura</div>
+          <div class="empty" id="inv-empty" style="display:none">Nessuna fattura</div>
         </div>
       </div>
 
-      <!-- ── BROADCAST ── -->
-      <div class="view" id="view-broadcast">
-        <div class="page-hd">
-          <div><div class="page-title">Broadcast</div><div class="page-sub">Invia notifiche o messaggi agli utenti</div></div>
-          <button class="btn btn-secondary" onclick="loadBroadcastHistory()">📋 Storico invii</button>
-        </div>
-        <div class="grid2">
-          <div class="card">
-            <div class="card-title">Nuovo messaggio</div>
-            <div class="form-group">
-              <label>Titolo notifica</label>
-              <input type="text" id="bc-title" placeholder="Es. Nuova funzionalità disponibile">
-            </div>
-            <div class="form-group">
-              <label>Messaggio</label>
-              <textarea id="bc-body" placeholder="Scrivi il messaggio per gli utenti..." rows="4"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Tipo</label>
-              <select id="bc-type">
-                <option value="info">ℹ️ Informazione</option>
-                <option value="update">🚀 Aggiornamento</option>
-                <option value="warning">⚠️ Avviso</option>
-                <option value="promo">🎉 Promozione</option>
-                <option value="maintenance">🔧 Manutenzione</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Segmento destinatari</label>
-              <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
-                <button class="segment-btn sel" id="seg-all" onclick="toggleSegment('all')">👥 Tutti</button>
-                <button class="segment-btn" id="seg-free" onclick="toggleSegment('free')">Free</button>
-                <button class="segment-btn" id="seg-pro" onclick="toggleSegment('pro')">Pro</button>
-                <button class="segment-btn" id="seg-business" onclick="toggleSegment('business')">Business</button>
-              </div>
-            </div>
-            <div id="bc-preview-wrap" style="display:none">
-              <div class="form-group"><label>Anteprima messaggio</label>
-                <div class="msg-preview" id="bc-preview"></div>
-              </div>
-            </div>
-            <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.25rem">
-              <button class="btn btn-secondary" onclick="previewBroadcast()">👁 Anteprima</button>
-              <button class="btn btn-primary" onclick="sendBroadcast()">📣 Invia messaggio</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Storico invii recenti</div>
-            <div id="broadcast-history"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── SUPPORT ── -->
-      <div class="view" id="view-support">
-        <div class="page-hd">
-          <div><div class="page-title">Supporto Utenti</div><div class="page-sub">Gestisci le richieste di supporto</div></div>
-          <div style="display:flex;gap:.5rem">
-            <button class="btn btn-secondary" id="sup-filter-open" onclick="filterTickets('open')">🔴 Aperti</button>
-            <button class="btn btn-secondary" id="sup-filter-all" onclick="filterTickets('all')">Tutti</button>
-          </div>
-        </div>
-        <div class="grid2">
-          <div>
-            <div id="tickets-list"></div>
-            <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:.5rem" onclick="openModal('modal-new-ticket')">+ Nuovo ticket</button>
-          </div>
-          <div class="card" id="ticket-detail-panel">
-            <div style="text-align:center;padding:2rem;color:var(--tx3)">
-              <div style="font-size:2rem;margin-bottom:.5rem">💬</div>
-              Seleziona un ticket per visualizzare la conversazione
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── GLOBAL SEARCH ── -->
-      <div class="view" id="view-search">
-        <div class="page-hd">
-          <div><div class="page-title">Ricerca Globale</div><div class="page-sub">Cerca qualsiasi dato in tutto il sistema</div></div>
-        </div>
-        <div class="card">
-          <div style="display:flex;gap:.75rem;margin-bottom:1.25rem">
-            <input class="search-input" id="global-search-input" placeholder="🔍 Cerca utente, email, transazione, importo, conto..." oninput="globalSearch()" style="font-size:1rem;padding:.875rem 1.1rem">
-            <select class="btn btn-secondary" id="global-search-type" onchange="globalSearch()" style="padding:.6rem .875rem">
-              <option value="all">Tutto</option>
-              <option value="users">Utenti</option>
-              <option value="transactions">Transazioni</option>
-              <option value="accounts">Conti</option>
-            </select>
-          </div>
-          <div id="global-search-results">
-            <div style="text-align:center;padding:2rem;color:var(--tx3)">Inizia a digitare per cercare...</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── SECURITY ── -->
-      <div class="view" id="view-security">
-        <div class="page-hd">
-          <div><div class="page-title">Sicurezza</div><div class="page-sub">Monitoraggio accessi e gestione account</div></div>
-          <button class="btn btn-secondary" onclick="refreshSecurity()">🔄 Aggiorna</button>
-        </div>
-        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
-          <div class="stat"><div class="stat-lbl">Account bloccati</div><div class="stat-val" id="sec-blocked" style="color:var(--re)">0</div></div>
-          <div class="stat"><div class="stat-lbl">Admin attivi</div><div class="stat-val" id="sec-admins" style="color:var(--ac)">—</div></div>
-          <div class="stat"><div class="stat-lbl">Tentativi login falliti</div><div class="stat-val" id="sec-failed" style="color:var(--ye)">—</div></div>
-          <div class="stat"><div class="stat-lbl">Password reset (30gg)</div><div class="stat-val" id="sec-resets">—</div></div>
-        </div>
-        <div class="grid2">
-          <div class="card">
-            <div class="card-title">Gestione account utenti
-              <button class="btn btn-sm btn-secondary" onclick="openModal('modal-block-user')">🔒 Blocca utente</button>
-            </div>
-            <div id="security-users-list"></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Amministratori
-              <button class="btn btn-sm btn-primary" onclick="openModal('modal-add-admin')">+ Aggiungi admin</button>
-            </div>
-            <div id="admins-list"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Log sicurezza recenti</div>
-          <div id="security-log-list"></div>
-        </div>
-      </div>
-
-      <!-- ── BACKUP ── -->
-      <div class="view" id="view-backup">
-        <div class="page-hd">
-          <div><div class="page-title">Backup & Restore</div><div class="page-sub">Export e import dati utenti e sistema</div></div>
-        </div>
-        <div class="grid2">
-          <div class="card">
-            <div class="card-title">Export dati</div>
-            <div style="display:flex;flex-direction:column;gap:.75rem">
-              <div class="backup-item">
-                <div class="backup-info">
-                  <div class="backup-name">🗄️ Backup completo sistema</div>
-                  <div class="backup-meta">Tutti gli utenti, transazioni, conti, fatture</div>
-                </div>
-                <button class="btn btn-primary btn-sm" onclick="exportFullBackup()">Scarica JSON</button>
-              </div>
-              <div class="backup-item">
-                <div class="backup-info">
-                  <div class="backup-name">👥 Export utenti</div>
-                  <div class="backup-meta">Profili e impostazioni</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" onclick="exportUsersCSV()">Scarica CSV</button>
-              </div>
-              <div class="backup-item">
-                <div class="backup-info">
-                  <div class="backup-name">💸 Export transazioni</div>
-                  <div class="backup-meta">Tutte le transazioni del sistema</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" onclick="exportAllCSV()">Scarica CSV</button>
-              </div>
-              <div class="backup-item">
-                <div class="backup-info">
-                  <div class="backup-name">🧾 Export fatture</div>
-                  <div class="backup-meta">Tutte le fatture del sistema</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" onclick="exportInvoicesCSV()">Scarica CSV</button>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Export per singolo utente</div>
-            <div class="form-group">
-              <label>Seleziona utente</label>
-              <select id="backup-user-select" style="width:100%;padding:.7rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx)">
-                <option value="">— Scegli utente —</option>
-              </select>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:.5rem">
-              <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="exportUserJSON()">📦 Export JSON completo utente</button>
-              <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="exportUserTxCSV()">💸 Export transazioni utente</button>
-            </div>
-            <div class="card-title" style="margin-top:1.25rem">Import dati</div>
-            <div style="background:var(--bg3);border:2px dashed var(--b2);border-radius:var(--rsm);padding:1.5rem;text-align:center">
-              <div style="font-size:1.5rem;margin-bottom:.5rem">📂</div>
-              <div style="font-size:.85rem;color:var(--tx2);margin-bottom:.75rem">Trascina un file JSON di backup<br>o selezionalo dal computer</div>
-              <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
-              <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Seleziona file</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── LOGS ── -->
+      <!-- LOGS -->
       <div class="view" id="view-logs">
         <div class="page-hd">
-          <div><div class="page-title">Log Attività</div><div class="page-sub">Accessi e operazioni amministrative</div></div>
-          <div style="display:flex;gap:.5rem">
-            <select class="btn btn-secondary" id="log-filter" onchange="loadLogs()" style="padding:.6rem .875rem">
-              <option value="">Tutti i tipi</option>
-              <option value="login">Login</option>
-              <option value="create">Creazioni</option>
-              <option value="update">Modifiche</option>
-              <option value="delete">Eliminazioni</option>
-              <option value="export">Export</option>
-              <option value="broadcast">Broadcast</option>
-              <option value="security">Sicurezza</option>
-            </select>
-            <button class="btn btn-danger btn-sm" onclick="clearLogs()">🗑 Cancella log</button>
+          <div><div class="page-title">Log Attività</div></div>
+          <button class="btn btn-danger btn-sm" onclick="clearLogs()">🗑 Cancella</button>
+        </div>
+        <div class="card"><div id="logs-list"></div><div class="empty" id="logs-empty" style="display:none">Nessun log</div></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="view" id="view-settings">
+        <div class="page-hd"><div><div class="page-title">Impostazioni</div></div></div>
+        <div class="card">
+          <div class="card-title">App</div>
+          <div class="sr"><div><div style="font-weight:600">Registrazioni aperte</div><div style="font-size:.8rem;color:var(--tx2)">Permetti nuove registrazioni</div></div><div class="toggle on" id="tog-reg" onclick="toggleSetting('registration')"></div></div>
+          <div class="sr"><div><div style="font-weight:600">Manutenzione</div><div style="font-size:.8rem;color:var(--tx2)">Mostra avviso manutenzione</div></div><div class="toggle" id="tog-maint" onclick="toggleSetting('maintenance')"></div></div>
+          <div class="sr"><div><div style="font-weight:600">Log attività</div><div style="font-size:.8rem;color:var(--tx2)">Registra operazioni admin</div></div><div class="toggle on" id="tog-logs" onclick="toggleSetting('activityLogs')"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Durate abbonamento predefinite</div>
+          <div class="fr">
+            <div class="fg2"><label>Pro (giorni)</label><input type="number" id="cfg-pro" value="30" min="1"></div>
+            <div class="fg2"><label>Business (giorni)</label><input type="number" id="cfg-biz" value="30" min="1"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveDurations()">Salva</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Export dati</div>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <button class="btn btn-sec" onclick="exportAllCSV()">📥 CSV transazioni</button>
+            <button class="btn btn-sec" onclick="exportUsersCSV()">👥 CSV utenti</button>
+            <button class="btn btn-sec" onclick="exportSubsCSV()">💳 CSV abbonamenti</button>
           </div>
         </div>
         <div class="card">
-          <div id="logs-list"></div>
-          <div class="empty" id="logs-empty" style="display:none"><div class="empty-icon">📋</div>Nessun log disponibile</div>
+          <div class="card-title">Firebase</div>
+          <div class="sr"><div><div style="font-weight:600">Progetto</div><div style="font-size:.8rem;color:var(--tx2)">financeapp-556ae</div></div><span class="badge bg">Connesso</span></div>
+          <div class="sr"><div><div style="font-weight:600">Region</div><div style="font-size:.8rem;color:var(--tx2)">europe-west1</div></div><span class="badge bb">EU</span></div>
         </div>
       </div>
 
-      <!-- ── SETTINGS ── -->
-      <div class="view" id="view-settings">
-        <div class="page-hd"><div><div class="page-title">Impostazioni</div><div class="page-sub">Configurazione del sistema Kazka</div></div></div>
-        <div class="grid2">
-          <div>
-            <div class="card">
-              <div class="card-title">Applicazione</div>
-              <div class="setting-row">
-                <div class="setting-info"><div class="setting-title">Registrazioni aperte</div><div class="setting-desc">Permetti a nuovi utenti di registrarsi</div></div>
-                <div class="toggle on" id="tog-reg" onclick="toggleSetting('registration')"></div>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info"><div class="setting-title">Modalità manutenzione</div><div class="setting-desc">Mostra avviso di manutenzione agli utenti</div></div>
-                <div class="toggle" id="tog-maint" onclick="toggleSetting('maintenance')"></div>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info"><div class="setting-title">Log attività utenti</div><div class="setting-desc">Registra le operazioni degli utenti</div></div>
-                <div class="toggle on" id="tog-logs" onclick="toggleSetting('activityLogs')"></div>
-              </div>
-              <div class="setting-row">
-                <div class="setting-info"><div class="setting-title">Notifiche broadcast</div><div class="setting-desc">Abilita l'invio di messaggi broadcast</div></div>
-                <div class="toggle on" id="tog-broadcast" onclick="toggleSetting('broadcastEnabled')"></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">Piano prezzi (€/mese)</div>
-              <div class="setting-row">
-                <div class="setting-info"><div class="setting-title">Piano Pro</div></div>
-                <input type="number" id="price-pro" value="9.99" step="0.01" style="width:90px;padding:.45rem .7rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.9rem;text-align:right" onchange="savePrices()">
-              </div>
-              <div class="setting-row">
-                <div class="setting-info"><div class="setting-title">Piano Business</div></div>
-                <input type="number" id="price-business" value="24.99" step="0.01" style="width:90px;padding:.45rem .7rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.9rem;text-align:right" onchange="savePrices()">
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="card">
-              <div class="card-title">Database Firebase</div>
-              <div class="setting-row"><div class="setting-info"><div class="setting-title">Progetto</div><div class="setting-desc">financeapp-556ae</div></div><span class="badge badge-green">Connesso</span></div>
-              <div class="setting-row"><div class="setting-info"><div class="setting-title">Region</div><div class="setting-desc">europe-west1</div></div><span class="badge badge-blue">EU</span></div>
-              <div class="setting-row"><div class="setting-info"><div class="setting-title">Auth</div><div class="setting-desc">Email/Password + Google</div></div><span class="badge badge-green">Attivo</span></div>
-            </div>
-            <div class="card">
-              <div class="card-title">Annuncio di sistema</div>
-              <div class="form-group"><label>Messaggio banner (lascia vuoto per nasconderlo)</label>
-                <textarea id="sys-banner" placeholder="Es. Manutenzione programmata domenica 3:00-5:00" rows="3"></textarea>
-              </div>
-              <div style="display:flex;gap:.5rem">
-                <select id="sys-banner-type" style="padding:.6rem .875rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx)">
-                  <option value="info">ℹ️ Info</option>
-                  <option value="warn">⚠️ Avviso</option>
-                  <option value="danger">🚨 Urgente</option>
-                </select>
-                <button class="btn btn-primary" onclick="saveBanner()">Salva banner</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── DANGER ── -->
+      <!-- DANGER -->
       <div class="view" id="view-danger">
-        <div class="page-hd"><div><div class="page-title" style="color:var(--re)">⚠ Zona Pericolo</div><div class="page-sub">Operazioni irreversibili — massima attenzione</div></div></div>
+        <div class="page-hd"><div><div class="page-title" style="color:var(--re)">⚠ Zona Pericolo</div></div></div>
         <div class="card" style="border-color:rgba(255,51,85,.25)">
-          <div class="card-title" style="color:var(--re)">Operazioni distruttive</div>
           <div style="display:flex;flex-direction:column;gap:.875rem">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--b1)">
-              <div><div style="font-weight:600;margin-bottom:.25rem">Elimina utente specifico</div><div style="font-size:.8rem;color:var(--tx2)">Rimuove profilo e tutti i dati di un utente</div></div>
-              <button class="btn btn-danger btn-sm" onclick="openModal('modal-delete-user')">Elimina utente</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:7px">
+              <div><div style="font-weight:600;margin-bottom:.25rem">Elimina utente</div><div style="font-size:.8rem;color:var(--tx2)">Rimuove profilo e tutti i dati</div></div>
+              <button class="btn btn-danger btn-sm" onclick="om('modal-del-user')">Elimina utente</button>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--b1)">
-              <div><div style="font-weight:600;margin-bottom:.25rem">Reset transazioni utente</div><div style="font-size:.8rem;color:var(--tx2)">Cancella tutte le transazioni di un utente specifico</div></div>
-              <button class="btn btn-danger btn-sm" onclick="openModal('modal-reset-user-tx')">Reset transazioni</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:7px">
+              <div><div style="font-weight:600;margin-bottom:.25rem">Reset transazioni utente</div><div style="font-size:.8rem;color:var(--tx2)">Cancella tutte le transazioni</div></div>
+              <button class="btn btn-danger btn-sm" onclick="om('modal-reset-tx')">Reset</button>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(255,51,85,.05);border-radius:var(--rsm);border:1px solid rgba(255,51,85,.25)">
-              <div><div style="font-weight:600;margin-bottom:.25rem;color:var(--re)">⚠ Cancella TUTTI i dati</div><div style="font-size:.8rem;color:var(--tx2)">Rimuove tutti gli utenti e i loro dati dal database</div></div>
-              <button class="btn btn-danger btn-sm" onclick="openModal('modal-nuke')">CANCELLA TUTTO</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(255,51,85,.05);border-radius:7px;border:1px solid rgba(255,51,85,.25)">
+              <div><div style="font-weight:600;color:var(--re);margin-bottom:.25rem">⚠ CANCELLA TUTTO</div><div style="font-size:.8rem;color:var(--tx2)">Elimina tutti i dati dal database</div></div>
+              <button class="btn btn-danger btn-sm" onclick="om('modal-nuke')">ESEGUI</button>
             </div>
           </div>
         </div>
@@ -838,1216 +368,487 @@ tr:hover td{background:var(--b1)}
   </div>
 </div>
 
-<!-- ══ MODALS ══ -->
-
-<!-- NEW USER -->
-<div class="modal-overlay" id="modal-new-user">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title">Nuovo utente</div><div class="modal-close" onclick="closeModal('modal-new-user')">✕</div></div>
-    <div class="modal-body">
-      <div class="form-group"><label>Nome</label><input type="text" id="nu-name" placeholder="Nome Cognome"></div>
-      <div class="form-group"><label>Email</label><input type="email" id="nu-email" placeholder="email@dominio.com"></div>
-      <div class="form-group"><label>Piano</label><select id="nu-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option></select></div>
-      <div class="form-group"><label>Ruolo</label><select id="nu-role"><option value="user">Utente</option><option value="admin">Admin</option></select></div>
+<!-- MODALS -->
+<div class="mo" id="modal-edit-user">
+  <div class="md">
+    <div class="mh"><div class="mt" id="eu-title">Modifica utente</div><div class="mc" onclick="cm('modal-edit-user')">✕</div></div>
+    <div class="mb">
+      <input type="hidden" id="eu-uid">
+      <div style="background:var(--bg3);border-radius:7px;padding:.875rem;margin-bottom:1rem;font-size:.82rem" id="eu-info"></div>
+      <div class="fr">
+        <div class="fg2"><label>Ruolo sistema</label>
+          <select id="eu-role">
+            <option value="user">👤 Utente normale</option>
+            <option value="admin">🔐 Amministratore</option>
+          </select>
+        </div>
+        <div class="fg2"><label>Piano</label>
+          <select id="eu-plan">
+            <option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg2"><label>Inizio abbonamento</label><input type="date" id="eu-start"></div>
+        <div class="fg2"><label>Scadenza abbonamento</label><input type="date" id="eu-expiry"></div>
+      </div>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn btn-sec btn-sm" onclick="addDays(30)">+30 gg</button>
+        <button class="btn btn-sec btn-sm" onclick="addDays(90)">+90 gg</button>
+        <button class="btn btn-sec btn-sm" onclick="addDays(365)">+1 anno</button>
+        <button class="btn btn-sec btn-sm" onclick="document.getElementById('eu-expiry').value=''">Illimitato</button>
+      </div>
+      <div class="fg2"><label>Note interne (non visibili all'utente)</label><textarea id="eu-notes" rows="2" placeholder="Note admin..."></textarea></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-new-user')">Annulla</button>
-      <button class="btn btn-primary" onclick="createUser()">Crea utente</button>
-    </div>
-  </div>
-</div>
-
-<!-- USER DETAIL -->
-<div class="modal-overlay" id="modal-user-detail">
-  <div class="modal modal-lg">
-    <div class="modal-head"><div class="modal-title" id="ud-title">Dettaglio utente</div><div class="modal-close" onclick="closeModal('modal-user-detail')">✕</div></div>
-    <div class="modal-body" id="ud-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" id="ud-delete-btn">Elimina utente</button>
-      <button class="btn btn-warn btn-sm" id="ud-block-btn">Blocca account</button>
-      <button class="btn btn-secondary" onclick="closeModal('modal-user-detail')">Chiudi</button>
-      <button class="btn btn-primary" id="ud-save-btn">Salva modifiche</button>
-    </div>
-  </div>
-</div>
-
-<!-- BULK PLAN -->
-<div class="modal-overlay" id="modal-bulk-plan">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title">Modifica piano in blocco</div><div class="modal-close" onclick="closeModal('modal-bulk-plan')">✕</div></div>
-    <div class="modal-body">
-      <div class="form-group"><label>Da piano</label><select id="bulk-from"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option></select></div>
-      <div class="form-group"><label>A piano</label><select id="bulk-to"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option></select></div>
-      <p id="bulk-preview-text" style="font-size:.85rem;color:var(--tx2);margin-top:.5rem"></p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-plan')">Annulla</button>
-      <button class="btn btn-primary" onclick="executeBulkPlan()">Applica a tutti</button>
+    <div class="mf">
+      <button class="btn btn-danger btn-sm" id="eu-del-btn">🗑 Elimina utente</button>
+      <button class="btn btn-sec" onclick="cm('modal-edit-user')">Annulla</button>
+      <button class="btn btn-primary" onclick="saveUserEdit()">Salva</button>
     </div>
   </div>
 </div>
 
-<!-- DELETE USER -->
-<div class="modal-overlay" id="modal-delete-user">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title" style="color:var(--re)">⚠ Elimina utente</div><div class="modal-close" onclick="closeModal('modal-delete-user')">✕</div></div>
-    <div class="modal-body">
-      <p style="font-size:.875rem;color:var(--tx2);margin-bottom:1rem">Inserisci l'UID o l'email dell'utente da eliminare. Questa operazione è irreversibile.</p>
-      <div class="form-group"><label>UID o Email utente</label><input type="text" id="del-user-id" placeholder="uid o email@..."></div>
-      <p style="font-size:.75rem;color:var(--re)">⚠ Verranno eliminati: profilo, transazioni, conti, obiettivi, fatture.</p>
+<div class="mo" id="modal-new-user">
+  <div class="md">
+    <div class="mh"><div class="mt">Nuovo utente</div><div class="mc" onclick="cm('modal-new-user')">✕</div></div>
+    <div class="mb">
+      <div class="fg2"><label>Nome</label><input type="text" id="nu-name" placeholder="Nome Cognome"></div>
+      <div class="fg2"><label>Email</label><input type="email" id="nu-email" placeholder="email@dominio.com"></div>
+      <div class="fr">
+        <div class="fg2"><label>Ruolo</label><select id="nu-role"><option value="user">Utente</option><option value="admin">Admin</option></select></div>
+        <div class="fg2"><label>Piano</label><select id="nu-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option></select></div>
+      </div>
+      <div class="fg2"><label>Scadenza abbonamento</label><input type="date" id="nu-expiry"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-delete-user')">Annulla</button>
-      <button class="btn btn-danger" onclick="deleteUserData()">Elimina definitivamente</button>
-    </div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('modal-new-user')">Annulla</button><button class="btn btn-primary" onclick="createUser()">Crea</button></div>
   </div>
 </div>
 
-<!-- RESET TX -->
-<div class="modal-overlay" id="modal-reset-user-tx">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title" style="color:var(--ye)">Reset transazioni</div><div class="modal-close" onclick="closeModal('modal-reset-user-tx')">✕</div></div>
-    <div class="modal-body"><div class="form-group"><label>UID o Email utente</label><input type="text" id="reset-tx-uid" placeholder="uid o email@..."></div></div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-reset-user-tx')">Annulla</button>
-      <button class="btn btn-danger" onclick="resetUserTransactions()">Cancella transazioni</button>
+<div class="mo" id="modal-del-user">
+  <div class="md" style="max-width:420px">
+    <div class="mh"><div class="mt" style="color:var(--re)">⚠ Elimina utente</div><div class="mc" onclick="cm('modal-del-user')">✕</div></div>
+    <div class="mb">
+      <div class="fg2"><label>UID o Email</label><input type="text" id="del-uid" placeholder="uid o email@..."></div>
+      <p style="font-size:.75rem;color:var(--re)">⚠ Elimina: profilo, transazioni, conti, obiettivi, fatture, gruppi.</p>
     </div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('modal-del-user')">Annulla</button><button class="btn btn-danger" onclick="deleteUserData()">Elimina</button></div>
   </div>
 </div>
 
-<!-- NUKE -->
-<div class="modal-overlay" id="modal-nuke">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title" style="color:var(--re)">🚨 CANCELLA TUTTO</div><div class="modal-close" onclick="closeModal('modal-nuke')">✕</div></div>
-    <div class="modal-body">
-      <p style="font-size:.875rem;color:var(--tx2);margin-bottom:.75rem">Questa operazione cancella <strong style="color:var(--re)">TUTTI</strong> i dati degli utenti dal database.</p>
-      <p style="font-size:.875rem;margin-bottom:.5rem">Digita <strong>CANCELLA TUTTO</strong> per confermare:</p>
-      <input class="confirm-input" type="text" id="nuke-confirm" placeholder="CANCELLA TUTTO">
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-nuke')">Annulla</button>
-      <button class="btn btn-danger" onclick="nukeAllData()">Esegui cancellazione</button>
-    </div>
+<div class="mo" id="modal-reset-tx">
+  <div class="md" style="max-width:420px">
+    <div class="mh"><div class="mt">Reset transazioni</div><div class="mc" onclick="cm('modal-reset-tx')">✕</div></div>
+    <div class="mb"><div class="fg2"><label>UID o Email</label><input type="text" id="rst-uid" placeholder="uid o email@..."></div></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('modal-reset-tx')">Annulla</button><button class="btn btn-danger" onclick="resetTx()">Reset</button></div>
   </div>
 </div>
 
-<!-- BLOCK USER -->
-<div class="modal-overlay" id="modal-block-user">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title">🔒 Blocca account</div><div class="modal-close" onclick="closeModal('modal-block-user')">✕</div></div>
-    <div class="modal-body">
-      <div class="form-group"><label>Email utente</label><input type="text" id="block-user-email" placeholder="email@..."></div>
-      <div class="form-group"><label>Motivo (opzionale)</label><textarea id="block-reason" placeholder="Motivo del blocco..." rows="2"></textarea></div>
+<div class="mo" id="modal-nuke">
+  <div class="md" style="max-width:420px">
+    <div class="mh"><div class="mt" style="color:var(--re)">🚨 CANCELLA TUTTO</div><div class="mc" onclick="cm('modal-nuke')">✕</div></div>
+    <div class="mb">
+      <p style="font-size:.875rem;color:var(--tx2);margin-bottom:.75rem">Cancella <strong style="color:var(--re)">TUTTI</strong> i dati. Irreversibile.</p>
+      <p style="font-size:.875rem;margin-bottom:.5rem">Digita <strong>CANCELLA TUTTO</strong>:</p>
+      <input style="width:100%;padding:.75rem;background:var(--bg3);border:1.5px solid rgba(255,51,85,.4);border-radius:7px;color:var(--tx);font-size:.875rem" type="text" id="nuke-c" placeholder="CANCELLA TUTTO">
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-block-user')">Annulla</button>
-      <button class="btn btn-danger" onclick="blockUser()">Blocca account</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD ADMIN -->
-<div class="modal-overlay" id="modal-add-admin">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title">+ Aggiungi amministratore</div><div class="modal-close" onclick="closeModal('modal-add-admin')">✕</div></div>
-    <div class="modal-body">
-      <div class="form-group"><label>Email amministratore</label><input type="email" id="new-admin-email" placeholder="admin@dominio.com"></div>
-      <p style="font-size:.8rem;color:var(--tx2)">L'email verrà aggiunta alla whitelist degli amministratori nel database.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-add-admin')">Annulla</button>
-      <button class="btn btn-primary" onclick="addAdmin()">Aggiungi admin</button>
-    </div>
-  </div>
-</div>
-
-<!-- NEW TICKET -->
-<div class="modal-overlay" id="modal-new-ticket">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title">Nuovo ticket di supporto</div><div class="modal-close" onclick="closeModal('modal-new-ticket')">✕</div></div>
-    <div class="modal-body">
-      <div class="form-group"><label>Utente</label><select id="ticket-user-sel" style="width:100%;padding:.7rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx)"><option value="">— Scegli utente —</option></select></div>
-      <div class="form-group"><label>Oggetto</label><input type="text" id="ticket-subject" placeholder="Es. Problema con importazione CSV"></div>
-      <div class="form-group"><label>Messaggio iniziale</label><textarea id="ticket-msg" placeholder="Descrivi il problema..." rows="3"></textarea></div>
-      <div class="form-group"><label>Priorità</label><select id="ticket-priority"><option value="low">🟢 Bassa</option><option value="medium" selected>🟡 Media</option><option value="high">🔴 Alta</option></select></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-new-ticket')">Annulla</button>
-      <button class="btn btn-primary" onclick="createTicket()">Crea ticket</button>
-    </div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('modal-nuke')">Annulla</button><button class="btn btn-danger" onclick="nukeAll()">Esegui</button></div>
   </div>
 </div>
 
 <div id="toast"></div>
 
-<!-- ══ SCRIPTS ══ -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 'use strict';
+firebase.initializeApp({apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",authDomain:"financeapp-556ae.firebaseapp.com",databaseURL:"https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",projectId:"financeapp-556ae",storageBucket:"financeapp-556ae.firebasestorage.app",messagingSenderId:"181987533980",appId:"1:181987533980:web:41c5032990ccede17eb959"});
+const auth=firebase.auth(),db=firebase.database();
+const ADMIN_EMAILS=['adamomic371@gmail.com','admin@kazka.app'];
+let AU=null,ALL_U={},ALL_TX=[],ALL_ACC=[],ALL_INV=[],ALL_G={};
+let cfg={registration:true,maintenance:false,activityLogs:true,planDurations:{pro:30,business:30}};
 
-firebase.initializeApp({
-  apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",
-  authDomain:"financeapp-556ae.firebaseapp.com",
-  databaseURL:"https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:"financeapp-556ae",
-  storageBucket:"financeapp-556ae.firebasestorage.app",
-  messagingSenderId:"181987533980",
-  appId:"1:181987533980:web:41c5032990ccede17eb959"
-});
-const auth = firebase.auth();
-const db   = firebase.database();
-
-const ADMIN_EMAILS = ['admin@kazka.app','adamomic371@gmail.com'];
-const PLAN_PRICES  = { free:0, pro:9.99, business:24.99 };
-
-let ADMIN_USER = null;
-let ALL_USERS = {}, ALL_TX = [], ALL_ACC = [], ALL_INV = [];
-let settings = { registration:true, maintenance:false, activityLogs:true, broadcastEnabled:true };
-let bcSegments = new Set(['all']);
-let CHARTS = {};
-
-/* ══ AUTH ══ */
-auth.onAuthStateChanged(async user => {
-  if (user) {
-    if (!ADMIN_EMAILS.includes(user.email)) { showToast('Accesso non autorizzato','err'); await auth.signOut(); return; }
-    ADMIN_USER = user;
-    showPanel();
+auth.onAuthStateChanged(async u=>{
+  if(u){
+    if(!ADMIN_EMAILS.includes(u.email)){toast('Accesso non autorizzato','err');await auth.signOut();return}
+    AU=u;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    document.getElementById('admin-av').textContent=(u.email||'A').charAt(0).toUpperCase();
+    document.getElementById('admin-name').textContent=u.displayName||u.email.split('@')[0];
+    document.getElementById('dash-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    wlog('login','Accesso admin');
+    loadSettings();
     await loadAll();
   } else {
-    ADMIN_USER = null;
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('admin-panel').style.display = 'none';
+    AU=null;
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('admin-panel').style.display='none';
   }
 });
 
-async function doLogin() {
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = document.getElementById('l-pass').value;
-  const err   = document.getElementById('login-err');
-  const btn   = document.getElementById('login-btn');
-  if (!email||!pass) { showErr(err,'Compila tutti i campi'); return; }
-  if (!ADMIN_EMAILS.includes(email)) { showErr(err,'Email non autorizzata come amministratore'); return; }
-  btn.textContent='Accesso in corso...'; btn.disabled=true;
-  try { await auth.signInWithEmailAndPassword(email,pass); }
-  catch(e){ showErr(err,friendlyErr(e.code)); btn.textContent='Accedi al pannello'; btn.disabled=false; }
+async function doLogin(){
+  const email=document.getElementById('l-email').value.trim(),pass=document.getElementById('l-pass').value;
+  const err=document.getElementById('login-err'),btn=document.getElementById('login-btn');
+  if(!email||!pass){showErr(err,'Compila tutti i campi');return}
+  if(!ADMIN_EMAILS.includes(email)){showErr(err,'Email non autorizzata come admin');return}
+  btn.textContent='Accesso...';btn.disabled=true;
+  try{await auth.signInWithEmailAndPassword(email,pass)}
+  catch(e){showErr(err,ferr(e.code));btn.textContent='Accedi al pannello';btn.disabled=false}
 }
+async function doLogout(){if(!confirm('Uscire?'))return;wlog('logout','Uscita');await auth.signOut()}
 
-async function doLogout() {
-  if(!confirm('Esci dal pannello admin?'))return;
-  writeLog('logout','Uscita dal pannello admin');
-  await auth.signOut();
-}
-
-function showPanel() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('admin-panel').style.display = 'block';
-  const initials = (ADMIN_USER.email||'A').charAt(0).toUpperCase();
-  document.getElementById('admin-av').textContent = initials;
-  document.getElementById('admin-name').textContent = ADMIN_USER.displayName || ADMIN_USER.email.split('@')[0];
-  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  writeLog('login','Accesso al pannello admin');
-  loadSettings();
-}
-
-/* ══ LOAD DATA ══ */
-async function loadAll() {
-  try {
-    const snap = await db.ref('users').once('value');
-    const raw = snap.val() || {};
-    ALL_USERS = raw; ALL_TX = []; ALL_ACC = []; ALL_INV = [];
-    Object.entries(raw).forEach(([uid, u]) => {
-      const p = u.profile || {};
-      Object.entries(u.transactions||{}).forEach(([id,t])=>ALL_TX.push({...t,id,uid,userEmail:p.email||uid,userName:p.name||'—'}));
-      Object.entries(u.accounts||{}).forEach(([id,a])=>ALL_ACC.push({...a,id,uid,userEmail:p.email||uid,userName:p.name||'—'}));
-      Object.entries(u.invoices||{}).forEach(([id,i])=>ALL_INV.push({...i,id,uid,userEmail:p.email||uid,userName:p.name||'—'}));
+async function loadAll(){
+  try{
+    const[us,gs]=await Promise.all([db.ref('users').once('value'),db.ref('groups').once('value')]);
+    ALL_U=us.val()||{};ALL_G=gs.val()||{};ALL_TX=[];ALL_ACC=[];ALL_INV=[];
+    Object.entries(ALL_U).forEach(([uid,u])=>{
+      const p=u.profile||{};
+      Object.entries(u.transactions||{}).forEach(([id,t])=>ALL_TX.push({...t,id,uid,uEmail:p.email||uid,uName:p.name||'—'}));
+      Object.entries(u.accounts||{}).forEach(([id,a])=>ALL_ACC.push({...a,id,uid,uName:p.name||'—'}));
+      Object.entries(u.invoices||{}).forEach(([id,i])=>ALL_INV.push({...i,id,uid,uEmail:p.email||uid,uName:p.name||'—'}));
     });
-    ALL_TX.sort((a,b)=>new Date(b.date||b.createdAt||0)-new Date(a.date||a.createdAt||0));
-    updateTopbar(); renderDashboard(); renderUsers(); renderTransactions(); renderAccounts();
-    renderAnalytics(); renderInvoices(); renderRevenue(); renderPlans();
-    populateUserSelects(); loadLogs(); loadBroadcastHistory(); renderSecurity();
-    renderTickets(); loadSettings();
-  } catch(e) { showToast('Errore caricamento: '+e.message,'err'); }
-}
-function reloadAll(){ showToast('Aggiornamento...','warn'); loadAll(); }
-
-function updateTopbar() {
-  const uCount = Object.keys(ALL_USERS).length;
-  document.getElementById('tb-users').textContent = uCount;
-  document.getElementById('tb-tx').textContent = ALL_TX.length;
-  const mrr = calcMRR();
-  document.getElementById('tb-mrr').textContent = fmt(mrr);
+    ALL_TX.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    document.getElementById('tb-users').textContent=Object.keys(ALL_U).length;
+    document.getElementById('tb-tx').textContent=ALL_TX.length;
+    document.getElementById('tb-grp').textContent=Object.keys(ALL_G).length;
+    renderDash();renderUsers();renderSubs();renderGroups();renderTx();renderAnalytics();renderInv();loadLogs();
+  }catch(e){toast('Errore: '+e.message,'err')}
 }
 
-function calcMRR() {
-  const prices = getPrices();
-  return Object.values(ALL_USERS).reduce((s,u)=>{
-    const plan = u.profile?.plan||'free';
-    return s + (prices[plan]||0);
-  },0);
-}
+/* DASHBOARD */
+function renderDash(){
+  const ul=Object.values(ALL_U);
+  document.getElementById('d-users').textContent=ul.length;
+  document.getElementById('d-admins').textContent=ul.filter(u=>u.profile?.role==='admin').length;
+  document.getElementById('d-pro').textContent=ul.filter(u=>['pro','business'].includes(u.profile?.plan)).length;
+  document.getElementById('d-tx').textContent=ALL_TX.length;
+  document.getElementById('d-income').textContent=fmt(ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0));
+  document.getElementById('d-grp').textContent=Object.keys(ALL_G).length;
 
-function getPrices() {
-  return {
-    free: 0,
-    pro: parseFloat(document.getElementById('price-pro')?.value||9.99),
-    business: parseFloat(document.getElementById('price-business')?.value||24.99)
-  };
-}
-
-/* ══ DASHBOARD ══ */
-function renderDashboard() {
-  const uCount  = Object.keys(ALL_USERS).length;
-  const income  = ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
-  const expense = ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
-  const now = Date.now();
-  const activeUsers = Object.values(ALL_USERS).filter(u=>{
-    const txs = ALL_TX.filter(t=>t.uid===Object.keys(ALL_USERS).find(k=>ALL_USERS[k]===u));
-    return txs.some(t=>now - new Date(t.date||t.createdAt||0).getTime() < 30*24*3600*1000);
-  }).length;
-  const mrr = calcMRR();
-
-  document.getElementById('d-users').textContent = uCount;
-  document.getElementById('d-active').textContent = activeUsers;
-  document.getElementById('d-tx').textContent = ALL_TX.length;
-  document.getElementById('d-income').textContent = fmt(income);
-  document.getElementById('d-expense').textContent = fmt(expense);
-  document.getElementById('d-mrr').textContent = fmt(mrr);
-
-  const users = Object.values(ALL_USERS).filter(u=>u.profile).slice(0,6);
-  document.getElementById('recent-users-list').innerHTML = users.length ? users.map(u=>`
+  const sorted=ul.filter(u=>u.profile?.createdAt).sort((a,b)=>new Date(b.profile.createdAt)-new Date(a.profile.createdAt)).slice(0,5);
+  document.getElementById('recent-users').innerHTML=sorted.length?sorted.map(u=>`
     <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)">
-      <div style="width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">${(u.profile.name||'?').charAt(0).toUpperCase()}</div>
-      <div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div>
-      <span class="badge ${planBadge(u.profile.plan)}">${u.profile.plan||'free'}</span>
-    </div>`).join('') : '<div class="empty">Nessun utente</div>';
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0">${(u.profile.name||'?').charAt(0).toUpperCase()}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div>
+      <span class="badge ${rb(u.profile.role)}">${u.profile.role||'user'}</span>
+    </div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun utente</div>';
 
-  const CAT_IC = {alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',altro:'📦'};
-  document.getElementById('recent-tx-list').innerHTML = ALL_TX.slice(0,8).map(t=>`
-    <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.82rem">
-      <span style="font-size:1rem">${CAT_IC[t.category]||'📦'}</span>
-      <div style="flex:1;min-width:0"><div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.description||'—'}</div><div style="color:var(--tx3);font-size:.72rem">${t.userName} · ${fmtDate(t.date)}</div></div>
-      <div style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div>
-    </div>`).join('') || '<div class="empty">Nessuna transazione</div>';
-
-  mkChart('chart-dash-activity','bar', dashActivityData(), {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7A85A8',font:{size:11}}}},scales:{x:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}}}});
+  const now=Date.now(),in30=now+30*864e5;
+  const exp=ul.filter(u=>{const e=u.profile?.subscriptionExpiry;if(!e||e==='never')return false;const t=new Date(e).getTime();return t>now&&t<=in30}).sort((a,b)=>new Date(a.profile.subscriptionExpiry)-new Date(b.profile.subscriptionExpiry));
+  document.getElementById('expiring-subs').innerHTML=exp.length?exp.map(u=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem">
+      <div><div style="font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div>
+      <div style="text-align:right"><span class="badge ${pb(u.profile.plan)}">${u.profile.plan||'free'}</span><div style="font-size:.72rem;color:var(--ye);margin-top:.2rem">Scade ${fd(u.profile.subscriptionExpiry)}</div></div>
+    </div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessuna scadenza imminente</div>';
 }
 
-function dashActivityData() {
-  const labels=[],incomes=[],expenses=[];
-  for(let i=5;i>=0;i--){
-    const d=new Date(); d.setMonth(d.getMonth()-i);
-    const m=d.toISOString().slice(0,7);
-    labels.push(d.toLocaleDateString('it-IT',{month:'short'}));
-    const txM = ALL_TX.filter(t=>t.date&&t.date.startsWith(m));
-    incomes.push(txM.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0));
-    expenses.push(txM.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0));
-  }
-  return {labels,datasets:[{label:'Entrate',data:incomes,backgroundColor:'rgba(0,240,160,.7)',borderRadius:4},{label:'Uscite',data:expenses,backgroundColor:'rgba(255,51,85,.65)',borderRadius:4}]};
-}
-
-/* ══ USERS ══ */
-function renderUsers(filter='', plan='', sortBy='date') {
-  let users = Object.entries(ALL_USERS).filter(([uid,u])=>{
-    const p = u.profile||{};
-    const q = filter.toLowerCase();
-    return (!q||(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q))
-      && (!plan||p.plan===plan);
+/* USERS */
+function renderUsers(q='',role='',plan=''){
+  const entries=Object.entries(ALL_U).filter(([uid,u])=>{
+    const p=u.profile||{};const ql=q.toLowerCase();
+    return(!q||(p.name||'').toLowerCase().includes(ql)||(p.email||'').toLowerCase().includes(ql)||uid.includes(ql))&&(!role||(p.role||'user')===role)&&(!plan||p.plan===plan);
   });
-  if(sortBy==='tx') users.sort((a,b)=>ALL_TX.filter(t=>t.uid===b[0]).length - ALL_TX.filter(t=>t.uid===a[0]).length);
-  else if(sortBy==='name') users.sort((a,b)=>(a[1].profile?.name||'').localeCompare(b[1].profile?.name||''));
-  else users.sort((a,b)=>new Date(b[1].profile?.createdAt||0)-new Date(a[1].profile?.createdAt||0));
-
-  document.getElementById('users-count').textContent = `${users.length} utenti trovati`;
-  const tbody = document.getElementById('users-tbody');
-  const empty = document.getElementById('users-empty');
-  if(!users.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  document.getElementById('users-count').textContent=`${entries.length} utenti`;
+  const tbody=document.getElementById('users-tbody'),empty=document.getElementById('users-empty');
+  if(!entries.length){tbody.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
-
-  tbody.innerHTML = users.map(([uid,u])=>{
-    const p = u.profile||{};
-    const txN = ALL_TX.filter(t=>t.uid===uid).length;
-    const isBlocked = p.blocked;
-    return `<tr style="cursor:pointer" onclick="showUserDetail('${uid}')">
-      <td><div style="width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div></td>
-      <td class="td-main">${p.name||'—'}</td>
-      <td>${p.email||'—'}</td>
-      <td><span class="badge ${planBadge(p.plan)}">${p.plan||'free'}</span></td>
-      <td>${fmtDate(p.createdAt)}</td>
-      <td>${txN}</td>
-      <td><span class="badge ${isBlocked?'badge-red':'badge-green'}">${isBlocked?'🔒 Bloccato':'✓ Attivo'}</span></td>
-      <td><div style="display:flex;gap:.3rem" onclick="event.stopPropagation()">
-        <button class="btn btn-secondary btn-icon btn-sm" onclick="showUserDetail('${uid}')" title="Dettagli">👁</button>
-        <button class="btn btn-warn btn-icon btn-sm" onclick="quickPlanChange('${uid}')" title="Cambia piano">🎯</button>
-        <button class="btn btn-danger btn-icon btn-sm" onclick="confirmDeleteUser('${uid}')" title="Elimina">🗑</button>
+  const txN=uid=>ALL_TX.filter(t=>t.uid===uid).length;
+  tbody.innerHTML=entries.map(([uid,u])=>{
+    const p=u.profile||{};const s=subStatus(p);
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:.5rem">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div>
+        <div><div class="tdm" style="font-size:.85rem">${p.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${p.email||uid.slice(0,10)+'...'}</div></div>
       </div></td>
-    </tr>`;
-  }).join('');
-}
-
-function filterUsers(){
-  renderUsers(
-    document.getElementById('user-search').value,
-    document.getElementById('user-filter-plan').value,
-    document.getElementById('user-filter-sort').value
-  );
-}
-
-function showUserDetail(uid) {
-  const u = ALL_USERS[uid]; if(!u)return;
-  const p = u.profile||{};
-  const txN = ALL_TX.filter(t=>t.uid===uid).length;
-  const accN = ALL_ACC.filter(a=>a.uid===uid).length;
-  const income  = ALL_TX.filter(t=>t.uid===uid&&t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
-  const expense = ALL_TX.filter(t=>t.uid===uid&&t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
-  const recentTx = ALL_TX.filter(t=>t.uid===uid).slice(0,4);
-
-  document.getElementById('ud-title').textContent = p.name||'Utente';
-  document.getElementById('ud-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
-      <div class="udet"><div class="udet-l">UID</div><div class="udet-v" style="font-size:.65rem;word-break:break-all">${uid}</div></div>
-      <div class="udet"><div class="udet-l">Email</div><div class="udet-v" style="font-size:.8rem">${p.email||'—'}</div></div>
-      <div class="udet"><div class="udet-l">Registrato</div><div class="udet-v">${fmtDate(p.createdAt)}</div></div>
-      <div class="udet"><div class="udet-l">Ruolo</div>
-        <select id="ud-role" style="background:var(--bg3);border:1px solid var(--b2);border-radius:6px;color:var(--tx);padding:.3rem .6rem;font-size:.8rem;width:100%">
-          <option value="user" ${p.role==='user'?'selected':''}>Utente</option>
-          <option value="admin" ${p.role==='admin'?'selected':''}>Admin</option>
-        </select>
-      </div>
-      <div class="udet"><div class="udet-l">Piano</div>
-        <select id="ud-plan" style="background:var(--bg3);border:1px solid var(--b2);border-radius:6px;color:var(--tx);padding:.3rem .6rem;font-size:.8rem;width:100%">
-          <option value="free" ${p.plan==='free'?'selected':''}>Free</option>
-          <option value="pro" ${p.plan==='pro'?'selected':''}>Pro</option>
-          <option value="business" ${p.plan==='business'?'selected':''}>Business</option>
-        </select>
-      </div>
-      <div class="udet"><div class="udet-l">Stato</div><div class="udet-v"><span class="badge ${p.blocked?'badge-red':'badge-green'}">${p.blocked?'🔒 Bloccato':'✓ Attivo'}</span></div></div>
-      <div class="udet"><div class="udet-l">Transazioni</div><div class="udet-v">${txN}</div></div>
-      <div class="udet"><div class="udet-l">Conti</div><div class="udet-v">${accN}</div></div>
-      <div class="udet"><div class="udet-l">Entrate</div><div class="udet-v" style="color:var(--gr)">${fmt(income)}</div></div>
-      <div class="udet"><div class="udet-l">Uscite</div><div class="udet-v" style="color:var(--re)">${fmt(expense)}</div></div>
-    </div>
-    ${recentTx.length?`
-    <div style="font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:.5rem">Ultime transazioni</div>
-    ${recentTx.map(t=>`
-      <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--b1);font-size:.82rem">
-        <span>${t.description||'—'} <span style="color:var(--tx3)">${fmtDate(t.date)}</span></span>
-        <span style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</span>
-      </div>`).join('')}`:'' }`;
-
-  document.getElementById('ud-save-btn').onclick = () => saveUserDetail(uid);
-  document.getElementById('ud-delete-btn').onclick = () => { closeModal('modal-user-detail'); confirmDeleteUser(uid); };
-  document.getElementById('ud-block-btn').onclick = () => toggleBlockUser(uid);
-  document.getElementById('ud-block-btn').textContent = p.blocked ? '🔓 Sblocca' : '🔒 Blocca';
-  openModal('modal-user-detail');
-}
-
-async function saveUserDetail(uid) {
-  const plan = document.getElementById('ud-plan').value;
-  const role = document.getElementById('ud-role').value;
-  await db.ref(`users/${uid}/profile`).update({plan, role});
-  closeModal('modal-user-detail');
-  await loadAll();
-  showToast('Utente aggiornato','ok');
-  writeLog('update',`Utente ${uid}: piano=${plan}, ruolo=${role}`);
-}
-
-async function toggleBlockUser(uid) {
-  const u = ALL_USERS[uid]; if(!u)return;
-  const isBlocked = u.profile?.blocked;
-  await db.ref(`users/${uid}/profile/blocked`).set(!isBlocked);
-  closeModal('modal-user-detail');
-  await loadAll();
-  showToast(isBlocked?'Account sbloccato':'Account bloccato', isBlocked?'ok':'warn');
-  writeLog('security',`Account ${isBlocked?'sbloccato':'bloccato'}: ${u.profile?.email}`);
-}
-
-async function quickPlanChange(uid) {
-  const u = ALL_USERS[uid]; if(!u)return;
-  const plans = ['free','pro','business'];
-  const cur = u.profile?.plan||'free';
-  const next = plans[(plans.indexOf(cur)+1)%plans.length];
-  if(!confirm(`Cambia piano di ${u.profile?.name} da ${cur} a ${next}?`))return;
-  await db.ref(`users/${uid}/profile/plan`).set(next);
-  await loadAll();
-  showToast(`Piano aggiornato: ${cur} → ${next}`,'ok');
-  writeLog('update',`Piano utente ${u.profile?.email}: ${cur} → ${next}`);
-}
-
-async function createUser() {
-  const name = document.getElementById('nu-name').value.trim();
-  const email = document.getElementById('nu-email').value.trim();
-  const plan  = document.getElementById('nu-plan').value;
-  const role  = document.getElementById('nu-role').value;
-  if(!name||!email){showToast('Compila nome ed email','err');return}
-  const profile = {name,email,plan,role,createdAt:new Date().toISOString(),uid:'manual-'+Date.now()};
-  await db.ref(`users/${profile.uid}/profile`).set(profile);
-  closeModal('modal-new-user');
-  await loadAll();
-  showToast('Utente creato','ok');
-  writeLog('create',`Utente creato: ${email}`);
-}
-
-async function confirmDeleteUser(uid) {
-  const email = ALL_USERS[uid]?.profile?.email||uid;
-  if(!confirm(`Eliminare definitivamente ${email} e tutti i suoi dati?`))return;
-  await db.ref(`users/${uid}`).remove();
-  await loadAll();
-  showToast('Utente eliminato','ok');
-  writeLog('delete',`Utente eliminato: ${email}`);
-}
-
-async function deleteUserData() {
-  const input = document.getElementById('del-user-id').value.trim();
-  if(!input){showToast('Inserisci UID o email','err');return}
-  const uid = Object.entries(ALL_USERS).find(([,u])=>u.profile?.email===input)?.[0]||input;
-  await db.ref(`users/${uid}`).remove();
-  closeModal('modal-delete-user');
-  await loadAll();
-  showToast('Utente eliminato','ok');
-  writeLog('delete',`Utente eliminato: ${input}`);
-}
-
-async function resetUserTransactions() {
-  const input = document.getElementById('reset-tx-uid').value.trim();
-  if(!input){showToast('Inserisci UID o email','err');return}
-  const uid = Object.entries(ALL_USERS).find(([,u])=>u.profile?.email===input)?.[0]||input;
-  await db.ref(`users/${uid}/transactions`).remove();
-  closeModal('modal-reset-user-tx');
-  await loadAll();
-  showToast('Transazioni resettate','ok');
-  writeLog('reset',`Transazioni resettate per: ${input}`);
-}
-
-async function nukeAllData() {
-  if(document.getElementById('nuke-confirm').value !== 'CANCELLA TUTTO'){showToast('Testo di conferma errato','err');return}
-  await db.ref('users').remove();
-  closeModal('modal-nuke');
-  await loadAll();
-  showToast('Tutti i dati eliminati','ok');
-  writeLog('nuke','⚠ CANCELLAZIONE TOTALE ESEGUITA');
-}
-
-/* ══ PLAN MANAGEMENT ══ */
-function renderPlans() {
-  const plans = {free:0, pro:0, business:0};
-  Object.values(ALL_USERS).forEach(u=>{ const p=u.profile?.plan||'free'; plans[p]=(plans[p]||0)+1; });
-  const prices = getPrices();
-  const total = Object.keys(ALL_USERS).length || 1;
-  const planDefs = [
-    {key:'free', name:'Free', color:'var(--tx2)', features:['Dashboard base','Transazioni illimitate','Conti multipli','—No report avanzati','—No fatture','—No business']},
-    {key:'pro', name:'Pro', color:'var(--ac)', features:['Tutto Free +','Report avanzati','Obiettivi e budget','Esportazione PDF/CSV','Ricorrenti','—No fatture business']},
-    {key:'business', name:'Business', color:'var(--ac2)', features:['Tutto Pro +','Fatture & clienti','Viaggi & trasferte','Personal + Business','Supporto prioritario','API access']},
-  ];
-  document.getElementById('plan-cards').innerHTML = planDefs.map(pl=>`
-    <div class="plan-card plan-${pl.key}">
-      <div class="plan-badge-strip" style="background:${pl.color}"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-        <div class="plan-name" style="color:${pl.color}">${pl.name}</div>
-        <span class="badge ${planBadge(pl.key)}">${plans[pl.key]} utenti</span>
-      </div>
-      <div class="plan-users-count" style="color:${pl.color}">${Math.round((plans[pl.key]/total)*100)}%</div>
-      <div style="color:var(--tx2);font-size:.78rem;margin-bottom:.875rem">degli utenti totali</div>
-      <div class="plan-price">${pl.key==='free'?'Gratis':`€${prices[pl.key]}<span>/mese</span>`}</div>
-      <div>
-        ${pl.features.map(f=>`<div class="plan-feature"><span class="${f.startsWith('—')?'no':'ok'}">${f.startsWith('—')?'✗':'✓'}</span>${f.replace('—','')}</div>`).join('')}
-      </div>
-      <div style="margin-top:.875rem">
-        <div style="font-size:.72rem;color:var(--tx3)">MRR da questo piano</div>
-        <div style="font-weight:700;color:${pl.color}">${fmt(plans[pl.key]*(prices[pl.key]||0))}</div>
-      </div>
-    </div>`).join('');
-
-  renderPlanTable();
-}
-
-function renderPlanTable(filter='') {
-  const tbody = document.getElementById('plan-tbody');
-  let users = Object.entries(ALL_USERS).filter(([uid,u])=>{
-    const p=u.profile||{};
-    const q=filter.toLowerCase();
-    return !q||(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q);
-  });
-  tbody.innerHTML = users.map(([uid,u])=>{
-    const p = u.profile||{};
-    const since = p.planChangedAt ? fmtDate(p.planChangedAt) : fmtDate(p.createdAt);
-    const expiry = p.planExpiry ? fmtDate(p.planExpiry) : '—';
-    return `<tr>
-      <td class="td-main">${p.name||'—'}</td>
-      <td style="font-size:.8rem">${p.email||'—'}</td>
-      <td><span class="badge ${planBadge(p.plan)}">${p.plan||'free'}</span></td>
-      <td>${since}</td>
-      <td>${expiry}</td>
+      <td><span class="badge ${rb(p.role)}">${p.role||'user'}</span></td>
+      <td><span class="badge ${pb(p.plan)}">${p.plan||'free'}</span></td>
+      <td style="font-size:.8rem">${p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?fd(p.subscriptionExpiry):p.subscriptionExpiry==='never'?'Illimitato':'—'}</td>
+      <td><span class="badge ${s.badge}">${s.label}</span></td>
+      <td style="font-size:.8rem">${fd(p.createdAt)}</td>
+      <td style="font-weight:600">${txN(uid)}</td>
       <td><div style="display:flex;gap:.3rem">
-        <select onchange="changePlan('${uid}',this.value)" style="padding:.35rem .6rem;background:var(--bg3);border:1px solid var(--b2);border-radius:6px;color:var(--tx);font-size:.78rem">
-          <option value="free" ${p.plan==='free'?'selected':''}>Free</option>
-          <option value="pro" ${p.plan==='pro'?'selected':''}>Pro</option>
-          <option value="business" ${p.plan==='business'?'selected':''}>Business</option>
-        </select>
+        <button class="btn btn-sec btn-icon btn-sm" onclick="openEdit('${uid}')" title="Modifica">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="qDelete('${uid}')" title="Elimina">🗑</button>
       </div></td>
     </tr>`;
   }).join('');
 }
+function filterUsers(){renderUsers(document.getElementById('user-search').value,document.getElementById('uf-role').value,document.getElementById('uf-plan').value)}
 
-function filterPlanUsers(){ renderPlanTable(document.getElementById('plan-user-search').value); }
-
-async function changePlan(uid, newPlan) {
-  const u = ALL_USERS[uid]; if(!u)return;
-  const oldPlan = u.profile?.plan||'free';
-  await db.ref(`users/${uid}/profile`).update({plan:newPlan, planChangedAt:new Date().toISOString()});
-  ALL_USERS[uid].profile = {...(ALL_USERS[uid].profile||{}), plan:newPlan};
-  showToast(`Piano ${u.profile?.name}: ${oldPlan} → ${newPlan}`,'ok');
-  writeLog('update',`Piano utente ${u.profile?.email}: ${oldPlan} → ${newPlan}`);
-  updateTopbar(); renderPlans();
+function openEdit(uid){
+  const u=ALL_U[uid];if(!u)return;const p=u.profile||{};
+  document.getElementById('eu-uid').value=uid;
+  document.getElementById('eu-title').textContent=p.name||'Modifica utente';
+  document.getElementById('eu-role').value=p.role||'user';
+  document.getElementById('eu-plan').value=p.plan||'free';
+  document.getElementById('eu-start').value=p.subscriptionStart||today();
+  document.getElementById('eu-expiry').value=p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?p.subscriptionExpiry:'';
+  document.getElementById('eu-notes').value=p.adminNotes||'';
+  const txN=ALL_TX.filter(t=>t.uid===uid).length;
+  const inc=ALL_TX.filter(t=>t.uid===uid&&t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const exp=ALL_TX.filter(t=>t.uid===uid&&t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+  document.getElementById('eu-info').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem">
+    <div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.15rem">Email</div><div style="font-size:.78rem;word-break:break-all">${p.email||'—'}</div></div>
+    <div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.15rem">Registrato</div><div style="font-size:.78rem">${fd(p.createdAt)}</div></div>
+    <div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.15rem">Transazioni</div><div style="font-size:.78rem;font-weight:600">${txN}</div></div>
+    <div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.15rem">Volume</div><div style="font-size:.78rem"><span style="color:var(--gr)">+${fmt(inc)}</span> <span style="color:var(--re)">-${fmt(exp)}</span></div></div>
+  </div>`;
+  document.getElementById('eu-del-btn').onclick=()=>{cm('modal-edit-user');qDelete(uid)};
+  om('modal-edit-user');
+}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);document.getElementById('eu-expiry').value=d.toISOString().split('T')[0];if(!document.getElementById('eu-start').value)document.getElementById('eu-start').value=today()}
+async function saveUserEdit(){
+  const uid=document.getElementById('eu-uid').value;
+  const role=document.getElementById('eu-role').value,plan=document.getElementById('eu-plan').value;
+  const start=document.getElementById('eu-start').value,expiry=document.getElementById('eu-expiry').value||'never';
+  const notes=document.getElementById('eu-notes').value.trim();
+  await db.ref(`users/${uid}/profile`).update({role,plan,subscriptionStart:start||today(),subscriptionExpiry:expiry,adminNotes:notes,updatedByAdmin:new Date().toISOString()});
+  cm('modal-edit-user');await loadAll();toast('Utente aggiornato','ok');
+  wlog('update',`Utente ${uid}: ruolo=${role}, piano=${plan}, scadenza=${expiry}`);
+}
+async function qDelete(uid){
+  const u=ALL_U[uid];const email=u?.profile?.email||uid;
+  if(!confirm(`Eliminare definitivamente ${email}?`))return;
+  await db.ref(`users/${uid}`).remove();await loadAll();toast('Utente eliminato','ok');
+  wlog('delete',`Utente eliminato: ${email}`);
+}
+async function createUser(){
+  const name=document.getElementById('nu-name').value.trim(),email=document.getElementById('nu-email').value.trim();
+  const role=document.getElementById('nu-role').value,plan=document.getElementById('nu-plan').value;
+  const expiry=document.getElementById('nu-expiry').value||'never';
+  if(!name||!email){toast('Compila nome ed email','err');return}
+  const uid='manual-'+Date.now();
+  await db.ref(`users/${uid}/profile`).set({name,email,role,plan,subscriptionExpiry:expiry,subscriptionStart:today(),uid,createdAt:new Date().toISOString(),createdByAdmin:true});
+  cm('modal-new-user');await loadAll();toast('Utente creato','ok');
+  wlog('create',`Utente creato: ${email} (${role}/${plan})`);
 }
 
-async function executeBulkPlan() {
-  const from = document.getElementById('bulk-from').value;
-  const to   = document.getElementById('bulk-to').value;
-  if(from===to){showToast('Piani uguali','err');return}
-  const targets = Object.entries(ALL_USERS).filter(([,u])=>(u.profile?.plan||'free')===from);
-  if(!targets.length){showToast('Nessun utente con questo piano','warn');return}
-  if(!confirm(`Cambiare il piano di ${targets.length} utenti da "${from}" a "${to}"?`))return;
-  const updates = {};
-  targets.forEach(([uid])=>{ updates[`users/${uid}/profile/plan`]=to; });
-  await db.ref().update(updates);
-  closeModal('modal-bulk-plan');
-  await loadAll();
-  showToast(`${targets.length} utenti aggiornati: ${from} → ${to}`,'ok');
-  writeLog('update',`Bulk plan change: ${from} → ${to} (${targets.length} utenti)`);
+/* SUBSCRIPTIONS */
+function renderSubs(){
+  const ul=Object.entries(ALL_U).map(([uid,u])=>({uid,...u.profile}));
+  document.getElementById('s-free').textContent=ul.filter(u=>!u.plan||u.plan==='free').length;
+  document.getElementById('s-pro').textContent=ul.filter(u=>u.plan==='pro').length;
+  document.getElementById('s-biz').textContent=ul.filter(u=>u.plan==='business').length;
+  document.getElementById('s-exp').textContent=ul.filter(u=>u.plan&&u.plan!=='free'&&u.subscriptionExpiry&&u.subscriptionExpiry!=='never'&&new Date(u.subscriptionExpiry)<new Date()).length;
+  const sorted=ul.filter(u=>u.email).sort((a,b)=>({business:0,pro:1,free:2}[a.plan]||2)-({business:0,pro:1,free:2}[b.plan]||2));
+  document.getElementById('subs-tbody').innerHTML=sorted.map(u=>{const s=subStatus(u);return`<tr>
+    <td class="tdm">${u.name||'—'}</td><td style="font-size:.82rem">${u.email||'—'}</td>
+    <td><span class="badge ${pb(u.plan)}">${u.plan||'free'}</span></td>
+    <td style="font-size:.82rem">${u.subscriptionStart?fd(u.subscriptionStart):'—'}</td>
+    <td style="font-size:.82rem">${u.subscriptionExpiry&&u.subscriptionExpiry!=='never'?fd(u.subscriptionExpiry):u.subscriptionExpiry==='never'?'Illimitato':'—'}</td>
+    <td><span class="badge ${s.badge}">${s.label}</span></td>
+    <td><button class="btn btn-sec btn-icon btn-sm" onclick="openEdit('${u.uid}')">✏️</button></td>
+  </tr>`}).join('');
 }
 
-/* ══ TRANSACTIONS ══ */
-function renderTransactions(q='',type='',ctx='') {
-  let tx = ALL_TX;
-  if(q) tx=tx.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.userName||'').toLowerCase().includes(q));
-  if(type) tx=tx.filter(t=>t.type===type);
-  if(ctx) tx=tx.filter(t=>t.context===ctx);
+/* GROUPS */
+function renderGroups(){
+  const entries=Object.entries(ALL_G);
+  document.getElementById('grp-count').textContent=`${entries.length} gruppi`;
+  const tbody=document.getElementById('grp-tbody'),empty=document.getElementById('grp-empty');
+  if(!entries.length){tbody.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  tbody.innerHTML=entries.map(([gid,g])=>{
+    const info=g.info||{};
+    const members=Object.keys(g.members||{}).length;
+    const expenses=Object.keys(g.expenses||{}).length;
+    const totalExp=Object.values(g.expenses||{}).reduce((s,e)=>s+Number(e.amount||0),0);
+    const messages=Object.keys(g.chat||{}).length;
+    const creator=Object.values(ALL_U).find(u=>u.profile?.uid===info.createdBy||u.profile?.email===info.createdBy)?.profile?.name||info.createdBy||'—';
+    return`<tr>
+      <td class="tdm">${info.name||'—'}</td>
+      <td style="font-size:.82rem">${creator}</td>
+      <td style="font-weight:600">${members}</td>
+      <td style="font-weight:600">${expenses}</td>
+      <td style="font-weight:700;color:var(--re)">${fmt(totalExp)}</td>
+      <td>${messages}</td>
+      <td style="font-size:.82rem">${fd(info.createdAt)}</td>
+      <td><button class="btn btn-danger btn-icon btn-sm" onclick="deleteGroup('${gid}')" title="Elimina gruppo">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+async function deleteGroup(gid){if(!confirm('Eliminare questo gruppo?'))return;await db.ref(`groups/${gid}`).remove();await loadAll();toast('Gruppo eliminato','ok');wlog('delete',`Gruppo eliminato: ${gid}`)}
 
-  document.getElementById('tx-count-label').textContent = `${tx.length} transazioni`;
-  const tbody = document.getElementById('tx-tbody');
-  const empty = document.getElementById('tx-empty');
+/* TRANSACTIONS */
+function renderTx(q='',type=''){
+  let tx=ALL_TX;
+  if(q)tx=tx.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.uName||'').toLowerCase().includes(q));
+  if(type)tx=tx.filter(t=>t.type===type);
+  document.getElementById('tx-count').textContent=`${tx.length} transazioni`;
+  const tbody=document.getElementById('tx-tbody'),empty=document.getElementById('tx-empty');
   if(!tx.length){tbody.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
-  const CAT={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',altro:'📦'};
-  tbody.innerHTML = tx.slice(0,200).map(t=>`
-    <tr>
-      <td>${t.userName}</td>
-      <td>${fmtDate(t.date)}</td>
-      <td class="td-main">${CAT[t.category]||'📦'} ${t.description||'—'}</td>
-      <td>${cap(t.category||'altro')}</td>
-      <td><span class="badge ${t.type==='income'?'badge-green':'badge-red'}">${t.type==='income'?'Entrata':'Uscita'}</span></td>
-      <td><span class="badge ${t.context==='business'?'badge-orange':'badge-purple'}">${t.context==='business'?'💼 Biz':'👤 Per'}</span></td>
-      <td style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</td>
-      <td><button class="btn btn-danger btn-icon btn-sm" onclick="deleteTx('${t.uid}','${t.id}')">🗑</button></td>
-    </tr>`).join('');
+  const CI={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',altro:'📦'};
+  tbody.innerHTML=tx.slice(0,200).map(t=>`<tr>
+    <td style="font-size:.82rem">${t.uName}</td>
+    <td style="font-size:.82rem">${fd(t.date)}</td>
+    <td class="tdm">${CI[t.category]||'📦'} ${t.description||'—'}</td>
+    <td style="font-size:.82rem">${cap(t.category||'altro')}</td>
+    <td><span class="badge ${t.type==='income'?'bg':'br'}">${t.type==='income'?'Entrata':'Uscita'}</span></td>
+    <td style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">
+      ${t.type==='income'?'+':'-'}${fmt(t.amount)}
+    </td>
+    <td><button class="btn btn-danger btn-icon btn-sm" onclick="delTx('${t.uid}','${t.id}')">🗑</button></td>
+  </tr>`).join('');
 }
-function filterTx(){renderTransactions(document.getElementById('tx-search').value.toLowerCase(),document.getElementById('tx-filter-type').value,document.getElementById('tx-filter-ctx').value)}
-async function deleteTx(uid,id){
-  if(!confirm('Eliminare questa transazione?'))return;
-  await db.ref(`users/${uid}/transactions/${id}`).remove();
-  await loadAll(); showToast('Eliminata','ok');
-}
+function filterTx(){renderTx(document.getElementById('tx-search').value.toLowerCase(),document.getElementById('tx-type-f').value)}
+async function delTx(uid,id){if(!confirm('Eliminare?'))return;await db.ref(`users/${uid}/transactions/${id}`).remove();await loadAll();toast('Eliminata','ok')}
 
-/* ══ ACCOUNTS ══ */
-function renderAccounts() {
-  const tbody = document.getElementById('acc-tbody');
-  const empty = document.getElementById('acc-empty');
-  const TYPES = {bank:'🏦 Banca',card:'💳 Carta',paypal:'🟦 PayPal',cash:'💵 Contanti',crypto:'₿ Crypto',investment:'📈 Invest.'};
-  document.getElementById('acc-count-label').textContent = `${ALL_ACC.length} conti registrati`;
-  if(!ALL_ACC.length){tbody.innerHTML='';empty.style.display='block';return}
-  empty.style.display='none';
-  tbody.innerHTML = ALL_ACC.map(a=>`
-    <tr>
-      <td>${a.userName}</td>
-      <td class="td-main">${a.name}</td>
-      <td>${TYPES[a.type]||a.type}</td>
-      <td><span class="badge ${a.context==='business'?'badge-orange':'badge-purple'}">${a.context==='business'?'💼 Business':'👤 Personal'}</span></td>
-      <td style="font-weight:700;color:${Number(a.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(a.balance||0)}</td>
-      <td>${fmtDate(a.createdAt)}</td>
-    </tr>`).join('');
-}
+/* ANALYTICS */
+function renderAnalytics(){
+  const inc=ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const exp=ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+  const avg=Object.keys(ALL_U).length?Math.round(ALL_TX.length/Object.keys(ALL_U).length):0;
+  document.getElementById('an-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Volume entrate</div><div class="stat-val" style="color:var(--gr)">${fmt(inc)}</div></div>
+    <div class="stat"><div class="stat-lbl">Volume uscite</div><div class="stat-val" style="color:var(--re)">${fmt(exp)}</div></div>
+    <div class="stat"><div class="stat-lbl">Saldo netto</div><div class="stat-val">${fmt(inc-exp)}</div></div>
+    <div class="stat"><div class="stat-lbl">Media tx/utente</div><div class="stat-val">${avg}</div></div>`;
 
-/* ══ REVENUE ══ */
-function renderRevenue() {
-  const prices = getPrices();
-  const planCounts = {free:0,pro:0,business:0};
-  Object.values(ALL_USERS).forEach(u=>{ const p=u.profile?.plan||'free'; planCounts[p]++; });
-  const mrr = calcMRR();
-  const arr = mrr * 12;
-  const paying = planCounts.pro + planCounts.business;
-  const total  = Object.keys(ALL_USERS).length || 1;
-  const convRate = Math.round((paying/total)*100);
-
-  document.getElementById('revenue-kpis').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">MRR (Monthly Recurring Revenue)</div><div class="kpi-value" style="color:var(--ye)">${fmt(mrr)}</div><div class="kpi-sub">da ${paying} utenti paganti</div><div class="kpi-delta pos">▲ ${convRate}% conv. rate</div></div>
-    <div class="kpi-card"><div class="kpi-label">ARR (Annual Run Rate)</div><div class="kpi-value" style="color:var(--gr)">${fmt(arr)}</div><div class="kpi-sub">proiezione annuale</div></div>
-    <div class="kpi-card"><div class="kpi-label">Utenti paganti</div><div class="kpi-value" style="color:var(--ac)">${paying}</div><div class="kpi-sub">${convRate}% del totale</div></div>
-    <div class="kpi-card"><div class="kpi-label">ARPU (Revenue per utente)</div><div class="kpi-value" style="color:var(--ac2)">${fmt(mrr/(total||1))}</div><div class="kpi-sub">medio mensile</div></div>`;
-
-  /* Funnel */
-  document.getElementById('conversion-funnel').innerHTML = [
-    {label:'Utenti free',count:planCounts.free,color:'var(--tx2)',pct:Math.round((planCounts.free/total)*100)},
-    {label:'Upgrade a Pro',count:planCounts.pro,color:'var(--ac)',pct:Math.round((planCounts.pro/total)*100)},
-    {label:'Upgrade a Business',count:planCounts.business,color:'var(--ac2)',pct:Math.round((planCounts.business/total)*100)},
-  ].map(f=>`
-    <div style="margin-bottom:.875rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:.3rem;font-size:.85rem">
-        <span style="font-weight:600">${f.label}</span>
-        <span style="font-weight:700;color:${f.color}">${f.count} utenti (${f.pct}%)</span>
-      </div>
-      <div style="height:8px;background:var(--b1);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${f.pct}%;background:${f.color};border-radius:4px;transition:width .6s"></div>
-      </div>
-    </div>`).join('');
-
-  /* Plan dist chart */
-  mkChart('chart-plan-dist','doughnut',{
-    labels:['Free','Pro','Business'],
-    datasets:[{data:[planCounts.free,planCounts.pro,planCounts.business],backgroundColor:['rgba(122,133,168,.6)','rgba(123,104,238,.7)','rgba(0,229,255,.7)'],borderWidth:0}]
-  },{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#7A85A8',font:{size:11}}}}});
-
-  /* Active/inactive */
-  const thirtyDaysAgo = Date.now() - 30*24*3600*1000;
-  const active=[], inactive=[];
-  Object.entries(ALL_USERS).forEach(([uid,u])=>{
-    const lastTx = ALL_TX.filter(t=>t.uid===uid)[0];
-    const lastActive = lastTx ? new Date(lastTx.date||lastTx.createdAt||0).getTime() : 0;
-    if(lastActive > thirtyDaysAgo) active.push(u);
-    else inactive.push(u);
-  });
-  document.getElementById('active-inactive-list').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div style="background:rgba(0,240,160,.06);border:1px solid rgba(0,240,160,.2);border-radius:var(--rsm);padding:1rem">
-        <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--gr);margin-bottom:.5rem">✓ Attivi (30gg)</div>
-        <div style="font-family:'Syne';font-size:2rem;font-weight:800;color:var(--gr)">${active.length}</div>
-        <div style="font-size:.8rem;color:var(--tx2)">hanno fatto almeno una transazione</div>
-      </div>
-      <div style="background:rgba(255,51,85,.06);border:1px solid rgba(255,51,85,.2);border-radius:var(--rsm);padding:1rem">
-        <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--re);margin-bottom:.5rem">⚠ Inattivi (30gg)</div>
-        <div style="font-family:'Syne';font-size:2rem;font-weight:800;color:var(--re)">${inactive.length}</div>
-        <div style="font-size:.8rem;color:var(--tx2)">nessuna transazione recente</div>
-      </div>
-    </div>`;
-
-  /* Growth chart */
-  const byMonth = {};
-  Object.values(ALL_USERS).forEach(u=>{ const d=u.profile?.createdAt; if(!d)return; const m=new Date(d).toISOString().slice(0,7); byMonth[m]=(byMonth[m]||0)+1; });
-  const labels=[], data=[], cumData=[]; let cum=0;
-  for(let i=11;i>=0;i--){ const d=new Date(); d.setMonth(d.getMonth()-i); const m=d.toISOString().slice(0,7); labels.push(d.toLocaleDateString('it-IT',{month:'short',year:'2-digit'})); const n=byMonth[m]||0; data.push(n); cum+=n; cumData.push(cum); }
-  mkChart('chart-revenue-growth','bar',{labels,datasets:[{label:'Nuovi utenti',data,backgroundColor:'rgba(123,104,238,.65)',borderRadius:4,yAxisID:'y'},{type:'line',label:'Totale cumulativo',data:cumData,borderColor:'var(--gr)',backgroundColor:'rgba(0,240,160,.1)',fill:true,tension:.4,yAxisID:'y1'}]},{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7A85A8'}}},scales:{x:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}},y1:{position:'right',ticks:{color:'#3A4268'},grid:{display:false}}}});
-}
-
-/* ══ ANALYTICS ══ */
-function renderAnalytics() {
-  const income  = ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
-  const expense = ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
-  const uCount  = Object.keys(ALL_USERS).length;
-  document.getElementById('analytics-stats').innerHTML=`
-    <div class="stat"><div class="stat-lbl">Volume entrate</div><div class="stat-val" style="color:var(--gr)">${fmt(income)}</div></div>
-    <div class="stat"><div class="stat-lbl">Volume uscite</div><div class="stat-val" style="color:var(--re)">${fmt(expense)}</div></div>
-    <div class="stat"><div class="stat-lbl">Saldo netto</div><div class="stat-val">${fmt(income-expense)}</div></div>
-    <div class="stat"><div class="stat-lbl">Media tx/utente</div><div class="stat-val">${uCount?Math.round(ALL_TX.length/uCount):0}</div></div>`;
-
-  const cats={};
-  ALL_TX.filter(t=>t.type==='expense').forEach(t=>{ cats[t.category]=(cats[t.category]||0)+Number(t.amount||0); });
-  const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const maxC=sorted[0]?.[1]||1;
-  const CAT_IC={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};
-  document.getElementById('top-categories').innerHTML = sorted.map(([c,v])=>`
+  const plans={};Object.values(ALL_U).forEach(u=>{const p=u.profile?.plan||'free';plans[p]=(plans[p]||0)+1});
+  const tot=Object.keys(ALL_U).length||1;
+  const PC={free:'var(--tx2)',pro:'var(--ac)',business:'var(--ac2)'};
+  document.getElementById('plan-dist').innerHTML=Object.entries(plans).map(([p,n])=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)">
-      <span style="font-size:.875rem">${CAT_IC[c]||'📦'} ${cap(c)}</span>
+      <span style="font-size:.875rem;font-weight:500;color:${PC[p]||'var(--tx)'}">${cap(p)}</span>
       <div style="display:flex;align-items:center;gap:.75rem">
-        <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((v/maxC)*100)}%;background:var(--re);border-radius:3px"></div></div>
+        <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((n/tot)*100)}%;background:${PC[p]||'var(--ac)'};border-radius:3px"></div></div>
+        <span style="font-size:.875rem;font-weight:700">${n}</span>
+      </div>
+    </div>`).join('')||'<div class="empty">Nessun dato</div>';
+
+  const cats={};ALL_TX.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+Number(t.amount||0)});
+  const sc=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);const mc=sc[0]?.[1]||1;
+  const CI2={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};
+  document.getElementById('top-cats').innerHTML=sc.map(([c,v])=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)">
+      <span style="font-size:.875rem">${CI2[c]||'📦'} ${cap(c)}</span>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((v/mc)*100)}%;background:var(--re);border-radius:3px"></div></div>
         <span style="font-size:.875rem;font-weight:700">${fmt(v)}</span>
       </div>
     </div>`).join('')||'<div class="empty">Nessun dato</div>';
 
-  const perCtx={personal:0,business:0,unset:0};
-  ALL_TX.forEach(t=>{ const c=t.context||'unset'; perCtx[c]=(perCtx[c]||0)+Number(t.amount||0); });
-  const total=Object.values(perCtx).reduce((s,v)=>s+v,0)||1;
-  document.getElementById('ctx-split').innerHTML = Object.entries(perCtx).map(([c,v])=>`
-    <div style="margin-bottom:.875rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:.3rem;font-size:.85rem">
-        <span>${c==='business'?'💼 Business':c==='personal'?'👤 Personal':'❓ Non classificato'}</span>
-        <span style="font-weight:700">${fmt(v)} (${Math.round((v/total)*100)}%)</span>
-      </div>
-      <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
-        <div style="height:100%;width:${Math.round((v/total)*100)}%;background:${c==='business'?'var(--or)':c==='personal'?'var(--ac)':'var(--tx3)'};border-radius:3px"></div>
-      </div>
-    </div>`).join('');
-
-  const labels2=[],inc2=[],exp2=[];
-  for(let i=11;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);const m=d.toISOString().slice(0,7);labels2.push(d.toLocaleDateString('it-IT',{month:'short',year:'2-digit'}));const txM=ALL_TX.filter(t=>t.date&&t.date.startsWith(m));inc2.push(txM.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0));exp2.push(txM.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0));}
-  mkChart('chart-analytics-trend','line',{labels:labels2,datasets:[{label:'Entrate',data:inc2,borderColor:'var(--gr)',backgroundColor:'rgba(0,240,160,.08)',fill:true,tension:.4},{label:'Uscite',data:exp2,borderColor:'var(--re)',backgroundColor:'rgba(255,51,85,.08)',fill:true,tension:.4}]},{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7A85A8',font:{size:11}}}},scales:{x:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}}}});
+  const bm={};Object.values(ALL_U).forEach(u=>{const d=u.profile?.createdAt;if(!d)return;const m=new Date(d).toLocaleDateString('it-IT',{month:'short',year:'2-digit'});bm[m]=(bm[m]||0)+1});
+  const labels=Object.keys(bm).slice(-12),data=labels.map(l=>bm[l]);
+  const ctx=document.getElementById('chart-users');
+  if(ctx){if(ctx._ch)ctx._ch.destroy();ctx._ch=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Nuovi utenti',data,backgroundColor:'rgba(123,104,238,.7)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#3A4268'},grid:{color:'rgba(255,255,255,.04)'}}}}})}
 }
 
-/* ══ INVOICES ══ */
-function renderInvoices() {
-  const tbody=document.getElementById('inv-tbody');
-  const empty=document.getElementById('inv-empty');
-  const STATUS={draft:{l:'Bozza',c:'badge-gray'},sent:{l:'Inviata',c:'badge-yellow'},paid:{l:'Pagata',c:'badge-green'},overdue:{l:'Scaduta',c:'badge-red'}};
-  document.getElementById('inv-count-label').textContent=`${ALL_INV.length} fatture nel sistema`;
+/* INVOICES */
+function renderInv(){
+  const tbody=document.getElementById('inv-tbody'),empty=document.getElementById('inv-empty');
+  const S={draft:'bgy',sent:'by',paid:'bg',overdue:'br'};
+  document.getElementById('inv-count').textContent=`${ALL_INV.length} fatture`;
   if(!ALL_INV.length){tbody.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
-  tbody.innerHTML=ALL_INV.map(i=>{const total=Number(i.amount||0)*(1+(Number(i.vat||22)/100));const s=STATUS[i.status]||STATUS.draft;return`<tr><td>${i.userName}</td><td class="td-main">${i.client||'—'}</td><td>${i.invoiceNum||'—'}</td><td>${fmtDate(i.date)}</td><td>${i.vat||22}%</td><td style="font-weight:700">${fmt(total)}</td><td><span class="badge ${s.c}">${s.l}</span></td></tr>`;}).join('');
+  tbody.innerHTML=ALL_INV.map(i=>{
+    const total=Number(i.amount||0)*(1+Number(i.vat||22)/100);
+    return`<tr>
+      <td style="font-size:.82rem">${i.uName}</td><td class="tdm">${i.client||'—'}</td>
+      <td style="font-size:.82rem">${i.invoiceNum||'—'}</td><td style="font-size:.82rem">${fd(i.date)}</td>
+      <td>${i.vat||22}%</td><td style="font-weight:700">${fmt(total)}</td>
+      <td><span class="badge ${S[i.status]||'bgy'}">${cap(i.status||'draft')}</span></td>
+    </tr>`;
+  }).join('');
 }
 
-/* ══ BROADCAST ══ */
-function toggleSegment(seg) {
-  if(seg==='all'){ bcSegments=new Set(['all']); }
-  else { bcSegments.delete('all'); bcSegments.has(seg)?bcSegments.delete(seg):bcSegments.add(seg); if(!bcSegments.size)bcSegments.add('all'); }
-  document.querySelectorAll('.segment-btn').forEach(b=>{ b.classList.toggle('sel',bcSegments.has(b.id.replace('seg-',''))); });
-}
-
-function getBroadcastTargets() {
-  if(bcSegments.has('all')) return Object.entries(ALL_USERS);
-  return Object.entries(ALL_USERS).filter(([,u])=>bcSegments.has(u.profile?.plan||'free'));
-}
-
-function previewBroadcast() {
-  const title = document.getElementById('bc-title').value.trim();
-  const body  = document.getElementById('bc-body').value.trim();
-  if(!title||!body){showToast('Compila titolo e messaggio','err');return}
-  const targets = getBroadcastTargets();
-  const TYPE_IC = {info:'ℹ️',update:'🚀',warning:'⚠️',promo:'🎉',maintenance:'🔧'};
-  const type = document.getElementById('bc-type').value;
-  document.getElementById('bc-preview').textContent = `${TYPE_IC[type]||'📣'} ${title}\n\n${body}\n\n— Team Kazka\n\nDestinatari: ${targets.length} utenti`;
-  document.getElementById('bc-preview-wrap').style.display='block';
-}
-
-async function sendBroadcast() {
-  const title = document.getElementById('bc-title').value.trim();
-  const body  = document.getElementById('bc-body').value.trim();
-  const type  = document.getElementById('bc-type').value;
-  if(!title||!body){showToast('Compila titolo e messaggio','err');return}
-  const targets = getBroadcastTargets();
-  if(!targets.length){showToast('Nessun destinatario','err');return}
-  if(!confirm(`Inviare il messaggio a ${targets.length} utenti?`))return;
-
-  const msg = {title,body,type,sentBy:ADMIN_USER.email,sentAt:new Date().toISOString(),recipients:targets.length,segments:Array.from(bcSegments).join(',')};
-  await db.ref('broadcasts').push(msg);
-  const promises = targets.map(([uid])=>db.ref(`users/${uid}/notifications`).push({title,body,type,read:false,createdAt:new Date().toISOString()}));
-  await Promise.all(promises);
-
-  showToast(`Messaggio inviato a ${targets.length} utenti`,'ok');
-  writeLog('broadcast',`Broadcast inviato: "${title}" → ${targets.length} utenti`);
-  document.getElementById('bc-title').value=''; document.getElementById('bc-body').value='';
-  document.getElementById('bc-preview-wrap').style.display='none';
-  loadBroadcastHistory();
-}
-
-async function loadBroadcastHistory() {
-  try {
-    const snap = await db.ref('broadcasts').limitToLast(10).once('value');
-    const raw = snap.val()||{};
-    const msgs = Object.values(raw).reverse();
-    const TYPE_IC={info:'ℹ️',update:'🚀',warning:'⚠️',promo:'🎉',maintenance:'🔧'};
-    document.getElementById('broadcast-history').innerHTML = msgs.length ? msgs.map(m=>`
-      <div style="padding:.75rem 0;border-bottom:1px solid var(--b1);font-size:.82rem">
-        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem">
-          <span>${TYPE_IC[m.type]||'📣'}</span>
-          <span style="font-weight:600;color:var(--tx)">${m.title}</span>
-          <span class="badge badge-gray" style="margin-left:auto">${m.recipients} dest.</span>
-        </div>
-        <div style="color:var(--tx2);font-size:.78rem">${(m.body||'').slice(0,80)}${m.body?.length>80?'...':''}</div>
-        <div style="color:var(--tx3);font-size:.7rem;margin-top:.25rem">${fmtDateTime(m.sentAt)} · ${m.sentBy}</div>
-      </div>`).join('') : '<div class="empty">Nessun messaggio inviato</div>';
-  } catch(e) {}
-}
-
-/* ══ SUPPORT ══ */
-let allTickets = [], currentTicket = null, ticketFilter = 'all';
-
-async function loadTickets() {
-  try {
-    const snap = await db.ref('support_tickets').once('value');
-    allTickets = Object.entries(snap.val()||{}).map(([id,t])=>({id,...t}))
-      .sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-    const openCount = allTickets.filter(t=>t.status==='open').length;
-    const badge = document.getElementById('support-badge');
-    if(openCount>0){ badge.textContent=openCount; badge.style.display='inline-flex'; }
-    else badge.style.display='none';
-    renderTickets();
-  } catch(e){}
-}
-
-function renderTickets() {
-  const list = document.getElementById('tickets-list');
-  let tickets = allTickets;
-  if(ticketFilter==='open') tickets = tickets.filter(t=>t.status==='open');
-  const PRIO={high:'🔴',medium:'🟡',low:'🟢'};
-  list.innerHTML = tickets.length ? tickets.map(t=>`
-    <div class="ticket-card ${t.status}-ticket" onclick="openTicket('${t.id}')">
-      <div class="ticket-header">
-        <span class="ticket-user">${PRIO[t.priority]||'🟡'} ${t.userName||t.userEmail||'Utente'}</span>
-        <span class="badge ${t.status==='open'?'badge-red':t.status==='resolved'?'badge-green':'badge-yellow'}">${t.status==='open'?'Aperto':t.status==='resolved'?'Risolto':'In attesa'}</span>
-      </div>
-      <div class="ticket-preview">${t.subject||'—'}</div>
-      <div class="ticket-meta">${fmtDateTime(t.createdAt)}</div>
-    </div>`).join('') : '<div class="empty">Nessun ticket</div>';
-}
-
-function filterTickets(f){ ticketFilter=f; renderTickets(); }
-
-async function openTicket(id) {
-  currentTicket = allTickets.find(t=>t.id===id);
-  if(!currentTicket)return;
-  const panel = document.getElementById('ticket-detail-panel');
-  const msgs = Object.values(currentTicket.messages||{}).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-  panel.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
-      <div>
-        <div style="font-weight:700;font-size:.95rem">${currentTicket.subject||'Ticket'}</div>
-        <div style="font-size:.75rem;color:var(--tx3)">${currentTicket.userName||currentTicket.userEmail||'—'} · ${fmtDateTime(currentTicket.createdAt)}</div>
-      </div>
-      <div style="display:flex;gap:.4rem">
-        <button class="btn btn-success btn-sm" onclick="resolveTicket('${id}')">✓ Risolvi</button>
-        <select onchange="updateTicketStatus('${id}',this.value)" style="padding:.35rem .6rem;background:var(--bg3);border:1px solid var(--b2);border-radius:6px;color:var(--tx);font-size:.78rem">
-          <option value="open" ${currentTicket.status==='open'?'selected':''}>Aperto</option>
-          <option value="pending" ${currentTicket.status==='pending'?'selected':''}>In attesa</option>
-          <option value="resolved" ${currentTicket.status==='resolved'?'selected':''}>Risolto</option>
-        </select>
-      </div>
-    </div>
-    <div class="chat-wrap">
-      ${msgs.map(m=>`
-        <div class="chat-bubble ${m.from==='admin'?'admin':'user'}">
-          ${m.text}
-          <div class="chat-meta">${m.from==='admin'?'Admin':'Utente'} · ${fmtDateTime(m.ts)}</div>
-        </div>`).join('') || '<div style="text-align:center;color:var(--tx3);font-size:.85rem">Nessun messaggio</div>'}
-    </div>
-    <div style="display:flex;gap:.5rem">
-      <textarea id="ticket-reply" style="flex:1;padding:.65rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.85rem;resize:none" rows="2" placeholder="Scrivi risposta..."></textarea>
-      <button class="btn btn-primary" onclick="replyToTicket('${id}')" style="align-self:flex-end">Invia</button>
-    </div>`;
-}
-
-async function replyToTicket(id) {
-  const text = document.getElementById('ticket-reply').value.trim();
-  if(!text)return;
-  await db.ref(`support_tickets/${id}/messages`).push({text,from:'admin',ts:new Date().toISOString()});
-  await db.ref(`support_tickets/${id}`).update({status:'pending',updatedAt:new Date().toISOString()});
-  showToast('Risposta inviata','ok');
-  await loadTickets(); openTicket(id);
-}
-
-async function resolveTicket(id) {
-  await db.ref(`support_tickets/${id}`).update({status:'resolved',resolvedAt:new Date().toISOString()});
-  showToast('Ticket risolto','ok');
-  writeLog('update',`Ticket ${id} risolto`);
-  await loadTickets(); renderTickets();
-  document.getElementById('ticket-detail-panel').innerHTML = '<div style="text-align:center;padding:2rem;color:var(--tx3)"><div style="font-size:2rem;margin-bottom:.5rem">✅</div>Ticket risolto</div>';
-}
-
-async function updateTicketStatus(id, status) {
-  await db.ref(`support_tickets/${id}/status`).set(status);
-  await loadTickets();
-}
-
-async function createTicket() {
-  const userSel = document.getElementById('ticket-user-sel').value;
-  const subject = document.getElementById('ticket-subject').value.trim();
-  const msg     = document.getElementById('ticket-msg').value.trim();
-  const priority= document.getElementById('ticket-priority').value;
-  if(!subject||!msg){showToast('Compila oggetto e messaggio','err');return}
-  const u = ALL_USERS[userSel]; const p = u?.profile||{};
-  const ticket = {uid:userSel||'admin',userName:p.name||'Admin',userEmail:p.email||ADMIN_USER.email,subject,priority,status:'open',createdAt:new Date().toISOString(),messages:{}};
-  const ref = await db.ref('support_tickets').push(ticket);
-  await db.ref(`support_tickets/${ref.key}/messages`).push({text:msg,from:'admin',ts:new Date().toISOString()});
-  closeModal('modal-new-ticket');
-  showToast('Ticket creato','ok');
-  await loadTickets();
-}
-
-/* ══ GLOBAL SEARCH ══ */
-function globalSearch() {
-  const q = (document.getElementById('global-search-input').value||'').toLowerCase().trim();
-  const type = document.getElementById('global-search-type').value;
-  const results = document.getElementById('global-search-results');
-  if(q.length < 2){ results.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">Digita almeno 2 caratteri...</div>'; return; }
-
-  let found = [];
-
-  if(type==='all'||type==='users') {
-    Object.entries(ALL_USERS).forEach(([uid,u])=>{
-      const p=u.profile||{};
-      if((p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q)||(p.plan||'').includes(q)) {
-        found.push({type:'user',icon:'👤',bg:'rgba(123,104,238,.15)',title:p.name||'—',sub:`${p.email} · Piano: ${p.plan||'free'}`,meta:fmtDate(p.createdAt),uid});
-      }
-    });
-  }
-  if(type==='all'||type==='transactions') {
-    ALL_TX.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.category||'').toLowerCase().includes(q)||(t.userName||'').toLowerCase().includes(q)).slice(0,20).forEach(t=>{
-      found.push({type:'tx',icon:t.type==='income'?'📈':'📉',bg:t.type==='income'?'rgba(0,240,160,.1)':'rgba(255,51,85,.1)',title:t.description||'—',sub:`${t.userName} · ${cap(t.category||'altro')}`,meta:`${t.type==='income'?'+':'-'}${fmt(t.amount)}`});
-    });
-  }
-  if(type==='all'||type==='accounts') {
-    ALL_ACC.filter(a=>(a.name||'').toLowerCase().includes(q)||(a.userName||'').toLowerCase().includes(q)).slice(0,10).forEach(a=>{
-      found.push({type:'acc',icon:'🏦',bg:'rgba(0,229,255,.1)',title:a.name||'—',sub:`${a.userName} · ${a.type||'bank'}`,meta:fmt(a.balance||0)});
-    });
-  }
-
-  if(!found.length){ results.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">Nessun risultato per "'+q+'"</div>'; return; }
-  results.innerHTML = `<div style="color:var(--tx3);font-size:.78rem;margin-bottom:.75rem">${found.length} risultati per "${q}"</div>`+found.slice(0,30).map(r=>`
-    <div class="search-result" onclick="${r.uid?`showUserDetail('${r.uid}');showView('users')`:''}">
-      <div class="search-result-icon" style="background:${r.bg}">${r.icon}</div>
-      <div class="search-result-info">
-        <div class="search-result-title">${r.title}</div>
-        <div class="search-result-sub">${r.sub}</div>
-      </div>
-      <div class="search-result-meta">${r.meta}</div>
-    </div>`).join('');
-}
-
-/* ══ SECURITY ══ */
-function renderSecurity() {
-  const blocked = Object.values(ALL_USERS).filter(u=>u.profile?.blocked).length;
-  const admins  = ADMIN_EMAILS.length;
-  document.getElementById('sec-blocked').textContent = blocked;
-  document.getElementById('sec-admins').textContent  = admins;
-  document.getElementById('sec-failed').textContent  = '—';
-  document.getElementById('sec-resets').textContent  = '—';
-
-  const users = Object.entries(ALL_USERS).slice(0,8);
-  document.getElementById('security-users-list').innerHTML = users.map(([uid,u])=>{
-    const p=u.profile||{};
-    return `<div class="session-row">
-      <div class="session-dot ${p.blocked?'inactive':'active'}"></div>
-      <div style="flex:1"><div style="font-size:.875rem;font-weight:500">${p.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${p.email||'—'}</div></div>
-      <div style="display:flex;gap:.3rem;align-items:center">
-        <span class="badge ${p.role==='admin'?'badge-red':'badge-gray'}">${p.role||'user'}</span>
-        <button class="btn btn-${p.blocked?'success':'warn'} btn-icon btn-sm" onclick="toggleBlockUser('${uid}')" title="${p.blocked?'Sblocca':'Blocca'}">${p.blocked?'🔓':'🔒'}</button>
-      </div>
-    </div>`;
-  }).join('') || '<div class="empty">Nessun utente</div>';
-
-  document.getElementById('admins-list').innerHTML = ADMIN_EMAILS.map(e=>`
-    <div class="session-row">
-      <div class="session-dot active"></div>
-      <div style="flex:1"><div style="font-size:.875rem;font-weight:500">${e}</div><div style="font-size:.72rem;color:var(--re)">Super Admin</div></div>
-      <span class="risk-badge risk-low">✓ Attivo</span>
-    </div>`).join('');
-
-  loadSecurityLogs();
-}
-
-async function refreshSecurity(){ await loadAll(); renderSecurity(); showToast('Dati sicurezza aggiornati','ok'); }
-
-async function blockUser() {
-  const email = document.getElementById('block-user-email').value.trim();
-  const reason= document.getElementById('block-reason').value.trim();
-  if(!email){showToast('Inserisci email','err');return}
-  const uid = Object.entries(ALL_USERS).find(([,u])=>u.profile?.email===email)?.[0];
-  if(!uid){showToast('Utente non trovato','err');return}
-  await db.ref(`users/${uid}/profile`).update({blocked:true,blockedReason:reason,blockedAt:new Date().toISOString()});
-  closeModal('modal-block-user');
-  await loadAll(); renderSecurity();
-  showToast('Account bloccato','ok');
-  writeLog('security',`Account bloccato: ${email}${reason?' — '+reason:''}`);
-}
-
-async function addAdmin() {
-  const email = document.getElementById('new-admin-email').value.trim();
-  if(!email){showToast('Inserisci email','err');return}
-  await db.ref('admin_emails').push(email);
-  closeModal('modal-add-admin');
-  showToast(`${email} aggiunto come admin (richiede aggiornamento codice)`, 'warn');
-  writeLog('security',`Nuovo admin aggiunto: ${email}`);
-}
-
-async function loadSecurityLogs() {
-  try {
-    const snap = await db.ref('admin_logs').orderByChild('type').equalTo('security').limitToLast(10).once('value');
-    const raw  = snap.val()||{};
-    const logs = Object.values(raw).reverse();
-    document.getElementById('security-log-list').innerHTML = logs.length ? logs.map(l=>`
-      <div class="log-entry"><div class="log-icon">🛡️</div><div class="log-info"><div class="log-msg">${l.msg}</div><div class="log-meta">${l.admin} · ${fmtDateTime(l.ts)}</div></div></div>`).join('') : '<div class="empty">Nessun evento sicurezza</div>';
+/* LOGS */
+async function wlog(type,msg){await db.ref('admin_logs').push({type,msg,admin:AU?.email||'?',ts:new Date().toISOString()}).catch(()=>{})}
+async function loadLogs(){
+  try{
+    const snap=await db.ref('admin_logs').limitToLast(60).once('value');
+    const logs=Object.entries(snap.val()||{}).map(([id,l])=>({id,...l})).reverse();
+    const c=document.getElementById('logs-list'),e=document.getElementById('logs-empty');
+    if(!logs.length){c.innerHTML='';e.style.display='block';return}e.style.display='none';
+    const IC={login:'🔑',logout:'🚪',create:'✅',delete:'🗑',update:'✏️',reset:'🔄',nuke:'🚨',export:'📥'};
+    const CL={login:'bg',logout:'bgy',create:'bg',delete:'br',update:'bb',reset:'by',nuke:'br',export:'bb'};
+    c.innerHTML=logs.map(l=>`
+      <div class="log-e">
+        <div class="log-ic">${IC[l.type]||'📋'}</div>
+        <div style="flex:1"><div style="color:var(--tx)">${l.msg}</div><div style="color:var(--tx3);font-size:.72rem">${l.admin} · ${fdt(l.ts)}</div></div>
+        <span class="badge ${CL[l.type]||'bgy'}">${l.type}</span>
+      </div>`).join('');
   }catch(e){}
 }
+async function clearLogs(){if(!confirm('Cancellare tutti i log?'))return;await db.ref('admin_logs').remove();loadLogs();toast('Log cancellati','ok')}
 
-/* ══ BACKUP ══ */
-function populateUserSelects() {
-  const options = Object.entries(ALL_USERS).map(([uid,u])=>`<option value="${uid}">${u.profile?.name||'—'} (${u.profile?.email||uid})</option>`).join('');
-  ['backup-user-select','ticket-user-sel'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.innerHTML=(id==='ticket-user-sel'?'<option value="">— Scegli utente —</option>':'')+options;
-  });
+/* SETTINGS */
+async function loadSettings(){
+  const snap=await db.ref('admin_settings').once('value').catch(()=>null);
+  if(snap?.val()){cfg={...cfg,...snap.val()}}
+  const map={registration:'tog-reg',maintenance:'tog-maint',activityLogs:'tog-logs'};
+  Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',!!cfg[k])});
+  document.getElementById('cfg-pro').value=cfg.planDurations?.pro||30;
+  document.getElementById('cfg-biz').value=cfg.planDurations?.business||30;
 }
-
-function exportFullBackup() {
-  const blob = JSON.stringify({exportedAt:new Date().toISOString(),users:ALL_USERS,metadata:{totalUsers:Object.keys(ALL_USERS).length,totalTx:ALL_TX.length}},null,2);
-  dl('kazka-full-backup-'+new Date().toISOString().slice(0,10)+'.json','application/json',blob);
-  showToast('Backup completo esportato','ok');
-  writeLog('export','Backup completo sistema');
-}
-
-function exportUserJSON() {
-  const uid = document.getElementById('backup-user-select').value;
-  if(!uid){showToast('Seleziona un utente','err');return}
-  const u = ALL_USERS[uid]; if(!u)return;
-  dl(`kazka-user-${u.profile?.name||uid}-${new Date().toISOString().slice(0,10)}.json`,'application/json',JSON.stringify({...u,uid},null,2));
-  showToast('Export utente completato','ok');
-  writeLog('export',`Export JSON utente: ${u.profile?.email}`);
+async function toggleSetting(key){cfg[key]=!cfg[key];await db.ref(`admin_settings/${key}`).set(cfg[key]);loadSettings();toast(`${key}: ${cfg[key]?'attivo':'disattivo'}`,'ok')}
+async function saveDurations(){
+  cfg.planDurations={pro:parseInt(document.getElementById('cfg-pro').value)||30,business:parseInt(document.getElementById('cfg-biz').value)||30};
+  await db.ref('admin_settings/planDurations').set(cfg.planDurations);toast('Durate salvate','ok');
 }
 
-function exportUserTxCSV() {
-  const uid = document.getElementById('backup-user-select').value;
-  if(!uid){showToast('Seleziona un utente','err');return}
-  const u = ALL_USERS[uid];
-  const rows=[['Data','Descrizione','Tipo','Categoria','Contesto','Importo','Note']];
-  ALL_TX.filter(t=>t.uid===uid).forEach(t=>rows.push([t.date,t.description||'',t.type,t.category||'',t.context||'personal',(t.type==='income'?'':'-')+t.amount,t.note||'']));
-  dl(`kazka-tx-${u?.profile?.name||uid}.csv`,'text/csv',rows.map(r=>r.join(';')).join('\n'));
-  showToast('CSV transazioni esportato','ok');
+/* DANGER */
+async function deleteUserData(){
+  const input=document.getElementById('del-uid').value.trim();if(!input){toast('Inserisci UID o email','err');return}
+  const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;
+  await db.ref(`users/${uid}`).remove();cm('modal-del-user');await loadAll();toast('Dati eliminati','ok');wlog('delete',`Dati utente: ${input}`)
+}
+async function resetTx(){
+  const input=document.getElementById('rst-uid').value.trim();if(!input){toast('Inserisci UID o email','err');return}
+  const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;
+  await db.ref(`users/${uid}/transactions`).remove();cm('modal-reset-tx');await loadAll();toast('Reset OK','ok');wlog('reset',`Tx reset: ${input}`)
+}
+async function nukeAll(){
+  if(document.getElementById('nuke-c').value!=='CANCELLA TUTTO'){toast('Testo errato','err');return}
+  await db.ref('users').remove();cm('modal-nuke');await loadAll();toast('Cancellazione eseguita','ok');wlog('nuke','CANCELLAZIONE TOTALE')
 }
 
-async function handleImport(event) {
-  const file = event.target.files[0]; if(!file)return;
-  try {
-    const text = await file.text();
-    const data = JSON.parse(text);
-    if(!data.users){showToast('File non valido: manca "users"','err');return}
-    if(!confirm(`Importare ${Object.keys(data.users).length} utenti? I dati esistenti con gli stessi UID verranno sovrascritti.`))return;
-    await db.ref('users').update(data.users);
-    await loadAll();
-    showToast(`Importati ${Object.keys(data.users).length} utenti`,'ok');
-    writeLog('import',`Import backup: ${Object.keys(data.users).length} utenti`);
-  } catch(e) { showToast('Errore parsing JSON: '+e.message,'err'); }
-  event.target.value='';
+/* EXPORTS */
+function exportAllCSV(){
+  const rows=[['UID','Utente','Email','Data','Descrizione','Tipo','Categoria','Importo']];
+  ALL_TX.forEach(t=>rows.push([t.uid,t.uName,t.uEmail,t.date,t.description||'',t.type,t.category||'',(t.type==='income'?'':'-')+t.amount]));
+  dl('kazka-tx.csv',rows);wlog('export','Export CSV transazioni');
 }
+function exportUsersCSV(){
+  const rows=[['UID','Nome','Email','Ruolo','Piano','Inizio','Scadenza','Registrato']];
+  Object.entries(ALL_U).forEach(([uid,u])=>{const p=u.profile||{};rows.push([uid,p.name||'',p.email||'',p.role||'user',p.plan||'free',p.subscriptionStart||'',p.subscriptionExpiry||'',p.createdAt||''])});
+  dl('kazka-users.csv',rows);wlog('export','Export CSV utenti');
+}
+function exportSubsCSV(){
+  const rows=[['UID','Nome','Email','Piano','Inizio','Scadenza','Stato']];
+  Object.entries(ALL_U).forEach(([uid,u])=>{const p=u.profile||{};const s=subStatus(p);rows.push([uid,p.name||'',p.email||'',p.plan||'free',p.subscriptionStart||'',p.subscriptionExpiry||'',s.label])});
+  dl('kazka-subs.csv',rows);
+}
+function dl(name,rows){const b=new Blob([rows.map(r=>r.join(';')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();URL.revokeObjectURL(a.href);toast('Esportato','ok')}
 
-/* ══ LOGS ══ */
-async function writeLog(type, msg) {
-  await db.ref('admin_logs').push({type,msg,admin:ADMIN_USER?.email||'?',ts:new Date().toISOString()}).catch(()=>{});
+/* HELPERS */
+function subStatus(p){
+  if(!p.plan||p.plan==='free')return{label:'Free',cls:'',badge:'bgy'};
+  if(p.subscriptionExpiry==='never')return{label:'Attivo illimitato',cls:'',badge:'bg'};
+  if(!p.subscriptionExpiry)return{label:'Nessuna scadenza',cls:'',badge:'bgy'};
+  const exp=new Date(p.subscriptionExpiry),now=new Date();
+  if(exp<now)return{label:'Scaduto',cls:'',badge:'br'};
+  const days=Math.ceil((exp-now)/864e5);
+  if(days<=7)return{label:`Scade in ${days}gg`,cls:'',badge:'by'};
+  return{label:`Attivo (${days}gg)`,cls:'',badge:'bg'};
 }
-
-async function loadLogs() {
-  try {
-    const filterType = document.getElementById('log-filter')?.value||'';
-    const snap = await db.ref('admin_logs').limitToLast(100).once('value');
-    const raw  = snap.val()||{};
-    let logs   = Object.entries(raw).map(([id,l])=>({id,...l})).reverse();
-    if(filterType) logs = logs.filter(l=>l.type===filterType);
-    const container = document.getElementById('logs-list');
-    const empty     = document.getElementById('logs-empty');
-    if(!logs.length){container.innerHTML='';empty.style.display='block';return}
-    empty.style.display='none';
-    const ICONS={login:'🔑',logout:'🚪',create:'✅',delete:'🗑',update:'✏️',reset:'🔄',nuke:'🚨',export:'📥',import:'📤',broadcast:'📣',security:'🛡️'};
-    const COLS={login:'badge-green',logout:'badge-gray',create:'badge-green',delete:'badge-red',update:'badge-blue',reset:'badge-yellow',nuke:'badge-red',export:'badge-blue',import:'badge-purple',broadcast:'badge-orange',security:'badge-red'};
-    container.innerHTML = logs.map(l=>`
-      <div class="log-entry">
-        <div class="log-icon">${ICONS[l.type]||'📋'}</div>
-        <div class="log-info"><div class="log-msg">${l.msg}</div><div class="log-meta">${l.admin} · ${fmtDateTime(l.ts)}</div></div>
-        <div class="log-type"><span class="badge ${COLS[l.type]||'badge-gray'}">${l.type}</span></div>
-      </div>`).join('');
-  } catch(e) {}
-}
-
-async function clearLogs() {
-  if(!confirm('Cancellare tutti i log?'))return;
-  await db.ref('admin_logs').remove();
-  loadLogs(); showToast('Log cancellati','ok');
-}
-
-/* ══ SETTINGS ══ */
-async function loadSettings() {
-  const snap = await db.ref('admin_settings').once('value').catch(()=>null);
-  if(snap?.val()) settings = {...settings,...snap.val()};
-  const MAP={registration:'reg',maintenance:'maint',activityLogs:'logs',broadcastEnabled:'broadcast'};
-  Object.entries(MAP).forEach(([k,id])=>{ const el=document.getElementById('tog-'+id); if(el)el.classList.toggle('on',!!settings[k]); });
-  const prices = snap?.val()?.prices||{};
-  if(prices.pro) document.getElementById('price-pro').value = prices.pro;
-  if(prices.business) document.getElementById('price-business').value = prices.business;
-  const banner = snap?.val()?.banner||'';
-  if(banner) document.getElementById('sys-banner').value = banner;
-}
-
-async function toggleSetting(key) {
-  settings[key]=!settings[key];
-  await db.ref(`admin_settings/${key}`).set(settings[key]);
-  loadSettings();
-  showToast(`${key}: ${settings[key]?'attivo':'disattivo'}`,'ok');
-  writeLog('update',`Impostazione ${key}: ${settings[key]}`);
-}
-
-async function savePrices() {
-  const pro      = parseFloat(document.getElementById('price-pro').value)||9.99;
-  const business = parseFloat(document.getElementById('price-business').value)||24.99;
-  await db.ref('admin_settings/prices').set({pro,business});
-  showToast('Prezzi salvati','ok');
-  updateTopbar();
-  writeLog('update',`Prezzi aggiornati: Pro=${pro}, Business=${business}`);
-}
-
-async function saveBanner() {
-  const banner = document.getElementById('sys-banner').value.trim();
-  const type   = document.getElementById('sys-banner-type').value;
-  await db.ref('admin_settings').update({banner,bannerType:type});
-  showToast(banner?'Banner salvato':'Banner rimosso','ok');
-  writeLog('update',`Banner di sistema: "${banner}"`);
-}
-
-/* ══ EXPORTS ══ */
-function exportAllCSV() {
-  const rows=[['UID','Utente','Email','Data','Descrizione','Tipo','Categoria','Contesto','Importo']];
-  ALL_TX.forEach(t=>rows.push([t.uid,t.userName,t.userEmail,t.date,t.description||'',t.type,t.category||'',t.context||'personal',(t.type==='income'?'':'-')+t.amount]));
-  dl('kazka-admin-tx.csv','text/csv',rows.map(r=>r.join(';')).join('\n'));
-  showToast('CSV esportato','ok');
-  writeLog('export','Export CSV transazioni sistema');
-}
-function exportUsersCSV() {
-  const rows=[['UID','Nome','Email','Piano','Ruolo','Registrato','N° Transazioni','Bloccato']];
-  Object.entries(ALL_USERS).forEach(([uid,u])=>{const p=u.profile||{};rows.push([uid,p.name||'',p.email||'',p.plan||'free',p.role||'user',p.createdAt||'',ALL_TX.filter(t=>t.uid===uid).length,p.blocked?'SI':'NO']);});
-  dl('kazka-admin-users.csv','text/csv',rows.map(r=>r.join(';')).join('\n'));
-  showToast('CSV utenti esportato','ok');
-  writeLog('export','Export CSV utenti');
-}
-function exportInvoicesCSV() {
-  const rows=[['Utente','Email','Cliente','N° Fattura','Data','IVA','Totale','Stato']];
-  ALL_INV.forEach(i=>{const total=Number(i.amount||0)*(1+(Number(i.vat||22)/100));rows.push([i.userName,i.userEmail,i.client||'',i.invoiceNum||'',i.date||'',i.vat||22,total.toFixed(2),i.status||'draft']);});
-  dl('kazka-admin-invoices.csv','text/csv',rows.map(r=>r.join(';')).join('\n'));
-  showToast('CSV fatture esportato','ok');
-}
-
-/* ══ NAV ══ */
-function showView(name) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('view-'+name)?.classList.add('active');
-  document.getElementById('nav-'+name)?.classList.add('active');
-  if(name==='support') loadTickets();
-  if(name==='security') renderSecurity();
-}
-
-/* ══ MODAL ══ */
-function openModal(id){ const el=document.getElementById(id); el.style.display='flex'; el.classList.add('open'); }
-function closeModal(id){ const el=document.getElementById(id); el.style.display='none'; el.classList.remove('open'); }
-document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')){ e.target.style.display='none'; e.target.classList.remove('open'); } });
-document.addEventListener('change',e=>{ if(e.target.id==='bulk-from'||e.target.id==='bulk-to'){ const from=document.getElementById('bulk-from').value; const to=document.getElementById('bulk-to').value; const count=Object.values(ALL_USERS).filter(u=>(u.profile?.plan||'free')===from).length; document.getElementById('bulk-preview-text').textContent=`Verranno aggiornati ${count} utenti da "${from}" a "${to}".`; } });
-
-/* ══ UTILS ══ */
-function mkChart(id,type,data,opts) {
-  const ctx=document.getElementById(id); if(!ctx)return;
-  if(CHARTS[id]) CHARTS[id].destroy();
-  CHARTS[id]=new Chart(ctx,{type,data,options:opts});
-}
-function planBadge(p){ return p==='pro'?'badge-purple':p==='business'?'badge-blue':'badge-gray'; }
-function fmt(v){ return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(v)||0); }
-function fmtDate(d){ if(!d)return'—'; try{return new Date(d).toLocaleDateString('it-IT');}catch{return d;} }
-function fmtDateTime(d){ if(!d)return'—'; try{return new Date(d).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return d;} }
-function cap(s){ return s?s.charAt(0).toUpperCase()+s.slice(1):s; }
-function showErr(el,msg){ el.textContent=msg; el.style.display='block'; }
-function showToast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  const icons={ok:'✓',err:'✕',warn:'⚠'};
-  t.innerHTML=`<span>${icons[type]||'•'}</span> ${msg}`;
-  t.className='toast '+type+' show';
-  clearTimeout(t._t);
-  t._t=setTimeout(()=>t.classList.remove('show'),3500);
-}
-function dl(name,type,content){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b);a.download=name;a.click();URL.revokeObjectURL(a.href); }
-function friendlyErr(code){ const m={'auth/wrong-password':'Password errata','auth/user-not-found':'Email non trovata','auth/invalid-credential':'Credenziali non valide','auth/too-many-requests':'Troppi tentativi, riprova tra qualche minuto'}; return m[code]||'Errore: '+code; }
+function rb(r){return r==='admin'?'br':'bgy'}
+function pb(p){return{free:'bgy',pro:'bp',business:'bb'}[p]||'bgy'}
+function sv(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));document.getElementById('view-'+n)?.classList.add('active');document.getElementById('nav-'+n)?.classList.add('active')}
+function om(id){document.getElementById(id).style.display='flex';document.getElementById(id).classList.add('open')}
+function cm(id){document.getElementById(id).style.display='none';document.getElementById(id).classList.remove('open')}
+document.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.style.display='none'})
+function fmt(v){return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(v)||0)}
+function fd(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('it-IT')}catch{return d}}
+function fdt(d){if(!d)return'—';try{return new Date(d).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}catch{return d}}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s}
+function today(){return new Date().toISOString().split('T')[0]}
+function showErr(el,msg){el.textContent=msg;el.style.display='block'}
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500)}
+function ferr(c){const m={'auth/wrong-password':'Password errata','auth/user-not-found':'Email non trovata','auth/invalid-credential':'Credenziali non valide','auth/too-many-requests':'Troppi tentativi'};return m[c]||'Errore: '+c}
 </script>
 </body>
 </html>

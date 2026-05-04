@@ -12,8 +12,11 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#050912;--bg2:#090f1e;--bg3:#0d1528;--bg4:#111c32;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF);--grad-biz:linear-gradient(135deg,#FF8C42,#FFD166);--nav-h:60px;--side-w:240px;--r:14px;--rsm:8px}
 [data-theme="light"]{--bg:#F0F2F8;--bg2:#fff;--bg3:#F8F9FC;--bg4:#ECEEF5;--b1:rgba(0,0,0,.06);--b2:rgba(0,0,0,.12);--tx:#1A1F36;--tx2:#5A6282;--tx3:#A0A8C8}
+/* Mode toggle — controls sidebar nav items only */
 [data-mode="business"] .mode-personal{display:none!important}
 [data-mode="personal"] .mode-business{display:none!important}
+/* Active views ALWAYS show regardless of mode */
+.view.active{display:block!important}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;overflow-x:hidden;min-height:100vh}
 a{text-decoration:none;color:inherit}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
@@ -442,14 +445,14 @@ tr:hover td{background:var(--b1)}
     </div>
 
     <!-- INVOICES -->
-    <div class="view mode-business" id="view-invoices">
+    <div class="view" id="view-invoices">
       <div class="page-hd"><div><div class="pt">Fatture & Clienti</div></div><button class="btn bp2" onclick="om('modal-invoice')">+ Nuova fattura</button></div>
       <div id="inv-stats" style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem"></div>
       <div class="card"><div class="tw"><table><thead><tr><th>N°</th><th>Cliente</th><th>Data</th><th>Scad.</th><th>IVA</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody id="inv-tbody"></tbody></table></div><div class="empty-st" id="inv-empty" style="display:none"><div style="font-size:2rem">🧾</div><strong>Nessuna fattura</strong></div></div>
     </div>
 
     <!-- TRAVEL -->
-    <div class="view mode-business" id="view-travel">
+    <div class="view" id="view-travel">
       <div class="page-hd"><div><div class="pt">Viaggi & Trasferte</div></div><button class="btn bp2" onclick="om('modal-travel')">+ Nuovo viaggio</button></div>
       <div class="gg" id="travel-grid"></div>
       <div class="empty-st" id="travel-empty" style="display:none;margin-top:2rem"><div style="font-size:2rem">✈️</div><strong>Nessun viaggio</strong></div>
@@ -706,7 +709,15 @@ function renderAll(){renderDashboard();renderTransactions();renderAccounts();ren
 
 function showView(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.ni').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+n)?.classList.add('active');document.getElementById('nav-'+n)?.classList.add('active');if(window.innerWidth<=768){document.getElementById('sidebar').classList.remove('open');document.getElementById('s-overlay').style.display='none';}window.scrollTo(0,0);if(n==='reports')setTimeout(renderReportCharts,100);if(n==='transfer')populateTransferSelects();}
 function toggleSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('s-overlay');s.classList.toggle('open');o.style.display=s.classList.contains('open')?'block':'none';}
-function setMode(m){mode=m;localStorage.setItem('kz_mode',m);document.documentElement.setAttribute('data-mode',m);document.getElementById('mb-p').className='mode-btn'+(m==='personal'?' ap':'');document.getElementById('mb-b').className='mode-btn'+(m==='business'?' ab':'');}
+function setMode(m){
+  mode=m;localStorage.setItem('kz_mode',m);
+  document.documentElement.setAttribute('data-mode',m);
+  document.getElementById('mb-p').className='mode-btn'+(m==='personal'?' ap':'');
+  document.getElementById('mb-b').className='mode-btn'+(m==='business'?' ab':'');
+  const ca=document.querySelector('.view.active');
+  if(m==='personal'&&ca&&(ca.id==='view-invoices'||ca.id==='view-travel')){showView('dashboard');}
+  if(m==='business'){showView('invoices');}
+}
 function applyTheme(t){theme=t;document.documentElement.setAttribute('data-theme',t);localStorage.setItem('kz_theme',t);document.getElementById('theme-btn').textContent=t==='dark'?'🌙':'☀️';}
 function toggleTheme(){applyTheme(theme==='dark'?'light':'dark');}
 

@@ -654,6 +654,31 @@ tr:hover td{background:var(--b1)}
   <div class="mf"><button class="btn bs" onclick="cm('modal-pin')">Annulla</button><button class="btn bp" onclick="savePin()">Imposta</button></div>
 </div></div>
 
+<!-- QUOTE MODAL -->
+<div class="mo" id="modal-quote"><div class="md" style="max-width:540px">
+  <div class="mh"><div class="mt">Preventivo</div><div class="mc2" onclick="cm('modal-quote')">✕</div></div>
+  <div class="mb"><input type="hidden" id="qt-id">
+    <div class="fr"><div class="fg2"><label>Cliente</label><input type="text" id="qt-client" placeholder="Nome cliente / azienda"></div><div class="fg2"><label>N° Preventivo</label><input type="text" id="qt-num" placeholder="PREV-001"></div></div>
+    <div class="fr"><div class="fg2"><label>Data</label><input type="date" id="qt-date"></div><div class="fg2"><label>Validità fino al</label><input type="date" id="qt-valid"></div></div>
+    <div class="fr"><div class="fg2"><label>Imponibile (€)</label><input type="number" id="qt-amount" placeholder="1000" step="0.01"></div><div class="fg2"><label>IVA %</label><select id="qt-vat"><option value="0">0%</option><option value="4">4%</option><option value="10">10%</option><option value="22" selected>22%</option></select></div></div>
+    <div class="fg2"><label>Stato</label><select id="qt-status"><option value="draft">Bozza</option><option value="sent">Inviato</option><option value="accepted">Accettato</option><option value="rejected">Rifiutato</option></select></div>
+    <div class="fg2"><label>Note / descrizione servizi</label><textarea id="qt-notes" rows="3" placeholder="Descrizione dettagliata dei servizi..."></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-quote')">Annulla</button><button class="btn bs" onclick="convertQuoteToInvoice()">→ Converti in fattura</button><button class="btn bp2" onclick="saveQuote()">Salva</button></div>
+</div></div>
+
+<!-- SUPPLIER MODAL -->
+<div class="mo" id="modal-supplier"><div class="md">
+  <div class="mh"><div class="mt">Fornitore</div><div class="mc2" onclick="cm('modal-supplier')">✕</div></div>
+  <div class="mb"><input type="hidden" id="sup-id">
+    <div class="fg2"><label>Nome fornitore / Azienda</label><input type="text" id="sup-name" placeholder="Fornitore SRL"></div>
+    <div class="fr"><div class="fg2"><label>Categoria</label><select id="sup-cat"><option value="software">💻 Software / SaaS</option><option value="servizi">🔧 Servizi</option><option value="materiali">📦 Materiali</option><option value="consulenza">💼 Consulenza</option><option value="utilities">⚡ Utenze</option><option value="altro">📋 Altro</option></select></div><div class="fg2"><label>Costo mensile (€)</label><input type="number" id="sup-cost" placeholder="0" step="0.01"></div></div>
+    <div class="fg2"><label>Email contatto</label><input type="email" id="sup-email" placeholder="contatti@fornitore.com"></div>
+    <div class="fg2"><label>Note</label><input type="text" id="sup-notes" placeholder="Note aggiuntive..."></div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-supplier')">Annulla</button><button class="btn bp2" onclick="saveSupplier()">Salva</button></div>
+</div></div>
+
 <div id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -860,6 +885,465 @@ function showErr(el,msg){el.textContent=msg;el.style.display='block';}
 function toast(msg,type='ok'){const t=document.getElementById('toast');t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
 function ferr(c){const m={'auth/user-not-found':'Email non trovata','auth/wrong-password':'Password errata','auth/email-already-in-use':'Email già registrata','auth/weak-password':'Password troppo corta','auth/invalid-credential':'Credenziali non valide','auth/too-many-requests':'Troppi tentativi'};return m[c]||'Errore — riprova';}
 document.addEventListener('DOMContentLoaded',()=>{applyTheme(theme);['tx-date','rec-next','inv-date','trv-start','tr-date','ge-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today();});renderCalendar();});
+
+/* ══════════════════════════════════════════
+   FREE MONEY CALCULATOR
+══════════════════════════════════════════ */
+let fmConfig = JSON.parse(localStorage.getItem('kz_fm') || '{}');
+
+function calcFreeMoney() {
+  const m = new Date().toISOString().slice(0, 7);
+  const txM = S.transactions.filter(t => t.date?.startsWith(m));
+  const mIncome = txM.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const mExpense = txM.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const recurringTotal = S.recurring.reduce((s, r) => {
+    const m2 = {weekly: 4.33, monthly: 1, quarterly: 1/3, yearly: 1/12}[r.frequency] || 1;
+    return s + Number(r.amount || 0) * m2;
+  }, 0);
+  const debtRates = S.debts.reduce((s, d) => s + Number(d.rate || 0), 0);
+  const fixedIncome = Number(fmConfig.income || mIncome);
+  const otherIncome = Number(fmConfig.otherIncome || 0);
+  const totalIncome = fixedIncome + otherIncome;
+  const totalFixed = recurringTotal + debtRates;
+  const alreadySpent = mExpense;
+  const free = totalIncome - totalFixed - alreadySpent;
+  const freeAfterFixed = totalIncome - totalFixed;
+
+  // Stats
+  document.getElementById('fm-stats').innerHTML = `
+    <div class="sc"><div class="sl">Entrate mensili</div><div class="sv" style="color:var(--gr)">${fmt(totalIncome)}</div><div style="font-size:.8rem;color:var(--tx2)">stipendio + altro</div></div>
+    <div class="sc"><div class="sl">Spese fisse</div><div class="sv" style="color:var(--ye)">${fmt(totalFixed)}</div><div style="font-size:.8rem;color:var(--tx2)">ricorrenti + rate</div></div>
+    <div class="sc"><div class="sl">Già speso (mese)</div><div class="sv" style="color:var(--re)">${fmt(alreadySpent)}</div><div style="font-size:.8rem;color:var(--tx2)">questo mese</div></div>
+    <div class="sc"><div class="sl">💰 Soldi liberi</div><div class="sv" style="color:${free >= 0 ? 'var(--gr)' : 'var(--re)'};font-size:1.8rem">${fmt(free)}</div><div style="font-size:.8rem;color:var(--tx2)">${free >= 0 ? 'disponibili ora' : 'in rosso!'}</div></div>`;
+
+  // Breakdown
+  document.getElementById('fm-breakdown').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">💼 Entrata principale</span><span style="font-weight:700;color:var(--gr)">+${fmt(fixedIncome)}</span></div>
+      ${otherIncome > 0 ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">➕ Altre entrate</span><span style="font-weight:700;color:var(--gr)">+${fmt(otherIncome)}</span></div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">🔁 Spese ricorrenti (prorata)</span><span style="font-weight:700;color:var(--ye)">-${fmt(recurringTotal)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">💳 Rate prestiti/mutuo</span><span style="font-weight:700;color:var(--ye)">-${fmt(debtRates)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">🛒 Spese questo mese</span><span style="font-weight:700;color:var(--re)">-${fmt(alreadySpent)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.875rem 0;background:${free >= 0 ? 'rgba(0,240,160,.08)' : 'rgba(255,51,85,.08)'};border-radius:var(--rsm);padding:.75rem"><span style="font-size:.9rem;font-weight:700">💰 Soldi liberi ora</span><span style="font-weight:800;font-size:1.1rem;color:${free >= 0 ? 'var(--gr)' : 'var(--re)'}">${fmt(free)}</span></div>
+    </div>`;
+
+  // Distribution (regola 50/30/20)
+  const needs = freeAfterFixed * 0.5;
+  const wants = freeAfterFixed * 0.3;
+  const savings = freeAfterFixed * 0.2;
+  document.getElementById('fm-distribution').innerHTML = `
+    <div style="font-size:.8rem;color:var(--tx2);margin-bottom:.875rem">Regola 50/30/20 sul disponibile dopo le spese fisse (${fmt(freeAfterFixed)})</div>
+    ${[
+      {label:'🏠 Necessità (50%)', val: needs, color: 'var(--ac2)', desc: 'Cibo, casa, trasporti'},
+      {label:'🎬 Svago (30%)', val: wants, color: 'var(--ac)', desc: 'Shopping, ristoranti, viaggi'},
+      {label:'🏆 Risparmio (20%)', val: savings, color: 'var(--gr)', desc: 'Investimenti, obiettivi'},
+    ].map(i => `
+      <div style="margin-bottom:.875rem">
+        <div style="display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.35rem">
+          <span>${i.label}</span><span style="font-weight:700;color:${i.color}">${fmt(i.val)}</span>
+        </div>
+        <div class="pb"><div class="pf" style="width:${Math.min(100, Math.round((alreadySpent / (i.val || 1)) * 100))}%;background:${i.color}"></div></div>
+        <div style="font-size:.72rem;color:var(--tx3)">${i.desc}</div>
+      </div>`).join('')}`;
+
+  // Pre-fill income fields
+  if (document.getElementById('fm-income')) document.getElementById('fm-income').value = fmConfig.income || '';
+  if (document.getElementById('fm-other-income')) document.getElementById('fm-other-income').value = fmConfig.otherIncome || '';
+}
+
+function saveFMConfig() {
+  fmConfig = {
+    income: parseFloat(document.getElementById('fm-income').value) || 0,
+    otherIncome: parseFloat(document.getElementById('fm-other-income').value) || 0
+  };
+  localStorage.setItem('kz_fm', JSON.stringify(fmConfig));
+  calcFreeMoney();
+  toast('Configurazione salvata', 'ok');
+}
+
+/* ══════════════════════════════════════════
+   MONTHLY EXPENSES
+══════════════════════════════════════════ */
+let monthlyDate = new Date();
+
+function renderMonthly() {
+  const y = monthlyDate.getFullYear(), mo = monthlyDate.getMonth();
+  const mStr = `${y}-${String(mo + 1).padStart(2, '0')}`;
+  document.getElementById('monthly-title').textContent = new Date(y, mo, 1).toLocaleDateString('it-IT', {month: 'long', year: 'numeric'});
+  const txM = S.transactions.filter(t => t.date?.startsWith(mStr));
+  const income = txM.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const expense = txM.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const avgDay = expense > 0 ? expense / new Date(y, mo + 1, 0).getDate() : 0;
+  const daysLeft = mo === new Date().getMonth() && y === new Date().getFullYear()
+    ? new Date(y, mo + 1, 0).getDate() - new Date().getDate()
+    : 0;
+  const projected = expense + (avgDay * daysLeft);
+
+  document.getElementById('monthly-stats').innerHTML = `
+    <div class="sc"><div class="sl">Entrate</div><div class="sv" style="color:var(--gr)">${fmt(income)}</div></div>
+    <div class="sc"><div class="sl">Uscite totali</div><div class="sv" style="color:var(--re)">${fmt(expense)}</div></div>
+    <div class="sc"><div class="sl">Media giornaliera</div><div class="sv" style="color:var(--ye)">${fmt(avgDay)}</div></div>
+    <div class="sc"><div class="sl">Proiezione fine mese</div><div class="sv" style="color:var(--or)">${fmt(projected)}</div><div style="font-size:.75rem;color:var(--tx2)">${daysLeft > 0 ? daysLeft + ' giorni rimasti' : 'mese passato'}</div></div>`;
+
+  // Category breakdown
+  const cats = {};
+  txM.filter(t => t.type === 'expense').forEach(t => { cats[t.category] = (cats[t.category] || 0) + Number(t.amount || 0); });
+  const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+  const maxCat = sorted[0]?.[1] || 1;
+  document.getElementById('monthly-cats').innerHTML = sorted.length
+    ? sorted.map(([c, v]) => `
+      <div style="margin-bottom:.75rem">
+        <div style="display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.3rem">
+          <span>${CI[c] || '📦'} ${cap(c)}</span>
+          <span style="font-weight:700">${fmt(v)} <span style="color:var(--tx3);font-weight:400">(${expense > 0 ? Math.round((v / expense) * 100) : 0}%)</span></span>
+        </div>
+        <div class="pb"><div class="pf" style="width:${Math.round((v / maxCat) * 100)}%;background:var(--ac)"></div></div>
+      </div>`).join('')
+    : '<div style="color:var(--tx3);font-size:.875rem;padding:1rem 0">Nessuna spesa questo mese</div>';
+
+  // Daily chart
+  const days = new Date(y, mo + 1, 0).getDate();
+  const dailyData = Array(days).fill(0);
+  txM.filter(t => t.type === 'expense').forEach(t => {
+    const d = parseInt(t.date?.split('-')[2]) - 1;
+    if (d >= 0 && d < days) dailyData[d] += Number(t.amount || 0);
+  });
+  const dayLabels = Array.from({length: days}, (_, i) => i + 1);
+  mkChart('ch-daily', 'bar', {
+    labels: dayLabels,
+    datasets: [{label: 'Spese', data: dailyData, backgroundColor: 'rgba(255,51,85,.6)', borderRadius: 3}]
+  }, {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}}, scales: {x: {ticks: {color: 'var(--tx3)', font: {size: 9}}}, y: {ticks: {color: 'var(--tx3)'}}}});
+
+  // Table
+  const tbody = document.getElementById('monthly-tbody'), empty = document.getElementById('monthly-empty');
+  if (!txM.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = txM.sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `<tr>
+    <td style="font-size:.82rem">${fd(t.date)}</td>
+    <td class="tdm">${CI[t.category] || '📦'} ${t.description || '—'}</td>
+    <td><span class="badge bg-gy">${cap(t.category || 'altro')}</span></td>
+    <td><span class="badge ${t.type === 'income' ? 'bg-gr' : 'bg-re'}">${t.type === 'income' ? 'Entrata' : 'Uscita'}</span></td>
+    <td style="font-weight:700;color:${t.type === 'income' ? 'var(--gr)' : 'var(--re)'}">${t.type === 'income' ? '+' : '-'}${fmt(t.amount)}</td>
+  </tr>`).join('');
+}
+function monthPrev() { monthlyDate.setMonth(monthlyDate.getMonth() - 1); renderMonthly(); }
+function monthNext() { monthlyDate.setMonth(monthlyDate.getMonth() + 1); renderMonthly(); }
+
+/* ══════════════════════════════════════════
+   QUOTES (Preventivi)
+══════════════════════════════════════════ */
+function renderQuotes() {
+  const tbody = document.getElementById('quotes-tbody'), empty = document.getElementById('quotes-empty');
+  const QS = {draft: {l: 'Bozza', c: 'bg-gy'}, sent: {l: 'Inviato', c: 'bg-ye'}, accepted: {l: 'Accettato', c: 'bg-gr'}, rejected: {l: 'Rifiutato', c: 'bg-re'}};
+  if (!S.quotes?.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = S.quotes.map(q => {
+    const total = Number(q.amount || 0) * (1 + Number(q.vat || 22) / 100);
+    const s = QS[q.status] || QS.draft;
+    return `<tr>
+      <td class="tdm">${q.num || '—'}</td><td>${q.client || '—'}</td>
+      <td style="font-size:.82rem">${fd(q.date)}</td><td style="font-size:.82rem">${fd(q.valid)}</td>
+      <td style="font-weight:700">${fmt(total)}</td>
+      <td><span class="badge ${s.c}">${s.l}</span></td>
+      <td><div style="display:flex;gap:.25rem">
+        <button class="btn bi bs bsm" onclick="editQuote('${q.id}')" title="Modifica">✏️</button>
+        <button class="btn bi bs bsm" onclick="quoteToInvoice('${q.id}')" title="→ Fattura">🧾</button>
+        <button class="btn bi bd bsm" onclick="deleteQuote('${q.id}')">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+async function saveQuote() {
+  const id = document.getElementById('qt-id').value;
+  const q = {client: document.getElementById('qt-client').value.trim(), num: document.getElementById('qt-num').value.trim(), date: document.getElementById('qt-date').value, valid: document.getElementById('qt-valid').value, amount: parseFloat(document.getElementById('qt-amount').value) || 0, vat: parseInt(document.getElementById('qt-vat').value) || 22, status: document.getElementById('qt-status').value, notes: document.getElementById('qt-notes').value.trim(), updatedAt: new Date().toISOString()};
+  if (!q.client || !q.amount) { toast('Compila cliente e importo', 'err'); return; }
+  if (id) { await db.ref(`users/${UID}/quotes/${id}`).update(q); }
+  else { q.createdAt = new Date().toISOString(); await db.ref(`users/${UID}/quotes`).push(q); }
+  cm('modal-quote'); document.getElementById('qt-id').value = ''; toast('Preventivo salvato', 'ok');
+}
+function editQuote(id) {
+  const q = S.quotes?.find(q => q.id === id); if (!q) return;
+  document.getElementById('qt-id').value = id;
+  document.getElementById('qt-client').value = q.client || '';
+  document.getElementById('qt-num').value = q.num || '';
+  document.getElementById('qt-date').value = q.date || '';
+  document.getElementById('qt-valid').value = q.valid || '';
+  document.getElementById('qt-amount').value = q.amount || '';
+  document.getElementById('qt-vat').value = q.vat || 22;
+  document.getElementById('qt-status').value = q.status || 'draft';
+  document.getElementById('qt-notes').value = q.notes || '';
+  om('modal-quote');
+}
+async function quoteToInvoice(id) {
+  const q = S.quotes?.find(q => q.id === id); if (!q) return;
+  if (!confirm(`Convertire il preventivo di ${q.client} in fattura?`)) return;
+  const inv = {client: q.client, invoiceNum: q.num?.replace('PREV', 'FAT') || '', date: today(), due: '', amount: q.amount, vat: q.vat, totalWithVat: q.amount * (1 + q.vat / 100), status: 'draft', notes: q.notes || '', createdAt: new Date().toISOString()};
+  await db.ref(`users/${UID}/invoices`).push(inv);
+  await db.ref(`users/${UID}/quotes/${id}`).update({status: 'accepted'});
+  toast('Convertito in fattura!', 'ok'); showView('invoices');
+}
+function convertQuoteToInvoice() { const id = document.getElementById('qt-id').value; if (id) quoteToInvoice(id); }
+async function deleteQuote(id) { if (!confirm('Eliminare?')) return; await db.ref(`users/${UID}/quotes/${id}`).remove(); toast('Eliminato', 'ok'); }
+
+/* ══════════════════════════════════════════
+   SUPPLIERS (Fornitori)
+══════════════════════════════════════════ */
+const SUP_CAT_IC = {software: '💻', servizi: '🔧', materiali: '📦', consulenza: '💼', utilities: '⚡', altro: '📋'};
+function renderSuppliers() {
+  const grid = document.getElementById('suppliers-grid'), empty = document.getElementById('suppliers-empty');
+  if (!S.suppliers?.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = S.suppliers.map(s => `
+    <div class="gc">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">${SUP_CAT_IC[s.cat] || '📋'}</div>
+      <div style="font-weight:700;font-size:1rem;margin-bottom:.2rem">${s.name}</div>
+      <div style="font-size:.8rem;color:var(--tx2);margin-bottom:.75rem">${s.email || '—'}</div>
+      ${s.cost > 0 ? `<div style="font-size:.875rem">Costo mensile: <strong style="color:var(--re)">${fmt(s.cost)}</strong></div>` : ''}
+      ${s.notes ? `<div style="font-size:.8rem;color:var(--tx3);margin-top:.25rem">${s.notes}</div>` : ''}
+      <div style="display:flex;gap:.5rem;margin-top:.875rem">
+        <button class="btn bs bsm" style="flex:1" onclick="editSupplier('${s.id}')">Modifica</button>
+        <button class="btn bi bd bsm" onclick="deleteSupplier('${s.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+async function saveSupplier() {
+  const id = document.getElementById('sup-id').value;
+  const s = {name: document.getElementById('sup-name').value.trim(), cat: document.getElementById('sup-cat').value, cost: parseFloat(document.getElementById('sup-cost').value) || 0, email: document.getElementById('sup-email').value.trim(), notes: document.getElementById('sup-notes').value.trim(), updatedAt: new Date().toISOString()};
+  if (!s.name) { toast('Inserisci nome', 'err'); return; }
+  if (id) { await db.ref(`users/${UID}/suppliers/${id}`).update(s); }
+  else { s.createdAt = new Date().toISOString(); await db.ref(`users/${UID}/suppliers`).push(s); }
+  cm('modal-supplier'); document.getElementById('sup-id').value = ''; toast('Fornitore salvato', 'ok');
+}
+function editSupplier(id) {
+  const s = S.suppliers?.find(s => s.id === id); if (!s) return;
+  document.getElementById('sup-id').value = id;
+  document.getElementById('sup-name').value = s.name;
+  document.getElementById('sup-cat').value = s.cat || 'altro';
+  document.getElementById('sup-cost').value = s.cost || '';
+  document.getElementById('sup-email').value = s.email || '';
+  document.getElementById('sup-notes').value = s.notes || '';
+  om('modal-supplier');
+}
+async function deleteSupplier(id) { if (!confirm('Eliminare?')) return; await db.ref(`users/${UID}/suppliers/${id}`).remove(); toast('Eliminato', 'ok'); }
+
+/* ══════════════════════════════════════════
+   PRIMA NOTA
+══════════════════════════════════════════ */
+let pnDate = new Date();
+function renderPrimaNota() {
+  const y = pnDate.getFullYear(), mo = pnDate.getMonth();
+  const mStr = `${y}-${String(mo + 1).padStart(2, '0')}`;
+  document.getElementById('pn-title').textContent = 'Prima Nota — ' + new Date(y, mo, 1).toLocaleDateString('it-IT', {month: 'long', year: 'numeric'});
+  const txM = S.transactions.filter(t => t.date?.startsWith(mStr)).sort((a, b) => new Date(a.date) - new Date(b.date));
+  const income = txM.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const expense = txM.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount || 0), 0);
+  document.getElementById('pn-stats').innerHTML = `
+    <div class="sc"><div class="sl">Registrazioni</div><div class="sv">${txM.length}</div></div>
+    <div class="sc"><div class="sl">Totale entrate</div><div class="sv" style="color:var(--gr)">${fmt(income)}</div></div>
+    <div class="sc"><div class="sl">Totale uscite</div><div class="sv" style="color:var(--re)">${fmt(expense)}</div></div>
+    <div class="sc"><div class="sl">Saldo periodo</div><div class="sv" style="color:${income-expense>=0?'var(--gr)':'var(--re)'}">${fmt(income-expense)}</div></div>`;
+  const tbody = document.getElementById('pn-tbody'), empty = document.getElementById('pn-empty');
+  if (!txM.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  let progressive = 0;
+  tbody.innerHTML = txM.map((t, i) => {
+    const amt = Number(t.amount || 0);
+    progressive += t.type === 'income' ? amt : -amt;
+    return `<tr>
+      <td style="font-size:.82rem;color:var(--tx3)">${String(i + 1).padStart(3, '0')}</td>
+      <td style="font-size:.82rem">${fd(t.date)}</td>
+      <td class="tdm">${t.description || '—'}</td>
+      <td><span class="badge bg-gy">${cap(t.category || 'altro')}</span></td>
+      <td style="font-weight:600;color:var(--gr)">${t.type === 'income' ? fmt(amt) : '—'}</td>
+      <td style="font-weight:600;color:var(--re)">${t.type === 'expense' ? fmt(amt) : '—'}</td>
+      <td style="font-weight:700;color:${progressive >= 0 ? 'var(--gr)' : 'var(--re)'}">${fmt(progressive)}</td>
+    </tr>`;
+  }).join('');
+}
+function pnPrev() { pnDate.setMonth(pnDate.getMonth() - 1); renderPrimaNota(); }
+function pnNext() { pnDate.setMonth(pnDate.getMonth() + 1); renderPrimaNota(); }
+function exportPrimaNotaPDF() {
+  try {
+    const {jsPDF} = window.jspdf; const doc = new jsPDF();
+    const y = pnDate.getFullYear(), mo = pnDate.getMonth();
+    const mStr = `${y}-${String(mo + 1).padStart(2, '0')}`;
+    doc.setFontSize(16); doc.text('Prima Nota', 14, 20);
+    doc.setFontSize(10); doc.setTextColor(120);
+    doc.text(new Date(y, mo, 1).toLocaleDateString('it-IT', {month: 'long', year: 'numeric'}), 14, 28);
+    doc.text(`Azienda: ${UP?.name || '—'}`, 14, 36);
+    doc.setTextColor(0); doc.setFontSize(8);
+    doc.text('N°', 14, 48); doc.text('Data', 22, 48); doc.text('Descrizione', 40, 48); doc.text('Entrata', 120, 48); doc.text('Uscita', 145, 48); doc.text('Saldo', 170, 48);
+    let yy = 56, prog = 0;
+    const txM = S.transactions.filter(t => t.date?.startsWith(mStr)).sort((a, b) => new Date(a.date) - new Date(b.date));
+    txM.forEach((t, i) => {
+      if (yy > 270) { doc.addPage(); yy = 20; }
+      const amt = Number(t.amount || 0);
+      prog += t.type === 'income' ? amt : -amt;
+      doc.text(String(i + 1).padStart(3, '0'), 14, yy);
+      doc.text(t.date || '—', 22, yy);
+      doc.text((t.description || '—').slice(0, 35), 40, yy);
+      if (t.type === 'income') doc.text(fmt(amt), 120, yy);
+      if (t.type === 'expense') doc.text(fmt(amt), 145, yy);
+      doc.text(fmt(prog), 170, yy);
+      yy += 7;
+    });
+    doc.save('prima-nota.pdf');
+    toast('PDF esportato', 'ok');
+  } catch(e) { toast('Errore PDF', 'err'); }
+}
+
+/* ══════════════════════════════════════════
+   TAX CALCULATOR
+══════════════════════════════════════════ */
+function calcTax() {
+  const revenue = parseFloat(document.getElementById('tax-revenue')?.value) || 0;
+  if (!revenue) { document.getElementById('tax-result').innerHTML = '<div style="color:var(--tx3);font-size:.875rem;padding:1rem 0">Inserisci il fatturato annuo lordo</div>'; return; }
+  const regime = document.getElementById('tax-regime')?.value || 'forfettario_15';
+  const coeff = parseFloat(document.getElementById('tax-ateco')?.value) || 0.78;
+  const inpsType = document.getElementById('tax-inps')?.value || 'gestione_separata';
+  const taxYear = parseInt(document.getElementById('tax-year')?.value) || 1;
+  const inpsRates = {gestione_separata: 0.2607, artigiani: 0.24, commercianti: 0.2409};
+  const inpsRate = inpsRates[inpsType] || 0.2607;
+  let taxableBase, taxRate, taxAmount, inpsAmount, net;
+  if (regime === 'forfettario_15' || regime === 'forfettario_5') {
+    const actualRate = (regime === 'forfettario_5' && taxYear <= 5) ? 0.05 : 0.15;
+    taxableBase = revenue * coeff;
+    inpsAmount = taxableBase * inpsRate;
+    const adjustedBase = taxableBase - inpsAmount * 0.5;
+    taxAmount = adjustedBase * actualRate;
+    taxRate = actualRate * 100;
+    net = revenue - taxAmount - inpsAmount;
+  } else {
+    taxableBase = revenue * coeff;
+    inpsAmount = taxableBase * inpsRate;
+    const netBase = taxableBase - inpsAmount;
+    taxAmount = netBase <= 15000 ? netBase * 0.23 : netBase <= 28000 ? 3450 + (netBase - 15000) * 0.25 : netBase <= 50000 ? 6700 + (netBase - 28000) * 0.35 : netBase <= 75000 ? 14400 + (netBase - 50000) * 0.41 : 24650 + (netBase - 75000) * 0.43;
+    taxRate = Math.round((taxAmount / revenue) * 100);
+    net = revenue - taxAmount - inpsAmount;
+  }
+  const monthly = net / 12;
+  const monthlyTax = taxAmount / 12;
+  const monthlyInps = inpsAmount / 12;
+  document.getElementById('tax-result').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:.625rem">
+      <div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">📊 Fatturato lordo</span><span style="font-weight:700">${fmt(revenue)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">📐 Base imponibile (coeff. ${coeff})</span><span style="font-weight:700">${fmt(taxableBase)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">🏛️ Tasse (${taxRate}%)</span><span style="font-weight:700;color:var(--re)">-${fmt(taxAmount)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">🏦 Contributi INPS</span><span style="font-weight:700;color:var(--ye)">-${fmt(inpsAmount)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:.875rem;background:rgba(0,240,160,.08);border-radius:var(--rsm)"><span style="font-size:.9rem;font-weight:700">💰 Netto annuo</span><span style="font-weight:800;font-size:1.1rem;color:var(--gr)">${fmt(net)}</span></div>
+    </div>`;
+  document.getElementById('tax-monthly').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem">
+      <div class="sc"><div class="sl">Stipendio mensile netto</div><div class="sv" style="color:var(--gr)">${fmt(monthly)}</div></div>
+      <div class="sc"><div class="sl">Accantona tasse/mese</div><div class="sv" style="color:var(--re)">${fmt(monthlyTax)}</div></div>
+      <div class="sc"><div class="sl">Accantona INPS/mese</div><div class="sv" style="color:var(--ye)">${fmt(monthlyInps)}</div></div>
+      <div class="sc"><div class="sl">Totale da accantonare</div><div class="sv" style="color:var(--or)">${fmt(monthlyTax + monthlyInps)}</div></div>
+    </div>
+    <div style="margin-top:.875rem;padding:.75rem;background:rgba(123,104,238,.08);border-radius:var(--rsm);font-size:.8rem;color:var(--tx2)">
+      💡 Apri un conto separato e versa <strong>${fmt(monthlyTax + monthlyInps)}</strong>/mese per tasse e contributi. Non toccarli — sono del fisco.
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   GROUP BALANCE CALCULATION
+══════════════════════════════════════════ */
+function calcGroupBalances(gid) {
+  const g = S.groups[gid]; if (!g) return [];
+  const members = Object.values(g.members || {});
+  const expenses = Object.values(g.expenses || {});
+  const balances = {};
+  members.forEach(m => { balances[m.name || m.email] = 0; });
+  expenses.forEach(e => {
+    const payer = members.find(m => m.uid === e.payerId || m.email === e.payerId);
+    const payerName = payer?.name || e.payerName || e.payerId;
+    const share = e.amount / members.length;
+    members.forEach(m => {
+      const n = m.name || m.email;
+      if (!balances[n]) balances[n] = 0;
+      if (n === payerName) balances[n] += (e.amount - share);
+      else balances[n] -= share;
+    });
+  });
+  return Object.entries(balances).map(([name, bal]) => ({name, bal})).sort((a, b) => b.bal - a.bal);
+}
+
+/* Override openGroup to add balance calc */
+const _origOpenGroup = openGroup;
+function openGroup(gid) {
+  currentGid = gid;
+  const g = S.groups[gid]; if (!g) return;
+  const info = g.info || {};
+  document.getElementById('gd-title').textContent = info.name || 'Gruppo';
+  document.getElementById('gd-sub').textContent = `${Object.keys(g.members || {}).length} membri`;
+  const members = Object.values(g.members || {});
+  const balances = calcGroupBalances(gid);
+  document.getElementById('gd-members').innerHTML = members.map(m => {
+    const bal = balances.find(b => b.name === (m.name || m.email));
+    const b = bal?.bal || 0;
+    return `<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--b1)">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">${(m.name || '?').charAt(0).toUpperCase()}</div>
+      <div style="flex:1"><div style="font-size:.875rem;font-weight:500">${m.name || m.email}</div><div style="font-size:.72rem;color:var(--tx3)">${m.email || ''}</div></div>
+      <div style="text-align:right">
+        <div style="font-weight:700;font-size:.875rem;color:${b >= 0 ? 'var(--gr)' : 'var(--re)'}">${b >= 0 ? '+' : ''}${fmt(b)}</div>
+        <div style="font-size:.7rem;color:var(--tx3)">${b > 0 ? 'da ricevere' : b < 0 ? 'deve pagare' : 'in pari'}</div>
+      </div>
+      ${m.pending ? '<span class="badge bg-ye">Pending</span>' : ''}
+    </div>`;
+  }).join('') + (balances.some(b => b.bal < 0) ? `
+    <div style="margin-top:.875rem;padding:.75rem;background:rgba(255,209,102,.08);border-radius:var(--rsm);font-size:.8rem;color:var(--tx2)">
+      💡 <strong>Chi deve cosa:</strong><br>
+      ${balances.filter(b => b.bal < 0).map(b => `${b.name} deve ${fmt(Math.abs(b.bal))} a ${balances.find(x => x.bal > 0)?.name || '—'}`).join('<br>')}
+    </div>` : '');
+  const expenses = Object.values(g.expenses || {}).sort((a, b) => new Date(b.date) - new Date(a.date));
+  document.getElementById('gd-expenses').innerHTML = expenses.slice(0, 10).map(e => `<tr>
+    <td>${e.payerName || '—'}</td><td class="tdm">${e.description || '—'}</td>
+    <td style="font-weight:700;color:var(--re)">${fmt(e.amount)}</td>
+    <td><span class="badge bg-pu">${e.split === 'equal' ? 'Uguale' : 'Custom'}</span></td>
+  </tr>`).join('');
+  const ps = document.getElementById('ge-payer');
+  ps.innerHTML = members.map(m => `<option value="${m.uid || m.email}">${m.name || m.email}</option>`).join('');
+  document.getElementById('ge-date').value = today();
+  loadGroupChat(gid);
+  showView('group-detail');
+}
+
+/* ══════════════════════════════════════════
+   OVERRIDE renderAll to include new sections
+══════════════════════════════════════════ */
+const _origRenderAll = renderAll;
+function renderAll() {
+  _origRenderAll();
+  calcFreeMoney();
+  renderMonthly();
+  renderQuotes();
+  renderSuppliers();
+  renderPrimaNota();
+}
+
+/* Subscribe to new Firebase paths */
+const _origSubscribeData = subscribeData;
+function subscribeData() {
+  _origSubscribeData();
+  ['quotes', 'suppliers'].forEach(p => {
+    db.ref(`users/${UID}/${p}`).on('value', snap => {
+      const raw = snap.val() || {};
+      S[p] = Object.entries(raw).map(([id, v]) => ({id, ...v}));
+      if (p === 'quotes') renderQuotes();
+      if (p === 'suppliers') renderSuppliers();
+    });
+  });
+}
+
+/* Override showView to trigger specific renders */
+const _origShowView = showView;
+function showView(n) {
+  _origShowView(n);
+  if (n === 'freemoney') calcFreeMoney();
+  if (n === 'monthly') renderMonthly();
+  if (n === 'primanota') renderPrimaNota();
+  if (n === 'taxcalc') setTimeout(calcTax, 50);
+}
+
 if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js').catch(()=>{});
 </script>
 </body>

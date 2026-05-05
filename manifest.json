@@ -2,16 +2,20 @@
   "name": "Kazka — Smart Finance Assistant",
   "short_name": "Kazka",
   "description": "Traccia entrate, uscite, budget e obiettivi finanziari",
-  "start_url": "/appfinance/app/",
-  "scope": "/appfinance/",
+  "start_url": "./app/",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#050912",
   "theme_color": "#7B68EE",
   "orientation": "portrait-primary",
   "icons": [
-    {"src": "assets/icons/icon-192.png","sizes": "192x192","type": "image/png","purpose": "any maskable"},
-    {"src": "assets/icons/icon-512.png","sizes": "512x512","type": "image/png","purpose": "any maskable"}
+    {"src": "./assets/icons/icon-192.png","sizes": "192x192","type": "image/png","purpose": "any maskable"},
+    {"src": "./assets/icons/icon-512.png","sizes": "512x512","type": "image/png","purpose": "any maskable"}
   ],
   "categories": ["finance","productivity"],
-  "lang": "it"
+  "lang": "it",
+  "shortcuts": [
+    {"name": "Nuova transazione","short_name": "Transazione","description": "Aggiungi una transazione","url": "./app/#tx","icons": [{"src": "./assets/icons/icon-192.png","sizes": "192x192"}]},
+    {"name": "Dashboard","short_name": "Dashboard","description": "Vai alla dashboard","url": "./app/","icons": [{"src": "./assets/icons/icon-192.png","sizes": "192x192"}]}
+  ]
 }

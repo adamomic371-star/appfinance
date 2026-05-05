@@ -204,6 +204,67 @@ tr:hover td{background:var(--b1)}
 </head>
 <body>
 
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="position:fixed;inset:0;background:#050912;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem">
+  <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#7B68EE,#00E5FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">⚡ Kazka</div>
+  <div style="width:48px;height:48px;border:3px solid rgba(123,104,238,.2);border-top-color:#7B68EE;border-radius:50%;animation:spin .7s linear infinite"></div>
+  <div style="font-size:.8rem;color:#7A85A8">Caricamento in corso...</div>
+</div>
+
+<!-- ONBOARDING WIZARD -->
+<div id="onboarding" style="position:fixed;inset:0;background:#050912;z-index:8000;display:none;align-items:center;justify-content:center;padding:1rem;background-image:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%)">
+  <div style="width:100%;max-width:480px;background:#090f1e;border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden">
+    <div style="height:4px;background:rgba(255,255,255,.07)"><div id="ob-prog" style="height:100%;background:linear-gradient(135deg,#7B68EE,#00E5FF);transition:width .4s ease;width:33%"></div></div>
+    <div style="padding:2rem">
+      <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#3A4268;margin-bottom:.5rem" id="ob-step-label">Passo 1 di 3</div>
+
+      <!-- STEP 1: Conto -->
+      <div id="ob-1">
+        <div style="font-size:2rem;margin-bottom:.75rem">🏦</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.5rem">Aggiungi il tuo primo conto</div>
+        <p style="font-size:.875rem;color:#7A85A8;margin-bottom:1.5rem">Da dove partono i tuoi soldi? Aggiungi banca, PayPal o contanti.</p>
+        <div style="margin-bottom:1rem"><label style="display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7A85A8;margin-bottom:.4rem">Nome conto</label><input type="text" id="ob-acc-name" placeholder="Es. Conto Intesa, PayPal..." style="width:100%;padding:.8rem 1rem;background:#0d1528;border:1.5px solid rgba(255,255,255,.13);border-radius:8px;color:#EEF2FF;font-size:.9rem"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+          <div><label style="display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7A85A8;margin-bottom:.4rem">Tipo</label><select id="ob-acc-type" style="width:100%;padding:.8rem 1rem;background:#0d1528;border:1.5px solid rgba(255,255,255,.13);border-radius:8px;color:#EEF2FF;font-size:.875rem"><option value="bank">🏦 Banca</option><option value="card">💳 Carta</option><option value="paypal">🟦 PayPal</option><option value="cash">💵 Contanti</option></select></div>
+          <div><label style="display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7A85A8;margin-bottom:.4rem">Saldo attuale (€)</label><input type="number" id="ob-acc-bal" placeholder="1500" style="width:100%;padding:.8rem 1rem;background:#0d1528;border:1.5px solid rgba(255,255,255,.13);border-radius:8px;color:#EEF2FF;font-size:.9rem"></div>
+        </div>
+        <button onclick="obNext(1)" style="width:100%;padding:.95rem;background:linear-gradient(135deg,#7B68EE,#00E5FF);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer">Avanti →</button>
+        <button onclick="skipOnboarding()" style="width:100%;margin-top:.75rem;padding:.65rem;background:none;border:none;color:#3A4268;font-size:.8rem;cursor:pointer">Salta configurazione</button>
+      </div>
+
+      <!-- STEP 2: Prima transazione -->
+      <div id="ob-2" style="display:none">
+        <div style="font-size:2rem;margin-bottom:.75rem">💸</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.5rem">Prima transazione</div>
+        <p style="font-size:.875rem;color:#7A85A8;margin-bottom:1.5rem">Aggiungi un'entrata o uscita recente per iniziare a tracciare.</p>
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+          <button id="ob-t-exp" onclick="setObType('expense')" style="flex:1;padding:.65rem;border-radius:8px;border:1.5px solid #FF3355;color:#FF3355;background:rgba(255,51,85,.1);font-weight:600;cursor:pointer">↑ Uscita</button>
+          <button id="ob-t-inc" onclick="setObType('income')" style="flex:1;padding:.65rem;border-radius:8px;border:1.5px solid rgba(255,255,255,.13);color:#7A85A8;background:#0d1528;font-weight:600;cursor:pointer">↓ Entrata</button>
+        </div>
+        <input type="hidden" id="ob-tx-type" value="expense">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+          <div><label style="display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7A85A8;margin-bottom:.4rem">Importo (€)</label><input type="number" id="ob-tx-amount" placeholder="50" style="width:100%;padding:.8rem 1rem;background:#0d1528;border:1.5px solid rgba(255,255,255,.13);border-radius:8px;color:#EEF2FF;font-size:.9rem"></div>
+          <div><label style="display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7A85A8;margin-bottom:.4rem">Categoria</label><select id="ob-tx-cat" style="width:100%;padding:.8rem 1rem;background:#0d1528;border:1.5px solid rgba(255,255,255,.13);border-radius:8px;color:#EEF2FF;font-size:.875rem"><option value="alimentari">🛒 Alimentari</option><option value="trasporti">🚗 Trasporti</option><option value="casa">🏠 Casa</option><option value="svago">🎬 Svago</option><option value="lavoro">💼 Lavoro</option><option value="altro">📦 Altro</option></select></div>
+        </div>
+        <div style="margin-bottom:1rem"><label style="display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7A85A8;margin-bottom:.4rem">Descrizione</label><input type="text" id="ob-tx-desc" placeholder="Es. Spesa al supermercato" style="width:100%;padding:.8rem 1rem;background:#0d1528;border:1.5px solid rgba(255,255,255,.13);border-radius:8px;color:#EEF2FF;font-size:.9rem"></div>
+        <button onclick="obNext(2)" style="width:100%;padding:.95rem;background:linear-gradient(135deg,#7B68EE,#00E5FF);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer">Avanti →</button>
+        <button onclick="obBack(1)" style="width:100%;margin-top:.75rem;padding:.65rem;background:none;border:none;color:#3A4268;font-size:.8rem;cursor:pointer">← Indietro</button>
+      </div>
+
+      <!-- STEP 3: Budget -->
+      <div id="ob-3" style="display:none">
+        <div style="font-size:2rem;margin-bottom:.75rem">🎯</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.5rem">Imposta un budget</div>
+        <p style="font-size:.875rem;color:#7A85A8;margin-bottom:1.5rem">Quanto vuoi spendere al mese per categoria? Puoi modificarlo sempre.</p>
+        <div id="ob-budget-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem"></div>
+        <button onclick="obFinish()" style="width:100%;padding:.95rem;background:linear-gradient(135deg,#7B68EE,#00E5FF);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer">Inizia ad usare Kazka 🚀</button>
+        <button onclick="obBack(2)" style="width:100%;margin-top:.75rem;padding:.65rem;background:none;border:none;color:#3A4268;font-size:.8rem;cursor:pointer">← Indietro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- PIN SCREEN -->
 <div id="pin-screen">
   <div class="pin-logo">⚡ Kazka</div>
@@ -300,6 +361,8 @@ tr:hover td{background:var(--b1)}
       <div class="ni" onclick="showView('reports')" id="nav-reports">📈 Report</div>
       <div class="ni" onclick="showView('score')" id="nav-score">⭐ Score Finanziario</div>
       <div class="ss">Account</div>
+      <div class="ni" onclick="showView('notifications')" id="nav-notifications">🔔 Notifiche<div id="notif-nav-badge" style="margin-left:auto;background:#FF3355;color:#fff;font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:10px;display:none">0</div></div>
+      <div class="ni" onclick="showView('profile')" id="nav-profile">👤 Profilo</div>
       <div class="ni" onclick="showView('settings')" id="nav-settings">⚙️ Impostazioni</div>
     </div>
     <div class="sidebar-bottom">
@@ -456,6 +519,77 @@ tr:hover td{background:var(--b1)}
       <div class="page-hd"><div><div class="pt">Viaggi & Trasferte</div></div><button class="btn bp2" onclick="om('modal-travel')">+ Nuovo viaggio</button></div>
       <div class="gg" id="travel-grid"></div>
       <div class="empty-st" id="travel-empty" style="display:none;margin-top:2rem"><div style="font-size:2rem">✈️</div><strong>Nessun viaggio</strong></div>
+    </div>
+
+
+    <!-- NOTIFICATION CENTER -->
+    <div class="view" id="view-notifications">
+      <div class="page-hd">
+        <div><div class="pt">🔔 Notifiche</div><div class="ps">Alert e avvisi in tempo reale</div></div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn bs bsm" onclick="markAllRead()">✓ Segna tutte lette</button>
+          <button class="btn bd bsm" onclick="clearAllNotifs()">🗑 Cancella tutte</button>
+        </div>
+      </div>
+      <div class="card" id="notif-list"></div>
+      <div class="empty-st" id="notif-empty" style="display:none;margin-top:2rem"><div style="font-size:2rem">🔔</div><strong>Nessuna notifica</strong><p style="margin-top:.25rem;font-size:.875rem">Sei in pari con tutto!</p></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="view" id="view-profile">
+      <div class="page-hd"><div><div class="pt">👤 Profilo</div></div></div>
+      <div class="g2">
+        <div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="ct">Foto profilo</div>
+            <div style="display:flex;align-items:center;gap:1.25rem">
+              <div id="profile-avatar-big" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#7B68EE,#00E5FF);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;position:relative">K
+                <img id="profile-photo-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none">
+              </div>
+              <div>
+                <label style="display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.1rem;border-radius:8px;font-size:.875rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.13);color:#EEF2FF;background:#0d1528" for="profile-photo-input">📷 Cambia foto</label>
+                <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="uploadProfilePhoto(event)">
+                <div style="font-size:.75rem;color:#7A85A8;margin-top:.4rem">JPG, PNG — max 2MB</div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="ct">Informazioni personali</div>
+            <div class="fg2"><label>Nome completo</label><input type="text" id="prof-name" placeholder="Mario Rossi"></div>
+            <div class="fg2"><label>Email</label><input type="email" id="prof-email" placeholder="email@esempio.com" readonly style="opacity:.6;cursor:not-allowed"></div>
+            <button class="btn bp" style="width:100%" onclick="saveProfile()">Salva modifiche</button>
+          </div>
+          <div class="card">
+            <div class="ct">Cambio password</div>
+            <div class="fg2"><label>Nuova password</label><input type="password" id="prof-newpass" placeholder="min. 6 caratteri"></div>
+            <button class="btn bs" style="width:100%" onclick="changePassword()">Aggiorna password</button>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="ct">Il tuo piano</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0">
+              <div><div style="font-weight:600" id="prof-plan-name">Free</div><div style="font-size:.8rem;color:#7A85A8" id="prof-plan-desc">Piano base gratuito</div></div>
+              <span class="badge" id="prof-plan-badge" style="background:rgba(255,255,255,.08);color:#7A85A8">Free</span>
+            </div>
+            <div id="prof-plan-expiry" style="font-size:.8rem;color:#7A85A8"></div>
+          </div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="ct">Backup & Ripristino</div>
+            <div style="font-size:.875rem;color:#7A85A8;margin-bottom:.875rem">Esporta tutti i tuoi dati in JSON o reimportali da un backup precedente.</div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem">
+              <button class="btn bp bsm" onclick="exportBackup()">📥 Esporta backup</button>
+              <button class="btn bs bsm" onclick="document.getElementById('restore-file').click()">📤 Ripristina</button>
+            </div>
+            <input type="file" id="restore-file" accept=".json" style="display:none" onchange="importBackup(event)">
+          </div>
+          <div class="card">
+            <div class="ct" style="color:#FF3355">Zona pericolosa</div>
+            <div style="font-size:.875rem;color:#7A85A8;margin-bottom:.875rem">Elimina il tuo account e tutti i dati. Questa operazione è irreversibile.</div>
+            <button class="btn bd bsm" onclick="deleteAccount()">Elimina account</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- REPORTS -->
@@ -678,6 +812,28 @@ tr:hover td{background:var(--b1)}
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-supplier')">Annulla</button><button class="btn bp2" onclick="saveSupplier()">Salva</button></div>
 </div></div>
+
+<!-- GROUP INVITE MODAL -->
+<div class="mo" id="modal-invite"><div class="md" style="max-width:400px">
+  <div class="mh"><div class="mt">🔗 Invita tramite link</div><div class="mc2" onclick="cm('modal-invite')">✕</div></div>
+  <div class="mb">
+    <p style="font-size:.875rem;color:var(--tx2);margin-bottom:1rem">Condividi questo link per invitare qualcuno nel gruppo. Chiunque lo apra verrà aggiunto automaticamente.</p>
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+      <input type="text" id="invite-link" readonly style="flex:1;padding:.75rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rsm);color:var(--tx);font-size:.8rem">
+      <button class="btn bp" onclick="copyInviteLink()">📋 Copia</button>
+    </div>
+    <div id="invite-qr" style="text-align:center;padding:1rem;background:var(--bg3);border-radius:var(--rsm)">
+      <div style="font-size:.8rem;color:var(--tx3)">Oppure condividi via:</div>
+      <div style="display:flex;justify-content:center;gap:.75rem;margin-top:.75rem">
+        <button class="btn bs bsm" onclick="shareInvite('whatsapp')">WhatsApp</button>
+        <button class="btn bs bsm" onclick="shareInvite('telegram')">Telegram</button>
+        <button class="btn bs bsm" onclick="shareInvite('copy')">Copia link</button>
+      </div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-invite')">Chiudi</button></div>
+</div></div>
+
 
 <div id="toast"></div>
 
@@ -1343,6 +1499,562 @@ function showView(n) {
   if (n === 'primanota') renderPrimaNota();
   if (n === 'taxcalc') setTimeout(calcTax, 50);
 }
+
+
+/* ══════════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════════ */
+function hideLoading() {
+  const el = document.getElementById('loading-screen');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(() => el.remove(), 400); }
+}
+
+/* ══════════════════════════════════════════
+   AUTO THEME (follow OS)
+══════════════════════════════════════════ */
+function initAutoTheme() {
+  if (localStorage.getItem('kz_theme')) return; // User set manually
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  applyTheme(mq.matches ? 'dark' : 'light');
+  mq.addEventListener('change', e => {
+    if (!localStorage.getItem('kz_theme')) applyTheme(e.matches ? 'dark' : 'light');
+  });
+}
+
+/* ══════════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════════ */
+function checkOnboarding() {
+  if (localStorage.getItem('kz_onboarded')) return;
+  if (S.accounts.length > 0) { localStorage.setItem('kz_onboarded','1'); return; }
+  // Show onboarding after 500ms
+  setTimeout(() => {
+    const el = document.getElementById('onboarding');
+    if (el) el.style.display = 'flex';
+    initObBudget();
+  }, 500);
+}
+
+function initObBudget() {
+  const cats = [{cat:'alimentari',label:'🛒 Alimentari',def:400},{cat:'trasporti',label:'🚗 Trasporti',def:150},{cat:'casa',label:'🏠 Casa & Utenze',def:600},{cat:'svago',label:'🎬 Svago',def:200}];
+  document.getElementById('ob-budget-list').innerHTML = cats.map(c => `
+    <div style="display:flex;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06)">
+      <span style="font-size:.875rem;flex:1">${c.label}</span>
+      <div style="display:flex;align-items:center;gap:.4rem">
+        <span style="font-size:.8rem;color:#7A85A8">€</span>
+        <input type="number" id="ob-bud-${c.cat}" value="${c.def}" style="width:70px;padding:.4rem .5rem;background:#0d1528;border:1px solid rgba(255,255,255,.13);border-radius:6px;color:#EEF2FF;font-size:.875rem;text-align:right">
+      </div>
+    </div>`).join('');
+}
+
+function setObType(t) {
+  document.getElementById('ob-tx-type').value = t;
+  document.getElementById('ob-t-exp').style.borderColor = t==='expense'?'#FF3355':'rgba(255,255,255,.13)';
+  document.getElementById('ob-t-exp').style.color = t==='expense'?'#FF3355':'#7A85A8';
+  document.getElementById('ob-t-exp').style.background = t==='expense'?'rgba(255,51,85,.1)':'#0d1528';
+  document.getElementById('ob-t-inc').style.borderColor = t==='income'?'#00F0A0':'rgba(255,255,255,.13)';
+  document.getElementById('ob-t-inc').style.color = t==='income'?'#00F0A0':'#7A85A8';
+  document.getElementById('ob-t-inc').style.background = t==='income'?'rgba(0,240,160,.1)':'#0d1528';
+}
+
+async function obNext(step) {
+  if (step === 1) {
+    const name = document.getElementById('ob-acc-name').value.trim();
+    const bal = parseFloat(document.getElementById('ob-acc-bal').value) || 0;
+    const type = document.getElementById('ob-acc-type').value;
+    if (!name) { document.getElementById('ob-acc-name').style.borderColor='#FF3355'; return; }
+    await db.ref(`users/${UID}/accounts`).push({name, type, balance:bal, color:'#7B68EE', createdAt:new Date().toISOString()});
+    document.getElementById('ob-1').style.display = 'none';
+    document.getElementById('ob-2').style.display = 'block';
+    document.getElementById('ob-prog').style.width = '66%';
+    document.getElementById('ob-step-label').textContent = 'Passo 2 di 3';
+  } else if (step === 2) {
+    const amount = parseFloat(document.getElementById('ob-tx-amount').value) || 0;
+    const desc = document.getElementById('ob-tx-desc').value.trim();
+    const type = document.getElementById('ob-tx-type').value;
+    const cat = document.getElementById('ob-tx-cat').value;
+    if (amount > 0 && desc) {
+      const accSnap = await db.ref(`users/${UID}/accounts`).limitToFirst(1).once('value');
+      const accId = Object.keys(accSnap.val() || {})[0] || '';
+      await db.ref(`users/${UID}/transactions`).push({type, amount, description:desc, category:cat, date:today(), account:accId, currency:'EUR', createdAt:new Date().toISOString()});
+    }
+    document.getElementById('ob-2').style.display = 'none';
+    document.getElementById('ob-3').style.display = 'block';
+    document.getElementById('ob-prog').style.width = '100%';
+    document.getElementById('ob-step-label').textContent = 'Passo 3 di 3';
+  }
+}
+
+function obBack(toStep) {
+  document.getElementById('ob-'+(toStep+1)).style.display = 'none';
+  document.getElementById('ob-'+toStep).style.display = 'block';
+  document.getElementById('ob-prog').style.width = toStep===1?'33%':'66%';
+  document.getElementById('ob-step-label').textContent = `Passo ${toStep} di 3`;
+}
+
+async function obFinish() {
+  const cats = ['alimentari','trasporti','casa','svago'];
+  const m = new Date().toISOString().slice(0,7);
+  for (const cat of cats) {
+    const val = parseFloat(document.getElementById('ob-bud-'+cat)?.value) || 0;
+    if (val > 0) await db.ref(`users/${UID}/budgets/${m}/${cat}`).set({limit:val, updatedAt:new Date().toISOString()});
+  }
+  localStorage.setItem('kz_onboarded','1');
+  document.getElementById('onboarding').style.display = 'none';
+  toast('Benvenuto in Kazka! 🎉', 'ok');
+  addNotification('🎉 Benvenuto in Kazka!', 'La tua app finanziaria è pronta. Inizia ad aggiungere le tue transazioni.', 'system');
+}
+
+function skipOnboarding() {
+  localStorage.setItem('kz_onboarded','1');
+  document.getElementById('onboarding').style.display = 'none';
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICATION CENTER
+══════════════════════════════════════════ */
+let notifications = JSON.parse(localStorage.getItem('kz_notifs') || '[]');
+
+function addNotification(title, body, type='info', url='') {
+  const n = {id: Date.now(), title, body, type, url, ts: new Date().toISOString(), read: false};
+  notifications.unshift(n);
+  if (notifications.length > 50) notifications = notifications.slice(0, 50);
+  localStorage.setItem('kz_notifs', JSON.stringify(notifications));
+  updateNotifBadge();
+  renderNotifications();
+}
+
+function updateNotifBadge() {
+  const unread = notifications.filter(n => !n.read).length;
+  const badge = document.getElementById('notif-badge');
+  const navBadge = document.getElementById('notif-nav-badge');
+  if (badge) { badge.textContent = unread; badge.style.display = unread > 0 ? 'flex' : 'none'; }
+  if (navBadge) { navBadge.textContent = unread; navBadge.style.display = unread > 0 ? 'block' : 'none'; }
+}
+
+function renderNotifications() {
+  const list = document.getElementById('notif-list');
+  const empty = document.getElementById('notif-empty');
+  if (!list) return;
+  if (!notifications.length) { list.innerHTML = ''; if (empty) empty.style.display = 'block'; return; }
+  if (empty) empty.style.display = 'none';
+  const ICONS = {budget:'🎯', goal:'🏆', recurring:'🔁', system:'⚡', invoice:'🧾', info:'💡'};
+  const COLORS = {budget:'var(--re)', goal:'var(--gr)', recurring:'var(--ye)', system:'var(--ac)', invoice:'var(--or)', info:'var(--ac2)'};
+  list.innerHTML = notifications.map(n => `
+    <div onclick="readNotif('${n.id}')" style="display:flex;align-items:flex-start;gap:.875rem;padding:1rem;border-bottom:1px solid var(--b1);cursor:pointer;background:${n.read ? 'transparent' : 'rgba(123,104,238,.05)'};transition:background .2s" onmouseover="this.style.background='var(--b1)'" onmouseout="this.style.background='${n.read ? 'transparent' : 'rgba(123,104,238,.05)'}'">
+      <div style="width:36px;height:36px;border-radius:10px;background:${COLORS[n.type]||'var(--ac)'}22;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">${ICONS[n.type]||'💡'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.875rem;font-weight:${n.read?'500':'700'};color:${n.read?'var(--tx2)':'var(--tx)'};margin-bottom:.2rem">${n.title}</div>
+        <div style="font-size:.8rem;color:var(--tx3);line-height:1.4">${n.body}</div>
+        <div style="font-size:.72rem;color:var(--tx3);margin-top:.3rem">${fdt2(n.ts)}</div>
+      </div>
+      ${!n.read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:4px"></div>' : ''}
+    </div>`).join('');
+}
+
+function readNotif(id) {
+  const n = notifications.find(n => String(n.id) === String(id));
+  if (n) { n.read = true; localStorage.setItem('kz_notifs', JSON.stringify(notifications)); updateNotifBadge(); renderNotifications(); }
+}
+
+function markAllRead() {
+  notifications.forEach(n => n.read = true);
+  localStorage.setItem('kz_notifs', JSON.stringify(notifications));
+  updateNotifBadge(); renderNotifications(); toast('Tutte lette', 'ok');
+}
+
+function clearAllNotifs() {
+  if (!confirm('Cancellare tutte le notifiche?')) return;
+  notifications = []; localStorage.setItem('kz_notifs', JSON.stringify(notifications));
+  updateNotifBadge(); renderNotifications(); toast('Notifiche cancellate', 'ok');
+}
+
+function fdt2(d) {
+  if (!d) return '—';
+  try {
+    const dt = new Date(d), now = new Date();
+    const diff = Math.floor((now - dt) / 1000);
+    if (diff < 60) return 'Adesso';
+    if (diff < 3600) return Math.floor(diff/60) + ' min fa';
+    if (diff < 86400) return Math.floor(diff/3600) + ' ore fa';
+    return dt.toLocaleDateString('it-IT', {day:'numeric', month:'short'});
+  } catch { return d; }
+}
+
+function checkAndGenerateNotifications() {
+  const m = new Date().toISOString().slice(0, 7);
+  const budgets = S.budgets[m] || {};
+  const txM = S.transactions.filter(t => t.date?.startsWith(m) && t.type==='expense');
+
+  // Budget alerts
+  Object.entries(budgets).forEach(([cat, b]) => {
+    const spent = txM.filter(t => t.category===cat).reduce((s,t) => s+Number(t.amount||0), 0);
+    const pct = spent / b.limit;
+    const key = `budget_${cat}_${m}`;
+    if (pct >= 0.9 && !localStorage.getItem(key)) {
+      addNotification(`⚠️ Budget ${cap(cat)} quasi esaurito`, `Hai speso ${fmt(spent)} di ${fmt(b.limit)} (${Math.round(pct*100)}%)`, 'budget');
+      localStorage.setItem(key, '1');
+    }
+  });
+
+  // Recurring alerts (next 7 days)
+  const soon = new Date(); soon.setDate(soon.getDate() + 7);
+  S.recurring.forEach(r => {
+    if (r.nextDate && new Date(r.nextDate) <= soon) {
+      const key = `rec_${r.id}_${r.nextDate}`;
+      if (!localStorage.getItem(key)) {
+        addNotification(`🔁 Scadenza: ${r.name}`, `${fmt(r.amount)} in scadenza il ${fd(r.nextDate)}`, 'recurring');
+        localStorage.setItem(key, '1');
+      }
+    }
+  });
+
+  // Goal achieved
+  S.goals.forEach(g => {
+    const pct = Number(g.current||0) / Number(g.target);
+    const key = `goal_done_${g.id}`;
+    if (pct >= 1 && !localStorage.getItem(key)) {
+      addNotification(`🏆 Obiettivo raggiunto!`, `Hai raggiunto il tuo obiettivo "${g.name}"!`, 'goal');
+      localStorage.setItem(key, '1');
+    }
+  });
+
+  // Invoice overdue
+  const today2 = new Date();
+  S.invoices.forEach(i => {
+    if (i.status !== 'paid' && i.due && new Date(i.due) < today2) {
+      const key = `inv_overdue_${i.id}`;
+      if (!localStorage.getItem(key)) {
+        addNotification(`🧾 Fattura scaduta`, `Fattura a ${i.client} (${fmt(i.totalWithVat||i.amount)}) è scaduta il ${fd(i.due)}`, 'invoice');
+        localStorage.setItem(key, '1');
+      }
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   PROFILE MANAGEMENT
+══════════════════════════════════════════ */
+function loadProfileView() {
+  if (!UP) return;
+  const inp = document.getElementById('prof-name'); if (inp) inp.value = UP.name || '';
+  const emp = document.getElementById('prof-email'); if (emp) emp.value = UP.email || '';
+
+  // Plan badge
+  const plan = UP.plan || 'free';
+  const planEl = document.getElementById('prof-plan-name');
+  const planDesc = document.getElementById('prof-plan-desc');
+  const planBadge = document.getElementById('prof-plan-badge');
+  const planExpiry = document.getElementById('prof-plan-expiry');
+  const planMap = {free:{name:'Free',desc:'Piano base gratuito',color:'rgba(255,255,255,.08)',tc:'#7A85A8'},pro:{name:'Pro',desc:'Piano professionale',color:'rgba(123,104,238,.15)',tc:'#7B68EE'},business:{name:'Business',desc:'Piano business completo',color:'rgba(0,229,255,.15)',tc:'#00E5FF'}};
+  const pm = planMap[plan] || planMap.free;
+  if (planEl) planEl.textContent = pm.name;
+  if (planDesc) planDesc.textContent = pm.desc;
+  if (planBadge) { planBadge.textContent = pm.name; planBadge.style.background = pm.color; planBadge.style.color = pm.tc; }
+  if (planExpiry && UP.subscriptionExpiry && UP.subscriptionExpiry !== 'never') {
+    const exp = new Date(UP.subscriptionExpiry);
+    const days = Math.ceil((exp - new Date()) / 864e5);
+    planExpiry.textContent = days > 0 ? `Scade il ${fd(UP.subscriptionExpiry)} (${days} giorni)` : `⚠️ Scaduto il ${fd(UP.subscriptionExpiry)}`;
+    planExpiry.style.color = days <= 7 ? '#FF3355' : '#7A85A8';
+  }
+
+  // Profile photo
+  if (UP.photoURL) {
+    const img = document.getElementById('profile-photo-img');
+    if (img) { img.src = UP.photoURL; img.style.display = 'block'; }
+  }
+}
+
+function uploadProfilePhoto(e) {
+  const file = e.target.files[0]; if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Foto troppo grande (max 2MB)', 'err'); return; }
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const dataUrl = ev.target.result;
+    const img = document.getElementById('profile-photo-img');
+    if (img) { img.src = dataUrl; img.style.display = 'block'; }
+    // Save to Firebase profile
+    await db.ref(`users/${UID}/profile/photoURL`).set(dataUrl);
+    UP.photoURL = dataUrl;
+    // Update all avatars
+    ['nav-av', 'side-av', 'set-av'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.backgroundImage = `url(${dataUrl})`;
+    });
+    toast('Foto aggiornata', 'ok');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfile() {
+  const name = document.getElementById('prof-name')?.value.trim();
+  if (!name) { toast('Inserisci il nome', 'err'); return; }
+  await db.ref(`users/${UID}/profile/name`).set(name);
+  await auth.currentUser?.updateProfile({displayName: name});
+  UP.name = name;
+  const ini = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  ['nav-av','side-av','set-av'].forEach(id => { const el = document.getElementById(id); if (el && !UP.photoURL) el.textContent = ini; });
+  document.getElementById('side-name').textContent = name;
+  toast('Profilo aggiornato', 'ok');
+}
+
+async function changePassword() {
+  const pass = document.getElementById('prof-newpass')?.value;
+  if (!pass || pass.length < 6) { toast('Password minimo 6 caratteri', 'err'); return; }
+  try { await auth.currentUser?.updatePassword(pass); toast('Password aggiornata', 'ok'); document.getElementById('prof-newpass').value = ''; }
+  catch(e) { toast('Errore: rieffettua il login e riprova', 'err'); }
+}
+
+async function deleteAccount() {
+  if (!confirm('Eliminare il tuo account e TUTTI i dati? Questa operazione è irreversibile.')) return;
+  if (!confirm('Sei sicuro? Non è possibile annullare.')) return;
+  try {
+    await db.ref(`users/${UID}`).remove();
+    await auth.currentUser?.delete();
+    toast('Account eliminato', 'ok');
+  } catch(e) { toast('Errore: rieffettua il login e riprova', 'err'); }
+}
+
+/* ══════════════════════════════════════════
+   BACKUP & RESTORE
+══════════════════════════════════════════ */
+function exportBackup() {
+  const backup = {
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    user: {name: UP?.name, email: UP?.email},
+    data: {
+      transactions: S.transactions,
+      accounts: S.accounts,
+      budgets: S.budgets,
+      goals: S.goals,
+      recurring: S.recurring,
+      invoices: S.invoices,
+      travel: S.travel,
+      transfers: S.transfers,
+      debts: S.debts,
+      quotes: S.quotes || [],
+      suppliers: S.suppliers || []
+    }
+  };
+  const b = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = `kazka-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  toast('Backup esportato', 'ok');
+  addNotification('📥 Backup esportato', 'I tuoi dati sono stati esportati con successo.', 'system');
+}
+
+async function importBackup(e) {
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const text = await file.text();
+    const backup = JSON.parse(text);
+    if (!backup.data) { toast('File backup non valido', 'err'); return; }
+    if (!confirm(`Importare backup del ${fd(backup.exportedAt)}? I dati esistenti verranno sovrascrit­ti.`)) return;
+    const data = backup.data;
+    const ops = {};
+    if (data.accounts) { const map = {}; data.accounts.forEach(a => { const {id, ...rest} = a; map[id || db.ref().push().key] = rest; }); ops.accounts = map; }
+    if (data.goals) { const map = {}; data.goals.forEach(g => { const {id, ...rest} = g; map[id || db.ref().push().key] = rest; }); ops.goals = map; }
+    if (data.recurring) { const map = {}; data.recurring.forEach(r => { const {id, ...rest} = r; map[id || db.ref().push().key] = rest; }); ops.recurring = map; }
+    if (data.invoices) { const map = {}; data.invoices.forEach(i => { const {id, ...rest} = i; map[id || db.ref().push().key] = rest; }); ops.invoices = map; }
+    if (data.transactions) { const map = {}; data.transactions.forEach(t => { const {id, ...rest} = t; map[id || db.ref().push().key] = rest; }); ops.transactions = map; }
+    if (data.budgets) ops.budgets = data.budgets;
+    if (data.transfers) { const map = {}; (data.transfers||[]).forEach(t => { const {id, ...rest} = t; map[id || db.ref().push().key] = rest; }); ops.transfers = map; }
+    if (data.debts) { const map = {}; (data.debts||[]).forEach(d => { const {id, ...rest} = d; map[id || db.ref().push().key] = rest; }); ops.debts = map; }
+    await db.ref(`users/${UID}`).update(ops);
+    toast('Backup ripristinato!', 'ok');
+    addNotification('📤 Backup ripristinato', `Dati del ${fd(backup.exportedAt)} importati con successo.`, 'system');
+  } catch(e) { toast('Errore importazione: ' + e.message, 'err'); }
+  e.target.value = '';
+}
+
+/* ══════════════════════════════════════════
+   GROUP INVITE VIA LINK
+══════════════════════════════════════════ */
+function openGroupInvite(gid) {
+  const link = `${window.location.origin}${window.location.pathname}?join=${gid}`;
+  const inp = document.getElementById('invite-link');
+  if (inp) inp.value = link;
+  om('modal-invite');
+}
+
+function copyInviteLink() {
+  const inp = document.getElementById('invite-link');
+  if (inp) {
+    navigator.clipboard.writeText(inp.value).then(() => toast('Link copiato!', 'ok')).catch(() => {
+      inp.select(); document.execCommand('copy'); toast('Link copiato!', 'ok');
+    });
+  }
+}
+
+function shareInvite(platform) {
+  const link = document.getElementById('invite-link')?.value || '';
+  const text = `Unisciti al mio gruppo su Kazka! ${link}`;
+  if (platform === 'whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  else if (platform === 'telegram') window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Unisciti%20al%20mio%20gruppo%20su%20Kazka!`, '_blank');
+  else copyInviteLink();
+}
+
+async function checkGroupInvite() {
+  const params = new URLSearchParams(window.location.search);
+  const gid = params.get('join');
+  if (!gid || !UID) return;
+  const snap = await db.ref(`groups/${gid}`).once('value');
+  const g = snap.val();
+  if (!g) { toast('Link invito non valido', 'err'); return; }
+  const info = g.info || {};
+  if (confirm(`Vuoi unirti al gruppo "${info.name}"?`)) {
+    await db.ref(`groups/${gid}/members/${UID}`).set({email: UP?.email||'', name: UP?.name||'Utente', uid: UID, joinedAt: new Date().toISOString()});
+    toast(`Sei entrato in "${info.name}"!`, 'ok');
+    history.replaceState({}, '', window.location.pathname);
+    showView('groups');
+  }
+}
+
+/* ══════════════════════════════════════════
+   LIVE EXCHANGE RATES
+══════════════════════════════════════════ */
+let exchangeRates = JSON.parse(localStorage.getItem('kz_rates') || '{"EUR":1,"USD":1.08,"CHF":0.96,"GBP":0.86}');
+let ratesLastFetch = localStorage.getItem('kz_rates_ts') || 0;
+
+async function fetchExchangeRates() {
+  const now = Date.now();
+  if (now - ratesLastFetch < 3600000) return; // Cache 1 ora
+  try {
+    const res = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    exchangeRates = {EUR:1, USD: data.rates.USD, CHF: data.rates.CHF, GBP: data.rates.GBP};
+    localStorage.setItem('kz_rates', JSON.stringify(exchangeRates));
+    localStorage.setItem('kz_rates_ts', String(now));
+    ratesLastFetch = now;
+  } catch(e) {
+    console.log('Exchange rates: using cached/default rates');
+  }
+}
+
+function convertToEur(amount, currency) {
+  const rate = exchangeRates[currency] || 1;
+  return amount / rate;
+}
+
+/* ══════════════════════════════════════════
+   DASHBOARD PERSONAL/BUSINESS SPLIT
+══════════════════════════════════════════ */
+const _origRenderDashboard = renderDashboard;
+function renderDashboard() {
+  const m = new Date().toISOString().slice(0, 7);
+  // Filter by mode tag if set
+  const allTx = S.transactions.filter(t => t.date?.startsWith(m));
+  const bizTx = allTx.filter(t => t.isBusiness || t.category === 'lavoro');
+  const persTx = allTx.filter(t => !t.isBusiness && t.category !== 'lavoro');
+  const txM = mode === 'business' ? bizTx : persTx;
+  const allTxM = allTx; // for total balance
+
+  const inc = txM.filter(t => t.type === 'income').reduce((s,t) => s+Number(t.amount||0), 0);
+  const exp = txM.filter(t => t.type === 'expense').reduce((s,t) => s+Number(t.amount||0), 0);
+  const tot = S.accounts.reduce((s,a) => s+Number(a.balance||0), 0);
+  const allInc = allTxM.filter(t => t.type==='income').reduce((s,t) => s+Number(t.amount||0), 0);
+  const allExp = allTxM.filter(t => t.type==='expense').reduce((s,t) => s+Number(t.amount||0), 0);
+
+  const modeLabel = mode === 'business' ? '💼 Business' : '👤 Personal';
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="sc"><div class="sl">Saldo totale</div><div class="sv">${fmt(tot)}</div><div style="font-size:.75rem;color:var(--tx3)">tutti i conti</div></div>
+    <div class="sc"><div class="sl">Entrate ${modeLabel}</div><div class="sv" style="color:var(--gr)">${fmt(inc)}</div></div>
+    <div class="sc"><div class="sl">Uscite ${modeLabel}</div><div class="sv" style="color:var(--re)">${fmt(exp)}</div></div>
+    <div class="sc"><div class="sl">Risparmio ${modeLabel}</div><div class="sv" style="color:${inc-exp>=0?'var(--gr)':'var(--re)'}">${fmt(inc-exp)}</div></div>
+    ${mode==='business'?`<div class="sc"><div class="sl">Fatture da incassare</div><div class="sv" style="color:var(--ye)">${fmt(S.invoices.filter(i=>i.status==='sent').reduce((s,i)=>s+Number(i.totalWithVat||i.amount||0),0))}</div></div>`:''}
+    ${mode==='personal'?`<div class="sc"><div class="sl">Totale globale</div><div class="sv">${fmt(allInc-allExp)}</div><div style="font-size:.75rem;color:var(--tx3)">personal+business</div></div>`:''}`;
+
+  document.getElementById('dash-acc').innerHTML = S.accounts.length
+    ? S.accounts.map(a => `<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .875rem;background:var(--bg3);border-radius:var(--rsm);margin-bottom:.5rem"><div style="display:flex;align-items:center;gap:.5rem"><div style="width:28px;height:28px;border-radius:8px;background:${a.color||'var(--ac)'}22;display:flex;align-items:center;justify-content:center">${AI[a.type]||'🏦'}</div>${a.name}</div><div style="font-weight:700;color:${Number(a.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(a.balance||0)}</div></div>`).join('')
+    : '<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Aggiungi un conto</div>';
+
+  document.getElementById('dash-recent').innerHTML = S.transactions.slice(0,6).map(t => `<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem;border-radius:var(--rsm);margin-bottom:.3rem"><div style="width:34px;height:34px;border-radius:10px;background:${t.type==='income'?'rgba(0,240,160,.15)':'rgba(255,51,85,.12)'};display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">${CI[t.category]||'📦'}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.description||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}</div></div><div style="font-weight:700;font-size:.875rem;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('') || '<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessuna transazione</div>';
+
+  renderDashCharts();
+}
+
+/* ══════════════════════════════════════════
+   GLOBAL SEARCH
+══════════════════════════════════════════ */
+function globalSearch(q) {
+  if (!q || q.length < 2) { filterTx(); return; }
+  const ql = q.toLowerCase();
+  const results = [
+    ...S.transactions.filter(t => (t.description||'').toLowerCase().includes(ql) || (t.category||'').toLowerCase().includes(ql)).map(t => ({type:'tx',...t})),
+    ...(S.invoices||[]).filter(i => (i.client||'').toLowerCase().includes(ql) || (i.invoiceNum||'').toLowerCase().includes(ql)).map(i => ({type:'inv',...i})),
+    ...(S.goals||[]).filter(g => (g.name||'').toLowerCase().includes(ql)).map(g => ({type:'goal',...g})),
+    ...(S.accounts||[]).filter(a => (a.name||'').toLowerCase().includes(ql)).map(a => ({type:'acc',...a})),
+    ...(S.suppliers||[]).filter(s => (s.name||'').toLowerCase().includes(ql)).map(s => ({type:'sup',...s}))
+  ].slice(0, 15);
+
+  if (!results.length) { filterTx(); return; }
+
+  // Show results in transaction view
+  showView('transactions');
+  const tbody = document.getElementById('tx-tbody'), empty = document.getElementById('tx-empty');
+  if (!results.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  const aN = id => S.accounts.find(a=>a.id===id)?.name||'—';
+  tbody.innerHTML = results.map(r => {
+    if (r.type==='tx') return `<tr><td style="font-size:.82rem">${fd(r.date)}</td><td class="tdm">${CI[r.category]||'📦'} ${r.description||'—'}</td><td><span class="badge bg-gy">${cap(r.category||'')}</span></td><td>${aN(r.account)}</td><td><span class="cur-badge">${r.currency||'EUR'}</span></td><td style="font-weight:700;color:${r.type2==='income'?'var(--gr)':'var(--re)'}">${fmt(r.amount)}</td><td></td><td></td></tr>`.replace('type2',r.type);
+    if (r.type==='inv') return `<tr><td colspan="3" class="tdm">🧾 Fattura — ${r.client||'—'}</td><td colspan="2">${fd(r.date)}</td><td style="font-weight:700">${fmt(r.totalWithVat||r.amount)}</td><td><span class="badge ${IS[r.status]?.c||'bg-gy'}">${IS[r.status]?.l||'—'}</span></td><td><button class="btn bs bsm" onclick="showView('invoices')">→</button></td></tr>`;
+    if (r.type==='goal') return `<tr><td colspan="3" class="tdm">🏆 Obiettivo — ${r.name||'—'}</td><td colspan="2">${Math.round((Number(r.current||0)/Number(r.target))*100)}%</td><td style="font-weight:700">${fmt(r.target)}</td><td></td><td><button class="btn bs bsm" onclick="showView('goals')">→</button></td></tr>`;
+    if (r.type==='acc') return `<tr><td colspan="3" class="tdm">${AI[r.acctype]||'🏦'} Conto — ${r.name||'—'}</td><td colspan="2"></td><td style="font-weight:700;color:${Number(r.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(r.balance||0)}</td><td></td><td><button class="btn bs bsm" onclick="showView('accounts')">→</button></td></tr>`.replace('r.acctype',r.type2||'bank');
+    if (r.type==='sup') return `<tr><td colspan="3" class="tdm">🏢 Fornitore — ${r.name||'—'}</td><td colspan="2">${r.email||'—'}</td><td style="font-weight:700;color:var(--re)">${fmt(r.cost||0)}/mese</td><td></td><td><button class="btn bs bsm" onclick="showView('suppliers')">→</button></td></tr>`;
+    return '';
+  }).join('');
+}
+
+/* Override filterTx input to use globalSearch */
+document.addEventListener('DOMContentLoaded', () => {
+  const si = document.getElementById('search-input');
+  if (si) {
+    si.removeAttribute('oninput');
+    si.addEventListener('input', () => {
+      const q = si.value.trim();
+      if (q.length >= 2) globalSearch(q);
+      else filterTx();
+    });
+  }
+});
+
+/* ══════════════════════════════════════════
+   OVERRIDE showApp to run init functions
+══════════════════════════════════════════ */
+const _origShowApp2 = showApp;
+function showApp() {
+  _origShowApp2();
+  hideLoading();
+  fetchExchangeRates();
+  setTimeout(() => { checkGroupInvite(); checkOnboarding(); }, 800);
+  updateNotifBadge();
+  renderNotifications();
+}
+
+/* Override showView for new views */
+const _origShowView2 = showView;
+function showView(n) {
+  _origShowView2(n);
+  if (n === 'notifications') renderNotifications();
+  if (n === 'profile') loadProfileView();
+}
+
+/* Override renderAll to check notifications */
+const _origRenderAll2 = renderAll;
+function renderAll() {
+  _origRenderAll2();
+  checkAndGenerateNotifications();
+}
+
+/* notif-btn click → show notification center */
+document.addEventListener('DOMContentLoaded', () => {
+  const nb = document.getElementById('notif-btn');
+  if (nb) { nb.removeAttribute('onclick'); nb.addEventListener('click', () => showView('notifications')); }
+});
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js').catch(()=>{});
 </script>

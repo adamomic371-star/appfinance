@@ -207,9 +207,25 @@ tr:hover td{background:var(--b1)}
 <!-- LOADING SCREEN -->
 <div id="loading-screen" style="position:fixed;inset:0;background:#050912;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem">
   <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#7B68EE,#00E5FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">⚡ Kazka</div>
-  <div style="width:48px;height:48px;border:3px solid rgba(123,104,238,.2);border-top-color:#7B68EE;border-radius:50%;animation:spin .7s linear infinite"></div>
-  <div style="font-size:.8rem;color:#7A85A8">Caricamento in corso...</div>
+  <div style="width:40px;height:40px;border:3px solid rgba(123,104,238,.2);border-top-color:#7B68EE;border-radius:50%;animation:spin .7s linear infinite"></div>
 </div>
+<script>
+  // Nascondi loading screen dopo MAX 1.5s — non aspettare Firebase
+  (function(){
+    function hl(){
+      var el=document.getElementById('loading-screen');
+      if(el&&el.parentNode){el.style.transition='opacity .3s';el.style.opacity='0';setTimeout(function(){if(el&&el.parentNode)el.remove();},350);}
+    }
+    // Dopo 1.5s nascondi comunque
+    window._loadingTimer=setTimeout(hl,1500);
+    // Appena DOMContentLoaded nascondi (se Firebase non ancora pronto)
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(hl,300);
+    });
+    // Esponi globalmente
+    window.hideLoading=hl;
+  })();
+</script>
 
 <!-- ONBOARDING WIZARD -->
 <div id="onboarding" style="position:fixed;inset:0;background:#050912;z-index:8000;display:none;align-items:center;justify-content:center;padding:1rem;background-image:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%)">
@@ -855,10 +871,10 @@ let charts={},theme=localStorage.getItem('kz_theme')||'dark',mode=localStorage.g
 
 auth.onAuthStateChanged(async u=>{
   if(u){UID=u.uid;await loadProfile(u);checkPin();subscribeData();}// auth ok
-  else{UID=null;hideLoading();document.getElementById('auth-screen').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pin-screen').style.display='none';}
+  else{UID=null;if(window._loadingTimer)clearTimeout(window._loadingTimer);if(window.hideLoading)window.hideLoading();document.getElementById('auth-screen').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pin-screen').style.display='none';}
 });
 
-function checkPin(){const p=localStorage.getItem('kz_pin');if(p){hideLoading();document.getElementById('pin-screen').style.display='flex';pinEntry='';updatePinDots();}else showApp();}
+function checkPin(){const p=localStorage.getItem('kz_pin');if(p){if(window._loadingTimer)clearTimeout(window._loadingTimer);if(window.hideLoading)window.hideLoading();document.getElementById('pin-screen').style.display='flex';pinEntry='';updatePinDots();}else showApp();}
 function showApp(){document.getElementById('auth-screen').style.display='none';document.getElementById('pin-screen').style.display='none';document.getElementById('app').style.display='block';applyTheme(theme);setMode(mode);if(document.getElementById('set-cur'))document.getElementById('set-cur').value=defaultCur;}
 function pinD(d){if(pinEntry.length>=4)return;pinEntry+=d;updatePinDots();if(pinEntry.length===4){const s=localStorage.getItem('kz_pin');if(pinEntry===s){showApp();}else{document.getElementById('pin-sub').textContent='PIN errato';document.getElementById('pin-sub').style.color='var(--re)';pinEntry='';updatePinDots();setTimeout(()=>{document.getElementById('pin-sub').textContent='Kazka è protetta da PIN';document.getElementById('pin-sub').style.color='';},1500);}}}
 function updatePinDots(){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el)el.classList.toggle('filled',i<pinEntry.length);}}
@@ -1041,8 +1057,6 @@ function showErr(el,msg){el.textContent=msg;el.style.display='block';}
 function toast(msg,type='ok'){const t=document.getElementById('toast');t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
 function ferr(c){const m={'auth/user-not-found':'Email non trovata','auth/wrong-password':'Password errata','auth/email-already-in-use':'Email già registrata','auth/weak-password':'Password troppo corta','auth/invalid-credential':'Credenziali non valide','auth/too-many-requests':'Troppi tentativi'};return m[c]||'Errore — riprova';}
 document.addEventListener('DOMContentLoaded',()=>{
-  // Fallback: nascondi loading dopo 4s comunque
-  setTimeout(()=>{const ls=document.getElementById('loading-screen');if(ls&&ls.parentNode){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>{if(ls&&ls.parentNode)ls.remove();},400);}},4000);
   applyTheme(theme);['tx-date','rec-next','inv-date','trv-start','tr-date','ge-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today();});renderCalendar();});
 
 /* ══════════════════════════════════════════
@@ -1507,14 +1521,7 @@ function showView(n) {
 /* ══════════════════════════════════════════
    LOADING SCREEN
 ══════════════════════════════════════════ */
-function hideLoading() {
-  const el = document.getElementById('loading-screen');
-  if (el && el.parentNode) {
-    el.style.opacity = '0';
-    el.style.transition = 'opacity .4s ease';
-    setTimeout(() => { if(el.parentNode) el.remove(); }, 450);
-  }
-}
+// hideLoading defined inline in HTML
 
 /* ══════════════════════════════════════════
    AUTO THEME (follow OS)
@@ -2034,8 +2041,9 @@ document.addEventListener('DOMContentLoaded', () => {
 ══════════════════════════════════════════ */
 const _origShowApp2 = showApp;
 function showApp() {
+  if(window._loadingTimer)clearTimeout(window._loadingTimer);
+  if(window.hideLoading)window.hideLoading();
   _origShowApp2();
-  hideLoading();
   fetchExchangeRates();
   setTimeout(() => { checkGroupInvite(); checkOnboarding(); }, 800);
   updateNotifBadge();

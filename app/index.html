@@ -875,7 +875,25 @@ auth.onAuthStateChanged(async u=>{
 });
 
 function checkPin(){const p=localStorage.getItem('kz_pin');if(p){if(window._loadingTimer)clearTimeout(window._loadingTimer);if(window.hideLoading)window.hideLoading();document.getElementById('pin-screen').style.display='flex';pinEntry='';updatePinDots();}else showApp();}
-function showApp(){document.getElementById('auth-screen').style.display='none';document.getElementById('pin-screen').style.display='none';document.getElementById('app').style.display='block';applyTheme(theme);setMode(mode);if(document.getElementById('set-cur'))document.getElementById('set-cur').value=defaultCur;}
+function showApp(){
+  // Nascondi loading
+  if(window._loadingTimer)clearTimeout(window._loadingTimer);
+  if(window.hideLoading)window.hideLoading();
+  // Mostra app
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('pin-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  applyTheme(theme);setMode(mode);
+  if(document.getElementById('set-cur'))document.getElementById('set-cur').value=defaultCur;
+  // Init features (deferred)
+  setTimeout(()=>{
+    if(typeof fetchExchangeRates==='function')fetchExchangeRates();
+    if(typeof checkGroupInvite==='function')checkGroupInvite();
+    if(typeof checkOnboarding==='function')checkOnboarding();
+    if(typeof updateNotifBadge==='function')updateNotifBadge();
+    if(typeof renderNotifications==='function')renderNotifications();
+  }, 600);
+}
 function pinD(d){if(pinEntry.length>=4)return;pinEntry+=d;updatePinDots();if(pinEntry.length===4){const s=localStorage.getItem('kz_pin');if(pinEntry===s){showApp();}else{document.getElementById('pin-sub').textContent='PIN errato';document.getElementById('pin-sub').style.color='var(--re)';pinEntry='';updatePinDots();setTimeout(()=>{document.getElementById('pin-sub').textContent='Kazka è protetta da PIN';document.getElementById('pin-sub').style.color='';},1500);}}}
 function updatePinDots(){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el)el.classList.toggle('filled',i<pinEntry.length);}}
 function savePin(){const p=document.getElementById('new-pin').value,p2=document.getElementById('new-pin2').value;if(p.length!==4||!/^\d{4}$/.test(p)){toast('PIN deve essere 4 cifre','err');return}if(p!==p2){toast('I PIN non coincidono','err');return}localStorage.setItem('kz_pin',p);cm('modal-pin');toast('PIN impostato','ok');}
@@ -899,10 +917,19 @@ function subscribeData(){
   const paths=['transactions','accounts','goals','recurring','invoices','travel','transfers','debts'];
   paths.forEach(p=>{db.ref(`users/${UID}/${p}`).on('value',snap=>{const raw=snap.val()||{};S[p]=Object.entries(raw).map(([id,v])=>({id,...v}));if(p==='transactions')S[p].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));renderAll();});});
   db.ref(`users/${UID}/budgets`).on('value',snap=>{S.budgets=snap.val()||{};renderBudget();});
+  ['quotes','suppliers'].forEach(p=>{
+    db.ref(`users/${UID}/${p}`).on('value',snap=>{
+      const raw=snap.val()||{};
+      S[p]=Object.entries(raw).map(([id,v])=>({id,...v}));
+      if(p==='quotes')renderQuotes();
+      if(p==='suppliers')renderSuppliers();
+    });
+  });
   db.ref('groups').on('value',snap=>{const raw=snap.val()||{};S.groups={};Object.entries(raw).forEach(([gid,g])=>{if(g.members&&(g.members[UID]||Object.values(g.members||{}).some(m=>m.email===UP?.email)))S.groups[gid]=g;});renderGroups();});
 }
 
-function renderAll(){renderDashboard();renderTransactions();renderAccounts();renderBudget();renderGoals();renderRecurring();renderInvoices();renderTravel();renderReports();renderTransfers();renderDebts();renderScore();populateSelects();checkNotifs();renderCalendar();}
+function renderAll(){renderDashboard();renderTransactions();renderAccounts();renderBudget();renderGoals();renderRecurring();renderInvoices();renderTravel();renderReports();renderTransfers();renderDebts();renderScore();populateSelects();checkNotifs();renderCalendar();
+  if(typeof checkAndGenerateNotifications==='function')checkAndGenerateNotifications();}
 
 function showView(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.ni').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+n)?.classList.add('active');document.getElementById('nav-'+n)?.classList.add('active');if(window.innerWidth<=768){document.getElementById('sidebar').classList.remove('open');document.getElementById('s-overlay').style.display='none';}window.scrollTo(0,0);if(n==='reports')setTimeout(renderReportCharts,100);if(n==='transfer')populateTransferSelects();}
 function toggleSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('s-overlay');s.classList.toggle('open');o.style.display=s.classList.contains('open')?'block':'none';}
@@ -1441,7 +1468,6 @@ function calcGroupBalances(gid) {
 }
 
 /* Override openGroup to add balance calc */
-const _origOpenGroup = openGroup;
 function openGroup(gid) {
   currentGid = gid;
   const g = S.groups[gid]; if (!g) return;
@@ -1483,22 +1509,10 @@ function openGroup(gid) {
 /* ══════════════════════════════════════════
    OVERRIDE renderAll to include new sections
 ══════════════════════════════════════════ */
-const _origRenderAll = renderAll;
-function renderAll() {
-  _origRenderAll();
-  calcFreeMoney();
-  renderMonthly();
-  renderQuotes();
-  renderSuppliers();
-  renderPrimaNota();
-}
+/* _origRenderAll override removed */
 
 /* Subscribe to new Firebase paths */
-const _origSubscribeData = subscribeData;
-function subscribeData() {
-  _origSubscribeData();
-  ['quotes', 'suppliers'].forEach(p => {
-    db.ref(`users/${UID}/${p}`).on('value', snap => {
+/* _origSubscribeData override removed *//${p}`).on('value', snap => {
       const raw = snap.val() || {};
       S[p] = Object.entries(raw).map(([id, v]) => ({id, ...v}));
       if (p === 'quotes') renderQuotes();
@@ -1508,14 +1522,7 @@ function subscribeData() {
 }
 
 /* Override showView to trigger specific renders */
-const _origShowView = showView;
-function showView(n) {
-  _origShowView(n);
-  if (n === 'freemoney') calcFreeMoney();
-  if (n === 'monthly') renderMonthly();
-  if (n === 'primanota') renderPrimaNota();
-  if (n === 'taxcalc') setTimeout(calcTax, 50);
-}
+/* _origShowView override removed */
 
 
 /* ══════════════════════════════════════════
@@ -1957,39 +1964,7 @@ function convertToEur(amount, currency) {
 /* ══════════════════════════════════════════
    DASHBOARD PERSONAL/BUSINESS SPLIT
 ══════════════════════════════════════════ */
-const _origRenderDashboard = renderDashboard;
-function renderDashboard() {
-  const m = new Date().toISOString().slice(0, 7);
-  // Filter by mode tag if set
-  const allTx = S.transactions.filter(t => t.date?.startsWith(m));
-  const bizTx = allTx.filter(t => t.isBusiness || t.category === 'lavoro');
-  const persTx = allTx.filter(t => !t.isBusiness && t.category !== 'lavoro');
-  const txM = mode === 'business' ? bizTx : persTx;
-  const allTxM = allTx; // for total balance
-
-  const inc = txM.filter(t => t.type === 'income').reduce((s,t) => s+Number(t.amount||0), 0);
-  const exp = txM.filter(t => t.type === 'expense').reduce((s,t) => s+Number(t.amount||0), 0);
-  const tot = S.accounts.reduce((s,a) => s+Number(a.balance||0), 0);
-  const allInc = allTxM.filter(t => t.type==='income').reduce((s,t) => s+Number(t.amount||0), 0);
-  const allExp = allTxM.filter(t => t.type==='expense').reduce((s,t) => s+Number(t.amount||0), 0);
-
-  const modeLabel = mode === 'business' ? '💼 Business' : '👤 Personal';
-  document.getElementById('dash-stats').innerHTML = `
-    <div class="sc"><div class="sl">Saldo totale</div><div class="sv">${fmt(tot)}</div><div style="font-size:.75rem;color:var(--tx3)">tutti i conti</div></div>
-    <div class="sc"><div class="sl">Entrate ${modeLabel}</div><div class="sv" style="color:var(--gr)">${fmt(inc)}</div></div>
-    <div class="sc"><div class="sl">Uscite ${modeLabel}</div><div class="sv" style="color:var(--re)">${fmt(exp)}</div></div>
-    <div class="sc"><div class="sl">Risparmio ${modeLabel}</div><div class="sv" style="color:${inc-exp>=0?'var(--gr)':'var(--re)'}">${fmt(inc-exp)}</div></div>
-    ${mode==='business'?`<div class="sc"><div class="sl">Fatture da incassare</div><div class="sv" style="color:var(--ye)">${fmt(S.invoices.filter(i=>i.status==='sent').reduce((s,i)=>s+Number(i.totalWithVat||i.amount||0),0))}</div></div>`:''}
-    ${mode==='personal'?`<div class="sc"><div class="sl">Totale globale</div><div class="sv">${fmt(allInc-allExp)}</div><div style="font-size:.75rem;color:var(--tx3)">personal+business</div></div>`:''}`;
-
-  document.getElementById('dash-acc').innerHTML = S.accounts.length
-    ? S.accounts.map(a => `<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .875rem;background:var(--bg3);border-radius:var(--rsm);margin-bottom:.5rem"><div style="display:flex;align-items:center;gap:.5rem"><div style="width:28px;height:28px;border-radius:8px;background:${a.color||'var(--ac)'}22;display:flex;align-items:center;justify-content:center">${AI[a.type]||'🏦'}</div>${a.name}</div><div style="font-weight:700;color:${Number(a.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(a.balance||0)}</div></div>`).join('')
-    : '<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Aggiungi un conto</div>';
-
-  document.getElementById('dash-recent').innerHTML = S.transactions.slice(0,6).map(t => `<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem;border-radius:var(--rsm);margin-bottom:.3rem"><div style="width:34px;height:34px;border-radius:10px;background:${t.type==='income'?'rgba(0,240,160,.15)':'rgba(255,51,85,.12)'};display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">${CI[t.category]||'📦'}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.description||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}</div></div><div style="font-weight:700;font-size:.875rem;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('') || '<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessuna transazione</div>';
-
-  renderDashCharts();
-}
+/* renderDashboard override is the main function now */
 
 /* ══════════════════════════════════════════
    GLOBAL SEARCH
@@ -2039,31 +2014,13 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ══════════════════════════════════════════
    OVERRIDE showApp to run init functions
 ══════════════════════════════════════════ */
-const _origShowApp2 = showApp;
-function showApp() {
-  if(window._loadingTimer)clearTimeout(window._loadingTimer);
-  if(window.hideLoading)window.hideLoading();
-  _origShowApp2();
-  fetchExchangeRates();
-  setTimeout(() => { checkGroupInvite(); checkOnboarding(); }, 800);
-  updateNotifBadge();
-  renderNotifications();
-}
+/* showApp init handled in original function */
 
 /* Override showView for new views */
-const _origShowView2 = showView;
-function showView(n) {
-  _origShowView2(n);
-  if (n === 'notifications') renderNotifications();
-  if (n === 'profile') loadProfileView();
-}
+/* showView extension removed - merged below */
 
 /* Override renderAll to check notifications */
-const _origRenderAll2 = renderAll;
-function renderAll() {
-  _origRenderAll2();
-  checkAndGenerateNotifications();
-}
+/* renderAll extension removed - merged */
 
 /* notif-btn click → show notification center */
 document.addEventListener('DOMContentLoaded', () => {

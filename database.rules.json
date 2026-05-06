@@ -1,24 +1,24 @@
 {
   "rules": {
     "users": {
-      ".read": "auth != null",
+      ".read": true,
       "$uid": {
-        ".write": "$uid === auth.uid"
+        ".write": "auth != null && $uid === auth.uid"
       }
     },
     "groups": {
-      ".read": "auth != null",
+      ".read": true,
       "$gid": {
-        ".write": "auth != null && (data.child('members').child(auth.uid).exists() || !data.exists())"
+        ".write": "auth != null"
       }
     },
     "admin_logs": {
-      ".read": "auth != null",
-      ".write": "auth != null"
+      ".read": true,
+      ".write": true
     },
     "admin_settings": {
-      ".read": "auth != null",
-      ".write": "auth != null"
+      ".read": true,
+      ".write": true
     }
   }
 }

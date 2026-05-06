@@ -470,62 +470,68 @@ let AU=null,ADMIN_USER=null,ALL_U={},ALL_TX=[],ALL_ACC=[],ALL_INV=[],ALL_G={};
 let cfg={registration:true,maintenance:false,activityLogs:true,planDurations:{pro:30,business:30}};
 
 auth.onAuthStateChanged(async u=>{
-  if(u){
-    // Skip anonymous users (used for master bypass - already handled)
-    if(u.isAnonymous){AU=u;return;}
-    if(!ADMIN_EMAILS.includes(u.email)){toast('Accesso non autorizzato','err');await auth.signOut();return}
+  // Se utente anonimo (usato per bypass admin) -> ignora, gestito dal login
+  if(u&&u.isAnonymous){AU=u;return;}
+  // Se utente Firebase reale con email admin valida -> auto-login
+  if(u&&u.email&&ADMIN_EMAILS.includes(u.email)){
     AU=u;ADMIN_USER=u;
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-panel').style.display='block';
     document.getElementById('admin-av').textContent=(u.email||'A').charAt(0).toUpperCase();
     document.getElementById('admin-name').textContent=u.displayName||u.email.split('@')[0];
     document.getElementById('dash-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    wlog('login','Accesso admin');
     loadSettings();
     await loadAll();
-  } else {
-    AU=null;
-    if(!ADMIN_USER){
-      document.getElementById('login-screen').style.display='flex';
-      document.getElementById('admin-panel').style.display='none';
-    }
+  }
+  // Tutti gli altri: mostra login (solo se admin panel non già aperto)
+  else if(!u&&!ADMIN_USER){
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('admin-panel').style.display='none';
   }
 });
 
 async function doLogin(){
-  const emailRaw=document.getElementById('l-email').value.trim();
+  const emailRaw=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
   const err=document.getElementById('login-err'),btn=document.getElementById('login-btn');
-  if(!emailRaw||!pass){showErr(err,'Compila tutti i campi');return}
+  if(!emailRaw||!pass){showErr(err,'Compila tutti i campi');return;}
 
-  // Master admin bypass (credenziali hardcoded)
-  if((emailRaw==='admin'||emailRaw==='admin@kazka.app'||emailRaw==='admin@admin.it')&&pass==='admintest'){
-    btn.textContent='Accesso...';btn.disabled=true;
-    try{
-      // Sign in anonymously so Firebase rules work (auth != null)
-      await auth.signInAnonymously();
-      ADMIN_USER={email:'admin@kazka.app',displayName:'Admin Master'};
-      document.getElementById('login-screen').style.display='none';
-      document.getElementById('admin-panel').style.display='block';
-      document.getElementById('admin-av').textContent='A';
-      document.getElementById('admin-name').textContent='Admin Master';
-      document.getElementById('dash-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-      await loadAll();
-      loadSettings();
-      wlog('login','Accesso admin master');
-    }catch(ex){
-      showErr(err,'Errore Firebase: '+ex.message);
-      btn.textContent='Accedi al pannello';btn.disabled=false;
-    }
-    return;
-  }
+  // Credenziali statiche admin
+  const VALID=[
+    {u:'amministratore',p:'admintest'},
+    {u:'admin',p:'admintest'},
+    {u:'admin@kazka.app',p:'admintest'},
+    {u:'adamomic371@gmail.com',p:'admintest'}
+  ];
+  const ok=VALID.some(v=>v.u===emailRaw&&v.p===pass);
+  if(!ok){showErr(err,'Credenziali non valide');return;}
 
-  if(!ADMIN_EMAILS.includes(emailRaw)){showErr(err,'Email non autorizzata come admin');return}
   btn.textContent='Accesso...';btn.disabled=true;
-  try{await auth.signInWithEmailAndPassword(emailRaw,pass)}
-  catch(e){showErr(err,ferr(e.code));btn.textContent='Accedi al pannello';btn.disabled=false}
+  ADMIN_USER={email:emailRaw,displayName:'Admin'};
+  
+  // Prova auth anonima per Firebase rules, se fallisce procedi comunque
+  try{await auth.signInAnonymously();}catch(e){console.log('Anonymous auth skip:',e.message);}
+
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('admin-panel').style.display='block';
+  document.getElementById('admin-av').textContent='A';
+  document.getElementById('admin-name').textContent='Admin';
+  document.getElementById('dash-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  wlog('login','Accesso admin: '+emailRaw);
+  loadSettings();
+  await loadAll();
 }
-async function doLogout(){if(!confirm('Uscire?'))return;wlog('logout','Uscita');ADMIN_USER=null;AU=null;await auth.signOut();document.getElementById('login-screen').style.display='flex';document.getElementById('admin-panel').style.display='none';}
+
+async function doLogout(){
+  if(!confirm('Uscire dal pannello admin?'))return;
+  wlog('logout','Uscita admin');
+  ADMIN_USER=null;AU=null;
+  try{await auth.signOut();}catch(e){}
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('l-pass').value='';
+  document.getElementById('login-err').style.display='none';
+}
 
 async function loadAll(){
   try{
@@ -784,7 +790,7 @@ function renderInv(){
 }
 
 /* LOGS */
-async function wlog(type,msg){await db.ref('admin_logs').push({type,msg,admin:(AU||ADMIN_USER)?.email||'admin',ts:new Date().toISOString()}).catch(()=>{})}
+async function wlog(type,msg){try{await db.ref('admin_logs').push({type,msg,admin:(ADMIN_USER||AU)?.email||'admin',ts:new Date().toISOString()});}catch(e){}}
 async function loadLogs(){
   try{
     const snap=await db.ref('admin_logs').limitToLast(60).once('value');

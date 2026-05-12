@@ -130,11 +130,21 @@ tr:hover td{background:var(--b1)}
       <div class="login-badge">🔐 ADMIN PANEL</div>
     </div>
     <div class="login-body">
-      <div class="fg"><label>Username / Email</label><input type="text" id="l-user" placeholder="amministratore" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('l-pass').focus()"></div>
-      <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="login-btn" onclick="doLogin()" id="login-btn">Accedi al pannello</button>
+      <div class="fg">
+        <label>Username</label>
+        <input type="text" id="l-user" placeholder="amministratore"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter')document.getElementById('l-pass').focus()">
+      </div>
+      <div class="fg">
+        <label>Password</label>
+        <input type="password" id="l-pass" placeholder="••••••••"
+          autocomplete="off"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Accedi al pannello</button>
       <div class="login-err" id="login-err"></div>
-      <div class="login-creds">👤 <strong>amministratore</strong> / <strong>admintest</strong></div>
+      <div class="login-creds">👤 <strong>amministratore</strong> &nbsp;/&nbsp; 🔑 <strong>admintest</strong></div>
     </div>
   </div>
 </div>

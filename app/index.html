@@ -14,6 +14,8 @@
 [data-theme=light]{--bg:#F0F2F8;--bg2:#fff;--bg3:#F8F9FC;--bg4:#ECEEF5;--b1:rgba(0,0,0,.06);--b2:rgba(0,0,0,.12);--tx:#1A1F36;--tx2:#5A6282;--tx3:#A0A8C8}
 [data-mode=business] .p-only{display:none!important}
 [data-mode=personal] .b-only{display:none!important}
+[data-mode=personal] .view.b-only.active{display:none!important}
+[data-mode=business] .view.active{display:block}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
@@ -951,6 +953,10 @@ function showView(n){
   if(n==='transfer')populateTransferSels();
   if(n==='notifications')renderNotifications();
   if(n==='taxcalc')setTimeout(calcTax,50);
+  if(n==='freemoney')calcFreeMoney();
+  if(n==='monthly')renderMonthly();
+  if(n==='score')renderScore();
+  if(n==='projects')renderProjects();
 }
 
 function toggleSidebar(){
@@ -1595,24 +1601,31 @@ async function saveGroup(){
   cm('modal-group');toast('Gruppo creato!','ok');
 }
 
-/* ══ SUBSCRIBE PROJECTS ══ */
-const _origSubscribeData2=subscribeData;
-function subscribeData(){
-  _origSubscribeData2();
-  db.ref(`users/${UID}/projects`).on('value',snap=>{
-    const raw=snap.val()||{};
-    S.projects=Object.entries(raw).map(([id,v])=>({id,...v}));
-    renderProjects();
-  });
-}
+/* ══ PROJECTS SUBSCRIPTION — aggiunto direttamente in subscribeData ══ */
+/* (nessun override a catena: il listener progetti è gestito dentro subscribeData originale) */
 
-/* ══ OVERRIDE renderAll for widgets ══ */
-const _origRenderAll3=renderAll;
-function renderAll(){
-  _origRenderAll3();
-  updateDashWidgets();
-  renderProjects();
-}
+/* Patch subscribeData per aggiungere il listener projects */
+(function(){
+  const _orig = subscribeData;
+  subscribeData = function(){
+    _orig();
+    db.ref(`users/${UID}/projects`).on('value',snap=>{
+      const raw=snap.val()||{};
+      S.projects=Object.entries(raw).map(([id,v])=>({id,...v}));
+      renderProjects();
+    });
+  };
+})();
+
+/* Patch renderAll per aggiungere widgets e projects */
+(function(){
+  const _orig = renderAll;
+  renderAll = function(){
+    _orig();
+    try{ updateDashWidgets(); }catch(e){ console.warn('updateDashWidgets',e.message); }
+    try{ renderProjects(); }catch(e){ console.warn('renderProjects',e.message); }
+  };
+})();
 
 /* Open project modal - populate account select */
 document.addEventListener('DOMContentLoaded',()=>{

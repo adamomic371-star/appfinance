@@ -104,7 +104,26 @@ tr:hover td{background:var(--b1)}
 #toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:.8rem 1.1rem;color:var(--tx);font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:280px;display:flex;align-items:center;gap:.5rem}
 #toast.show{transform:translateX(0)}
 #toast.ok{border-left:3px solid var(--gr)}#toast.err{border-left:3px solid var(--re)}#toast.warn{border-left:3px solid var(--ye)}
-@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.g2,.fr{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:53px;bottom:0;z-index:200;transform:translateX(-100%);transition:transform .3s ease;display:flex!important}
+  .sidebar.open{transform:translateX(0)}
+  .mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;display:none}
+  .mob-overlay.show{display:block}
+  .main{padding:.875rem .75rem}
+  .g2,.fr{grid-template-columns:1fr}
+  .sg{grid-template-columns:1fr 1fr}
+  .ph{flex-direction:column;align-items:flex-start}
+  .ph>div:last-child{display:flex;flex-wrap:wrap;gap:.4rem;width:100%}
+  table{font-size:.78rem}
+  th,td{padding:.5rem .65rem}
+  .topbar{padding:.65rem .875rem}
+  .t-stat{display:none}
+  .mob-tog{display:flex!important}
+  .sb2{flex-direction:column}
+  .si{min-width:0;width:100%}
+}
+@media(min-width:769px){.mob-tog{display:none!important}}
 </style>
 </head>
 <body>
@@ -134,8 +153,10 @@ tr:hover td{background:var(--b1)}
 </div>
 
 <div id="admin-panel">
+  <div class="mob-overlay" id="mob-overlay" onclick="toggleAdminSidebar()"></div>
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:.75rem">
+      <button class="mob-tog" onclick="toggleAdminSidebar()" style="width:34px;height:34px;display:none;align-items:center;justify-content:center;background:var(--bg3);border-radius:var(--rs);color:var(--tx2);font-size:1rem;cursor:pointer">☰</button>
       <div class="t-logo">⚡ Kazka</div>
       <div class="t-badge">ADMIN</div>
     </div>
@@ -161,6 +182,7 @@ tr:hover td{background:var(--b1)}
         <div class="ss">Sistema</div>
         <div class="ni" onclick="sv('logs')" id="nav-logs">📋 Log</div>
         <div class="ni" onclick="sv('settings')" id="nav-settings">⚙️ Impostazioni</div>
+        <div class="ni" onclick="sv('pricing')" id="nav-pricing">💎 Piani & Prezzi</div>
         <div class="ni" onclick="sv('danger')" id="nav-danger"><span style="color:var(--re)">⚠️ Zona Pericolo</span></div>
       </div>
       <div class="sb-bot">
@@ -176,12 +198,14 @@ tr:hover td{background:var(--b1)}
       <div class="view active" id="view-dashboard">
         <div class="ph"><div><div class="pt">Dashboard</div><div class="ps" id="dash-date"></div></div><button class="btn bs bsm" onclick="loadAll()">🔄 Aggiorna</button></div>
         <div class="sg">
-          <div class="sc"><div class="sl">Utenti</div><div class="sv" id="d-u">—</div></div>
+          <div class="sc"><div class="sl">Tot. Utenti</div><div class="sv" id="d-u">—</div></div>
+          <div class="sc"><div class="sl">Nuovi (30gg)</div><div class="sv" style="color:var(--gr)" id="d-new">—</div></div>
           <div class="sc"><div class="sl">Admin</div><div class="sv" style="color:var(--re)" id="d-a">—</div></div>
           <div class="sc"><div class="sl">Pro/Business</div><div class="sv" style="color:var(--ac)" id="d-p">—</div></div>
           <div class="sc"><div class="sl">Transazioni</div><div class="sv" id="d-tx">—</div></div>
           <div class="sc"><div class="sl">Entrate tot.</div><div class="sv" style="color:var(--gr)" id="d-inc">—</div></div>
           <div class="sc"><div class="sl">Gruppi</div><div class="sv" style="color:#00E5FF" id="d-g">—</div></div>
+          <div class="sc"><div class="sl">Churn (30gg)</div><div class="sv" style="color:var(--ye)" id="d-churn">—</div></div>
         </div>
         <div class="g2">
           <div class="card"><div class="ct">Ultimi utenti</div><div id="recent-u"></div></div>
@@ -272,6 +296,98 @@ tr:hover td{background:var(--b1)}
         </div></div>
       </div>
 
+
+      <!-- PRICING -->
+      <div class="view" id="view-pricing">
+        <div class="ph"><div><div class="pt">💎 Piani & Prezzi</div><div class="ps">Configurazione piani abbonamento</div></div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem" id="pricing-grid">
+
+          <!-- FREE -->
+          <div style="background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.5rem;position:relative">
+            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.5rem">Free</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.25rem">€0<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
+            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">Per iniziare</div>
+            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
+              <li>✅ Transazioni illimitate</li><li>✅ 2 conti</li><li>✅ Budget mensile</li><li>✅ 3 obiettivi</li><li>❌ Report avanzati</li><li>❌ Business mode</li><li>❌ Fatture</li><li>❌ Export CSV/PDF</li>
+            </ul>
+          </div>
+
+          <!-- PRO -->
+          <div style="background:linear-gradient(135deg,rgba(123,104,238,.12),rgba(0,229,255,.08));border:1px solid rgba(123,104,238,.3);border-radius:var(--r);padding:1.5rem;position:relative">
+            <div style="position:absolute;top:-10px;right:1rem;background:var(--ac);color:#fff;font-size:.65rem;font-weight:800;padding:.2rem .75rem;border-radius:20px;letter-spacing:.06em">POPOLARE</div>
+            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);margin-bottom:.5rem">Pro</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€2,49<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
+            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">oppure <strong style="color:var(--ac)">€19,99/anno</strong> (-33%)</div>
+            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">vs Toshl €3.99 · Spendee €2.99</div>
+            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
+              <li>✅ Tutto di Free</li><li>✅ Conti illimitati</li><li>✅ Obiettivi illimitati</li><li>✅ Report avanzati</li><li>✅ Export CSV/PDF</li><li>✅ Tasso di cambio live</li><li>✅ Notifiche push</li><li>❌ Business mode</li><li>❌ Fatture & Clienti</li>
+            </ul>
+          </div>
+
+          <!-- BUSINESS -->
+          <div style="background:linear-gradient(135deg,rgba(255,140,66,.12),rgba(255,209,102,.08));border:1px solid rgba(255,140,66,.3);border-radius:var(--r);padding:1.5rem">
+            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--or);margin-bottom:.5rem">Business</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€4,99<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
+            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">oppure <strong style="color:var(--or)">€39,99/anno</strong> (-33%)</div>
+            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">vs YNAB €14.99 · Emma £4.99</div>
+            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
+              <li>✅ Tutto di Pro</li><li>✅ Business mode</li><li>✅ Fatture & Clienti</li><li>✅ Preventivi → Fattura</li><li>✅ Prima Nota</li><li>✅ Gestione fornitori</li><li>✅ Regime fiscale</li><li>✅ Viaggi & Trasferte</li>
+            </ul>
+          </div>
+
+          <!-- ALL-INCLUSIVE -->
+          <div style="background:linear-gradient(135deg,rgba(0,240,160,.1),rgba(0,229,255,.1));border:1px solid rgba(0,240,160,.3);border-radius:var(--r);padding:1.5rem">
+            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);margin-bottom:.5rem">All-Inclusive</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€7,99<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
+            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">oppure <strong style="color:var(--gr)">€59,99/anno</strong> (-37%)</div>
+            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">Tutto senza limiti</div>
+            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
+              <li>✅ Tutto di Business</li><li>✅ Multi-utente (5 slot)</li><li>✅ Accesso prioritario</li><li>✅ Supporto dedicato</li><li>✅ Progetti avanzati</li><li>✅ API access</li><li>✅ White-label opzionale</li><li>✅ Backup automatici</li>
+            </ul>
+          </div>
+
+          <!-- LIFETIME -->
+          <div style="background:linear-gradient(135deg,rgba(255,51,85,.1),rgba(255,140,66,.1));border:2px solid rgba(255,51,85,.3);border-radius:var(--r);padding:1.5rem;position:relative">
+            <div style="position:absolute;top:-10px;right:1rem;background:linear-gradient(135deg,#FF3355,#FF8C42);color:#fff;font-size:.65rem;font-weight:800;padding:.2rem .75rem;border-radius:20px;letter-spacing:.06em">LIFETIME ∞</div>
+            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--re);margin-bottom:.5rem">Lifetime Deal</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€149,99<span style="font-size:.9rem;font-weight:500;color:var(--tx2)"> una volta</span></div>
+            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">Equivale a <strong style="color:var(--re)">~19 mesi Pro</strong></div>
+            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">Paga una volta, tieni per sempre</div>
+            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
+              <li>✅ Piano All-Inclusive</li><li>✅ Tutte le feature future</li><li>✅ Nessun rinnovo</li><li>✅ Priorità assoluta</li><li>✅ Badge esclusivo</li><li>⚡ Quantità limitata</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="card">
+          <div class="ct">Confronto con la concorrenza</div>
+          <div class="tw"><table><thead><tr><th>App</th><th>Piano base</th><th>Piano pro</th><th>Business</th><th>Lifetime</th></tr></thead><tbody>
+            <tr style="background:rgba(123,104,238,.06)"><td class="tdm">⚡ Kazka</td><td>€0</td><td style="color:var(--gr)">€2,49/mese</td><td style="color:var(--gr)">€4,99/mese</td><td style="color:var(--gr)">€149,99</td></tr>
+            <tr><td>Toshl Finance</td><td>€0 (limite 2/mese)</td><td>€3,99/mese</td><td>€8,99/mese</td><td>—</td></tr>
+            <tr><td>Spendee</td><td>€0</td><td>€2,99/mese</td><td>€6,99/mese</td><td>—</td></tr>
+            <tr><td>YNAB</td><td>—</td><td>€14,99/mese</td><td>€14,99/mese</td><td>—</td></tr>
+            <tr><td>Emma</td><td>€0</td><td>£4,99/mese</td><td>£9,99/mese</td><td>—</td></tr>
+            <tr><td>MoneyMoney</td><td>—</td><td>—</td><td>—</td><td>€31,99 (2yr)</td></tr>
+          </tbody></table></div>
+        </div>
+
+        <div class="card" style="border-color:rgba(123,104,238,.25)">
+          <div class="ct">Gestione piano utente (assegna manualmente)</div>
+          <div class="fr">
+            <div class="fg2"><label>Email o UID utente</label><input type="text" id="plan-uid" placeholder="email@utente.com"></div>
+            <div class="fg2"><label>Piano</label><select id="plan-sel"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option><option value="allinclusive">All-Inclusive</option><option value="lifetime">Lifetime</option></select></div>
+          </div>
+          <div class="fr">
+            <div class="fg2"><label>Scadenza (vuoto = illimitato)</label><input type="date" id="plan-exp"></div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:.875rem;gap:.4rem">
+              <button class="btn bs bsm" onclick="addDays2(30)">+30gg</button>
+              <button class="btn bs bsm" onclick="addDays2(365)">+1 anno</button>
+            </div>
+          </div>
+          <button class="btn bp" style="width:100%" onclick="assignPlan()">Assegna piano</button>
+        </div>
+      </div>
       <!-- DANGER -->
       <div class="view" id="view-danger">
         <div class="ph"><div><div class="pt" style="color:var(--re)">⚠ Zona Pericolo</div></div></div>
@@ -400,12 +516,18 @@ async function loadAll(){
 
 function renderDash(){
   const ul=Object.values(ALL_U);
+  const now=new Date(),d30=new Date();d30.setDate(d30.getDate()-30);
+  const newUsers=ul.filter(u=>{const c=u.profile?.createdAt;return c&&new Date(c)>=d30;}).length;
+  // Churn: users who had paid plan 60 days ago but not now (approximation)
+  const churn=ul.filter(u=>{const p=u.profile;return p?.plan&&p.plan!=='free'&&p.subscriptionExpiry&&p.subscriptionExpiry!=='never'&&new Date(p.subscriptionExpiry)<now;}).length;
   document.getElementById('d-u').textContent=ul.length;
+  const dn=document.getElementById('d-new');if(dn)dn.textContent=newUsers;
   document.getElementById('d-a').textContent=ul.filter(u=>u.profile?.role==='admin').length;
-  document.getElementById('d-p').textContent=ul.filter(u=>['pro','business'].includes(u.profile?.plan)).length;
+  document.getElementById('d-p').textContent=ul.filter(u=>['pro','business','allinclusive','lifetime'].includes(u.profile?.plan)).length;
   document.getElementById('d-tx').textContent=ALL_TX.length;
   document.getElementById('d-inc').textContent=fmt(ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0));
   document.getElementById('d-g').textContent=Object.keys(ALL_G).length;
+  const dc=document.getElementById('d-churn');if(dc)dc.textContent=churn;
   const sorted=ul.filter(u=>u.profile?.createdAt).sort((a,b)=>new Date(b.profile.createdAt)-new Date(a.profile.createdAt)).slice(0,5);
   document.getElementById('recent-u').innerHTML=sorted.length?sorted.map(u=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0">${(u.profile.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div><span class="badge ${rb(u.profile.role)}">${u.profile.role||'user'}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessun utente</div>';
   const now=Date.now(),in30=now+30*864e5;
@@ -472,6 +594,26 @@ function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
 function today(){return new Date().toISOString().split('T')[0];}
 function N(v){return Number(v)||0;}
 function toast(msg,type='ok'){const t=document.getElementById('toast');if(!t)return;t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
+function toggleAdminSidebar(){
+  const s=document.getElementById('sidebar'),o=document.getElementById('mob-overlay');
+  s.classList.toggle('open');
+  o.classList.toggle('show');
+}
+
+function addDays2(n){const d=new Date();d.setDate(d.getDate()+n);document.getElementById('plan-exp').value=d.toISOString().split('T')[0];}
+
+async function assignPlan(){
+  const input=document.getElementById('plan-uid').value.trim();
+  const plan=document.getElementById('plan-sel').value;
+  const exp=document.getElementById('plan-exp').value||'never';
+  if(!input){toast('Inserisci email o UID','err');return;}
+  const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;
+  await db.ref(`users/${uid}/profile`).update({plan,subscriptionExpiry:exp,subscriptionStart:today(),updatedByAdmin:new Date().toISOString()});
+  await loadAll();
+  toast(`Piano ${plan} assegnato a ${input}`,'ok');
+  wlog('update',`Piano ${plan} → ${input}`);
+}
+
 </script>
 </body>
 </html>

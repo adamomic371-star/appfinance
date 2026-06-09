@@ -1,3 +1,9 @@
+// +--------------------------------------------------------------+
+// ¦  WARNING — FILE ORFANO / NON INTEGRATO                      ¦
+// ¦  Questo file NON è caricato dall'app principale (app.html).  ¦
+// ¦  Il codice eseguibile è nello script inline di app/app.html. ¦
+// ¦  Mantenuto per riferimento storico — NON modificare.         ¦
+// +--------------------------------------------------------------+
 /* â”€â”€â”€ PROFILE â”€â”€â”€ */
 async function saveProfile(){
   try{
@@ -305,7 +311,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 });
 if('serviceWorker' in navigator){navigator.serviceWorker.register('../sw.js').catch(()=>{});}
-</script>
 
-/* â”€â”€â”€ Avvia handler globali errori â”€â”€â”€ */
 initGlobalErrors();

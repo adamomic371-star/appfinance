@@ -1,3 +1,9 @@
+// +--------------------------------------------------------------+
+// ¦  WARNING — FILE ORFANO / NON INTEGRATO                      ¦
+// ¦  Questo file NON è caricato dall'app principale (app.html).  ¦
+// ¦  Il codice eseguibile è nello script inline di app/app.html. ¦
+// ¦  Mantenuto per riferimento storico — NON modificare.         ¦
+// +--------------------------------------------------------------+
 /**
  * config.js â€” Configurazione Firebase
  *

@@ -1,3 +1,9 @@
+// +--------------------------------------------------------------+
+// ¦  WARNING — FILE ORFANO / NON INTEGRATO                      ¦
+// ¦  Questo file NON è caricato dall'app principale (app.html).  ¦
+// ¦  Il codice eseguibile è nello script inline di app/app.html. ¦
+// ¦  Mantenuto per riferimento storico — NON modificare.         ¦
+// +--------------------------------------------------------------+
 /* â”€â”€â”€ REPORTS â”€â”€â”€ */
 function renderReports(){const ae=S.transactions.filter(t=>t.type==='expense'),ai=S.transactions.filter(t=>t.type==='income');const te=ae.reduce((s,t)=>s+N(t.amount),0),ti=ai.reduce((s,t)=>s+N(t.amount),0);const rs=document.getElementById('rep-stats');if(rs)rs.innerHTML=`<div class="sc"><div class="sl">Totale entrate</div><div class="sv" style="color:var(--gr)">${fmt(ti)}</div></div><div class="sc"><div class="sl">Totale uscite</div><div class="sv" style="color:var(--re)">${fmt(te)}</div></div><div class="sc"><div class="sl">Saldo netto</div><div class="sv">${fmt(ti-te)}</div></div><div class="sc"><div class="sl">Transazioni</div><div class="sv">${S.transactions.length}</div></div>`;const cm2={};ae.forEach(t=>{cm2[t.category]=(cm2[t.category]||{count:0,total:0});cm2[t.category].count++;cm2[t.category].total+=N(t.amount);});const sorted=Object.entries(cm2).sort((a,b)=>b[1].total-a[1].total);const tbody=document.getElementById('rep-cat-tbody');if(tbody)tbody.innerHTML=sorted.map(([c,d])=>`<tr><td class="tdm">${CI[c]||'ðŸ“¦'} ${cap(c)}</td><td>${d.count}</td><td style="font-weight:700">${fmt(d.total)}</td><td>${te>0?Math.round((d.total/te)*100):0}%</td></tr>`).join('');}
 function renderRepCharts(){

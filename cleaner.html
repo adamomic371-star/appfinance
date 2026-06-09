@@ -203,9 +203,6 @@ pre.shell .rm{color:var(--danger)}
       </div>
       <button class="login-btn" id="loginBtn" onclick="doLogin()">Accedi</button>
       <div id="loginErr" class="login-err"></div>
-      <div class="login-hint">
-        Credenziali: <code>admin</code> / <code>admintest</code>
-      </div>
     </div>
   </div>
 </div>
@@ -320,17 +317,15 @@ pre.shell .rm{color:var(--danger)}
 'use strict';
 
 /* ── AUTH LOCALE ─────────────────────────────────────────────────
-   Credenziali statiche per accesso al cleaner.
-   Username: admin | Password: admintest
-   Modificabile aggiornando le costanti qui sotto.
+   Tool di manutenzione locale — password configurabile
+   su Firebase Realtime DB in admin_settings/cleaner_password.
+   Default locale: "admintest" (modificabile qui sotto).
 ── */
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'admintest';
+const CLEANER_PASS_HASH = 'sha256:8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // "admintest"
 
 let currentUser = null;
 
-function doLogin() {
-  const u    = document.getElementById('loginUser').value.trim();
+async function doLogin() {
   const p    = document.getElementById('loginPass').value;
   const errEl = document.getElementById('loginErr');
   const btn  = document.getElementById('loginBtn');
@@ -339,16 +334,18 @@ function doLogin() {
   btn.disabled = true;
   btn.textContent = 'Verifica…';
 
-  // Piccolo delay per prevenire brute-force rapido
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+  const hash = 'sha256:' + Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+
   setTimeout(() => {
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-      currentUser = u;
-      document.getElementById('loggedUser').textContent = u;
+    if (hash === CLEANER_PASS_HASH) {
+      currentUser = 'admin';
+      document.getElementById('loggedUser').textContent = 'admin';
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       initApp();
     } else {
-      errEl.textContent = 'Credenziali errate.';
+      errEl.textContent = 'Password errata.';
       errEl.style.display = 'block';
       document.getElementById('loginPass').value = '';
     }

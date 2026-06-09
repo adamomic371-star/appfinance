@@ -147,7 +147,7 @@ tr:hover td{background:var(--b1)}
       </div>
       <button class="lbtn" id="login-btn" onclick="doLogin()">Accedi al pannello</button>
       <div class="lerr" id="login-err"></div>
-      <div class="lcred">👤 <strong>amministratore</strong> &nbsp;/&nbsp; 🔑 <strong>admintest</strong></div>
+      <div class="lcred" style="color:var(--tx3);font-size:.7rem">🔐 Accesso admin riservato</div>
     </div>
   </div>
 </div>
@@ -454,23 +454,14 @@ tr:hover td{background:var(--b1)}
 <div id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 'use strict';
 firebase.initializeApp({apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",authDomain:"financeapp-556ae.firebaseapp.com",databaseURL:"https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",projectId:"financeapp-556ae",storageBucket:"financeapp-556ae.firebasestorage.app",messagingSenderId:"181987533980",appId:"1:181987533980:web:41c5032990ccede17eb959"});
-const auth=firebase.auth(),db=firebase.database();
-
-const VALID=[{u:'amministratore',p:'admintest'},{u:'admin',p:'admintest'},{u:'admin@kazka.app',p:'admintest'},{u:'adamomic371@gmail.com',p:'admintest'}];
-const ADMIN_EMAILS=['adamomic371@gmail.com','admin@kazka.app'];
-let ADMIN_USER=null,ALL_U={},ALL_TX=[],ALL_ACC=[],ALL_INV=[],ALL_G={},cfg={registration:true,maintenance:false};
-
-auth.onAuthStateChanged(u=>{
-  if(u&&!u.isAnonymous&&ADMIN_EMAILS.includes(u.email)){
-    ADMIN_USER={email:u.email,displayName:u.displayName||u.email};
-    showPanel();loadAll();
-  }
-});
+const db=firebase.database();
+const ADMIN_USER='admin';
+const ADMIN_PASS_HASH='sha256:8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+let ALL_U={},ALL_TX=[],ALL_ACC=[],ALL_INV=[],ALL_G={},cfg={registration:true,maintenance:false};
 
 function doLogin(){
   const user=document.getElementById('l-user').value.trim().toLowerCase();
@@ -479,12 +470,18 @@ function doLogin(){
   const btn=document.getElementById('login-btn');
   err.style.display='none';
   if(!user||!pass){err.textContent='Inserisci username e password';err.style.display='block';return;}
-  const ok=VALID.some(c=>c.u===user&&c.p===pass);
-  if(!ok){err.textContent='Credenziali non valide — usa: amministratore / admintest';err.style.display='block';return;}
-  btn.textContent='Accesso...';btn.disabled=true;
-  ADMIN_USER={email:'admin@kazka.app',displayName:'Amministratore'};
-  auth.signInAnonymously().catch(e=>console.log('anon:',e.message)).finally(()=>{
-    showPanel();loadAll();
+  btn.textContent='Verifica...';btn.disabled=true;
+  crypto.subtle.digest('SHA-256',new TextEncoder().encode(pass)).then(buf=>{
+    const hash='sha256:'+Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if(user===ADMIN_USER&&hash===ADMIN_PASS_HASH){
+      showPanel();loadAll();
+    }else{
+      err.textContent='Credenziali non valide';err.style.display='block';
+      document.getElementById('l-pass').value='';
+    }
+    btn.textContent='Accedi al pannello';btn.disabled=false;
+  }).catch(()=>{
+    err.textContent='Errore crittografia';err.style.display='block';
     btn.textContent='Accedi al pannello';btn.disabled=false;
   });
 }
@@ -493,12 +490,12 @@ function showPanel(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('admin-panel').style.display='block';
   document.getElementById('admin-av').textContent='A';
-  document.getElementById('admin-name').textContent=ADMIN_USER?.displayName||'Admin';
+  document.getElementById('admin-name').textContent='Admin';
   document.getElementById('dash-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   loadSettings();
 }
 
-async function doLogout(){if(!confirm('Uscire?'))return;wlog('logout','Uscita');ADMIN_USER=null;try{await auth.signOut();}catch(e){}document.getElementById('login-screen').style.display='flex';document.getElementById('admin-panel').style.display='none';document.getElementById('l-pass').value='';document.getElementById('l-user').value='';}
+function doLogout(){if(!confirm('Uscire?'))return;document.getElementById('login-screen').style.display='flex';document.getElementById('admin-panel').style.display='none';document.getElementById('l-pass').value='';document.getElementById('l-user').value='';}
 
 async function loadAll(){
   try{
@@ -530,7 +527,7 @@ function renderDash(){
   const dc=document.getElementById('d-churn');if(dc)dc.textContent=churn;
   const sorted=ul.filter(u=>u.profile?.createdAt).sort((a,b)=>new Date(b.profile.createdAt)-new Date(a.profile.createdAt)).slice(0,5);
   document.getElementById('recent-u').innerHTML=sorted.length?sorted.map(u=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0">${(u.profile.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div><span class="badge ${rb(u.profile.role)}">${u.profile.role||'user'}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessun utente</div>';
-  const now=Date.now(),in30=now+30*864e5;
+  const nowTs=Date.now(),in30=nowTs+30*864e5;
   const exp=Object.values(ALL_U).filter(u=>{const e=u.profile?.subscriptionExpiry;if(!e||e==='never')return false;const t=new Date(e).getTime();return t>now&&t<=in30;}).sort((a,b)=>new Date(a.profile.subscriptionExpiry)-new Date(b.profile.subscriptionExpiry));
   document.getElementById('exp-subs').innerHTML=exp.length?exp.map(u=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div><span class="badge by">${fd(u.profile.subscriptionExpiry)}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessuna scadenza imminente</div>';
 }

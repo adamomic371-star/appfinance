@@ -1,3 +1,9 @@
+// +--------------------------------------------------------------+
+// ¦  WARNING — FILE ORFANO / NON INTEGRATO                      ¦
+// ¦  Questo file NON è caricato dall'app principale (app.html).  ¦
+// ¦  Il codice eseguibile è nello script inline di app/app.html. ¦
+// ¦  Mantenuto per riferimento storico — NON modificare.         ¦
+// +--------------------------------------------------------------+
 /* â”€â”€â”€ INVOICES â”€â”€â”€ */
 function renderInvoices(){
   const tbody=document.getElementById('inv-tbody'),empty=document.getElementById('inv-empty'),stats=document.getElementById('inv-stats');

@@ -9,12 +9,14 @@
 <meta name="apple-mobile-web-app-title" content="Kazka">
 <meta name="application-name" content="Kazka">
 <meta name="theme-color" content="#070b18">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../assets/icons/icon-192.png">
+<link rel="icon" type="image/png" href="../assets/icons/icon-192.png">
 <title>Kazka – Finance</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <style>
 :root{
   --bg:#04070f;--bg2:#080d1a;--bg3:#0d1424;
@@ -261,8 +263,10 @@ nav{flex:1;display:flex;flex-direction:column;gap:2px}
 .drawer-mode-btn{flex:1;padding:7px 4px;border:none;background:transparent;color:var(--tx2);font-size:11px;font-weight:700;cursor:pointer;border-radius:8px;transition:all .2s;font-family:'Outfit',sans-serif}
 .drawer-mode-btn.active{background:var(--ac);color:#fff}
 .drawer-mode-btn.biz.active{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
-.drawer-out{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:10px;color:var(--tx3);cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;border:1px solid transparent;background:none;width:100%}
-.drawer-out:hover{background:rgba(255,68,102,.08);border-color:rgba(255,68,102,.2);color:var(--re)}
+.drawer-out:hover{background:rgba(255,68,102,.08);border-color:rgba(255,68,102,.2);color:var(--re)!important}
+.drawer-out:hover .drawer-ni-ico{background:rgba(255,68,102,.15)!important}
+.out-btn:hover{background:rgba(255,68,102,.08)!important;border-color:rgba(255,68,102,.2)!important;color:var(--re)!important}
+.out-btn:hover .ni-ico{background:rgba(255,68,102,.15)!important}
 
 /* Lang */
 .lang-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);padding:0 2px}
@@ -941,7 +945,7 @@ canvas{max-width:100%}
         <button class="lang-btn" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷</button>
         <button class="lang-btn" data-lang="de" onclick="setLang('de')" title="Deutsch">🇩🇪</button>
       </div>
-      <button class="drawer-out" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i> <span id="drawerOutLabel">Esci</span></button>
+      <div class="drawer-ni drawer-out" onclick="doLogout()"><div class="drawer-ni-ico" style="font-size:13px">🚪</div><span id="drawerOutLabel">Esci</span></div>
     </div>
   </div>
 
@@ -950,7 +954,7 @@ canvas{max-width:100%}
     <div class="ub"><div class="ub-name" id="sbName">–</div><div><span class="ub-plan" id="sbPlan">Free</span></div><div class="ub-id">ID: <span id="sbId">–</span></div></div>
     <nav class="nav" id="sideNav"></nav>
     <div class="nav-div"></div>
-    <button class="out-btn" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i><span>Esci</span></button>
+    <div class="ni out-btn" onclick="doLogout()"><div class="ni-ico" style="font-size:14px">🚪</div><span>Esci</span></div>
   </div>
   <div class="main">
     <div class="topbar">
@@ -1122,6 +1126,20 @@ canvas{max-width:100%}
       </select>
     </div>
     <div class="ma"><button class="bms" id="scadSaveBtn" onclick="saveScadenza()">Salva</button><button class="bmc" onclick="closeMo('scadenzaModal')">Annulla</button></div>
+  </div>
+</div>
+
+<!-- CUSTOM CATEGORIES MODAL -->
+<div id="customCatModal" class="mo">
+  <div class="ms">
+    <div class="mh"><div class="mtt">📂 Categorie personalizzate</div><button class="mc" onclick="closeMo('customCatModal')">✕</button></div>
+    <div class="mo-b" id="customCatList" style="max-height:300px;overflow-y:auto;margin-bottom:12px"></div>
+    <div class="fg" style="display:flex;gap:6px;flex-wrap:wrap">
+      <input id="newCatName" class="fc" placeholder="Nome categoria" style="flex:1;min-width:100px">
+      <input id="newCatIcon" class="fc" placeholder="Icona" style="width:60px">
+      <input id="newCatColor" type="color" value="#6c63ff" style="width:40px;height:38px;border-radius:8px;border:1px solid var(--b1);background:var(--s1)">
+    </div>
+    <div class="ma"><button class="bms" onclick="addCustomCat()">+ Aggiungi</button></div>
   </div>
 </div>
 
@@ -1304,7 +1322,8 @@ canvas{max-width:100%}
     <div class="fg"><label class="fl">Descrizione</label><input type="text" id="txDesc" class="fc" placeholder="es. Stipendio, Spesa..."></div>
     <div class="fg"><label class="fl">Importo (€)</label><input type="number" id="txAmt" class="fc" placeholder="0.00" step="0.01" min="0"></div>
     <div class="fg"><label class="fl">Tipo</label><select id="txType" class="fc"><option value="income">📈 Entrata</option><option value="expense">📉 Uscita</option></select></div>
-    <div class="fg"><label class="fl">Categoria</label><select id="txCat" class="fc"></select></div>
+    <div class="fg"><label class="fl">Categoria</label><select id="txCat" class="fc"></select><div style="margin-top:4px"><button class="btn-sm bs-g" onclick="aiSuggestCategory()" type="button">🤖 Suggerisci categoria</button></div></div>
+    <div class="fg"><label class="fl">Allegato</label><input type="file" id="txAttach" class="fc" accept="image/*,.pdf" style="padding:6px;font-size:12px"></div>
     <div class="ma"><button class="bms" onclick="saveTx()">Salva</button><button class="bmc" onclick="closeMo('txModal')">Annulla</button></div>
   </div>
 </div>
@@ -1505,6 +1524,9 @@ canvas{max-width:100%}
 })();
 document.getElementById('tbDate').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
 
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+
 /* ===== CATEGORIES ===== */
 const CATS=[
   {id:'food',    name:'Cibo & Ristoranti',  icon:'🍕', color:'#ff9f43'},
@@ -1526,10 +1548,44 @@ const REC_KINDS={subscription:{icon:'📱',label:'Abbonamento'},salary:{icon:'�
 const FREQS={daily:'Giornaliera',weekly:'Settimanale',monthly:'Mensile',yearly:'Annuale'};
 
 function fillCatSelects(){
-  ['txCat','recCat'].forEach(id=>{
+  const allCats=getAllCats();
+  ['txCat','recCat','scadCat'].forEach(id=>{
     const s=document.getElementById(id); if(!s)return;
-    s.innerHTML=CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+    s.innerHTML=allCats.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
   });
+  // also fill any custom cat dropdowns
+  document.querySelectorAll('.cat-dd').forEach(s=>{
+    const v=s.value;
+    s.innerHTML=allCats.map(c=>`<option value="${c.id}" ${v===c.id?'selected':''}>${c.icon} ${c.name}</option>`).join('');
+  });
+}
+function addCustomCat(){
+  const name=document.getElementById('newCatName').value.trim();
+  const icon=document.getElementById('newCatIcon').value.trim()||'📦';
+  const color=document.getElementById('newCatColor').value;
+  if(!name)return notify('⚠️ Inserisci un nome',2);
+  const cats=loadCustomCats();
+  if(cats.find(c=>c.name.toLowerCase()===name.toLowerCase()))return notify('⚠️ Categoria già esistente',2);
+  cats.push({id:'custom_'+name.toLowerCase().replace(/[^a-z0-9]/g,'_'),name,icon,color,cat:true});
+  saveCustomCats(cats);
+  renderCustomCats();fillCatSelects();
+  document.getElementById('newCatName').value='';
+  notify('✅ Categoria "'+name+'" aggiunta!');
+}
+function delCustomCat(id){
+  const ok=confirm('Eliminare la categoria "'+catName(id)+'"?');
+  if(!ok)return;
+  saveCustomCats(loadCustomCats().filter(c=>c.id!==id));
+  renderCustomCats();fillCatSelects();
+  notify('🗑️ Categoria eliminata');
+}
+function renderCustomCats(){
+  const el=document.getElementById('customCatList');
+  if(!el)return;
+  const cats=loadCustomCats();
+  el.innerHTML=cats.length===0
+    ?'<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nessuna categoria personalizzata. Aggiungine una sopra!</div>'
+    :cats.map(c=>`<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--b1);gap:8px"><span style="font-size:20px">${c.icon}</span><span style="flex:1;font-weight:600">${c.name}</span><span style="font-size:10px;color:var(--tx3)">${c.id}</span><button class="btn-sm bs-d" onclick="delCustomCat('${c.id}')">✕</button></div>`).join('');
 }
 
 /* ===== STATE ===== */
@@ -1562,7 +1618,8 @@ const PLANS={
 const NAV_PERSONAL=[
   {id:'dashboard',  icon:'📊',lkey:'nav_dashboard',   plans:['free','personal_pro','business_starter','business_pro','lifetime']},
   {id:'conti',      icon:'🏦',lkey:'nav_conti',          plans:['free','personal_pro','business_starter','business_pro','lifetime']},
-  {id:'transazioni',icon:'💸',lkey:'nav_transazioni',  plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'debiti',     icon:'💳',lkey:'nav_debiti',          plans:['free','personal_pro','business_starter','business_pro','lifetime']},
+  {id:'transazioni',icon:'💸',lkey:'nav_transazioni',     plans:['free','personal_pro','business_starter','business_pro','lifetime']},
   {id:'report',     icon:'📈',lkey:'nav_report',        plans:['free','personal_pro','business_starter','business_pro','lifetime']},
   {id:'ricorrenti', icon:'🔄',lkey:'nav_ricorrenti',    plans:['personal_pro','business_starter','business_pro','lifetime']},
   {id:'bollette',   icon:'📄',lkey:'nav_bollette',      plans:['personal_pro','business_starter','business_pro','lifetime']},
@@ -1698,11 +1755,11 @@ function setMsg(t,type){const e=document.getElementById('authMsg');e.textContent
 
 /* ===== I18N ===== */
 var LANGS={
-  it:{nav_conti:'Conti & Carte',nav_dashboard:'Dashboard',nav_transazioni:'Movimenti',nav_report:'Report',nav_ricorrenti:'Ricorrenti',nav_bollette:'Bollette',nav_viaggi:'Viaggi',nav_obiettivi:'Obiettivi',nav_gruppi:'Gruppi',nav_notifiche:'Notifiche',nav_piani:'Piani',nav_admin:'Admin',nav_profilo:'Profilo',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Prima Nota',nav_biz_clienti:'Clienti',nav_biz_preventivi:'Preventivi',nav_biz_progetti:'Progetti',nav_biz_spese:'Note Spese',nav_biz_scadenzario:'Scadenziario',nav_biz_iva:'IVA',title_dashboard:'Dashboard',title_transazioni:'Movimenti',title_report:'Report & Analisi',title_ricorrenti:'Ricorrenti',title_bollette:'Bollette & Utenze',title_viaggi:'Viaggi',title_obiettivi:'Obiettivi di Risparmio',title_gruppi:'Gruppi',title_notifiche:'Notifiche',title_piani:'Piani',title_admin:'Admin',title_profilo:'Profilo',title_biz_dashboard:'Dashboard Aziendale',title_biz_primanota:'Prima Nota',title_biz_clienti:'Clienti & Fornitori',title_biz_preventivi:'Preventivi',title_biz_progetti:'Progetti',title_biz_spese:'Note Spese',title_biz_scadenzario:'Scadenziario',title_biz_iva:'IVA Tracker',sub_dashboard:'Panoramica finanziaria',sub_transazioni:'movimenti',sub_report:'Analisi per categoria',sub_ricorrenti:'operazioni',sub_bollette:'bollette',sub_viaggi:'viaggi',sub_obiettivi:'attivi',sub_gruppi:'gruppi',sub_notifiche:'Scadenze, messaggi e avvisi',sub_piani:'Scegli il piano',sub_admin:'Gestione utenti',sub_profilo:'Il tuo account',sub_biz_dashboard:'Panoramica aziendale',sub_biz_primanota:'movimenti',sub_biz_clienti:'contatti',sub_biz_preventivi:'preventivi',sub_biz_progetti:'progetti',sub_biz_spese:'note',sub_biz_scadenzario:'Tutte le scadenze',sub_biz_iva:'Calcolo IVA',logout:'Vuoi uscire?',signout:'Esci',personal:'Personale',business:'Azienda',language:'Lingua',welcome:'Benvenuto in Kazka!'},
-  en:{nav_dashboard:'Dashboard',nav_transazioni:'Transactions',nav_report:'Report',nav_ricorrenti:'Recurring',nav_bollette:'Bills',nav_viaggi:'Trips',nav_obiettivi:'Goals',nav_gruppi:'Groups',nav_notifiche:'Notifications',nav_piani:'Plans',nav_admin:'Admin',nav_profilo:'Profile',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Clients',nav_biz_preventivi:'Quotes',nav_biz_progetti:'Projects',nav_biz_spese:'Expenses',nav_biz_scadenzario:'Schedule',nav_biz_iva:'VAT',title_dashboard:'Dashboard',title_transazioni:'Transactions',title_report:'Report & Analytics',title_ricorrenti:'Recurring',title_bollette:'Bills & Utilities',title_viaggi:'Trips',title_obiettivi:'Savings Goals',title_gruppi:'Groups',title_notifiche:'Notifications',title_piani:'Plans',title_admin:'Admin',title_profilo:'Profile',title_biz_dashboard:'Business Dashboard',title_biz_primanota:'Journal',title_biz_clienti:'Clients & Suppliers',title_biz_preventivi:'Quotes',title_biz_progetti:'Projects',title_biz_spese:'Expense Notes',title_biz_scadenzario:'Schedule',title_biz_iva:'VAT Tracker',sub_dashboard:'Financial overview',sub_transazioni:'transactions',sub_report:'Category analysis',sub_ricorrenti:'operations',sub_bollette:'bills',sub_viaggi:'trips',sub_obiettivi:'active',sub_gruppi:'groups',sub_notifiche:'Deadlines, messages & alerts',sub_piani:'Choose your plan',sub_admin:'User management',sub_profilo:'Your account',sub_biz_dashboard:'Business overview',sub_biz_primanota:'entries',sub_biz_clienti:'contacts',sub_biz_preventivi:'quotes',sub_biz_progetti:'projects',sub_biz_spese:'notes',sub_biz_scadenzario:'All deadlines',sub_biz_iva:'VAT calculation',logout:'Sign out?',signout:'Sign Out',personal:'Personal',business:'Business',language:'Language',welcome:'Welcome to Kazka!'},
-  es:{nav_dashboard:'Dashboard',nav_transazioni:'Movimientos',nav_report:'Informe',nav_ricorrenti:'Recurrentes',nav_bollette:'Facturas',nav_viaggi:'Viajes',nav_obiettivi:'Objetivos',nav_gruppi:'Grupos',nav_notifiche:'Notificaciones',nav_piani:'Planes',nav_admin:'Admin',nav_profilo:'Perfil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Diario',nav_biz_clienti:'Clientes',nav_biz_preventivi:'Presupuestos',nav_biz_progetti:'Proyectos',nav_biz_spese:'Gastos',nav_biz_scadenzario:'Vencimientos',nav_biz_iva:'IVA',title_dashboard:'Dashboard',title_transazioni:'Movimientos',title_report:'Informe y Análisis',title_ricorrenti:'Recurrentes',title_bollette:'Facturas y Servicios',title_viaggi:'Viajes',title_obiettivi:'Objetivos de Ahorro',title_gruppi:'Grupos',title_notifiche:'Notificaciones',title_piani:'Planes',title_admin:'Admin',title_profilo:'Perfil',title_biz_dashboard:'Dashboard Empresarial',title_biz_primanota:'Diario',title_biz_clienti:'Clientes y Proveedores',title_biz_preventivi:'Presupuestos',title_biz_progetti:'Proyectos',title_biz_spese:'Notas de Gastos',title_biz_scadenzario:'Vencimientos',title_biz_iva:'IVA Tracker',sub_dashboard:'Resumen financiero',sub_transazioni:'movimientos',sub_report:'Análisis por categoría',sub_ricorrenti:'operaciones',sub_bollette:'facturas',sub_viaggi:'viajes',sub_obiettivi:'activos',sub_gruppi:'grupos',sub_notifiche:'Vencimientos y alertas',sub_piani:'Elige tu plan',sub_admin:'Gestión usuarios',sub_profilo:'Tu cuenta',sub_biz_dashboard:'Resumen empresarial',sub_biz_primanota:'entradas',sub_biz_clienti:'contactos',sub_biz_preventivi:'presupuestos',sub_biz_progetti:'proyectos',sub_biz_spese:'notas',sub_biz_scadenzario:'Todos los vencimientos',sub_biz_iva:'Cálculo IVA',logout:'¿Salir?',signout:'Salir',personal:'Personal',business:'Empresa',language:'Idioma',welcome:'¡Bienvenido a Kazka!'},
-  fr:{nav_dashboard:'Dashboard',nav_transazioni:'Transactions',nav_report:'Rapport',nav_ricorrenti:'Récurrents',nav_bollette:'Factures',nav_viaggi:'Voyages',nav_obiettivi:'Objectifs',nav_gruppi:'Groupes',nav_notifiche:'Notifications',nav_piani:'Plans',nav_admin:'Admin',nav_profilo:'Profil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Clients',nav_biz_preventivi:'Devis',nav_biz_progetti:'Projets',nav_biz_spese:'Dépenses',nav_biz_scadenzario:'Échéances',nav_biz_iva:'TVA',title_dashboard:'Dashboard',title_transazioni:'Transactions',title_report:'Rapport & Analyses',title_ricorrenti:'Récurrents',title_bollette:'Factures & Services',title_viaggi:'Voyages',title_obiettivi:'Objectifs Épargne',title_gruppi:'Groupes',title_notifiche:'Notifications',title_piani:'Plans',title_admin:'Admin',title_profilo:'Profil',title_biz_dashboard:'Dashboard Entreprise',title_biz_primanota:'Journal',title_biz_clienti:'Clients & Fournisseurs',title_biz_preventivi:'Devis',title_biz_progetti:'Projets',title_biz_spese:'Notes de Frais',title_biz_scadenzario:'Échéances',title_biz_iva:'Suivi TVA',sub_dashboard:'Aperçu financier',sub_transazioni:'transactions',sub_report:'Analyse par catégorie',sub_ricorrenti:'opérations',sub_bollette:'factures',sub_viaggi:'voyages',sub_obiettivi:'actifs',sub_gruppi:'groupes',sub_notifiche:'Échéances et alertes',sub_piani:'Choisir un plan',sub_admin:'Gestion utilisateurs',sub_profilo:'Votre compte',sub_biz_dashboard:'Aperçu entreprise',sub_biz_primanota:'entrées',sub_biz_clienti:'contacts',sub_biz_preventivi:'devis',sub_biz_progetti:'projets',sub_biz_spese:'notes',sub_biz_scadenzario:'Toutes les échéances',sub_biz_iva:'Calcul TVA',logout:'Se déconnecter?',signout:'Déconnexion',personal:'Personnel',business:'Entreprise',language:'Langue',welcome:'Bienvenue sur Kazka!'},
-  de:{nav_dashboard:'Dashboard',nav_transazioni:'Transaktionen',nav_report:'Bericht',nav_ricorrenti:'Wiederkehrend',nav_bollette:'Rechnungen',nav_viaggi:'Reisen',nav_obiettivi:'Ziele',nav_gruppi:'Gruppen',nav_notifiche:'Benachrichtigungen',nav_piani:'Pläne',nav_admin:'Admin',nav_profilo:'Profil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Kunden',nav_biz_preventivi:'Angebote',nav_biz_progetti:'Projekte',nav_biz_spese:'Ausgaben',nav_biz_scadenzario:'Fälligkeiten',nav_biz_iva:'MwSt',title_dashboard:'Dashboard',title_transazioni:'Transaktionen',title_report:'Bericht & Analysen',title_ricorrenti:'Wiederkehrend',title_bollette:'Rechnungen & Verträge',title_viaggi:'Reisen',title_obiettivi:'Sparziele',title_gruppi:'Gruppen',title_notifiche:'Benachrichtigungen',title_piani:'Pläne',title_admin:'Admin',title_profilo:'Profil',title_biz_dashboard:'Unternehmens-Dashboard',title_biz_primanota:'Journal',title_biz_clienti:'Kunden & Lieferanten',title_biz_preventivi:'Angebote',title_biz_progetti:'Projekte',title_biz_spese:'Ausgabennotizen',title_biz_scadenzario:'Fälligkeiten',title_biz_iva:'MwSt-Tracker',sub_dashboard:'Finanzübersicht',sub_transazioni:'Transaktionen',sub_report:'Kategorieanalyse',sub_ricorrenti:'Operationen',sub_bollette:'Rechnungen',sub_viaggi:'Reisen',sub_obiettivi:'aktiv',sub_gruppi:'Gruppen',sub_notifiche:'Fälligkeiten und Benachrichtigungen',sub_piani:'Plan wählen',sub_admin:'Benutzerverwaltung',sub_profilo:'Ihr Konto',sub_biz_dashboard:'Unternehmensübersicht',sub_biz_primanota:'Einträge',sub_biz_clienti:'Kontakte',sub_biz_preventivi:'Angebote',sub_biz_progetti:'Projekte',sub_biz_spese:'Notizen',sub_biz_scadenzario:'Alle Fälligkeiten',sub_biz_iva:'MwSt-Berechnung',logout:'Abmelden?',signout:'Abmelden',personal:'Persönlich',business:'Unternehmen',language:'Sprache',welcome:'Willkommen bei Kazka!'}
+  it:{nav_conti:'Conti & Carte',nav_debiti:'Debiti e Crediti',nav_dashboard:'Dashboard',nav_transazioni:'Movimenti',nav_report:'Report',nav_ricorrenti:'Ricorrenti',nav_bollette:'Bollette',nav_viaggi:'Viaggi',nav_obiettivi:'Obiettivi',nav_gruppi:'Gruppi',nav_notifiche:'Notifiche',nav_piani:'Piani',nav_admin:'Admin',nav_profilo:'Profilo',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Prima Nota',nav_biz_clienti:'Clienti',nav_biz_preventivi:'Preventivi',nav_biz_progetti:'Progetti',nav_biz_spese:'Note Spese',nav_biz_scadenzario:'Scadenziario',nav_biz_iva:'IVA',title_dashboard:'Dashboard',title_debiti:'Debiti e Crediti',title_transazioni:'Movimenti',title_report:'Report & Analisi',title_ricorrenti:'Ricorrenti',title_bollette:'Bollette & Utenze',title_viaggi:'Viaggi',title_obiettivi:'Obiettivi di Risparmio',title_gruppi:'Gruppi',title_notifiche:'Notifiche',title_piani:'Piani',title_admin:'Admin',title_profilo:'Profilo',title_biz_dashboard:'Dashboard Aziendale',title_biz_primanota:'Prima Nota',title_biz_clienti:'Clienti & Fornitori',title_biz_preventivi:'Preventivi',title_biz_progetti:'Progetti',title_biz_spese:'Note Spese',title_biz_scadenzario:'Scadenziario',title_biz_iva:'IVA Tracker',sub_dashboard:'Panoramica finanziaria',sub_debiti:'debiti e crediti',sub_transazioni:'movimenti',sub_report:'Analisi per categoria',sub_ricorrenti:'operazioni',sub_bollette:'bollette',sub_viaggi:'viaggi',sub_obiettivi:'attivi',sub_gruppi:'gruppi',sub_notifiche:'Scadenze, messaggi e avvisi',sub_piani:'Scegli il piano',sub_admin:'Gestione utenti',sub_profilo:'Il tuo account',sub_biz_dashboard:'Panoramica aziendale',sub_biz_primanota:'movimenti',sub_biz_clienti:'contatti',sub_biz_preventivi:'preventivi',sub_biz_progetti:'progetti',sub_biz_spese:'note',sub_biz_scadenzario:'Tutte le scadenze',sub_biz_iva:'Calcolo IVA',logout:'Vuoi uscire?',signout:'Esci',personal:'Personale',business:'Azienda',language:'Lingua',welcome:'Benvenuto in Kazka!'},
+  en:{nav_debiti:'Debts & Credits',nav_dashboard:'Dashboard',nav_transazioni:'Transactions',nav_report:'Report',nav_ricorrenti:'Recurring',nav_bollette:'Bills',nav_viaggi:'Trips',nav_obiettivi:'Goals',nav_gruppi:'Groups',nav_notifiche:'Notifications',nav_piani:'Plans',nav_admin:'Admin',nav_profilo:'Profile',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Clients',nav_biz_preventivi:'Quotes',nav_biz_progetti:'Projects',nav_biz_spese:'Expenses',nav_biz_scadenzario:'Schedule',nav_biz_iva:'VAT',title_dashboard:'Dashboard',title_debiti:'Debts & Credits',title_transazioni:'Transactions',title_report:'Report & Analytics',title_ricorrenti:'Recurring',title_bollette:'Bills & Utilities',title_viaggi:'Trips',title_obiettivi:'Savings Goals',title_gruppi:'Groups',title_notifiche:'Notifications',title_piani:'Plans',title_admin:'Admin',title_profilo:'Profile',title_biz_dashboard:'Business Dashboard',title_biz_primanota:'Journal',title_biz_clienti:'Clients & Suppliers',title_biz_preventivi:'Quotes',title_biz_progetti:'Projects',title_biz_spese:'Expense Notes',title_biz_scadenzario:'Schedule',title_biz_iva:'VAT Tracker',sub_dashboard:'Financial overview',sub_debiti:'debts & credits',sub_transazioni:'transactions',sub_report:'Category analysis',sub_ricorrenti:'operations',sub_bollette:'bills',sub_viaggi:'trips',sub_obiettivi:'active',sub_gruppi:'groups',sub_notifiche:'Deadlines, messages & alerts',sub_piani:'Choose your plan',sub_admin:'User management',sub_profilo:'Your account',sub_biz_dashboard:'Business overview',sub_biz_primanota:'entries',sub_biz_clienti:'contacts',sub_biz_preventivi:'quotes',sub_biz_progetti:'projects',sub_biz_spese:'notes',sub_biz_scadenzario:'All deadlines',sub_biz_iva:'VAT calculation',logout:'Sign out?',signout:'Sign Out',personal:'Personal',business:'Business',language:'Language',welcome:'Welcome to Kazka!'},
+  es:{nav_debiti:'Deudas y Créditos',nav_dashboard:'Dashboard',nav_transazioni:'Movimientos',nav_report:'Informe',nav_ricorrenti:'Recurrentes',nav_bollette:'Facturas',nav_viaggi:'Viajes',nav_obiettivi:'Objetivos',nav_gruppi:'Grupos',nav_notifiche:'Notificaciones',nav_piani:'Planes',nav_admin:'Admin',nav_profilo:'Perfil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Diario',nav_biz_clienti:'Clientes',nav_biz_preventivi:'Presupuestos',nav_biz_progetti:'Proyectos',nav_biz_spese:'Gastos',nav_biz_scadenzario:'Vencimientos',nav_biz_iva:'IVA',title_dashboard:'Dashboard',title_debiti:'Deudas y Créditos',title_transazioni:'Movimientos',title_report:'Informe y Análisis',title_ricorrenti:'Recurrentes',title_bollette:'Facturas y Servicios',title_viaggi:'Viajes',title_obiettivi:'Objetivos de Ahorro',title_gruppi:'Grupos',title_notifiche:'Notificaciones',title_piani:'Planes',title_admin:'Admin',title_profilo:'Perfil',title_biz_dashboard:'Dashboard Empresarial',title_biz_primanota:'Diario',title_biz_clienti:'Clientes y Proveedores',title_biz_preventivi:'Presupuestos',title_biz_progetti:'Proyectos',title_biz_spese:'Notas de Gastos',title_biz_scadenzario:'Vencimientos',title_biz_iva:'IVA Tracker',sub_dashboard:'Resumen financiero',sub_debiti:'deudas y créditos',sub_transazioni:'movimientos',sub_report:'Análisis por categoría',sub_ricorrenti:'operaciones',sub_bollette:'facturas',sub_viaggi:'viajes',sub_obiettivi:'activos',sub_gruppi:'grupos',sub_notifiche:'Vencimientos y alertas',sub_piani:'Elige tu plan',sub_admin:'Gestión usuarios',sub_profilo:'Tu cuenta',sub_biz_dashboard:'Resumen empresarial',sub_biz_primanota:'entradas',sub_biz_clienti:'contactos',sub_biz_preventivi:'presupuestos',sub_biz_progetti:'proyectos',sub_biz_spese:'notas',sub_biz_scadenzario:'Todos los vencimientos',sub_biz_iva:'Cálculo IVA',logout:'¿Salir?',signout:'Salir',personal:'Personal',business:'Empresa',language:'Idioma',welcome:'¡Bienvenido a Kazka!'},
+  fr:{nav_debiti:'Dettes et Crédits',nav_dashboard:'Dashboard',nav_transazioni:'Transactions',nav_report:'Rapport',nav_ricorrenti:'Récurrents',nav_bollette:'Factures',nav_viaggi:'Voyages',nav_obiettivi:'Objectifs',nav_gruppi:'Groupes',nav_notifiche:'Notifications',nav_piani:'Plans',nav_admin:'Admin',nav_profilo:'Profil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Clients',nav_biz_preventivi:'Devis',nav_biz_progetti:'Projets',nav_biz_spese:'Dépenses',nav_biz_scadenzario:'Échéances',nav_biz_iva:'TVA',title_dashboard:'Dashboard',title_debiti:'Dettes et Crédits',title_transazioni:'Transactions',title_report:'Rapport & Analyses',title_ricorrenti:'Récurrents',title_bollette:'Factures & Services',title_viaggi:'Voyages',title_obiettivi:'Objectifs Épargne',title_gruppi:'Groupes',title_notifiche:'Notifications',title_piani:'Plans',title_admin:'Admin',title_profilo:'Profil',title_biz_dashboard:'Dashboard Entreprise',title_biz_primanota:'Journal',title_biz_clienti:'Clients & Fournisseurs',title_biz_preventivi:'Devis',title_biz_progetti:'Projets',title_biz_spese:'Notes de Frais',title_biz_scadenzario:'Échéances',title_biz_iva:'Suivi TVA',sub_dashboard:'Aperçu financier',sub_debiti:'dettes et crédits',sub_transazioni:'transactions',sub_report:'Analyse par catégorie',sub_ricorrenti:'opérations',sub_bollette:'factures',sub_viaggi:'voyages',sub_obiettivi:'actifs',sub_gruppi:'groupes',sub_notifiche:'Échéances et alertes',sub_piani:'Choisir un plan',sub_admin:'Gestion utilisateurs',sub_profilo:'Votre compte',sub_biz_dashboard:'Aperçu entreprise',sub_biz_primanota:'entrées',sub_biz_clienti:'contacts',sub_biz_preventivi:'devis',sub_biz_progetti:'projets',sub_biz_spese:'notes',sub_biz_scadenzario:'Toutes les échéances',sub_biz_iva:'Calcul TVA',logout:'Se déconnecter?',signout:'Déconnexion',personal:'Personnel',business:'Entreprise',language:'Langue',welcome:'Bienvenue sur Kazka!'},
+  de:{nav_debiti:'Schulden und Guthaben',nav_dashboard:'Dashboard',nav_transazioni:'Transaktionen',nav_report:'Bericht',nav_ricorrenti:'Wiederkehrend',nav_bollette:'Rechnungen',nav_viaggi:'Reisen',nav_obiettivi:'Ziele',nav_gruppi:'Gruppen',nav_notifiche:'Benachrichtigungen',nav_piani:'Pläne',nav_admin:'Admin',nav_profilo:'Profil',nav_biz_dashboard:'Dashboard',nav_biz_primanota:'Journal',nav_biz_clienti:'Kunden',nav_biz_preventivi:'Angebote',nav_biz_progetti:'Projekte',nav_biz_spese:'Ausgaben',nav_biz_scadenzario:'Fälligkeiten',nav_biz_iva:'MwSt',title_dashboard:'Dashboard',title_debiti:'Schulden und Guthaben',title_transazioni:'Transaktionen',title_report:'Bericht & Analysen',title_ricorrenti:'Wiederkehrend',title_bollette:'Rechnungen & Verträge',title_viaggi:'Reisen',title_obiettivi:'Sparziele',title_gruppi:'Gruppen',title_notifiche:'Benachrichtigungen',title_piani:'Pläne',title_admin:'Admin',title_profilo:'Profil',title_biz_dashboard:'Unternehmens-Dashboard',title_biz_primanota:'Journal',title_biz_clienti:'Kunden & Lieferanten',title_biz_preventivi:'Angebote',title_biz_progetti:'Projekte',title_biz_spese:'Ausgabennotizen',title_biz_scadenzario:'Fälligkeiten',title_biz_iva:'MwSt-Tracker',sub_dashboard:'Finanzübersicht',sub_debiti:'schulden und guthaben',sub_transazioni:'Transaktionen',sub_report:'Kategorieanalyse',sub_ricorrenti:'Operationen',sub_bollette:'Rechnungen',sub_viaggi:'Reisen',sub_obiettivi:'aktiv',sub_gruppi:'Gruppen',sub_notifiche:'Fälligkeiten und Benachrichtigungen',sub_piani:'Plan wählen',sub_admin:'Benutzerverwaltung',sub_profilo:'Ihr Konto',sub_biz_dashboard:'Unternehmensübersicht',sub_biz_primanota:'Einträge',sub_biz_clienti:'Kontakte',sub_biz_preventivi:'Angebote',sub_biz_progetti:'Projekte',sub_biz_spese:'Notizen',sub_biz_scadenzario:'Alle Fälligkeiten',sub_biz_iva:'MwSt-Berechnung',logout:'Abmelden?',signout:'Abmelden',personal:'Persönlich',business:'Unternehmen',language:'Sprache',welcome:'Willkommen bei Kazka!'}
 };
 var _kzLang=localStorage.getItem('kz_lang')||(navigator.language||'it').slice(0,2);
 if(!LANGS[_kzLang])_kzLang='it';
@@ -1722,8 +1779,7 @@ function setLang(l){
   var db=document.getElementById('drawerModeBiz');
   if(dp)dp.textContent='\uD83D\uDC64 '+t('personal');
   if(db)db.textContent='\uD83C\uDFE2 '+t('business');
-  var outBtns=document.querySelectorAll('.drawer-out,.out-btn span');
-  outBtns.forEach(function(b){if(b.tagName==='SPAN')b.textContent=t('signout');else b.innerHTML='<i class="fa fa-right-from-bracket"></i> '+t('signout');});
+  document.querySelectorAll('.drawer-out span,.out-btn span').forEach(function(s){s.textContent=t('signout');});
 }
 function _updateLangBtns(){
   document.querySelectorAll('.lang-btn').forEach(function(b){
@@ -1897,8 +1953,8 @@ function buildNav(){
   const drawerNav=document.getElementById('drawerNav');
   sideNav.innerHTML=''; drawerNav.innerHTML='';
   const visible=NAV.filter(item=>{
-    if(item.id==='admin')return realUser?.role==='admin';
-    return item.plans.includes(user.plan)||user.role==='admin';
+    if(item.id==='admin')return realUser?.role==='admin'||user?.role==='admin'||user?.admin===true;
+    return item.plans.includes(user.plan)||user.role==='admin'||user?.admin===true;
   });
   visible.forEach(item=>{
     // sidebar (desktop)
@@ -1987,7 +2043,7 @@ function startRealtimeSync(){
       updateSyncIndicator('synced',new Date().toISOString());
       // Re-render current page
       const cur=document.querySelector('.ni.active,[data-p].active');
-      if(render)try{render();}catch(e){}
+      if(render)try{render();}catch(e){console.warn('[render]',e.message);}
     });
     _rtListeners.push(ref);
   }
@@ -2163,7 +2219,7 @@ function loadNotifs(){
 }
 function saveNotifs(){
   try{localStorage.setItem(NOTIFS_KEY(),JSON.stringify(appNotifs.slice(0,100)));}
-  catch(e){}
+  catch(e){console.warn('[saveNotifs]',e.message);}
 }
 function pushNotif(n){
   loadNotifs();
@@ -2299,13 +2355,13 @@ function renderNotifiche(con){
     ${appNotifs.length===0?es('🔔','Nessuna notifica.<br>Scadenze, messaggi e ricorrenti appariranno qui automaticamente.'):
     appNotifs.map(n=>`
     <div class="ncard ${n.read?'':'unread'} type-${n.type}" id="ncard_${n.id}" style="transition:opacity .25s,transform .25s">
-      <div class="ncard-ico" style="background:${typeColors[n.type]||'var(--s2)'}" onclick="readNotif('${n.id}','${n.action||''}','${n.groupId||''}')">${n.icon||'🔔'}</div>
-      <div class="ncard-body" onclick="readNotif('${n.id}','${n.action||''}','${n.groupId||''}')">
-        <div class="ncard-title">${n.title}</div>
-        <div class="ncard-sub">${n.sub}</div>
+      <div class="ncard-ico" style="background:${typeColors[n.type]||'var(--s2)'}" onclick="readNotif('${escAttr(n.id)}','${escAttr(n.action)}','${escAttr(n.groupId)}')">${n.icon||'🔔'}</div>
+      <div class="ncard-body" onclick="readNotif('${escAttr(n.id)}','${escAttr(n.action)}','${escAttr(n.groupId)}')">
+        <div class="ncard-title">${esc(n.title)}</div>
+        <div class="ncard-sub">${esc(n.sub)}</div>
         <div class="ncard-time">${!n.read?'<span class="ncard-dot"></span>':''} ${fmtNotifTime(n.time)}</div>
       </div>
-      <button class="ncard-x" onclick="dismissNotif('${n.id}',event)" title="Chiudi">✕</button>
+      <button class="ncard-x" onclick="dismissNotif('${escAttr(n.id)}',event)" title="Chiudi">✕</button>
     </div>`).join('')}
   </div>`;
 }
@@ -2340,8 +2396,8 @@ function formatDateIt(dateStr){
 function renderPage(p){
   const con=document.getElementById('content');
   const _tk=id=>t('title_'+id)||t('nav_'+id)||id;
-  const TITLES={conti:'Conti & Carte',dashboard:_tk('dashboard'),transazioni:_tk('transazioni'),report:_tk('report'),ricorrenti:_tk('ricorrenti'),bollette:_tk('bollette'),viaggi:_tk('viaggi'),obiettivi:_tk('obiettivi'),gruppi:_tk('gruppi'),notifiche:_tk('notifiche'),piani:_tk('piani'),admin:_tk('admin'),profilo:_tk('profilo'),biz_dashboard:_tk('biz_dashboard'),biz_primanota:_tk('biz_primanota'),biz_clienti:_tk('biz_clienti'),biz_preventivi:_tk('biz_preventivi'),biz_progetti:_tk('biz_progetti'),biz_spese:_tk('biz_spese'),biz_scadenzario:_tk('biz_scadenzario'),biz_iva:_tk('biz_iva')};
-  const SUBS={conti:`${accounts.length} conti`,dashboard:t('sub_dashboard'),transazioni:`${ctx(transactions).length} ${t('sub_transazioni')}`,report:t('sub_report'),ricorrenti:`${ctx(recurring).length} ${t('sub_ricorrenti')}`,bollette:`${ctx(bills).length} ${t('sub_bollette')} · ${utilities.length}`,viaggi:`${trips.length} ${t('sub_viaggi')}`,obiettivi:`${loadGoals().filter(g=>(!g.mode||g.mode===appMode)&&g.status!=='completed').length} ${t('sub_obiettivi')}`,gruppi:`${groups.length} ${t('sub_gruppi')}`,notifiche:t('sub_notifiche'),piani:t('sub_piani'),admin:t('sub_admin'),profilo:t('sub_profilo'),biz_dashboard:t('sub_biz_dashboard'),biz_primanota:`${bizTx.length} ${t('sub_biz_primanota')}`,biz_clienti:`${clients.length} ${t('sub_biz_clienti')}`,biz_preventivi:`${quotes.length} ${t('sub_biz_preventivi')}`,biz_progetti:`${projects.length} ${t('sub_biz_progetti')}`,biz_spese:`${expenseNotes.length} ${t('sub_biz_spese')}`,biz_scadenzario:t('sub_biz_scadenzario'),biz_iva:t('sub_biz_iva')};
+  const TITLES={conti:'Conti & Carte',dashboard:_tk('dashboard'),debiti:_tk('debiti'),transazioni:_tk('transazioni'),report:_tk('report'),ricorrenti:_tk('ricorrenti'),bollette:_tk('bollette'),viaggi:_tk('viaggi'),obiettivi:_tk('obiettivi'),gruppi:_tk('gruppi'),notifiche:_tk('notifiche'),piani:_tk('piani'),admin:_tk('admin'),profilo:_tk('profilo'),biz_dashboard:_tk('biz_dashboard'),biz_primanota:_tk('biz_primanota'),biz_clienti:_tk('biz_clienti'),biz_preventivi:_tk('biz_preventivi'),biz_progetti:_tk('biz_progetti'),biz_spese:_tk('biz_spese'),biz_scadenzario:_tk('biz_scadenzario'),biz_iva:_tk('biz_iva')};
+  const SUBS={conti:`${accounts.length} conti`,dashboard:t('sub_dashboard'),debiti:`${loadDebts().length} ${t('sub_debiti')}`,transazioni:`${ctx(transactions).length} ${t('sub_transazioni')}`,report:t('sub_report'),ricorrenti:`${ctx(recurring).length} ${t('sub_ricorrenti')}`,bollette:`${ctx(bills).length} ${t('sub_bollette')} · ${utilities.length}`,viaggi:`${trips.length} ${t('sub_viaggi')}`,obiettivi:`${loadGoals().filter(g=>(!g.mode||g.mode===appMode)&&g.status!=='completed').length} ${t('sub_obiettivi')}`,gruppi:`${groups.length} ${t('sub_gruppi')}`,notifiche:t('sub_notifiche'),piani:t('sub_piani'),admin:t('sub_admin'),profilo:t('sub_profilo'),biz_dashboard:t('sub_biz_dashboard'),biz_primanota:`${bizTx.length} ${t('sub_biz_primanota')}`,biz_clienti:`${clients.length} ${t('sub_biz_clienti')}`,biz_preventivi:`${quotes.length} ${t('sub_biz_preventivi')}`,biz_progetti:`${projects.length} ${t('sub_biz_progetti')}`,biz_spese:`${expenseNotes.length} ${t('sub_biz_spese')}`,biz_scadenzario:t('sub_biz_scadenzario'),biz_iva:t('sub_biz_iva')};
   document.getElementById('pgTitle').textContent=TITLES[p]||p;
   document.getElementById('pgSub').textContent=SUBS[p]||'';
   // Desktop title
@@ -2456,12 +2512,21 @@ function renderPage(p){
       }).join('')}
     </div>`:''}
 
+    <!-- DEBITI & CREDITI -->
+    ${loadDebts().filter(d=>!d.paid).length>0?`<div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">💳</div>Debiti e Crediti in sospeso</div><button class="btn-a btn-a-ac" onclick="goTo('debiti')">Gestisci</button></div>
+      ${loadDebts().filter(d=>!d.paid).slice(0,3).map(d=>`<div class="ir">
+        <div class="ia">${d.type==='credit'?'💰':'💸'}</div>
+        <div class="ii"><div class="in">${d.name}</div><div class="id2">${d.dueDate?'Scad. '+d.dueDate:''} · ${d.type==='credit'?'Da ricevere':'Da pagare'}</div></div>
+        <div class="iam ${d.type==='credit'?'ain':'aout'}">${d.type==='credit'?'+':'-'}${fmtE(d.amount)}</div>
+      </div>`).join('')}
+    </div>`:''}
     <!-- OBIETTIVI -->
     ${goals.filter(g=>g.status!=='completed').length>0?`
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">🎯</div>Obiettivi di Risparmio</div><button class="btn-a btn-a-ac" onclick="goTo('obiettivi')">Vedi tutti</button></div>
       ${goals.filter(g=>g.status!=='completed').slice(0,3).map(g=>{
-        const pct=Math.min(100,Math.round((g.saved/g.target)*100));
+        const pct=Math.min(100,Math.round((g.saved/(g.target||1))*100));
         return `<div style="margin-bottom:12px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
             <div style="font-size:13px;font-weight:700">${g.icon} ${g.name}</div>
@@ -2473,7 +2538,7 @@ function renderPage(p){
           <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px"><span>${pct}% completato</span>${g.monthlyTarget?`<span style="color:var(--ac)">rata: ${fmtE(g.monthlyTarget)}/mese</span>`:''}</div>
         </div>`;
       }).join('')}
-    </div>`:''}
+    </div>`:''}`
   
   } else if(p==='transazioni'){
     let txPage=parseInt(sessionStorage.getItem('txPage')||'0');
@@ -2523,23 +2588,28 @@ function renderPage(p){
       <div class="ch">
         <div class="ct"><div class="ct-ico">💸</div>Movimenti <span style="color:var(--tx3);font-weight:400;font-size:11px">(${filtered.length})</span></div>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="export-btn" onclick="scanReceipt()" title="Scannerizza scontrino"><i class="fa fa-camera"></i> OCR</button>
           <label class="export-btn" style="cursor:pointer" title="Importa CSV"><i class="fa fa-upload"></i> CSV<input type="file" accept=".csv" style="display:none" onchange="importCSV(this)"></label>
           <button class="export-btn" onclick="exportCSV()"><i class="fa fa-download"></i> CSV</button>
           <button class="btn-a btn-a-gr" onclick="fillCatSelects();document.getElementById('txModalTitle').textContent='💸 Nuova Transazione';document.getElementById('txAccId').value='';openMo('txModal')">＋ Aggiungi</button>
         </div>
       </div>
       ${filtered.length===0?es('💸','Nessun movimento trovato.'):
-      paged.map(t=>`
+      paged.map(t=>{
+        const hasAttach=localStorage.getItem('fp_attach_'+user.id+'_'+t.id)!==null;
+        return `
       <div class="ir">
         <div class="ia">${catIcon(t.cat)}</div>
         <div class="ii">
-          <div class="in">${t.desc}</div>
+          <div class="in">${t.desc} ${hasAttach?'<span style="font-size:10px;color:var(--tx3)">📎</span>':''}</div>
           <div class="id2">${fmtDate(t.createdAt)} <span class="badge ${t.type==='income'?'bg':'br'}">${t.type==='income'?'Entrata':'Uscita'}</span> <span class="badge bc">${catName(t.cat)}</span></div>
         </div>
         <div class="iam ${t.type==='income'?'ain':'aout'}">${t.type==='income'?'+':'-'}${fmtE(t.amount)}</div>
+        ${hasAttach?'<button class="btn-sm bs-g" onclick="openAttachment(\''+t.id+'\')" style="margin-right:2px" title="Apri allegato">📎</button>':''}
         <button class="btn-sm bs-g" onclick="openEditTx('${t.id}')" style="margin-right:2px">✏️</button>
         <button class="btn-sm bs-d" onclick="delTx('${t.id}','${t.desc.replace(/'/g,'\\\'').slice(0,20)}')">🗑️</button>
-      </div>`).join('')}
+      </div>`;
+      }).join('')}
       ${totalPages>1?`<div class="pg-wrap">
         <div class="pg-info">${txPage*PAGE_SIZE+1}–${Math.min((txPage+1)*PAGE_SIZE,filtered.length)} di ${filtered.length}</div>
         <div class="pg-btns">
@@ -2739,11 +2809,51 @@ function renderPage(p){
         <div style="display:flex;gap:8px"><button class="bms" onclick="doChangePass()">Salva</button><button class="bmc" onclick="document.getElementById('changePassBox').style.display='none'">Annulla</button></div>
       </div>
     </div>
+    <!-- TAG -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">🔖</div>Tag & Categorie</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-a" onclick="renderTagManager(document.getElementById('content'))">🔖 Gestisci Tag</button>
+        <button class="btn-a" onclick="goTo('profilo');setTimeout(()=>openMo('customCatModal'),300)">📂 Categorie personalizzate</button>
+      </div>
+    </div>
+    <!-- VALUTA -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">🌍</div>Valuta</div></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select id="currencySelect" class="fc" style="flex:1" onchange="setUserCurrency(this.value);notify('✅ Valuta cambiata in '+this.options[this.selectedIndex].text);goTo('profilo')">
+          ${Object.entries(CURRENCIES).map(([k,v])=>`<option value="${k}" ${getUserCurrency()===k?'selected':''}>${v.symbol} ${v.name}</option>`).join('')}
+        </select>
+        <span style="font-size:11px;color:var(--tx3)">Tassi di cambio fissi (${new Date().getFullYear()})</span>
+      </div>
+    </div>
+    <!-- BACKUP -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">💾</div>Backup & Ripristino</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-a btn-a-ac" onclick="backupAllData()"><i class="fa fa-download"></i> Scarica Backup JSON</button>
+        <label class="btn-a" style="background:linear-gradient(135deg,var(--ye),var(--or));cursor:pointer"><i class="fa fa-upload"></i> Ripristina Backup<input type="file" accept=".json" style="display:none" onchange="restoreBackup(this)"></label>
+      </div>
+    </div>
+    <!-- SOGLIE -->
+    <div class="card">
+      <div class="ch"><div class="ct"><div class="ct-ico">💰</div>Soglie Conto</div></div>
+      <div id="thresholdList" style="font-size:12px;color:var(--tx2);margin-bottom:8px">
+        ${loadThresholds().map(t=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--b1)"><span>${t.label}</span><span style="color:${t.dir==='below'?'var(--re)':'var(--gr)'}">${t.dir==='below'?'<':'>'} €${t.amount.toFixed(2)}</span></div>`).join('')}
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input id="thrLabel" class="fc" placeholder="Etichetta" style="flex:1;min-width:80px">
+        <input id="thrAmt" type="number" class="fc" placeholder="Importo" style="width:100px" step="0.01">
+        <select id="thrDir" class="fc" style="width:90px"><option value="below">Sotto</option><option value="above">Sopra</option></select>
+        <button class="btn-a btn-a-ac" onclick="addThreshold(document.getElementById('thrLabel').value||'Soglia',document.getElementById('thrAmt').value,document.getElementById('thrDir').value);goTo('profilo')">+</button>
+      </div>
+    </div>
     <!-- AZIONI -->
     <div class="card">
       <div class="ch"><div class="ct"><div class="ct-ico">⚙️</div>Azioni</div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-a" onclick="navigator.clipboard.writeText('${user.id}').then(()=>notify('✅ ID copiato!'))"><i class="fa fa-copy"></i> Copia ID</button>
+        <button class="btn-a" onclick="auditLog('view_audit','');document.getElementById('content').innerHTML='<div class=\"card\"><div class=\"ch\"><div class=\"ct\"><div class=\"ct-ico\">📝</div>Audit Log</div><button class=\"btn-a\" onclick=\"clearAuditLogs();goTo(\\'profilo\\')\">🗑️ Pulisci</button></div>'+getAuditLogs().slice().reverse().slice(0,100).map(l=>'<div style=\"padding:6px 0;border-bottom:1px solid var(--b1);font-size:11px\"><span style=\"color:var(--tx2)\">'+new Date(l.ts).toLocaleString('it-IT')+'</span> — <strong>'+l.action+'</strong> '+(l.details||'')+'</div>').join('')+'</div>'">📝 Audit Log</button>
         <button class="btn-a" id="profileInstallBtn" onclick="pwaInstallFromProfile()" style="background:linear-gradient(135deg,#00b894,#00cec9)">📲 Installa App</button>
         <button class="btn-a" onclick="resetOnboarding()" style="background:linear-gradient(135deg,var(--ac3),var(--ac))">🎓 Rivisita Tutorial</button>
       </div>
@@ -2759,7 +2869,75 @@ function renderPage(p){
   } else if(p==='biz_spese'){renderBizSpese(con);
   } else if(p==='biz_scadenzario'){renderBizScadenzario(con);
   } else if(p==='biz_iva'){renderBizIva(con);
+  } else if(p==='debiti'){
+    const debts=loadDebts();
+    const totalCredits=debts.filter(d=>d.type==='credit').reduce((s,d)=>s+(d.paid?0:d.amount),0);
+    const totalDebts=debts.filter(d=>d.type==='debt').reduce((s,d)=>s+(d.paid?0:d.amount),0);
+    con.innerHTML=`
+    <div class="pg" style="padding-bottom:60px">
+      <div class="ph"><div class="pt">💳 Debiti e Crediti</div><button class="btn-a btn-a-ac" onclick="debrisAdd()">+ Nuovo</button></div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div class="card" style="text-align:center;background:linear-gradient(135deg,var(--re),#e74c3c);color:#fff"><div style="font-size:28px;font-weight:900">${fmtE(totalDebts)}</div><div style="font-size:11px;opacity:.8">Da pagare</div></div>
+        <div class="card" style="text-align:center;background:linear-gradient(135deg,var(--gr),#2ecc71);color:#fff"><div style="font-size:28px;font-weight:900">${fmtE(totalCredits)}</div><div style="font-size:11px;opacity:.8">Da ricevere</div></div>
+      </div>
+      <div id="debtsList">
+        ${debts.length===0?'<div class="card" style="text-align:center;padding:30px;color:var(--tx3)">Nessun debito/credito registrato</div>'
+        :debts.sort((a,b)=>a.paid-b.paid).map(d=>{
+          const isCredit=d.type==='credit';
+          return '<div class="card" style="'+(d.paid?'opacity:.5':'')+'">'+
+            '<div style="display:flex;align-items:center;gap:10px">'+
+              '<div style="font-size:30px">'+(isCredit?'💰':'💸')+'</div>'+
+              '<div style="flex:1;min-width:0">'+
+                '<div style="font-weight:700;font-size:15px">'+d.name+'</div>'+
+                '<div style="font-size:11px;color:var(--tx2)">'+(d.note||'')+(d.dueDate?' · Scadenza: '+fmtDate(d.dueDate):'')+'</div>'+
+              '</div>'+
+              '<div style="text-align:right">'+
+                '<div style="font-weight:900;font-size:18px;color:'+(isCredit?'var(--gr)':'var(--re)')+'">'+(isCredit?'+':'-')+fmtE(d.amount)+'</div>'+
+                '<div style="font-size:10px;color:var(--tx3)">'+(d.paid?'✅ Pagato':'')+' '+(d.type==='credit'?'Da ricevere':'Da pagare')+'</div>'+
+              '</div>'+
+            '</div>'+
+            '<div style="display:flex;gap:6px;margin-top:8px">'+
+              (!d.paid?'<button class="btn-sm bs-gr" onclick="markDebtPaid(\''+d.id+'\')">✅ Paga</button>':'')+
+              '<button class="btn-sm bs-d" onclick="delDebt(\''+d.id+'\')">🗑️</button>'+
+            '</div>'+
+          '</div>';
+        }).join('')}
+      </div>
+    </div>`;
   }
+}
+
+function debrisAdd(){
+  const name=prompt('Nome (persona/controparte):');
+  if(!name)return;
+  const type=confirm('OK = Credito (devi ricevere), Annulla = Debito (devi pagare)')?'credit':'debt';
+  const amount=parseFloat(prompt('Importo:'));
+  if(isNaN(amount)||amount<=0)return notify('⚠️ Importo non valido',2);
+  const dueDate=prompt('Data scadenza (opz., GG/MM/AAAA):')||'';
+  const note=prompt('Nota (opz.):')||'';
+  const debts=loadDebts();
+  debts.push({id:'d_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name,type,amount,dueDate,note,paid:false,createdAt:new Date().toISOString()});
+  saveDebts(debts);
+  goTo('debiti');
+  notify('✅ '+(type==='credit'?'Credito':'Debito')+' aggiunto!');
+}
+function markDebtPaid(id){
+  const debts=loadDebts();
+  const d=debts.find(x=>x.id===id);
+  if(!d)return;
+  if(!confirm('Confermi che "'+d.name+'" è stato '+(d.type==='credit'?'incassato':'pagato')+'?'))return;
+  d.paid=true;d.paidAt=new Date().toISOString();
+  saveDebts(debts);
+  if(d.type==='debt')addTransaction('Spese',d.amount,'Rimborso debito: '+d.name,'expense',d.cat||'other');
+  auditLog('debt_paid','Debito '+d.name+' '+fmtE(d.amount));
+  goTo('debiti');
+  notify('✅ '+(d.type==='credit'?'Credito incassato':'Debito pagato'));
+}
+function delDebt(id){
+  if(!confirm('Eliminare questo elemento?'))return;
+  const debts=loadDebts().filter(x=>x.id!==id);
+  saveDebts(debts);
+  goTo('debiti');
 }
 
 /* ══════════════════════════════════════════════
@@ -3845,8 +4023,8 @@ function renderReport(con,bal){
     Object.entries(budgets).map(([cid,limit])=>{
       const cat=CATS.find(c=>c.id===cid)||CATS[CATS.length-1];
       const spent=spentByCat[cid]||0;
-      const pct=Math.min(100,Math.round(spent/limit*100));
-      const over=spent>limit;
+      const pct=limit>0?Math.min(100,Math.round(spent/limit*100)):0;
+      const over=spent>(limit||0);
       const col=over?'var(--re)':pct>75?'var(--ye)':'var(--gr)';
       return `<div class="budget-row">
         <div class="budget-lbl">${cat.icon} ${cat.name}</div>
@@ -3901,7 +4079,38 @@ function renderReport(con,bal){
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-top:4px">
       <span>Inizio</span><span style="color:${bal>=0?'var(--gr)':'var(--re)'};font-weight:700">${fmtE(bal)}</span><span>Oggi</span>
     </div>
-  </div>`:''}`;
+  </div>`:''}
+
+  <!-- Chart.js Doughnut -->
+  ${typeof Chart!=='undefined'&&sortedCats.length>0?`<div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">🍩</div>Distribuzione Spese (Grafico)</div></div>
+    <div style="height:240px;display:flex;justify-content:center;padding:10px 0">
+      <canvas id="reportPieChart" style="max-width:240px;max-height:240px"></canvas>
+    </div>
+  </div>
+  <script>
+    setTimeout(()=>{
+      const pieCats=sortedCats.slice(0,8);
+      renderPieChart('reportPieChart',
+        pieCats.map(([cid])=>catName(cid)),
+        pieCats.map(([,v])=>v),
+        pieCats.map(([cid])=>CATS.find(c=>c.id===cid)?.color||'#6c63ff'));
+    },100);
+  <\/script>`:''}
+
+  <!-- Yearly comparison -->
+  <div class="card">
+    <div class="ch"><div class="ct"><div class="ct-ico">📊</div>Confronto Annuale</div></div>
+    ${(()=>{
+      const years=[...new Set(ctx(transactions).map(t=>(t.createdAt||'').slice(0,4)))].sort().reverse().slice(0,3);
+      if(years.length<2)return '<div style="text-align:center;padding:16px;color:var(--tx3);font-size:13px">Servono dati di almeno 2 anni per il confronto</div>';
+      return years.map(y=>{
+        const ye=expenses.filter(t=>(t.createdAt||'').startsWith(y)).reduce((s,t)=>s+t.amount,0);
+        const yi=income.filter(t=>(t.createdAt||'').startsWith(y)).reduce((s,t)=>s+t.amount,0);
+        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b1);font-size:13px"><span style="font-weight:700">${y}</span><span style="color:var(--gr)">+${fmtE(yi)}</span><span style="color:var(--re)">-${fmtE(ye)}</span><span style="font-weight:700;color:${yi-ye>=0?'var(--gr)':'var(--re)'}">${fmtE(yi-ye)}</span></div>`;
+      }).join('');
+    })()}
+  </div>`;
 }
 
 /* ===== RICORRENTI PAGE ===== */
@@ -4109,7 +4318,7 @@ function renderGroupDetail(con){
     <div class="chat-wrap">
       <div class="chat-msgs" id="chatMsgs">
         ${chats.length===0?es('💬','Inizia la conversazione!'):
-        chats.map(m=>`<div class="cmsg ${m.userId===user.id?'mine':''}"><div class="cav">${m.userName?m.userName[0].toUpperCase():'🤖'}</div><div class="cbody">${m.userId!==user.id?`<div class="cname">${m.userName}</div>`:''}${m.text}<div class="ctime">${new Date(m.ts).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('')}
+        chats.map(m=>`<div class="cmsg ${m.userId===user.id?'mine':''}"><div class="cav">${m.userName?esc(m.userName[0]).toUpperCase():'🤖'}</div><div class="cbody">${m.userId!==user.id?`<div class="cname">${esc(m.userName)}</div>`:''}${esc(m.text)}<div class="ctime">${new Date(m.ts).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('')}
       </div>
       <div class="chat-inp-row">
         <input type="text" id="chatInp" class="chat-inp" placeholder="Scrivi..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -4558,7 +4767,19 @@ function saveTx(){
   if(type==='expense'&&amt>bal&&!accId){document.getElementById('txWarn').style.display='block';notify('❌ Saldo insufficiente!');return;}
   const txData={desc,amount:amt,type,cat,mode:appMode,createdAt:new Date().toISOString()};
   if(accId) txData.accountId=accId;
-  db.ref(`users/${user.id}/transactions/${Date.now()}`).set(txData).then(()=>{
+  const _txKey=Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  // Save attachment if any
+  const fileInput=document.getElementById('txAttach');
+  if(fileInput&&fileInput.files&&fileInput.files[0]){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const attachData={name:fileInput.files[0].name,type:fileInput.files[0].type,data:e.target.result};
+      localStorage.setItem('fp_attach_'+user.id+'_'+_txKey,JSON.stringify(attachData));
+      fileInput.value='';
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  }
+  db.ref(`users/${user.id}/transactions/${_txKey}`).set(txData).then(()=>{
     // Update account balance if linked
     if(accId){
       const a=accounts.find(x=>x.id===accId);
@@ -4576,12 +4797,14 @@ function saveTx(){
 function saveBill(){
   const n=document.getElementById('bName').value.trim(),a=parseFloat(document.getElementById('bAmt').value),d=document.getElementById('bDate').value;
   if(!n||!a||!d){notify('❌ Compila tutto');return;}
-  db.ref(`users/${user.id}/bills/${Date.now()}`).set({name:n,amount:a,date:d,status:'pending',mode:appMode,createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');loadData(()=>goTo('bollette'));notify('✅ Aggiunto!');});
+  const _billKey=Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  db.ref(`users/${user.id}/bills/${_billKey}`).set({name:n,amount:a,date:d,status:'pending',mode:appMode,createdAt:new Date().toISOString()}).then(()=>{closeMo('billModal');loadData(()=>goTo('bollette'));notify('✅ Aggiunto!');});
 }
 function saveUtil(){
   const t=document.getElementById('utType').value,p=document.getElementById('utProv').value.trim(),c=document.getElementById('utCon').value.trim();
   if(!p||!c){notify('❌ Compila tutto');return;}
-  db.ref(`users/${user.id}/utilities/${Date.now()}`).set({type:t,provider:p,contract:c,mode:appMode,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('✅ Aggiunto!');});
+  const _utilKey=Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  db.ref(`users/${user.id}/utilities/${_utilKey}`).set({type:t,provider:p,contract:c,mode:appMode,createdAt:new Date().toISOString()}).then(()=>{closeMo('utilModal');loadData(()=>{sessionStorage.setItem('buTab','utenze');goTo('bollette');});notify('✅ Aggiunto!');});
 }
 function openNewTrip(){
   document.getElementById('trEditId').value='';
@@ -4622,7 +4845,8 @@ function saveTrip(){
     createdAt:new Date().toISOString()
   };
   const editId=document.getElementById('trEditId').value;
-  const ref=editId?db.ref(`users/${user.id}/trips/${editId}`):db.ref(`users/${user.id}/trips/${Date.now()}`);
+  const _tripKey=editId||Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  const ref=db.ref(`users/${user.id}/trips/${_tripKey}`);
   ref.set(data).then(()=>{closeMo('tripModal');loadData(()=>goTo('viaggi'));notify(editId?'✅ Viaggio aggiornato!':'✅ Viaggio aggiunto!');});
 }
 function delTrip(id){if(!confirm('Eliminare questo viaggio?'))return;db.ref(`users/${user.id}/trips/${id}`).remove().then(()=>{loadData(()=>goTo('viaggi'));notify('🗑️ Eliminato');});}
@@ -4678,7 +4902,8 @@ function saveRec(){
       closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiornata!');
     });
   } else {
-    db.ref(`users/${user.id}/recurring/${Date.now()}`).set({...data,createdAt:new Date().toISOString()}).then(()=>{
+    const _recKey=Date.now()+'_'+Math.random().toString(36).slice(2,6);
+    db.ref(`users/${user.id}/recurring/${_recKey}`).set({...data,createdAt:new Date().toISOString()}).then(()=>{
       closeMo('recModal');loadData(()=>goTo('ricorrenti'));notify('✅ Ricorrente aggiunta!');
     });
   }
@@ -4693,7 +4918,7 @@ function delRec(id){
 function saveGroup(){
   const n=document.getElementById('gName').value.trim(),d=document.getElementById('gDesc').value.trim(),i=document.getElementById('gIcon').value;
   if(!n){notify('❌ Inserisci un nome');return;}
-  const gid='g_'+Date.now();
+  const gid='g_'+Date.now()+'_'+Math.random().toString(36).slice(2,4);
   db.ref(`groups/${gid}`).set({name:n,desc:d,icon:i,creatorId:user.id,creatorName:user.name,members:{},expenses:{},chat:{},createdAt:new Date().toISOString()}).then(()=>{closeMo('groupModal');loadData(()=>{curGroupId=gid;goTo('gruppi');});notify('✅ Gruppo creato!');});
 }
 function doInvite(){
@@ -4892,6 +5117,7 @@ function checkBudgetAlerts(){
   });
   Object.entries(budgets).forEach(([cid,limit])=>{
     const spent=spentByCat[cid]||0;
+    if(!limit||limit<=0)return;
     const pct=spent/limit;
     if(pct>=1){
       pushNotif({id:'budget_over_'+cid+'_'+thisMonth,type:'bill',icon:'🚨',title:`Budget superato: ${catName(cid)}`,sub:`Hai speso ${fmtE(spent)} su ${fmtE(limit)} di budget mensile`,time:Date.now(),read:false,action:'report'});
@@ -4921,7 +5147,18 @@ function saveEditTx(){
   const type=document.getElementById('etType').value;
   const cat=document.getElementById('etCat').value;
   if(!desc||!amt){notify('❌ Compila tutti i campi');return;}
+  const old=transactions.find(x=>x.id===id);
+  if(!old){notify('❌ Transazione non trovata');return;}
   db.ref(`users/${user.id}/transactions/${id}`).update({desc,amount:amt,type,cat}).then(()=>{
+    if(old.accountId){
+      const oldDelta=old.type==='income'?old.amount:-old.amount;
+      const newDelta=type==='income'?amt:-amt;
+      const adj=newDelta-oldDelta;
+      if(adj!==0){
+        const acc=accounts.find(a=>a.id===old.accountId);
+        if(acc)db.ref(`users/${user.id}/accounts/${old.accountId}/balance`).set(N(acc.balance)+adj);
+      }
+    }
     closeMo('editTxModal');
     loadData(()=>goTo('transazioni'));
     notify('✅ Transazione aggiornata!');
@@ -4952,7 +5189,17 @@ function exportCSV(){
 /* ===== IMPROVED DELETE ===== */
 function delTx(id,name){
   if(!confirm(`Eliminare "${name||'questa transazione'}"?`))return;
-  db.ref(`users/${user.id}/transactions/${id}`).remove().then(()=>{loadData(()=>goTo('transazioni'));notify('🗑️ Eliminata');});
+  const old=transactions.find(x=>x.id===id);
+  localStorage.removeItem('fp_attach_'+user.id+'_'+id);
+  db.ref(`users/${user.id}/transactions/${id}`).remove().then(()=>{
+    if(old&&old.accountId){
+      const delta=old.type==='income'?-old.amount:old.amount;
+      const acc=accounts.find(a=>a.id===old.accountId);
+      if(acc)db.ref(`users/${user.id}/accounts/${old.accountId}/balance`).set(N(acc.balance)+delta);
+    }
+    loadData(()=>goTo('transazioni'));
+    notify('🗑️ Eliminata');
+  });
 }
 
 function openMo(id){document.getElementById(id).classList.add('active');}
@@ -4968,6 +5215,16 @@ function notify(msg){const n=document.getElementById('notif');n.textContent=msg;
 function doLogout(){if(!confirm(t('logout')))return;stopRealtimeSync();user=null;realUser=null;localStorage.removeItem('fp_user');location.reload();}
 function fmtE(v){return'€'+parseFloat(v||0).toFixed(2);}
 function fmtDate(d){try{return new Date(d).toLocaleDateString('it-IT');}catch(e){return d;}}
+function openAttachment(txId){
+  try{
+    const data=JSON.parse(localStorage.getItem('fp_attach_'+user.id+'_'+txId));
+    if(!data)return notify('⚠️ Allegato non trovato',2);
+    const win=window.open();
+    if(data.type.startsWith('image/')){win.document.write('<img src="'+data.data+'" style="max-width:100%;height:auto">');}
+    else{win.document.write('<iframe src="'+data.data+'" style="width:100%;height:100%;border:none"></iframe>');}
+    win.document.title=data.name;
+  }catch(e){notify('⚠️ Errore apertura allegato',2);}
+}
 function catIcon(cid){const c=CATS.find(x=>x.id===cid);return c?c.icon:'📦';}
 function catName(cid){const c=CATS.find(x=>x.id===cid);return c?c.name:'Altro';}
 function es(icon,text){return`<div class="es"><div class="es-i">${icon}</div><div class="es-t">${text}</div></div>`;}
@@ -4987,6 +5244,13 @@ function saveUserRow(uid){
   db.ref(`users/${uid}`).update(updates).then(()=>{
     const i=allUsers.findIndex(u=>u.id===uid);
     if(i!==-1){if(plan)allUsers[i].plan=plan;if(role)allUsers[i].role=role;}
+    // Refresh current user object + nav if editing own record
+    if(uid===user.id){
+      if(role)user.role=role;
+      if(plan)user.plan=plan;
+      localStorage.setItem('fp_user',JSON.stringify(user));
+      buildNav();
+    }
     const btn=document.getElementById('usave_'+uid);
     if(btn)btn.style.display='none';
     notify('✅ Utente aggiornato!');
@@ -5056,8 +5320,8 @@ function renderGoals(con){
   const done=goals.filter(g=>g.status==='completed');
   const priColor={high:'var(--re)',medium:'var(--ye)',low:'var(--gr)'};
   const renderGoalCard=(g)=>{
-    const pct=Math.min(100,Math.round((g.saved/g.target)*100));
-    const rem=Math.max(0,g.target-g.saved);
+    const pct=g.target>0?Math.min(100,Math.round((g.saved/g.target)*100)):0;
+    const rem=Math.max(0,(g.target||0)-(g.saved||0));
     const today=new Date();
     let monthsLeft=null,monthlyNeeded=null;
     if(g.deadline){monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-today)/2592000000));monthlyNeeded=rem/monthsLeft;}
@@ -5139,7 +5403,8 @@ function saveGoal(){
     const idx=goals.findIndex(g=>g.id===editId);
     if(idx>=0)goals[idx]={...goals[idx],name,target,saved,icon,deadline,priority,monthlyTarget};
   } else {
-    goals.push({id:'goal_'+Date.now(),name,target,saved,icon,deadline,priority,monthlyTarget,mode:appMode,status:'active',createdAt:new Date().toISOString()});
+    const _gKey=Date.now()+'_'+Math.random().toString(36).slice(2,6);
+    goals.push({id:'goal_'+_gKey,name,target,saved,icon,deadline,priority,monthlyTarget,mode:appMode,status:'active',createdAt:new Date().toISOString()});
   }
   saveGoals(goals);closeMo('goalModal');goTo('obiettivi');notify('✅ Obiettivo salvato!');
 }
@@ -5280,17 +5545,16 @@ function eomConfirm(goalId, amount){
 }
 
 function eomSkip(goalId){
-  // Ignora questo obiettivo per il mese corrente — già segnato come shown
-  notify('⏭️ Obiettivo saltato per questo mese');
+  const goals=loadGoals();
+  const g=goals.find(x=>x.id===goalId);
+  if(g)notify('⏭️ Obiettivo saltato per questo mese');
 }
-  // Ricalcola le rate mensili: solo se questo mese è stato versato meno della rata prevista
+function recalcGoalRates(){
   const goals=loadGoals();let changed=false;
-  const _nowYM=new Date().toISOString().slice(0,7);
   goals.filter(g=>g.status!=='completed'&&g.deadline).forEach(g=>{
     const idx=goals.findIndex(x=>x.id===g.id);
     const monthsLeft=Math.max(1,Math.ceil((new Date(g.deadline)-new Date())/2592000000));
     const newRate=Math.max(0,g.target-(g.saved||0))/monthsLeft;
-    // Aggiorna sempre la rata in base a quanto effettivamente rimane
     if(Math.abs((goals[idx].monthlyTarget||0)-newRate)>0.01){goals[idx].monthlyTarget=newRate;changed=true;}
   });
   if(changed)saveGoals(goals);
@@ -5375,7 +5639,7 @@ function requestPushPermission(){
   });
 }
 function sendPushIfGranted(title,body){
-  if(Notification.permission==='granted'){try{new Notification(title,{body});}catch(e){}}
+  if(Notification.permission==='granted'){try{new Notification(title,{body});}catch(e){console.warn('[notify]',e.message);}}
 }
 
 /* ===== PROFILO: modifica nome ===== */
@@ -5450,7 +5714,7 @@ function saveScadenza(){
   const editId=document.getElementById('scadEditId').value;
   const data={title,date,cat:document.getElementById('scadCat').value,amount:parseFloat(document.getElementById('scadAmt').value)||0,notes:document.getElementById('scadNotes').value.trim(),reminder:parseInt(document.getElementById('scadReminder').value)||0,status:'pending'};
   if(editId){const idx=all.findIndex(s=>s.id===editId);if(idx>=0)all[idx]={...all[idx],...data};}
-  else all.push({id:'scad_'+Date.now(),...data,createdAt:new Date().toISOString()});
+  else all.push({id:'scad_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),...data,createdAt:new Date().toISOString()});
   saveManualScadenze(all);closeMo('scadenzaModal');goTo('biz_scadenzario');notify('✅ Scadenza salvata!');
 }
 function doneScadenza(id){
@@ -5478,6 +5742,607 @@ function updateSyncIndicator(status){
   if(status==='syncing'){indicator.classList.add('syncing');if(statusIcon)statusIcon.textContent='⏳';indicator.title='Sincronizzando...';}
   else if(status==='synced'){indicator.classList.add('synced');if(statusIcon)statusIcon.textContent='✓';indicator.title='Sincronizzato';}
   else if(status==='error'){indicator.classList.add('error');if(statusIcon)statusIcon.textContent='✕';indicator.title='Errore sync';}
+}
+
+/* ══════════════════════════════════════════════
+   🔖 TAGS MANAGEMENT
+══════════════════════════════════════════════ */
+function getTags(){try{return JSON.parse(localStorage.getItem('fp_tags_'+user.id)||'[]');}catch(e){return [];}}
+function saveTags(t){localStorage.setItem('fp_tags_'+user.id,JSON.stringify(t));}
+function addTag(name,color){
+  const tags=getTags();
+  if(tags.some(t=>t.name===name))return false;
+  tags.push({id:'tag_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name,color:color||'#6c63ff'});
+  saveTags(tags);return true;
+}
+function delTag(id){saveTags(getTags().filter(t=>t.id!==id));}
+function renderTagManager(con){
+  const tags=getTags();
+  con.innerHTML=`<div class="card"><div class="ch"><div class="ct"><div class="ct-ico">🔖</div>Tag personalizzati</div></div>
+    ${tags.map(t=>`<div class="ir"><span class="badge" style="background:${t.color}33;color:${t.color};border:1px solid ${t.color}55">${t.name}</span>
+    <button class="btn-sm bs-d" onclick="delTag('${t.id}');renderTagManager(document.getElementById('content'))">✕</button></div>`).join('')}
+    <div style="display:flex;gap:6px;padding:10px 0"><input id="newTagName" class="fc" placeholder="Nome tag" style="flex:1">
+    <input id="newTagColor" type="color" value="#6c63ff" style="width:40px;height:38px;border-radius:8px;border:1px solid var(--b1);background:var(--s1);cursor:pointer">
+    <button class="btn-a btn-a-gr" onclick="addTag(document.getElementById('newTagName').value.trim(),document.getElementById('newTagColor').value)&&renderTagManager(document.getElementById('content'))">+</button></div></div>`;
+}
+
+/* ══════════════════════════════════════════════
+   📦 BACKUP & RESTORE (JSON completo)
+══════════════════════════════════════════════ */
+async function backupAllData(){
+  const uid=user.id;
+  const paths=['accounts','transactions','bills','utilities','trips','recurring','goals'];
+  const data={};
+  for(const p of paths){
+    const snap=await db.ref(`users/${uid}/${p}`).once('value');
+    data[p]=snap.val()||{};
+  }
+  // Business data
+  const bizSnap=await db.ref(`users/${uid}/biz`).once('value');
+  data.biz=bizSnap.val()||{};
+  // Local data
+  data.goals_fallback=JSON.parse(localStorage.getItem('fp_goals_'+uid)||'[]');
+  data.budgets=JSON.parse(localStorage.getItem('fp_budgets_'+uid)||'{}');
+  data.notifications=JSON.parse(localStorage.getItem('fp_notifs_'+uid)||'[]');
+  data.tags=getTags();
+  data.custom_categories=loadCustomCats();
+  data.backupVersion=2;data.exportedAt=new Date().toISOString();data.userEmail=user.email;
+  // Download
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`kazka_backup_${new Date().toISOString().split('T')[0]}.json`;a.click();
+  notify('✅ Backup scaricato!');
+}
+function restoreBackup(file){
+  if(!confirm('⚠️ Il ripristino SOVRASCRIVERÀ tutti i dati correnti. Continuare?'))return;
+  const reader=new FileReader();
+  reader.onload=async function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.backupVersion){notify('❌ File backup non valido');return;}
+      const uid=user.id;
+      await db.ref(`users/${uid}/accounts`).set(data.accounts||{});
+      await db.ref(`users/${uid}/transactions`).set(data.transactions||{});
+      await db.ref(`users/${uid}/bills`).set(data.bills||{});
+      await db.ref(`users/${uid}/utilities`).set(data.utilities||{});
+      await db.ref(`users/${uid}/trips`).set(data.trips||{});
+      await db.ref(`users/${uid}/recurring`).set(data.recurring||{});
+      await db.ref(`users/${uid}/biz`).set(data.biz||{});
+      if(data.goals)await db.ref(`users/${uid}/goals`).set(data.goals);
+      if(data.budgets)localStorage.setItem('fp_budgets_'+uid,JSON.stringify(data.budgets));
+      if(data.notifications)localStorage.setItem('fp_notifs_'+uid,JSON.stringify(data.notifications));
+      if(data.tags)localStorage.setItem('fp_tags_'+uid,JSON.stringify(data.tags));
+      if(data.custom_categories)localStorage.setItem('fp_custom_cats_'+uid,JSON.stringify(data.custom_categories));
+      loadData(()=>{goTo('dashboard');notify('✅ Backup ripristinato!');});
+    }catch(err){notify('❌ Errore lettura backup');console.error(err);}
+  };
+  reader.readAsText(file);
+}
+
+/* ══════════════════════════════════════════════
+   🔔 NOTIFICHE REALI ENHANCED
+══════════════════════════════════════════════ */
+let _notifCheckInterval=null;
+function startRealNotifMonitor(){
+  stopRealNotifMonitor();
+  _notifCheckInterval=setInterval(()=>{
+    checkRecurring();
+    checkBudgetAlerts();
+    checkThresholdAlerts();
+    checkGroupDebts();
+    checkQuoteAlerts();
+  },60000); // ogni minuto
+}
+function stopRealNotifMonitor(){if(_notifCheckInterval){clearInterval(_notifCheckInterval);_notifCheckInterval=null;}}
+function sendRichPush(title,body,tag,icon){
+  if(Notification.permission!=='granted')return;
+  try{new Notification(title,{body,tag:tag||'kazka',icon:icon||'/icon-192.png',badge:'/icon-192.png',silent:false});}
+  catch(e){console.warn('[push]',e.message);}
+}
+// Enhanced push with scheduled check
+function requestPushPermission(){
+  if(!('Notification' in window)){notify('❌ Browser non supportato');return;}
+  if(Notification.permission==='granted'){notify('✅ Notifiche già attive!');return;}
+  Notification.requestPermission().then(p=>{
+    updatePushStatus();
+    if(p==='granted'){notify('✅ Notifiche push attivate!');sendRichPush('Kazka 💰','Notifiche attivate! Riceverai avvisi per scadenze e ricorrenti.','kazka_welcome');}
+    else notify('❌ Permesso negato');
+  });
+}
+function sendPushIfGranted(title,body){sendRichPush(title,body);}
+
+/* ══════════════════════════════════════════════
+   🏦 MULTI-ACCOUNT BALANCE
+══════════════════════════════════════════════ */
+function getAccountBalance(accId){
+  return ctx(transactions).filter(t=>!t.accId||t.accId===accId).reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+}
+function getAllAccountBalances(){
+  const bal={};
+  ctx(accounts).forEach(a=>{bal[a.id]=getAccountBalance(a.id);});
+  return bal;
+}
+function getTotalBalance(){
+  return ctx(accounts).length>0
+    ? Object.values(getAllAccountBalances()).reduce((s,v)=>s+v,0)
+    : ctx(transactions).reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+}
+
+/* ══════════════════════════════════════════════
+   🎯 OBIETTIVI CON PRIORITÀ E SCADENZE
+══════════════════════════════════════════════ */
+function loadGoals(){
+  const uid=user.id;
+  try{
+    const raw=localStorage.getItem('fp_goals_'+uid);
+    if(raw){const g=JSON.parse(raw);if(Array.isArray(g))return g;}
+  }catch(e){}
+  // fallback from Firebase
+  db.ref(`users/${uid}/goals`).once('value').then(s=>{
+    const v=s.val();
+    if(Array.isArray(v))localStorage.setItem('fp_goals_'+uid,JSON.stringify(v));
+    else if(v&&typeof v==='object')localStorage.setItem('fp_goals_'+uid,JSON.stringify(Object.values(v)));
+  });
+  return [];
+}
+function saveGoals(goals){
+  localStorage.setItem('fp_goals_'+user.id,JSON.stringify(goals));
+  // persist to Firebase if exists
+  db.ref(`users/${user.id}/goals`).set(goals).catch(()=>{});
+}
+
+/* ══════════════════════════════════════════════
+   📂 CATEGORIE PERSONALIZZABILI
+══════════════════════════════════════════════ */
+function loadCustomCats(){
+  try{return JSON.parse(localStorage.getItem('fp_custom_cats_'+user.id)||'[]');}catch(e){return [];}
+}
+function saveCustomCats(cats){localStorage.setItem('fp_custom_cats_'+user.id,JSON.stringify(cats));}
+function getAllCats(){return[...CATS,...loadCustomCats()];}
+function catIcon(id){const c=getAllCats().find(x=>x.id===id);return c?c.icon:'📦';}
+function catName(id){const c=getAllCats().find(x=>x.id===id);return c?c.name:'Altro';}
+
+/* ══════════════════════════════════════════════
+   🔖 TAG MANAGER
+══════════════════════════════════════════════ */
+function renderTagManager(container){
+  const tags=loadTags();
+  container.innerHTML=`
+    <div class="pg" style="padding-bottom:60px">
+      <div class="ph"><div class="pt">🔖 Gestione Tag</div><button class="btn-a" onclick="goTo('profilo')">← Torna al profilo</button></div>
+      <div class="card">
+        <div class="ch"><div class="ct"><div class="ct-ico">🏷️</div>I tuoi tag</div><button class="btn-a btn-a-gr" onclick="addNewTag()">+ Nuovo tag</button></div>
+        <div id="tagList">
+          ${tags.length===0?'<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nessun tag creato. Clicca "+ Nuovo tag" per iniziare.</div>'
+          :tags.map(t=>`
+            <div class="ir">
+              <span style="font-size:14px;background:${t.color||'var(--ac)'};color:#fff;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600">${t.name}</span>
+              <span style="flex:1;font-size:11px;color:var(--tx3)">${(t.txIds||[]).length} transazioni</span>
+              <button class="btn-sm bs-d" onclick="deleteTag('${t.id}');renderTagManager(document.getElementById('content'))">✕</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+function loadTags(){
+  try{return JSON.parse(localStorage.getItem('fp_tags_'+user.id)||'[]');}catch(e){return [];}
+}
+function saveTags(t){localStorage.setItem('fp_tags_'+user.id,JSON.stringify(t));}
+function addNewTag(){
+  const name=prompt('Nome del tag:');
+  if(!name||!name.trim())return;
+  const color=prompt('Colore (es. #ff6b6b):');
+  const tags=loadTags();
+  tags.push({id:'t_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:name.trim(),color:color||'#6c63ff',txIds:[]});
+  saveTags(tags);
+  renderTagManager(document.getElementById('content'));
+  notify('✅ Tag "'+name.trim()+'" creato!');
+}
+function deleteTag(id){
+  if(!confirm('Eliminare questo tag?'))return;
+  saveTags(loadTags().filter(t=>t.id!==id));
+}
+function addTagToTx(txId,tagId){
+  const tags=loadTags();
+  const tag=tags.find(t=>t.id===tagId);
+  if(!tag)return;
+  if(!tag.txIds.includes(txId))tag.txIds.push(txId);
+  saveTags(tags);
+}
+
+/* ══════════════════════════════════════════════
+   🤖 AI AUTOSUGGEST CATEGORY & OCR
+══════════════════════════════════════════════ */
+function aiSuggestCategory(){
+  const desc=document.getElementById('txDesc').value.trim().toLowerCase();
+  if(!desc)return notify('⚠️ Scrivi prima una descrizione',2);
+  const keywords=[
+    {words:['stipendio','salario','busta paga','paga','compenso','reddito','lavoro','mensilita','pensione','liquidazione','bonus','provvigione'],cat:'income'},
+    {words:['supermercato','spesa','carrefour','esselunga','conad','coop','alimentari','pane','latte','cibo','pasta','pizza','ristorante','pizzeria','cena','pranzo','colazione','bar','gelato','dolce'],cat:'food'},
+    {words:['affitto','mutuo','condominio','spese condominiali','amministratore','locazione','canone'],cat:'housing'},
+    {words:['bolletta','luce','enel','energia','gas','italgas','acqua','teleriscaldamento','elettricita','pulizia'],cat:'utilities'},
+    {words:['treno','bus','metro','taxi','uber','benzina','carburante','parcheggio','pedaggio','biglietto','aereo','volo','autobus','noleggio','car sharing','trasporto'],cat:'transport'},
+    {words:['netflix','spotify','prime','disney','abbonamento','canone','tv','intrattenimento','gioco','playstation','xbox'],cat:'entertainment'},
+    {words:['farmacia','farmaco','medicina','medico','visita','ospedale','dentista','oculista','specialista','analisi','terapia','psicologo'],cat:'health'},
+    {words:['palestra','sport','piscina','corso','abbonamento palestra','personal trainer'],cat:'sport'},
+    {words:['vestiti','scarpe','abbigliamento','moda','negozio','h&m','zara','intimo','giacca','pantaloni'],cat:'shopping'},
+    {words:['libro','corso','formazione','universita','scuola','master','corsi','online','udemy','corsera','edx'],cat:'education'},
+    {words:['regalo','presente','natale','compleanno','anniversario','sposi','matrimonio','donazione'],cat:'gifts'},
+    {words:['viaggio','vacanza','hotel','albergo','volo','treno','soggiorno','tour','zaino','ostello'],cat:'travel'},
+    {words:['telefono','cellulare','tim','vodafone','wind','tre','ho mobile','illyad','ricarica','smartphone'],cat:'phone'},
+    {words:['investimento','azioni','borsa','titoli','obbligazioni','fondo','etf','trading','cripto','bitcoin'],cat:'investments'},
+    {words:['banca','commissione','spese bancarie','canone','conto','bonifico','bancomat','prelievo'],cat:'bank_fees'},
+    {words:['assicurazione','rc auto','rc casa','polizza','vita','infortuni'],cat:'insurance'},
+    {words:['ristrutturazione','casa','lavori','mobilio','arredo','elettrodomestico','tv','frigorifero','lavatrice'],cat:'home_improvement'},
+    {words:['rimborso','restituzione','indietro','reso','refund','cashback'],cat:'refunds'}
+  ];
+  for(const entry of keywords){
+    for(const w of entry.words){
+      if(desc.includes(w)){
+        document.getElementById('txCat').value=entry.cat;
+        notify('💡 Categoria suggerita: '+catName(entry.cat));
+        return;
+      }
+    }
+  }
+  notify('💡 Nessuna corrispondenza, categoria invariata');
+}
+function scanReceipt(){
+  if(typeof Tesseract==='undefined')return notify('❌ Tesseract.js non caricato. Riprova.',3);
+  const input=document.createElement('input');
+  input.type='file';input.accept='image/*';
+  input.onchange=async function(e){
+    const file=e.target.files[0];
+    if(!file)return;
+    notify('📸 Riconoscimento in corso...',3);
+    try{
+      const {data:{text}}=await Tesseract.recognize(file,'ita+eng',{logger:m=>{if(m.status==='recognizing text')notify('📖 Lettura... '+(m.progress*100).toFixed(0)+'%',3);}});
+      const lines=text.split('\n').filter(l=>l.trim());
+      const amountMatch=text.match(/(\d+[.,]\d{2})\s*€?/)||text.match(/€\s*(\d+[.,]\d{2})/);
+      const amount=amountMatch?parseFloat(amountMatch[1].replace(',','.')):0;
+      const desc=lines.slice(0,3).join(' ').trim().slice(0,80);
+      if(desc)document.getElementById('txDesc').value=desc;
+      if(amount>0)document.getElementById('txAmt').value=amount;
+      notify('✅ Riconosciuto: '+(desc||'nessun testo')+(amount>0?' — €'+amount.toFixed(2):''));
+      if(amount>0||desc)aiSuggestCategory();
+    }catch(e){
+      notify('❌ OCR fallito: '+e.message,3);
+    }
+  };
+  input.click();
+}
+
+/* ══════════════════════════════════════════════
+   💹 GRAFICI INTERATTIVI (Chart.js)
+══════════════════════════════════════════════ */
+let _chartInstances={};
+function destroyChart(id){if(_chartInstances[id]){_chartInstances[id].destroy();delete _chartInstances[id];}}
+function renderPieChart(canvasId,labels,data,colors){
+  destroyChart(canvasId);
+  const ctx=document.getElementById(canvasId);
+  if(!ctx)return;
+  _chartInstances[canvasId]=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}},
+    cutout:'65%'
+  });
+}
+function renderBarChart(canvasId,labels,incData,expData){
+  destroyChart(canvasId);
+  const ctx=document.getElementById(canvasId);
+  if(!ctx)return;
+  _chartInstances[canvasId]=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'Entrate',data:incData,backgroundColor:'rgba(0,229,160,.7)',borderRadius:6},
+      {label:'Uscite',data:expData,backgroundColor:'rgba(255,79,109,.7)',borderRadius:6}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
+      scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.05)'}}}
+    }
+  });
+}
+function renderLineChart(canvasId,labels,data,color){
+  destroyChart(canvasId);
+  const ctx=document.getElementById(canvasId);
+  if(!ctx)return;
+  _chartInstances[canvasId]=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'Saldo',data,borderColor:color||'#7c6fff',backgroundColor:color||'rgba(124,111,255,.1)',
+      fill:true,tension:.4,pointRadius:3,borderWidth:2
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.05)'}}}
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════
+   📄 ALLEGATI ALLE TRANSAZIONI
+══════════════════════════════════════════════ */
+const _attachments={};
+function attachFile(txId,file){
+  return new Promise((resolve)=>{
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const data={name:file.name,type:file.type,size:file.size,data:e.target.result,attachedAt:new Date().toISOString()};
+      db.ref(`users/${user.id}/attachments/${txId}`).set(data).then(()=>resolve(true)).catch(()=>resolve(false));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function getAttachmentUrl(txId){
+  return new Promise(resolve=>{
+    db.ref(`users/${user.id}/attachments/${txId}`).once('value').then(s=>{
+      const v=s.val();resolve(v?v.data:null);
+    }).catch(()=>resolve(null));
+  });
+}
+
+/* ══════════════════════════════════════════════
+   📅 BUDGET ANNUALE E PERIODI PERSONALIZZATI
+══════════════════════════════════════════════ */
+function loadBudgets(){
+  try{const r=localStorage.getItem('fp_budgets_'+user.id);return r?JSON.parse(r):{};}
+  catch(e){return{};}
+}
+function saveBudgets(b){
+  localStorage.setItem('fp_budgets_'+user.id,JSON.stringify(b));
+  db.ref(`users/${user.id}/budgets`).set(b).catch(()=>{});
+}
+function getYearlyBudget(year){
+  const monthly=loadBudgets();
+  const yearly={};
+  Object.entries(monthly).forEach(([cid,amt])=>{yearly[cid]=(yearly[cid]||0)+amt*12;});
+  return yearly;
+}
+function getBudgetPeriod(type,startDate){
+  const budgets=loadBudgets();const now=new Date();
+  if(type==='monthly')return budgets;
+  if(type==='yearly')return getYearlyBudget(now.getFullYear());
+  if(type==='weekly'){
+    const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());
+    const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+7);
+    const weekTx=ctx(transactions).filter(t=>{const d=new Date(t.createdAt);return d>=weekStart&&d<weekEnd;});
+    const spent={};weekTx.filter(t=>t.type==='expense').forEach(t=>{spent[t.cat||'other']=(spent[t.cat||'other']||0)+t.amount;});
+    return spent;
+  }
+  return budgets;
+}
+
+/* ══════════════════════════════════════════════
+   📊 REPORT ANNUALI COMPARATIVI
+══════════════════════════════════════════════ */
+function getYearlyStats(year){
+  const tx=ctx(transactions).filter(t=>(t.createdAt||'').startsWith(String(year)));
+  const monthly=[];
+  for(let m=0;m<12;m++){
+    const ms=String(m+1).padStart(2,'0');
+    const mt=tx.filter(t=>t.createdAt&&t.createdAt.slice(5,7)===ms);
+    monthly.push({
+      label:new Date(year,m).toLocaleDateString('it-IT',{month:'short'}),
+      inc:mt.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0),
+      exp:mt.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0)
+    });
+  }
+  return {totalInc:tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0),totalExp:tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0),monthly};
+}
+function compareYears(y1,y2){
+  const s1=getYearlyStats(y1),s2=getYearlyStats(y2);
+  return{
+    y1:{year:y1,...s1},y2:{year:y2,...s2},
+    incDiff:s2.totalInc-s1.totalInc,expDiff:s2.totalExp-s1.totalExp,
+    incPct:s1.totalInc>0?Math.round((s2.totalInc-s1.totalInc)/s1.totalInc*100):0,
+    expPct:s1.totalExp>0?Math.round((s2.totalExp-s1.totalExp)/s1.totalExp*100):0
+  };
+}
+
+/* ══════════════════════════════════════════════
+   💸 GESTIONE DEBITI/CREDITI (standalone)
+══════════════════════════════════════════════ */
+function loadDebts(){
+  try{return JSON.parse(localStorage.getItem('fp_debts_'+user.id)||'[]');}catch(e){return [];}
+}
+function saveDebts(d){localStorage.setItem('fp_debts_'+user.id,JSON.stringify(d));}
+function addDebt(person,amount,desc,dueDate,type){
+  const debts=loadDebts();
+  debts.push({id:'debt_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),person,amount:parseFloat(amount),desc:desc||'',dueDate:dueDate||'',type:type||'debt',status:'pending',createdAt:new Date().toISOString()});
+  saveDebts(debts);
+}
+function settleDebt(id){
+  const debts=loadDebts();const d=debts.find(x=>x.id===id);
+  if(d){d.status='settled';d.settledAt=new Date().toISOString();saveDebts(debts);}
+}
+
+/* ══════════════════════════════════════════════
+   🌍 MULTI-VALUTA CON CAMBIO AUTOMATICO
+══════════════════════════════════════════════ */
+const CURRENCIES={EUR:{symbol:'€',name:'Euro',rate:1},USD:{symbol:'$',name:'Dollaro USA',rate:1.08},GBP:{symbol:'£',name:'Sterlina',rate:0.86},CHF:{symbol:'CHF',name:'Franco Svizzero',rate:0.94},JPY:{symbol:'¥',name:'Yen',rate:162},CAD:{symbol:'CA$',name:'Dollaro Canadese',rate:1.47},AUD:{symbol:'A$',name:'Dollaro Australiano',rate:1.63},BRL:{symbol:'R$',name:'Real Brasiliano',rate:5.38}};
+function getUserCurrency(){return localStorage.getItem('fp_currency_'+user.id)||'EUR';}
+function setUserCurrency(c){localStorage.setItem('fp_currency_'+user.id,c);}
+function convertAmount(amt,from,to){
+  const f=CURRENCIES[from]||CURRENCIES.EUR;
+  const t=CURRENCIES[to]||CURRENCIES.EUR;
+  return amt/f.rate*t.rate;
+}
+// Override fmtE to support currency
+const _origFmtE=window.fmtE;
+function fmtE(amt){
+  const cur=getUserCurrency();
+  const sym=CURRENCIES[cur]?.symbol||'€';
+  const converted=cur==='EUR'?amt:convertAmount(amt,'EUR',cur);
+  return sym+converted.toFixed(2).replace('.',',');
+}
+
+/* ══════════════════════════════════════════════
+   🔐 CRIPTAZIONE END-TO-END
+══════════════════════════════════════════════ */
+async function e2eEncrypt(data,key){
+  const enc=new TextEncoder();
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(data)));
+  return {iv:Array.from(iv).map(b=>String.fromCharCode(b)).join(''),data:Array.from(new Uint8Array(ciphertext)).map(b=>String.fromCharCode(b)).join('')};
+}
+async function e2eDecrypt(packet,key){
+  const iv=new Uint8Array([...packet.iv].map(c=>c.charCodeAt(0)));
+  const data=new Uint8Array([...packet.data].map(c=>c.charCodeAt(0)));
+  const dec=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data);
+  return JSON.parse(new TextDecoder().decode(dec));
+}
+async function getEncryptionKey(){
+  const stored=localStorage.getItem('fp_e2e_key_'+user.id);
+  if(stored){
+    const raw=new Uint8Array(stored.split(',').map(Number));
+    return await crypto.subtle.importKey('raw',raw,{name:'AES-GCM'},false,['encrypt','decrypt']);
+  }
+  const key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);
+  const exported=await crypto.subtle.exportKey('raw',key);
+  localStorage.setItem('fp_e2e_key_'+user.id,Array.from(new Uint8Array(exported)).join(','));
+  return key;
+}
+
+/* ══════════════════════════════════════════════
+   📝 AUDIT LOG LATO UTENTE
+══════════════════════════════════════════════ */
+function auditLog(action,details){
+  const logs=JSON.parse(localStorage.getItem('fp_audit_'+user.id)||'[]');
+  logs.push({action,details:details||'',ts:new Date().toISOString(),ua:navigator.userAgent});
+  if(logs.length>200)logs.splice(0,logs.length-200);
+  localStorage.setItem('fp_audit_'+user.id,JSON.stringify(logs));
+}
+function getAuditLogs(){try{return JSON.parse(localStorage.getItem('fp_audit_'+user.id)||'[]');}catch(e){return [];}}
+function clearAuditLogs(){localStorage.removeItem('fp_audit_'+user.id);}
+
+/* ══════════════════════════════════════════════
+   🚨 NOTIFICHE SOGLIA CONTO
+══════════════════════════════════════════════ */
+function loadThresholds(){
+  try{return JSON.parse(localStorage.getItem('fp_thresholds_'+user.id)||'[]');}catch(e){return [];}
+}
+function saveThresholds(t){localStorage.setItem('fp_thresholds_'+user.id,JSON.stringify(t));}
+function addThreshold(label,amount,dir){
+  const t=loadThresholds();
+  t.push({id:'thr_'+Date.now(),label,amount:parseFloat(amount),dir:dir||'below',lastTriggered:0});
+  saveThresholds(t);
+}
+function checkThresholdAlerts(){
+  const bal=getTotalBalance();
+  loadThresholds().forEach(th=>{
+    const triggered=(th.dir==='below'&&bal<=th.amount)||(th.dir==='above'&&bal>=th.amount);
+    const cooldown=Date.now()-th.lastTriggered;
+    if(triggered&&cooldown>3600000){ // max 1 volta ogni ora
+      th.lastTriggered=Date.now();
+      saveThresholds(loadThresholds()); // persist update
+      sendRichPush('💰 Soglia superata: '+th.label,'Saldo attuale: '+fmtE(bal),'threshold_'+th.id);
+      pushNotif({id:'threshold_'+th.id+'_'+Date.now(),type:'info',icon:'💰',title:'Soglia: '+th.label,sub:'Saldo: '+fmtE(bal)+' — hai superato il limite di €'+th.amount.toFixed(2),time:Date.now(),read:false,action:'conti'});
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════
+   🤖 AUTOCATEGORIZZAZIONE AI
+══════════════════════════════════════════════ */
+const _keywordCats={
+  food:['ristorante','cena','pranzo','pizza','sushi','bar','caffè','pane','supermercato','spesa','alimenti','pasto','colazione'],
+  transport:['benzina','carburante','treno','bus','taxi','metro','parcheggio','pedaggio','biglietto','uber','noleggio'],
+  health:['farmacia','medico','dentista','ospedale','visita','analisi','terapia','psicologo','occhiali'],
+  fun:['cinema','concerto','teatro','serata','gioco','hobby','sport','palestra','netflix','spotify','amazon'],
+  shopping:['abbigliamento','scarpe','amazon','ebay','vestiti','elettronica','regalo','arredamento'],
+  home:['affitto','mutuo','condominio','bolletta','luce','gas','acqua','internet','telefono'],
+  travel:['volo','hotel','albergo','viaggio','vacanza','nostrovia','airbnb','booking'],
+  tech:['apple','google','microsoft','software','app','cloud','abbonamento','sistema'],
+};
+function suggestCategory(desc){
+  const low=desc.toLowerCase();
+  for(const [cat,keywords] of Object.entries(_keywordCats)){
+    if(keywords.some(k=>low.includes(k)))return cat;
+  }
+  return 'other';
+}
+
+/* ══════════════════════════════════════════════
+   📥 IMPORT FORMATI MULTIPLI (QIF, OFX)
+══════════════════════════════════════════════ */
+function parseQIF(text){
+  const tx=[];let entry={};
+  text.split('\n').forEach(line=>{
+    const c=line[0];const v=line.slice(1).trim();
+    if(c==='D')entry.date=v;
+    else if(c==='T')entry.amount=parseFloat(v.replace(/[^0-9.\-]/g,''));
+    else if(c==='M')entry.desc=v;
+    else if(c==='N')entry.cat=v;
+    else if(c==='^'&&entry.amount){
+      tx.push({desc:entry.desc||'Importato QIF',amount:Math.abs(entry.amount),type:entry.amount>=0?'income':'expense',cat:suggestCategory(entry.desc||''),createdAt:entry.date||new Date().toISOString().split('T')[0]});
+      entry={};
+    }
+  });
+  return tx;
+}
+function parseOFX(text){
+  const tx=[];let entry={};let inStmt=false;
+  text.split('\n').forEach(line=>{
+    const t=line.trim();
+    if(t==='<STMTTRN>'){entry={};inStmt=true;}
+    else if(t==='</STMTTRN>'){if(entry.amount){tx.push({desc:entry.desc||entry.memo||'Importato OFX',amount:Math.abs(entry.amount),type:entry.amount>=0?'income':'expense',cat:'other',createdAt:entry.date||new Date().toISOString().split('T')[0]});}inStmt=false;}
+    else if(inStmt){
+      if(t.startsWith('<TRNTYPE>'))entry.type=t.slice(9);
+      else if(t.startsWith('<DTPOSTED>'))entry.date=t.slice(10,18);
+      else if(t.startsWith('<TRNAMT>'))entry.amount=parseFloat(t.slice(8));
+      else if(t.startsWith('<NAME>'))entry.desc=t.slice(6);
+      else if(t.startsWith('<MEMO>'))entry.memo=t.slice(6);
+    }
+  });
+  return tx;
+}
+function importTxFile(file){
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const text=e.target.result;
+    let imported=[];
+    if(file.name.endsWith('.qif'))imported=parseQIF(text);
+    else if(file.name.endsWith('.ofx')||file.name.endsWith('.qfx'))imported=parseOFX(text);
+    else{notify('❌ Formato non supportato. Usa CSV, QIF, OFX');return;}
+    if(!imported.length){notify('❌ Nessuna transazione trovata');return;}
+    let done=0;
+    imported.forEach(tx=>{
+      const id='imp_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+      db.ref(`users/${user.id}/transactions/${id}`).set({...tx,id,createdAt:tx.createdAt||new Date().toISOString(),mode:appMode}).then(()=>{
+        done++;if(done>=imported.length){loadData(()=>goTo('transazioni'));notify('✅ Importate '+imported.length+' transazioni!');}
+      });
+    });
+  };
+  reader.readAsText(file);
+}
+
+/* ══════════════════════════════════════════════
+   📲 FIREBASE API ENDPOINTS (per integrazione esterna)
+══════════════════════════════════════════════ */
+function generateApiToken(){
+  const token='kz_'+Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b=>b.toString(36).padStart(2,'0')).join('');
+  localStorage.setItem('fp_api_token_'+user.id,token);
+  db.ref(`users/${user.id}/apiToken`).set(token);
+  return token;
+}
+function getApiToken(){return localStorage.getItem('fp_api_token_'+user.id)||'';}
+async function apiExportAll(){
+  const token=getApiToken();
+  if(!token)return {error:'Nessun token API. Generane uno dalle impostazioni.'};
+  const data={exportedAt:new Date().toISOString(),transactions:ctx(transactions),accounts:ctx(accounts),recurring:ctx(recurring),bills:ctx(bills),trips,goals:loadGoals(),budgets:loadBudgets()};
+  if(appMode==='business')data.biz={transactions:bizTx,clients,quotes,projects,expenseNotes};
+  return data;
+}
+
+/* ══════════════════════════════════════════════
+   🧪 TEST ESCLUSIONE rapidi
+══════════════════════════════════════════════ */
+// Wrap auditLog around key actions
+const _origAddTx=window.addTransaction;
+function addTransaction(data){
+  auditLog('add_tx',data.desc);
+  if(_origAddTx)return _origAddTx(data);
 }
 
 </script>
@@ -5570,11 +6435,10 @@ function updateSyncIndicator(status){
 /* ════════════════════════════════════════
    SERVICE WORKER REGISTRATION
 ════════════════════════════════════════ */
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .then(reg => console.log('[SW] Registered:', reg.scope))
-      .catch(err => console.warn('[SW] Registration failed:', err));
+    navigator.serviceWorker.register('../sw.js', { scope: '../' })
+      .catch(() => {});
   });
 }
 

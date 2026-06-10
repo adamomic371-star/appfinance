@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazka — Pagina non trovata</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#050912;color:#EEF2FF;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.logo{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#7B68EE,#00E5FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2rem}
+.code{font-family:'Syne',sans-serif;font-size:6rem;font-weight:800;background:linear-gradient(135deg,#7B68EE,#00E5FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+h1{font-size:1.5rem;font-weight:700;margin:.75rem 0 .5rem}
+p{color:#7A85A8;margin-bottom:2rem}
+.btn{display:inline-block;padding:.875rem 2rem;background:linear-gradient(135deg,#7B68EE,#00E5FF);color:#fff;border-radius:10px;font-weight:700;font-size:1rem;text-decoration:none;transition:opacity .2s}
+.btn:hover{opacity:.88}
+</style>
+</head>
+<body>
+<div>
+  <div class="logo">⚡ Kazka</div>
+  <div class="code">404</div>
+  <h1>Pagina non trovata</h1>
+  <p>La pagina che cerchi non esiste o è stata spostata.</p>
+  <a href="/appfinance/" class="btn">Torna alla home →</a>
+</div>
+<script>
+  // Redirect SPA: se è una route dell'app reindirizza
+  const path = window.location.pathname;
+  if(path.includes('/app/') || path.includes('/admin/')) {
+    const base = path.split('/').slice(0,2).join('/');
+    window.location.replace('/' + base + path);
+  }
+</script>
+</body>
+</html>

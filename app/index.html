@@ -1357,19 +1357,27 @@ async function doRegister(){
 
 async function doGoogle(){
   try{
+    const p=new firebase.auth.GoogleAuthProvider();
+    p.setCustomParameters({prompt:'select_account'});
     if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<768){
-      await auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      await auth.signInWithRedirect(p);
     } else {
-      await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+      await auth.signInWithPopup(p);
     }
-  }catch(e){toast(ferr(e.code),'err');}
+  }catch(e){
+    const m=ferr(e.code);
+    toast(m,'err');
+    if(e.code==='auth/popup-blocked')toast('Consenti i popup per questo sito','err',5000);
+  }
 }
-// Gestisce redirect dopo login Google (mobile)
-try{
+// Gestisce redirect dopo login Google (mobile) — eseguito subito all'avvio
+(function(){
   auth.getRedirectResult().then(result=>{
     if(result.user)console.log('Redirect login ok');
-  }).catch(e=>console.warn('Redirect result:',e.message));
-}catch(e){}
+  }).catch(e=>{
+    if(e.code!=='auth/no-auth-event')console.warn('Redirect result:',e.message);
+  });
+})();
 
 async function doReset(){
   const email=document.getElementById('reset-email').value.trim();
@@ -1895,7 +1903,7 @@ function today(){return new Date().toISOString().split('T')[0];}
 function N(v){return Number(v)||0;}
 function showErr(el,msg){if(el){el.textContent=msg;el.style.display='block';}}
 function toast(msg,type='ok'){const t=document.getElementById('toast');if(!t)return;t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]||'ℹ'}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
-function ferr(c){const m={'auth/user-not-found':'Email non trovata','auth/wrong-password':'Password errata','auth/email-already-in-use':'Email già registrata','auth/weak-password':'Password troppo corta (min. 6)','auth/invalid-email':'Email non valida','auth/too-many-requests':'Troppi tentativi — riprova più tardi','auth/invalid-credential':'Credenziali non valide','auth/network-request-failed':'Errore di rete — controlla la connessione'};return m[c]||'Errore — riprova';}
+function ferr(c){const m={'auth/user-not-found':'Email non trovata','auth/wrong-password':'Password errata','auth/email-already-in-use':'Email già registrata','auth/weak-password':'Password troppo corta (min. 6)','auth/invalid-email':'Email non valida','auth/too-many-requests':'Troppi tentativi — riprova più tardi','auth/invalid-credential':'Credenziali non valide','auth/network-request-failed':'Errore di rete — controlla la connessione','auth/popup-blocked':'Popup bloccato — consenti i popup per questo sito','auth/cancelled-popup-request':'Accesso annullato','auth/timeout':'Connessione scaduta — riprova','auth/account-exists-with-different-credential':'Email già usata con un altro metodo di accesso'};return m[c]||'Errore — riprova';}
 
 /* ══ ADMIN PANEL ══ */
 let allUsers=[];

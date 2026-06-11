@@ -1209,6 +1209,7 @@ html{transition:background-color .3s,color .3s}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 <script>
 'use strict';
 
@@ -1235,6 +1236,38 @@ let notifications=[];
 let fmCfg=JSON.parse(localStorage.getItem('kz_fm')||'{}');
 let mainAccId=localStorage.getItem('kz_mainAcc')||'';
 
+/* ─── FCM (Firebase Cloud Messaging) ─── */
+let messaging=null; let fcmToken=null;
+try{if(firebase.messaging) messaging=firebase.messaging();}catch(e){}
+async function initFCM(){
+  if(!messaging||!UID)return;
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted')return;
+    // Ottieni la VAPID Key dal tuo Firebase Console -> Cloud Messaging -> Web Push Certificate
+    const vapidKey='YOUR_VAPID_KEY'; // ← SOSTITUISCI CON QUELLA DEL TUO PROGETTO FIREBASE
+    fcmToken=await messaging.getToken({vapidKey});
+    if(fcmToken) await db.ref(`users/${UID}/fcmTokens/${fcmToken.replace(/[:.]/g,'_')}`).set({token:fcmToken,device:navigator.userAgent?.slice(0,100)||'unknown',ts:new Date().toISOString()});
+    messaging.onMessage(payload=>{
+      const n=payload.notification||{};
+      const title=n.title||'Kazka';
+      const body=n.body||'Hai una nuova notifica';
+      if(Notification.permission==='granted'&&document.visibilityState==='visible'){
+        try{new Notification(title,{body,icon:'./assets/icons/icon-192.png'});}catch(e){}
+      }
+    });
+    // Refresh token on change
+    messaging.onTokenRefresh(async()=>{
+      try{
+        const newToken=await messaging.getToken({vapidKey});
+        if(newToken&&newToken!==fcmToken){
+          fcmToken=newToken;
+          await db.ref(`users/${UID}/fcmTokens/${newToken.replace(/[:.]/g,'_')}`).set({token:newToken,device:navigator.userAgent?.slice(0,100)||'unknown',ts:new Date().toISOString()});
+        }
+      }catch(e){}
+    });
+  }catch(e){console.warn('FCM init:',e.message);}
+}
 /* ─── AUTH ─── */
 auth.getRedirectResult().then(result=>{
   if(result && result.user) console.log('Google login ok:', result.user.email);
@@ -1251,6 +1284,7 @@ auth.onAuthStateChanged(async u=>{
     showApp();
     subscribeData();
     subscribeNotifs();
+    setTimeout(initFCM,2000);
   } else if(!u){
     showAuth();
   }
@@ -3025,8 +3059,36 @@ renderTransactions=function(){_origRenderTx();};
 
 /* ══ CAPACITOR INIT — App mobile ══ */
 document.addEventListener('deviceready',()=>{
-  // Capacitor / Cordova bridge
-  if(window.Capacitor){try{Capacitor.Plugins.StatusBar?.setOverlaysWebView?.({overlay:false});Capacitor.Plugins.StatusBar?.setStyle?.({style:'DARK'});}catch(e){}}
+  if(window.Capacitor){
+    try{Capacitor.Plugins.StatusBar?.setOverlaysWebView?.({overlay:false});Capacitor.Plugins.StatusBar?.setStyle?.({style:'DARK'});}catch(e){}
+    // Native push notifications via Capacitor Push Notifications plugin
+    try{
+      const push=Capacitor.Plugins.PushNotifications;
+      if(push){
+        push.requestPermission().then(result=>{
+          if(result.granted){
+            push.register();
+            push.addListener('registration',async token=>{
+              if(token.value&&UID){
+                await db.ref(`users/${UID}/fcmTokens/native_${token.value.replace(/[:.]/g,'_')}`).set({
+                  token:token.value,
+                  device:'capacitor-native',
+                  ts:new Date().toISOString()
+                });
+              }
+            });
+            push.addListener('pushNotificationReceived',notification=>{
+              const title=notification.title||'Kazka';
+              const body=notification.body||'';
+              // Show in-app toast when in foreground
+              try{addNotif(title,body,'info');}catch(e){}
+            });
+            push.addListener('pushNotificationActionPerformed',()=>{});
+          }
+        }).catch(()=>{});
+      }
+    }catch(e){console.warn('Capacitor Push:',e.message);}
+  }
   document.addEventListener('backbutton',()=>{const modals=document.querySelectorAll('.mo.open');if(modals.length)cm(modals[modals.length-1].id);else if(document.getElementById('sidebar').classList.contains('open'))toggleSidebar();else if(navigator.app&&navigator.app.exitApp)navigator.app.exitApp();});
 },false);
 

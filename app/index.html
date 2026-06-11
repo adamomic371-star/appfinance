@@ -1209,6 +1209,10 @@ let notifications=JSON.parse(localStorage.getItem('kz_notifs')||'[]');
 let fmCfg=JSON.parse(localStorage.getItem('kz_fm')||'{}');
 
 /* ─── AUTH ─── */
+// Gestisce redirect dopo login Google (eseguito subito dopo init)
+auth.getRedirectResult().then(result=>{
+  if(result.user)console.log('Redirect login ok');
+}).catch(e=>{if(e.code!=='auth/no-auth-event')console.warn('Redirect:',e.message);});
 auth.onAuthStateChanged(async u=>{
   if(u && !u.isAnonymous){
     UID=u.uid;
@@ -1356,28 +1360,24 @@ async function doRegister(){
 }
 
 async function doGoogle(){
-  try{
-    const p=new firebase.auth.GoogleAuthProvider();
-    p.setCustomParameters({prompt:'select_account'});
-    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<768){
-      await auth.signInWithRedirect(p);
-    } else {
-      await auth.signInWithPopup(p);
+  const p=new firebase.auth.GoogleAuthProvider();
+  p.setCustomParameters({prompt:'select_account'});
+  // Mobile usa redirect (popup non funziona in PWA/standalone)
+  if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<768){
+    try{ await auth.signInWithRedirect(p); }
+    catch(e){ toast(ferr(e.code),'err'); }
+  } else {
+    try{ await auth.signInWithPopup(p); }
+    catch(e){
+      if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){
+        try{ await auth.signInWithRedirect(p); }
+        catch(e2){ toast(ferr(e2.code),'err'); }
+      } else {
+        toast(ferr(e.code),'err');
+      }
     }
-  }catch(e){
-    const m=ferr(e.code);
-    toast(m,'err');
-    if(e.code==='auth/popup-blocked')toast('Consenti i popup per questo sito','err',5000);
   }
 }
-// Gestisce redirect dopo login Google (mobile) — eseguito subito all'avvio
-(function(){
-  auth.getRedirectResult().then(result=>{
-    if(result.user)console.log('Redirect login ok');
-  }).catch(e=>{
-    if(e.code!=='auth/no-auth-event')console.warn('Redirect result:',e.message);
-  });
-})();
 
 async function doReset(){
   const email=document.getElementById('reset-email').value.trim();

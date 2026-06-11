@@ -1252,11 +1252,11 @@ function showApp(){
 }
 
 async function loadProfile(u){
-  const snap=await db.ref(`users/${UID}/profile`).once('value');
+  const snap=await db.ref(`users/${u.uid}/profile`).once('value');
   UP=snap.val();
   if(!UP){
-    UP={uid:UID,email:u.email,name:u.displayName||u.email.split('@')[0],plan:'free',role:'user',createdAt:new Date().toISOString()};
-    await db.ref(`users/${UID}/profile`).set(UP);
+    UP={uid:u.uid,email:u.email,name:u.displayName||u.email.split('@')[0],plan:'free',role:'user',createdAt:new Date().toISOString()};
+    await db.ref(`users/${u.uid}/profile`).set(UP);
   }
   const ini=(UP.name||'K').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
   ['nav-av','side-av'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=ini;});

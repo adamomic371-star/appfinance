@@ -173,7 +173,7 @@ tr:hover td{background:var(--b1)}
     </div>
   </div>
   <div class="layout">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div>
         <div class="ss">Panoramica</div>
         <div class="ni active" onclick="sv('dashboard')" id="nav-dashboard">📊 Dashboard</div>
@@ -183,9 +183,15 @@ tr:hover td{background:var(--b1)}
         <div class="ni" onclick="sv('transactions')" id="nav-transactions">💸 Transazioni</div>
         <div class="ss">Analytics</div>
         <div class="ni" onclick="sv('analytics')" id="nav-analytics">📈 Statistiche</div>
+        <div class="ni" onclick="sv('revenue')" id="nav-revenue">💰 Revenue</div>
         <div class="ni" onclick="sv('invoices')" id="nav-invoices">🧾 Fatture</div>
         <div class="ss">Sistema</div>
         <div class="ni" onclick="sv('logs')" id="nav-logs">📋 Log</div>
+        <div class="ni" onclick="sv('impersonate')" id="nav-impersonate">🔄 Impersona</div>
+        <div class="ni" onclick="sv('backup')" id="nav-backup">💾 Backup/Ripristino</div>
+        <div class="ni" onclick="sv('email')" id="nav-email">📧 Email</div>
+        <div class="ni" onclick="sv('notifications')" id="nav-notifications">🔔 Notifiche</div>
+        <div class="ni" onclick="sv('team')" id="nav-team">👥 Team</div>
         <div class="ni" onclick="sv('settings')" id="nav-settings">⚙️ Impostazioni</div>
         <div class="ni" onclick="sv('pricing')" id="nav-pricing">💎 Piani & Prezzi</div>
         <div class="ni" onclick="sv('danger')" id="nav-danger"><span style="color:var(--re)">⚠️ Zona Pericolo</span></div>
@@ -275,6 +281,25 @@ tr:hover td{background:var(--b1)}
         </div>
       </div>
 
+      <!-- REVENUE -->
+      <div class="view" id="view-revenue">
+        <div class="ph"><div><div class="pt">💰 Revenue Dashboard</div><div class="ps">Entrate totali e analytics</div></div>
+          <div style="display:flex;gap:.5rem"><select id="rev-period" class="si" style="max-width:140px" onchange="renderRevenue()"><option value="7">7 giorni</option><option value="30" selected>30 giorni</option><option value="90">90 giorni</option><option value="365">1 anno</option></select></div>
+        </div>
+        <div class="sg" id="rev-stats">
+          <div class="sc"><div class="sl">Entrate lorde</div><div class="sv" style="color:var(--gr)" id="rev-gross">—</div></div>
+          <div class="sc"><div class="sl">Nuove sottoscrizioni</div><div class="sv" id="rev-subs">—</div></div>
+          <div class="sc"><div class="sl">Tasso conversione</div><div class="sv" style="color:var(--ac)" id="rev-cr">—</div></div>
+          <div class="sc"><div class="sl">MRR (mensile)</div><div class="sv" style="color:var(--gr)" id="rev-mrr">—</div></div>
+          <div class="sc"><div class="sl">Churn rate</div><div class="sv" style="color:var(--re)" id="rev-churn">—</div></div>
+          <div class="sc"><div class="sl">LTV medio</div><div class="sv" style="color:#00E5FF" id="rev-ltv">—</div></div>
+        </div>
+        <div class="g2">
+          <div class="card"><div class="ct">Andamento entrate</div><div style="height:220px" id="rev-chart"><canvas></canvas></div></div>
+          <div class="card"><div class="ct">Distribuzione piani a pagamento</div><div id="rev-plan-dist"></div></div>
+        </div>
+      </div>
+
       <!-- INVOICES -->
       <div class="view" id="view-invoices">
         <div class="ph"><div><div class="pt">Tutte le Fatture</div><div class="ps" id="inv-count"></div></div></div>
@@ -287,12 +312,104 @@ tr:hover td{background:var(--b1)}
         <div class="card"><div id="logs-list"></div><div class="empty" id="logs-empty" style="display:none">Nessun log</div></div>
       </div>
 
+      <!-- IMPERSONATE -->
+      <div class="view" id="view-impersonate">
+        <div class="ph"><div><div class="pt">🔄 Impersona utente</div><div class="ps">Visualizza i dati di un utente come se fossi lui</div></div></div>
+        <div class="card">
+          <div class="sb2">
+            <input class="si" id="imp-search" placeholder="🔍 Cerca nome o email..." oninput="filterImpersonate()" style="flex:1">
+          </div>
+          <div class="tw"><table><thead><tr><th>Utente</th><th>Email</th><th>Piano</th><th>Tx</th><th>Saldo</th><th></th></tr></thead><tbody id="imp-tbody"></tbody></table></div>
+          <div class="empty" id="imp-empty" style="display:none">Nessun utente</div>
+        </div>
+      </div>
+
+      <!-- BACKUP -->
+      <div class="view" id="view-backup">
+        <div class="ph"><div><div class="pt">💾 Backup & Ripristino</div><div class="ps">Scarica o ripristina l'intero database</div></div></div>
+        <div class="g2">
+          <div class="card">
+            <div class="ct">Esporta backup</div>
+            <p style="font-size:.85rem;color:var(--tx2);margin-bottom:1rem">Scarica un file JSON con tutti i dati del database (utenti, transazioni, gruppi, impostazioni).</p>
+            <button class="btn bp" onclick="doBackup()" style="width:100%">📥 Scarica backup JSON</button>
+          </div>
+          <div class="card">
+            <div class="ct">Ripristina da backup</div>
+            <p style="font-size:.85rem;color:var(--tx2);margin-bottom:1rem">Carica un file JSON per ripristinare i dati. Attenzione: sovrascrive i dati esistenti!</p>
+            <input type="file" id="restore-file" accept=".json" style="display:none" onchange="doRestore(event)">
+            <button class="btn bd" onclick="document.getElementById('restore-file').click()" style="width:100%">📂 Carica e ripristina</button>
+          </div>
+        </div>
+        <div class="card"><div class="ct">Cronologia backup</div><div id="bk-history"><div class="empty">Nessun backup precedente</div></div></div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="view" id="view-email">
+        <div class="ph"><div><div class="pt">📧 Email (EmailJS)</div><div class="ps">Invia email a utenti tramite EmailJS</div></div></div>
+        <div class="card">
+          <div class="ct">Configurazione EmailJS</div>
+          <div class="fr">
+            <div class="fg2"><label>Service ID</label><input id="ej-service" placeholder="service_xxxxxx"></div>
+            <div class="fg2"><label>Template ID</label><input id="ej-template" placeholder="template_xxxxxx"></div>
+          </div>
+          <div class="fg2"><label>Public Key</label><input id="ej-key" placeholder="xxxxxxxxxxxxxx"></div>
+          <button class="btn bs bsm" onclick="saveEmailJS()">💾 Salva configurazione</button>
+        </div>
+        <div class="card">
+          <div class="ct">Invia email</div>
+          <div class="sb2">
+            <input class="si" id="eml-search" placeholder="🔍 Cerca utente..." oninput="filterEmailUsers()" style="flex:1">
+            <select class="si" id="eml-template" style="max-width:200px" onchange="document.getElementById('eml-custom').style.display=this.value==='custom'?'block':'none'"><option value="welcome">Benvenuto</option><option value="reset">Reset password</option><option value="promo">Promozione</option><option value="custom">Personalizzata</option></select>
+          </div>
+          <div id="eml-custom" style="display:none">
+            <div class="fg2"><label>Oggetto</label><input id="eml-subj" placeholder="Oggetto email"></div>
+            <div class="fg2"><label>Messaggio</label><textarea id="eml-body" rows="4" placeholder="Scrivi il messaggio... {{nome}} sarà sostituito col nome utente"></textarea></div>
+          </div>
+          <div style="max-height:260px;overflow-y:auto;margin-bottom:.75rem" id="eml-list"></div>
+          <button class="btn bp" onclick="sendEmailBulk()">📨 Invia a selezionati</button>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="view" id="view-notifications">
+        <div class="ph"><div><div class="pt">🔔 Notifiche Push</div><div class="ps">Invia notifiche a tutti gli utenti o a specifici piani</div></div></div>
+        <div class="card">
+          <div class="ct">Nuova notifica</div>
+          <div class="fg2"><label>Titolo</label><input id="notif-title" placeholder="Titolo notifica"></div>
+          <div class="fg2"><label>Messaggio</label><textarea id="notif-body" rows="3" placeholder="Corpo della notifica..."></textarea></div>
+          <div class="fr">
+            <div class="fg2"><label>Icona (emoji)</label><input id="notif-icon" value="🔔" style="max-width:80px"></div>
+            <div class="fg2"><label>Destinatari</label><select id="notif-target"><option value="all">Tutti gli utenti</option><option value="free">Solo Free</option><option value="pro">Solo Pro</option><option value="business">Solo Business</option><option value="paid">Solo a pagamento</option></select></div>
+          </div>
+          <div class="fg2"><label>Link (opzionale)</label><input id="notif-link" placeholder="https://..."></div>
+          <button class="btn bp" onclick="sendNotification()">📨 Invia notifica</button>
+        </div>
+        <div class="card"><div class="ct">Notifiche inviate</div><div id="notif-list"><div class="empty">Nessuna notifica inviata</div></div></div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="view" id="view-team">
+        <div class="ph"><div><div class="pt">👥 Team Admin</div><div class="ps">Gestisci gli amministratori e i loro permessi</div></div><button class="btn bp bsm" onclick="om('modal-invite')">+ Invita admin</button></div>
+        <div class="card">
+          <div class="tw"><table><thead><tr><th>Membro</th><th>Email</th><th>Ruolo</th><th>Autorizzazioni</th><th>Ultimo accesso</th><th></th></tr></thead><tbody id="team-tbody"></tbody></table></div>
+          <div class="empty" id="team-empty" style="display:none">Nessun membro</div>
+        </div>
+      </div>
+
       <!-- SETTINGS -->
       <div class="view" id="view-settings">
         <div class="ph"><div><div class="pt">Impostazioni</div></div></div>
         <div class="card"><div class="ct">Controlli App</div>
           <div class="sr"><div><div style="font-weight:600">Registrazioni aperte</div><div style="font-size:.8rem;color:var(--tx2)">Permetti nuovi utenti</div></div><div class="tog on" id="tog-reg" onclick="toggleSetting('registration')"></div></div>
           <div class="sr"><div><div style="font-weight:600">Modalità manutenzione</div><div style="font-size:.8rem;color:var(--tx2)">Mostra avviso agli utenti</div></div><div class="tog" id="tog-maint" onclick="toggleSetting('maintenance')"></div></div>
+        </div>
+        <div class="card"><div class="ct">🚩 Feature Flags</div>
+          <div id="feature-flags-list"></div>
+        </div>
+        <div class="card"><div class="ct">🔑 API Keys</div>
+          <p style="font-size:.82rem;color:var(--tx2);margin-bottom:.75rem">Gestisci le chiavi API per accesso esterno</p>
+          <div id="apikey-list"></div>
+          <button class="btn bs bsm" onclick="om('modal-apikey')" style="margin-top:.5rem">+ Nuova API Key</button>
         </div>
         <div class="card"><div class="ct">Export</div><div style="display:flex;gap:.75rem;flex-wrap:wrap">
           <button class="btn bs" onclick="exportAllCSV()">📥 CSV transazioni</button>
@@ -304,67 +421,16 @@ tr:hover td{background:var(--b1)}
 
       <!-- PRICING -->
       <div class="view" id="view-pricing">
-        <div class="ph"><div><div class="pt">💎 Piani & Prezzi</div><div class="ps">Configurazione piani abbonamento</div></div></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem" id="pricing-grid">
-
-          <!-- FREE -->
-          <div style="background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.5rem;position:relative">
-            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.5rem">Free</div>
-            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.25rem">€0<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
-            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">Per iniziare</div>
-            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
-              <li>✅ Transazioni illimitate</li><li>✅ 2 conti</li><li>✅ Budget mensile</li><li>✅ 3 obiettivi</li><li>❌ Report avanzati</li><li>❌ Business mode</li><li>❌ Fatture</li><li>❌ Export CSV/PDF</li>
-            </ul>
-          </div>
-
-          <!-- PRO -->
-          <div style="background:linear-gradient(135deg,rgba(123,104,238,.12),rgba(0,229,255,.08));border:1px solid rgba(123,104,238,.3);border-radius:var(--r);padding:1.5rem;position:relative">
-            <div style="position:absolute;top:-10px;right:1rem;background:var(--ac);color:#fff;font-size:.65rem;font-weight:800;padding:.2rem .75rem;border-radius:20px;letter-spacing:.06em">POPOLARE</div>
-            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);margin-bottom:.5rem">Pro</div>
-            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€2,49<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
-            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">oppure <strong style="color:var(--ac)">€19,99/anno</strong> (-33%)</div>
-            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">vs Toshl €3.99 · Spendee €2.99</div>
-            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
-              <li>✅ Tutto di Free</li><li>✅ Conti illimitati</li><li>✅ Obiettivi illimitati</li><li>✅ Report avanzati</li><li>✅ Export CSV/PDF</li><li>✅ Tasso di cambio live</li><li>✅ Notifiche push</li><li>❌ Business mode</li><li>❌ Fatture & Clienti</li>
-            </ul>
-          </div>
-
-          <!-- BUSINESS -->
-          <div style="background:linear-gradient(135deg,rgba(255,140,66,.12),rgba(255,209,102,.08));border:1px solid rgba(255,140,66,.3);border-radius:var(--r);padding:1.5rem">
-            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--or);margin-bottom:.5rem">Business</div>
-            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€4,99<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
-            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">oppure <strong style="color:var(--or)">€39,99/anno</strong> (-33%)</div>
-            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">vs YNAB €14.99 · Emma £4.99</div>
-            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
-              <li>✅ Tutto di Pro</li><li>✅ Business mode</li><li>✅ Fatture & Clienti</li><li>✅ Preventivi → Fattura</li><li>✅ Prima Nota</li><li>✅ Gestione fornitori</li><li>✅ Regime fiscale</li><li>✅ Viaggi & Trasferte</li>
-            </ul>
-          </div>
-
-          <!-- ALL-INCLUSIVE -->
-          <div style="background:linear-gradient(135deg,rgba(0,240,160,.1),rgba(0,229,255,.1));border:1px solid rgba(0,240,160,.3);border-radius:var(--r);padding:1.5rem">
-            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);margin-bottom:.5rem">All-Inclusive</div>
-            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€7,99<span style="font-size:.9rem;font-weight:500;color:var(--tx2)">/mese</span></div>
-            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">oppure <strong style="color:var(--gr)">€59,99/anno</strong> (-37%)</div>
-            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">Tutto senza limiti</div>
-            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
-              <li>✅ Tutto di Business</li><li>✅ Multi-utente (5 slot)</li><li>✅ Accesso prioritario</li><li>✅ Supporto dedicato</li><li>✅ Progetti avanzati</li><li>✅ API access</li><li>✅ White-label opzionale</li><li>✅ Backup automatici</li>
-            </ul>
-          </div>
-
-          <!-- LIFETIME -->
-          <div style="background:linear-gradient(135deg,rgba(255,51,85,.1),rgba(255,140,66,.1));border:2px solid rgba(255,51,85,.3);border-radius:var(--r);padding:1.5rem;position:relative">
-            <div style="position:absolute;top:-10px;right:1rem;background:linear-gradient(135deg,#FF3355,#FF8C42);color:#fff;font-size:.65rem;font-weight:800;padding:.2rem .75rem;border-radius:20px;letter-spacing:.06em">LIFETIME ∞</div>
-            <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--re);margin-bottom:.5rem">Lifetime Deal</div>
-            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.1rem">€149,99<span style="font-size:.9rem;font-weight:500;color:var(--tx2)"> una volta</span></div>
-            <div style="font-size:.72rem;color:var(--tx3);margin-bottom:.1rem">Equivale a <strong style="color:var(--re)">~19 mesi Pro</strong></div>
-            <div style="font-size:.75rem;color:var(--tx2);margin-bottom:1rem">Paga una volta, tieni per sempre</div>
-            <ul style="font-size:.82rem;color:var(--tx2);list-style:none;display:flex;flex-direction:column;gap:.4rem">
-              <li>✅ Piano All-Inclusive</li><li>✅ Tutte le feature future</li><li>✅ Nessun rinnovo</li><li>✅ Priorità assoluta</li><li>✅ Badge esclusivo</li><li>⚡ Quantità limitata</li>
-            </ul>
-          </div>
-
+        <div class="ph">
+          <div><div class="pt">💎 Piani & Prezzi</div><div class="ps">Modifica, aggiungi e rimuovi piani — le modifiche si riflettono in tempo reale sull'app</div></div>
+          <button class="btn bp" onclick="addNewPlan()">＋ Nuovo piano</button>
         </div>
 
+        <!-- EDITOR PIANI DINAMICI -->
+        <div id="plans-editor" style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem"></div>
+        <button class="btn bp" style="width:100%;margin-bottom:2rem" onclick="saveAllPlans()">💾 Salva tutti i piani</button>
+
+        <!-- CONFRONTO CONCORRENZA (statico) -->
         <div class="card">
           <div class="ct">Confronto con la concorrenza</div>
           <div class="tw"><table><thead><tr><th>App</th><th>Piano base</th><th>Piano pro</th><th>Business</th><th>Lifetime</th></tr></thead><tbody>
@@ -373,12 +439,12 @@ tr:hover td{background:var(--b1)}
             <tr><td>Spendee</td><td>€0</td><td>€2,99/mese</td><td>€6,99/mese</td><td>—</td></tr>
             <tr><td>YNAB</td><td>—</td><td>€14,99/mese</td><td>€14,99/mese</td><td>—</td></tr>
             <tr><td>Emma</td><td>€0</td><td>£4,99/mese</td><td>£9,99/mese</td><td>—</td></tr>
-            <tr><td>MoneyMoney</td><td>—</td><td>—</td><td>—</td><td>€31,99 (2yr)</td></tr>
           </tbody></table></div>
         </div>
 
-        <div class="card" style="border-color:rgba(123,104,238,.25)">
-          <div class="ct">Gestione piano utente (assegna manualmente)</div>
+        <!-- ASSEGNA PIANO MANUALE -->
+        <div class="card" style="border-color:rgba(123,104,238,.25);margin-top:1rem">
+          <div class="ct">Assegna piano manualmente a un utente</div>
           <div class="fr">
             <div class="fg2"><label>Email o UID utente</label><input type="text" id="plan-uid" placeholder="email@utente.com"></div>
             <div class="fg2"><label>Piano</label><select id="plan-sel"><option value="free">Free</option><option value="pro">Pro</option><option value="business">Business</option><option value="allinclusive">All-Inclusive</option><option value="lifetime">Lifetime</option></select></div>
@@ -393,7 +459,6 @@ tr:hover td{background:var(--b1)}
           <button class="btn bp" style="width:100%" onclick="assignPlan()">Assegna piano</button>
         </div>
       </div>
-      <!-- DANGER -->
       <div class="view" id="view-danger">
         <div class="ph"><div><div class="pt" style="color:var(--re)">⚠ Zona Pericolo</div></div></div>
         <div class="card" style="border-color:rgba(255,51,85,.25)">
@@ -456,11 +521,54 @@ tr:hover td{background:var(--b1)}
   <div class="mf"><button class="btn bs" onclick="cm('modal-nuke')">Annulla</button><button class="btn bd" onclick="nukeAll()">Esegui</button></div>
 </div></div>
 
+<div class="mo" id="modal-reverse"><div class="md" style="max-width:450px">
+  <div class="mh"><div class="mt">↩️ Reversa transazione</div><div class="mc" onclick="cm('modal-reverse')">✕</div></div>
+  <div class="mb">
+    <div class="fg2"><label>UID transazione</label><input type="text" id="rev-tx-uid" placeholder="UID transazione"></div>
+    <div class="fg2"><label>Motivazione</label><textarea id="rev-reason" rows="2" placeholder="Motivo della reversa..."></textarea></div>
+    <div style="padding:.8rem;background:rgba(255,51,85,.08);border-radius:var(--rs);font-size:.78rem;color:var(--re)">La transazione verrà annullata e registrata come storno nel database.</div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-reverse')">Annulla</button><button class="btn bd" onclick="reverseTransaction()">↩️ Reversa</button></div>
+</div></div>
+
+<div class="mo" id="modal-apikey"><div class="md" style="max-width:480px">
+  <div class="mh"><div class="mt">Nuova API Key</div><div class="mc" onclick="cm('modal-apikey')">✕</div></div>
+  <div class="mb">
+    <div class="fg2"><label>Nome</label><input id="apk-name" placeholder="es. Integrazione Zapier"></div>
+    <div class="fr">
+      <div class="fg2"><label>Permessi</label><select id="apk-scope" multiple style="height:100px"><option value="read" selected>Lettura</option><option value="write">Scrittura</option><option value="admin">Admin</option></select></div>
+      <div class="fg2"><label>Scadenza</label><input type="date" id="apk-exp"></div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-apikey')">Annulla</button><button class="btn bp" onclick="createApiKey()">Crea</button></div>
+</div></div>
+
+<div class="mo" id="modal-mass"><div class="md" style="max-width:520px">
+  <div class="mh"><div class="mt">Azioni Massive</div><div class="mc" onclick="cm('modal-mass')">✕</div></div>
+  <div class="mb">
+    <div class="fg2"><label>Azione</label><select id="mass-action"><option value="delete">Elimina selezionati</option><option value="plan-free">Imposta piano Free</option><option value="plan-pro">Imposta piano Pro</option><option value="plan-business">Imposta piano Business</option><option value="export">Esporta selezionati</option></select></div>
+    <div class="fg2"><label>Filtro destinatari</label><select id="mass-filter" onchange="updateMassCount()"><option value="all">Tutti gli utenti</option><option value="free">Solo Free</option><option value="pro">Solo Pro</option><option value="business">Solo Business</option><option value="expired">Scaduti</option></select></div>
+    <div style="padding:.75rem;background:var(--bg3);border-radius:var(--rs);margin:.5rem 0;font-size:.85rem" id="mass-count">0 utenti selezionati</div>
+    <div style="padding:.8rem;background:rgba(255,51,85,.08);border-radius:var(--rs);font-size:.78rem;color:var(--re)">Questa azione è irreversibile. Verrà applicata a tutti gli utenti filtrati.</div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-mass')">Annulla</button><button class="btn bd" onclick="executeMassAction()">Esegui azione massiva</button></div>
+</div></div>
+
+<div class="mo" id="modal-invite"><div class="md" style="max-width:440px">
+  <div class="mh"><div class="mt">Invita amministratore</div><div class="mc" onclick="cm('modal-invite')">✕</div></div>
+  <div class="mb">
+    <div class="fg2"><label>Email</label><input type="email" id="inv-email" placeholder="email@esempio.com"></div>
+    <div class="fg2"><label>Ruolo</label><select id="inv-role"><option value="admin">Admin</option><option value="super_admin">Super Admin</option><option value="support">Supporto (read-only)</option><option value="viewer">Visualizzatore</option></select></div>
+  </div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-invite')">Annulla</button><button class="btn bp" onclick="inviteAdmin()">Invita</button></div>
+</div></div>
+
 <div id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 'use strict';
 const FB_CFG={apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",authDomain:"financeapp-556ae.firebaseapp.com",databaseURL:"https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",projectId:"financeapp-556ae",storageBucket:"financeapp-556ae.firebasestorage.app",messagingSenderId:"181987533980",appId:"1:181987533980:web:41c5032990ccede17eb959"};
@@ -559,7 +667,7 @@ async function loadAll(){
     document.getElementById('tb-u').textContent=Object.keys(ALL_U).length;
     document.getElementById('tb-tx').textContent=ALL_TX.length;
     document.getElementById('tb-g').textContent=Object.keys(ALL_G).length;
-    renderDash();renderUsers();renderSubs();renderGroups();renderTx();renderAnalytics();renderInv();loadLogs();
+    renderDash();renderUsers();renderSubs();renderGroups();renderTx();renderAnalytics();renderRevenue();renderInv();loadLogs();loadPlans();loadFeatureFlags();loadApiKeys();loadTeam();loadNotifications();loadBackupHistory();
     toast('Dati caricati','ok');
   }catch(e){toast('Errore: '+e.message,'err');console.error(e);}
 }
@@ -630,10 +738,331 @@ function exportUsersCSV(){const rows=[['UID','Nome','Email','Ruolo','Piano','Sca
 function exportSubsCSV(){const rows=[['UID','Nome','Email','Piano','Inizio','Scadenza','Stato']];Object.entries(ALL_U).forEach(([uid,u])=>{const p=u.profile||{};const s=subStatus(p);rows.push([uid,p.name||'',p.email||'',p.plan||'free',p.subscriptionStart||'',p.subscriptionExpiry||'',s.label]);});dl('kazka-subs.csv',rows);}
 function dl(name,rows){const b=new Blob([rows.map(r=>r.join(';')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();toast('Esportato','ok');}
 
+/* ─── REVENUE DASHBOARD ─── */
+let REV_CHART=null;
+function renderRevenue(){
+  const days=parseInt(document.getElementById('rev-period')?.value||30);
+  const now=new Date(),cut=new Date(now.getTime()-days*864e5);
+  const tx=ALL_TX.filter(t=>t.date&&new Date(t.date)>=cut);
+  const inc=tx.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0);
+  const exp2=tx.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);
+  const gross=inc;
+  const newSubs=Object.values(ALL_U).filter(u=>{const c=u.profile?.subscriptionStart;return c&&new Date(c)>=cut&&u.profile?.plan&&u.profile.plan!=='free';}).length;
+  const totalU=Object.keys(ALL_U).length||1;
+  const paidU=Object.values(ALL_U).filter(u=>u.profile?.plan&&u.profile.plan!=='free').length;
+  const cr=totalU>0?((paidU/totalU)*100).toFixed(1):'0';
+  const mrr=Object.values(ALL_U).reduce((s,u)=>{const p=u.profile;if(!p||!p.plan||p.plan==='free')return s;const pp={pro:2.49,business:4.99,allinclusive:7.99,lifetime:149.99}[p.plan]||0;return s+pp;},0);
+  const churn=Object.values(ALL_U).filter(u=>{const p=u.profile;return p?.plan&&p.plan!=='free'&&p.subscriptionExpiry&&p.subscriptionExpiry!=='never'&&new Date(p.subscriptionExpiry)<now&&new Date(p.subscriptionExpiry)>=cut;}).length;
+  const churnRate=paidU>0?((churn/paidU)*100).toFixed(1):'0';
+  const ltv=paidU>0?fmt(mrr*12/paidU):'—';
+  document.getElementById('rev-gross').textContent=fmt(gross);
+  document.getElementById('rev-subs').textContent=newSubs;
+  document.getElementById('rev-cr').textContent=cr+'%';
+  document.getElementById('rev-mrr').textContent=fmt(mrr);
+  document.getElementById('rev-churn').textContent=churnRate+'%';
+  document.getElementById('rev-ltv').textContent=ltv;
+  const dist={};Object.values(ALL_U).forEach(u=>{const p=u.profile?.plan;if(p&&p!=='free')dist[p]=(dist[p]||0)+1;});
+  const dc=document.getElementById('rev-plan-dist');
+  if(dc)dc.innerHTML=Object.keys(dist).length?Object.entries(dist).map(([p,n])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--b1)"><span style="font-weight:600;font-size:.85rem">${cap(p)}</span><span style="font-weight:700;font-size:.85rem">${n}</span></div>`).join(''):'<div class="empty">Nessun dato</div>';
+  // Chart
+  const canvas=document.querySelector('#rev-chart canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  if(REV_CHART){REV_CHART.destroy();}
+  const labels=[];const data=[];
+  for(let i=days-1;i>=0;i--){const d=new Date(now.getTime()-i*864e5);labels.push(d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}));const dayTot=ALL_TX.filter(t=>t.type==='income'&&t.date&&t.date.startsWith(d.toISOString().split('T')[0])).reduce((s,t)=>s+N(t.amount),0);data.push(dayTot);}
+  REV_CHART=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Entrate',data,borderColor:'#00F0A0',backgroundColor:'rgba(0,240,160,.1)',fill:true,tension:.4,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A85A8',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A85A8',font:{size:10},callback:v=>'€'+v}}}}});
+}
+
+/* ─── IMPERSONATE ─── */
+function filterImpersonate(){
+  const q=document.getElementById('imp-search').value.toLowerCase();
+  const entries=Object.entries(ALL_U).filter(([uid,u])=>{const p=u.profile||{};return!q||(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q);});
+  const tb=document.getElementById('imp-tbody'),em=document.getElementById('imp-empty');
+  if(!entries.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';
+  tb.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};const bal=ALL_TX.filter(t=>t.uid===uid).reduce((s,t)=>s+(t.type==='income'?N(t.amount):-N(t.amount)),0);return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm">${p.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${p.email||'—'}</div></div></div></td><td style="font-size:.82rem">${p.email||'—'}</td><td><span class="badge ${pb(p.plan)}">${p.plan||'free'}</span></td><td>${ALL_TX.filter(t=>t.uid===uid).length}</td><td style="font-weight:700;color:${bal>=0?'var(--gr)':'var(--re)'}">${fmt(Math.abs(bal))}</td><td><button class="btn bs bsm" onclick="viewAsUser('${uid}')">👁 Vedi</button></td></tr>`;}).join('');
+}
+function viewAsUser(uid){
+  const u=ALL_U[uid];if(!u){toast('Utente non trovato','err');return;}
+  const p=u.profile||{};const tx=ALL_TX.filter(t=>t.uid===uid).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  const inc=tx.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0);
+  const exp2=tx.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);
+  const bal=inc-exp2;
+  const CI={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};
+  const html=`<div style="position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem" onclick="if(event.target===this)this.remove()">
+    <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:700px;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1);position:sticky;top:0;background:var(--bg2);z-index:1">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div>
+          <div><div style="font-weight:700;font-size:1rem">${p.name||'—'}</div><div style="font-size:.8rem;color:var(--tx2)">${p.email||'—'} · ${p.plan||'free'}</div></div>
+        </div>
+        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:6px;color:var(--tx2);cursor:pointer;border:none">✕</button>
+      </div>
+      <div style="padding:1.25rem 1.4rem">
+        <div class="sg" style="margin-bottom:1rem">
+          <div class="sc"><div class="sl">Entrate</div><div class="sv" style="color:var(--gr)">${fmt(inc)}</div></div>
+          <div class="sc"><div class="sl">Uscite</div><div class="sv" style="color:var(--re)">${fmt(exp2)}</div></div>
+          <div class="sc"><div class="sl">Saldo</div><div class="sv" style="color:${bal>=0?'var(--gr)':'var(--re)'}">${fmt(bal)}</div></div>
+          <div class="sc"><div class="sl">Transazioni</div><div class="sv">${tx.length}</div></div>
+        </div>
+        <div class="ct" style="margin-bottom:.5rem">Ultime transazioni</div>
+        ${tx.slice(0,20).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><span style="margin-right:.4rem">${CI[t.category]||'📦'}</span>${t.description||'—'}</div><div style="font-weight:600;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('')||'<div class="empty">Nessuna transazione</div>'}
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+/* ─── BACKUP & RESTORE ─── */
+async function doBackup(){
+  try{
+    const snap=await db.ref('/').once('value');
+    const data=snap.val();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`kazka-backup-${today()}.json`;a.click();
+    toast('Backup scaricato','ok');
+    wlog('backup','Backup scaricato');
+    await db.ref('backups').push({date:new Date().toISOString(),by:ADMIN_UID,size:JSON.stringify(data).length});
+    loadBackupHistory();
+  }catch(e){toast('Errore backup: '+e.message,'err');}
+}
+async function doRestore(event){
+  const file=event.target.files[0];if(!file)return;
+  if(!confirm('Ripristinare il database? Questa operazione sovrascriverà TUTTI i dati esistenti e non può essere annullata.'))return;
+  try{
+    const text=await file.text();
+    const data=JSON.parse(text);
+    await db.ref('/').set(data);
+    toast('Database ripristinato!','ok');
+    wlog('restore','Database ripristinato da backup');
+    await loadAll();
+  }catch(e){toast('Errore restore: '+e.message,'err');}
+  event.target.value='';
+}
+async function loadBackupHistory(){
+  try{
+    const snap=await db.ref('backups').limitToLast(10).once('value');
+    const backups=Object.entries(snap.val()||{}).map(([id,b])=>({id,...b})).reverse();
+    const el=document.getElementById('bk-history');
+    if(!backups.length){el.innerHTML='<div class="empty">Nessun backup precedente</div>';return;}
+    el.innerHTML=backups.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.82rem"><span>📦 ${fd(b.date)}</span><span style="color:var(--tx2)">${b.size?(Math.round(b.size/1024)+' KB'):'—'}</span></div>`).join('');
+  }catch(e){}
+}
+
+/* ─── EMAILJS ─── */
+async function saveEmailJS(){
+  const cfg2={service:document.getElementById('ej-service').value.trim(),template:document.getElementById('ej-template').value.trim(),key:document.getElementById('ej-key').value.trim()};
+  if(!cfg2.service||!cfg2.template||!cfg2.key){toast('Compila tutti i campi','err');return;}
+  await db.ref('admin_settings/emailjs').set(cfg2);
+  toast('Configurazione EmailJS salvata','ok');
+}
+async function loadEmailJS(){
+  try{
+    const snap=await db.ref('admin_settings/emailjs').once('value');
+    const c=snap.val()||{};
+    if(c.service)document.getElementById('ej-service').value=c.service;
+    if(c.template)document.getElementById('ej-template').value=c.template;
+    if(c.key)document.getElementById('ej-key').value=c.key;
+    return c;
+  }catch(e){return{};}
+}
+function filterEmailUsers(){
+  const q=document.getElementById('eml-search').value.toLowerCase();
+  const entries=Object.entries(ALL_U).filter(([uid,u])=>{const p=u.profile||{};return!q||(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q);});
+  const el=document.getElementById('eml-list');
+  if(!entries.length){el.innerHTML='<div class="empty">Nessun utente</div>';return;}
+  el.innerHTML=entries.slice(0,50).map(([uid,u])=>{const p=u.profile||{};return`<label style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--b1);cursor:pointer;font-size:.85rem"><input type="checkbox" class="eml-chk" value="${uid}" checked>${p.name||'—'} <span style="color:var(--tx2)">${p.email||''}</span></label>`;}).join('');
+}
+async function sendEmailBulk(){
+  const cfg2=await loadEmailJS();
+  const ck=document.querySelectorAll('.eml-chk:checked');
+  if(!ck.length){toast('Seleziona almeno un utente','err');return;}
+  const tmpl=document.getElementById('eml-template').value;
+  const uids=[...ck].map(c=>c.value);
+  const toSend=[];
+  uids.forEach(uid=>{const u=ALL_U[uid];if(u?.profile?.email)toSend.push({email:u.profile.email,name:u.profile.name||'Utente'});});
+  if(!toSend.length){toast('Nessun indirizzo valido','err');return;}
+  try{
+    emailjs.init(cfg2.key);
+    for(const r of toSend){
+      const params={to_email:r.email,to_name:r.name};
+      if(tmpl==='custom'){params.subject=document.getElementById('eml-subj').value;params.message=document.getElementById('eml-body').value.replace(/\{\{nome\}\}/g,r.name);}
+      await emailjs.send(cfg2.service,cfg2.template,params);
+    }
+    toast(`Email inviate a ${toSend.length} utenti`,'ok');
+    wlog('email',`${tmpl} → ${toSend.length} utenti`);
+  }catch(e){toast('Errore EmailJS: '+(e.text||e.message||'?'),'err');}
+}
+
+/* ─── NOTIFICHE PUSH ─── */
+async function sendNotification(){
+  const title=document.getElementById('notif-title').value.trim();
+  const body=document.getElementById('notif-body').value.trim();
+  const icon=document.getElementById('notif-icon').value.trim()||'🔔';
+  const target=document.getElementById('notif-target').value;
+  const link=document.getElementById('notif-link').value.trim()||'';
+  if(!title||!body){toast('Compila titolo e messaggio','err');return;}
+  const notif={title,body,icon,target,link,date:new Date().toISOString(),by:ADMIN_UID};
+  await db.ref('admin_notifications').push(notif);
+  document.getElementById('notif-title').value='';
+  document.getElementById('notif-body').value='';
+  toast('Notifica inviata!','ok');
+  wlog('notify',`${title} → ${target}`);
+  loadNotifications();
+}
+async function loadNotifications(){
+  try{
+    const snap=await db.ref('admin_notifications').limitToLast(20).once('value');
+    const list=Object.entries(snap.val()||{}).map(([id,n])=>({id,...n})).reverse();
+    const el=document.getElementById('notif-list');
+    if(!list.length){el.innerHTML='<div class="empty">Nessuna notifica inviata</div>';return;}
+    el.innerHTML=list.map(n=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="font-size:1.2rem">${n.icon||'🔔'}</div><div style="flex:1"><div style="font-weight:600;font-size:.85rem">${n.title}</div><div style="font-size:.78rem;color:var(--tx2)">${n.body}</div><div style="font-size:.7rem;color:var(--tx3);margin-top:.15rem">${fd(n.date)} · ${n.target}</div></div></div>`).join('');
+  }catch(e){}
+}
+
+/* ─── TEAM ADMIN ─── */
+async function loadTeam(){
+  try{
+    const snap=await db.ref('admin_team').once('value');
+    const team=Object.entries(snap.val()||{}).map(([uid,m])=>({uid,...m}));
+    const tb=document.getElementById('team-tbody'),em=document.getElementById('team-empty');
+    if(!team.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';
+    const RL={'super_admin':'Super Admin','admin':'Admin','support':'Supporto','viewer':'Visualizzatore'};
+    tb.innerHTML=team.map(m=>`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${(m.name||'?').charAt(0).toUpperCase()}</div><div class="tdm">${m.name||'—'}</div></div></td><td>${m.email||'—'}</td><td><span class="badge ${m.role==='super_admin'?'br':m.role==='support'?'by':'bp2'}">${RL[m.role]||m.role}</span></td><td style="font-size:.8rem">${m.permissions||'Tutti'}</td><td style="font-size:.8rem">${m.lastLogin?fd(m.lastLogin):'—'}</td><td><button class="btn bi bd bsm" onclick="removeTeamMember('${m.uid}')">🗑</button></td></tr>`).join('');
+  }catch(e){}
+}
+async function inviteAdmin(){
+  const email=document.getElementById('inv-email').value.trim();
+  const role=document.getElementById('inv-role').value;
+  if(!email){toast('Inserisci email','err');return;}
+  const uid='team-'+Date.now();
+  await db.ref(`admin_team/${uid}`).set({email,role,name:email.split('@')[0],permissions:role==='support'?'read':role==='viewer'?'view':'all',invitedAt:new Date().toISOString(),invitedBy:ADMIN_UID});
+  cm('modal-invite');document.getElementById('inv-email').value='';
+  await loadTeam();
+  toast(`Invitato ${email} come ${role}`,'ok');
+  wlog('invite',`${email} → ${role}`);
+}
+async function removeTeamMember(uid){
+  if(!confirm('Rimuovere membro dal team?'))return;
+  await db.ref(`admin_team/${uid}`).remove();
+  await loadTeam();
+  toast('Membro rimosso','ok');
+}
+
+/* ─── FEATURE FLAGS ─── */
+let FEATURE_FLAGS={};
+async function loadFeatureFlags(){
+  try{
+    const snap=await db.ref('admin_settings/featureFlags').once('value');
+    FEATURE_FLAGS=snap.val()||{free:{},pro:{},business:{},allinclusive:{},lifetime:{}};
+    renderFeatureFlags();
+  }catch(e){}
+}
+function renderFeatureFlags(){
+  const el=document.getElementById('feature-flags-list');
+  if(!el)return;
+  const plans=['free','pro','business','allinclusive','lifetime'];
+  const flags=[{key:'reports',label:'Report avanzati'},{key:'export_csv',label:'Export CSV/PDF'},{key:'invoices',label:'Fatture'},{key:'business_mode',label:'Business mode'},{key:'multi_user',label:'Multi-utente'},{key:'api_access',label:'API access'},{key:'push_notifications',label:'Notifiche push'},{key:'live_rates',label:'Tassi live'}];
+  el.innerHTML=plans.map(plan=>`<div style="margin-bottom:.75rem"><div style="font-size:.82rem;font-weight:600;margin-bottom:.4rem;color:var(--ac)">${cap(plan)}</div><div style="display:flex;flex-wrap:wrap;gap:.4rem">${flags.map(f=>`<label style="display:flex;align-items:center;gap:.35rem;padding:.25rem .6rem;background:var(--bg3);border-radius:5px;font-size:.75rem;cursor:pointer"><input type="checkbox" ${FEATURE_FLAGS[plan]?.[f.key]?'checked':''} onchange="toggleFeatureFlag('${plan}','${f.key}')">${f.label}</label>`).join('')}</div></div>`).join('');
+}
+async function toggleFeatureFlag(plan,key){
+  const cur=FEATURE_FLAGS[plan]||{};
+  cur[key]=!cur[key];
+  FEATURE_FLAGS[plan]=cur;
+  await db.ref(`admin_settings/featureFlags/${plan}/${key}`).set(cur[key]);
+  toast(`${cap(plan)}: ${key} ${cur[key]?'✅':'❌'}`,'ok');
+}
+
+/* ─── API KEYS ─── */
+async function loadApiKeys(){
+  try{
+    const snap=await db.ref('admin_settings/apiKeys').once('value');
+    const keys=Object.entries(snap.val()||{}).map(([id,k])=>({id,...k})).reverse();
+    const el=document.getElementById('apikey-list');
+    if(!el)return;
+    if(!keys.length){el.innerHTML='<div class="empty">Nessuna API Key</div>';return;}
+    el.innerHTML=keys.map(k=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--b1);font-size:.82rem"><div><div style="font-weight:600">${k.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${k.key?.slice(0,16)}... · ${k.scope||'read'}</div></div><button class="btn bi bd bsm" onclick="revokeApiKey('${k.id}')">🗑</button></div>`).join('');
+  }catch(e){}
+}
+async function createApiKey(){
+  const name=document.getElementById('apk-name').value.trim();
+  const sel=document.getElementById('apk-scope');
+  const scope=[...sel.selectedOptions].map(o=>o.value).join(',')||'read';
+  const exp=document.getElementById('apk-exp').value||'never';
+  if(!name){toast('Inserisci nome','err');return;}
+  const key='kazka_'+Array.from({length:32},()=>'abcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.random()*36)).join('');
+  await db.ref(`admin_settings/apiKeys/${Date.now()}`).set({name,key,scope,exp,createdAt:new Date().toISOString(),createdBy:ADMIN_UID});
+  cm('modal-apikey');document.getElementById('apk-name').value='';document.getElementById('apk-exp').value='';
+  await loadApiKeys();
+  toast(`API Key creata: ${key.slice(0,16)}...`,'ok');
+}
+async function revokeApiKey(id){
+  if(!confirm('Revocare questa API Key?'))return;
+  await db.ref(`admin_settings/apiKeys/${id}`).remove();
+  await loadApiKeys();
+  toast('API Key revocata','ok');
+}
+
+/* ─── AZIONI MASSIVE ─── */
+function updateMassCount(){
+  const filter=document.getElementById('mass-filter').value;
+  const count=filter==='all'?Object.keys(ALL_U).length:filter==='expired'?Object.values(ALL_U).filter(u=>{const e=u.profile?.subscriptionExpiry;return e&&e!=='never'&&new Date(e)<new Date();}).length:Object.values(ALL_U).filter(u=>u.profile?.plan===filter).length;
+  document.getElementById('mass-count').textContent=count+' utenti selezionati';
+}
+async function executeMassAction(){
+  const action=document.getElementById('mass-action').value;
+  const filter=document.getElementById('mass-filter').value;
+  const users=filter==='all'?Object.entries(ALL_U):filter==='expired'?Object.entries(ALL_U).filter(([uid,u])=>{const e=u.profile?.subscriptionExpiry;return e&&e!=='never'&&new Date(e)<new Date();}):Object.entries(ALL_U).filter(([uid,u])=>u.profile?.plan===filter);
+  if(!users.length){toast('Nessun utente','err');return;}
+  if(!confirm(`Applicare "${action}" a ${users.length} utenti?`))return;
+  for(const [uid,u] of users){
+    if(action==='delete'){await db.ref(`users/${uid}`).remove();}
+    else if(action.startsWith('plan-')){const plan=action.replace('plan-','');await db.ref(`users/${uid}/profile`).update({plan,updatedByAdmin:new Date().toISOString()});}
+    else if(action==='export'){/* handled below */}
+  }
+  if(action==='export'){
+    const rows=[['UID','Nome','Email','Ruolo','Piano']];users.forEach(([uid,u])=>{const p=u.profile||{};rows.push([uid,p.name||'',p.email||'',p.role||'user',p.plan||'free']);});
+    const b=new Blob([rows.map(r=>r.join(';')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kazka-mass-export-${today()}.csv`;a.click();
+  }
+  cm('modal-mass');
+  await loadAll();
+  toast(`Azione massiva completata su ${users.length} utenti`,'ok');
+  wlog('mass',`${action} → ${users.length} utenti`);
+}
+
+/* ─── REVERSA TRANSAZIONE ─── */
+async function reverseTransaction(){
+  const txId=document.getElementById('rev-tx-uid').value.trim();
+  const reason=document.getElementById('rev-reason').value.trim();
+  if(!txId){toast('Inserisci ID transazione','err');return;}
+  let found=null,foundUid=null;
+  for(const [uid,u] of Object.entries(ALL_U)){
+    const tx=Object.entries(u.transactions||{}).find(([id])=>id===txId);
+    if(tx){found={id:tx[0],...tx[1]};foundUid=uid;break;}
+  }
+  if(!found){toast('Transazione non trovata','err');return;}
+  if(!confirm(`Reversare ${fmt(found.amount)} (${found.description||'?'})?`))return;
+  await db.ref(`users/${foundUid}/transactions/${txId}`).update({reversed:true,reversedAt:new Date().toISOString(),reversedBy:ADMIN_UID,reverseReason:reason});
+  await db.ref(`users/${foundUid}/transactions/${txId}_rev`).set({type:found.type==='income'?'expense':'income',amount:found.amount,description:'↩️ STORNO: '+found.description,date:today(),category:found.category,reversalOf:txId,reversedAt:new Date().toISOString(),reversedBy:ADMIN_UID});
+  cm('modal-reverse');document.getElementById('rev-tx-uid').value='';document.getElementById('rev-reason').value='';
+  await loadAll();
+  toast('Transazione reversata','ok');
+  wlog('reverse',`${txId}: ${reason||'nessun motivo'}`);
+}
+
 function subStatus(p){if(!p.plan||p.plan==='free')return{label:'Free',badge:'bgy'};if(p.subscriptionExpiry==='never')return{label:'Illimitato',badge:'bg'};if(!p.subscriptionExpiry)return{label:'—',badge:'bgy'};const exp=new Date(p.subscriptionExpiry),now=new Date();if(exp<now)return{label:'Scaduto',badge:'br'};const days=Math.ceil((exp-now)/864e5);return days<=7?{label:`${days}gg rimasti`,badge:'by'}:{label:`Attivo (${days}gg)`,badge:'bg'};}
 function rb(r){return r==='admin'?'br':'bgy';}
 function pb(p){return{free:'bgy',pro:'bp2',business:'bb'}[p]||'bgy';}
-function sv(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.ni').forEach(i=>i.classList.remove('active'));document.getElementById('view-'+n)?.classList.add('active');document.getElementById('nav-'+n)?.classList.add('active');}
+function sv(n){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(i=>i.classList.remove('active'));
+  document.getElementById('view-'+n)?.classList.add('active');
+  document.getElementById('nav-'+n)?.classList.add('active');
+  if(n==='email'){loadEmailJS();filterEmailUsers();}
+  if(n==='impersonate')filterImpersonate();
+  if(n==='revenue')renderRevenue();
+  if(n==='team')loadTeam();
+}
 function om(id){const el=document.getElementById(id);if(el){el.style.display='flex';el.classList.add('open');}}
 function cm(id){const el=document.getElementById(id);if(el){el.style.display='none';el.classList.remove('open');}}
 document.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.style.display='none';});
@@ -651,6 +1080,105 @@ function toggleAdminSidebar(){
 }
 
 function addDays2(n){const d=new Date();d.setDate(d.getDate()+n);document.getElementById('plan-exp').value=d.toISOString().split('T')[0];}
+
+/* ─── PIANI DINAMICI ─── */
+const DEFAULT_PLANS=[
+  {id:'free',name:'Free',color:'#888',badge:'',price:0,priceYear:0,period:'per sempre',subtitle:'Per iniziare',popular:false,lifetime:false,features:['✅ Transazioni illimitate','✅ 2 conti','✅ Budget mensile','✅ 3 obiettivi','❌ Report avanzati','❌ Business mode','❌ Fatture','❌ Export CSV/PDF']},
+  {id:'pro',name:'Pro',color:'#7B68EE',badge:'POPOLARE',price:2.49,priceYear:19.99,period:'/mese',subtitle:'vs Toshl €3.99 · Spendee €2.99',popular:true,lifetime:false,features:['✅ Tutto di Free','✅ Conti illimitati','✅ Obiettivi illimitati','✅ Report avanzati','✅ Export CSV/PDF','✅ Tasso di cambio live','✅ Notifiche push','❌ Business mode','❌ Fatture & Clienti']},
+  {id:'business',name:'Business',color:'#FF8C42',badge:'',price:4.99,priceYear:39.99,period:'/mese',subtitle:'vs YNAB €14.99 · Emma £4.99',popular:false,lifetime:false,features:['✅ Tutto di Pro','✅ Business mode','✅ Fatture & Clienti','✅ Preventivi → Fattura','✅ Prima Nota','✅ Gestione fornitori','✅ Regime fiscale','✅ Viaggi & Trasferte']},
+  {id:'allinclusive',name:'All-Inclusive',color:'#00F0A0',badge:'',price:7.99,priceYear:59.99,period:'/mese',subtitle:'Tutto senza limiti',popular:false,lifetime:false,features:['✅ Tutto di Business','✅ Multi-utente (5 slot)','✅ Accesso prioritario','✅ Supporto dedicato','✅ Progetti avanzati','✅ API access','✅ White-label opzionale','✅ Backup automatici']},
+  {id:'lifetime',name:'Lifetime Deal',color:'#FF3355',badge:'LIFETIME ∞',price:149.99,priceYear:0,period:'pagamento unico',subtitle:'Paga una volta, tieni per sempre',popular:false,lifetime:true,features:['✅ Piano All-Inclusive','✅ Tutte le feature future','✅ Nessun rinnovo','✅ Priorità assoluta','✅ Badge esclusivo','⚡ Quantità limitata']}
+];
+
+let PLANS=[];
+
+async function loadPlans(){
+  const snap=await db.ref('config/plans').once('value');
+  PLANS=snap.val() ? Object.values(snap.val()) : JSON.parse(JSON.stringify(DEFAULT_PLANS));
+  renderPlansEditor();
+}
+
+function renderPlansEditor(){
+  const el=document.getElementById('plans-editor');
+  if(!el) return;
+  el.innerHTML=PLANS.map((p,i)=>`
+    <div class="card" style="border-color:${p.color}44;position:relative">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:14px;height:14px;border-radius:50%;background:${p.color};flex-shrink:0"></div>
+          <input value="${p.name}" id="pn_${i}" style="font-weight:700;font-size:1rem;background:transparent;border:none;border-bottom:1px solid var(--b2);color:var(--tx);padding:.2rem .4rem;width:160px" placeholder="Nome piano">
+          <input value="${p.id}" id="pid_${i}" style="font-size:.75rem;background:transparent;border:1px dashed var(--b2);border-radius:4px;color:var(--tx2);padding:.2rem .4rem;width:110px" placeholder="ID (es. pro)">
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <label style="font-size:.75rem;display:flex;align-items:center;gap:.3rem"><input type="checkbox" ${p.popular?'checked':''} id="ppop_${i}"> Popolare</label>
+          <label style="font-size:.75rem;display:flex;align-items:center;gap:.3rem"><input type="checkbox" ${p.lifetime?'checked':''} id="plt_${i}"> Lifetime</label>
+          <button class="btn bs bsm" onclick="movePlan(${i},-1)">↑</button>
+          <button class="btn bs bsm" onclick="movePlan(${i},1)">↓</button>
+          <button class="btn bsm" style="background:rgba(255,51,85,.15);color:var(--re);border:1px solid rgba(255,51,85,.3)" onclick="deletePlan(${i})">🗑</button>
+        </div>
+      </div>
+      <div class="fr" style="flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
+        <div class="fg2"><label>Prezzo mensile (€)</label><input type="number" id="pp_${i}" value="${p.price}" step="0.01" min="0" style="width:100%"></div>
+        <div class="fg2"><label>Prezzo annuale (€, 0=nessuno)</label><input type="number" id="ppy_${i}" value="${p.priceYear}" step="0.01" min="0" style="width:100%"></div>
+        <div class="fg2"><label>Periodo (es. /mese)</label><input type="text" id="pper_${i}" value="${p.period}" style="width:100%"></div>
+        <div class="fg2"><label>Badge (es. POPOLARE)</label><input type="text" id="pbadge_${i}" value="${p.badge||''}" style="width:100%"></div>
+        <div class="fg2"><label>Colore (hex)</label><input type="color" id="pcol_${i}" value="${p.color}" style="width:100%;height:36px;padding:2px"></div>
+        <div class="fg2"><label>Sottotitolo</label><input type="text" id="psub_${i}" value="${p.subtitle||''}" style="width:100%"></div>
+      </div>
+      <div>
+        <label style="font-size:.82rem;font-weight:600;display:block;margin-bottom:.5rem">Feature (una per riga, usa ✅ ❌ ⚡ all'inizio)</label>
+        <textarea id="pfeat_${i}" rows="6" style="width:100%;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rs);padding:.6rem;font-size:.82rem;color:var(--tx);resize:vertical">${p.features.join('\n')}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+
+function collectPlans(){
+  return PLANS.map((p,i)=>({
+    id: document.getElementById(`pid_${i}`)?.value.trim()||p.id,
+    name: document.getElementById(`pn_${i}`)?.value.trim()||p.name,
+    color: document.getElementById(`pcol_${i}`)?.value||p.color,
+    badge: document.getElementById(`pbadge_${i}`)?.value.trim()||'',
+    price: parseFloat(document.getElementById(`pp_${i}`)?.value)||0,
+    priceYear: parseFloat(document.getElementById(`ppy_${i}`)?.value)||0,
+    period: document.getElementById(`pper_${i}`)?.value.trim()||p.period,
+    subtitle: document.getElementById(`psub_${i}`)?.value.trim()||'',
+    popular: document.getElementById(`ppop_${i}`)?.checked||false,
+    lifetime: document.getElementById(`plt_${i}`)?.checked||false,
+    features: (document.getElementById(`pfeat_${i}`)?.value||'').split('\n').map(s=>s.trim()).filter(Boolean)
+  }));
+}
+
+async function saveAllPlans(){
+  PLANS=collectPlans();
+  const obj={};
+  PLANS.forEach((p,i)=>obj[i]=p);
+  await db.ref('config/plans').set(obj);
+  toast('Piani salvati e pubblicati!','ok');
+  wlog('update','Piani aggiornati: '+PLANS.map(p=>p.name).join(', '));
+}
+
+function addNewPlan(){
+  PLANS=collectPlans();
+  PLANS.push({id:'nuovo_piano',name:'Nuovo Piano',color:'#7B68EE',badge:'',price:9.99,priceYear:0,period:'/mese',subtitle:'',popular:false,lifetime:false,features:['✅ Feature 1','✅ Feature 2']});
+  renderPlansEditor();
+  document.getElementById('plans-editor').lastElementChild?.scrollIntoView({behavior:'smooth'});
+}
+
+function deletePlan(i){
+  if(!confirm(`Eliminare il piano "${PLANS[i].name}"?`)) return;
+  PLANS=collectPlans();
+  PLANS.splice(i,1);
+  renderPlansEditor();
+}
+
+function movePlan(i,dir){
+  PLANS=collectPlans();
+  const j=i+dir;
+  if(j<0||j>=PLANS.length) return;
+  [PLANS[i],PLANS[j]]=[PLANS[j],PLANS[i]];
+  renderPlansEditor();
+}
 
 async function assignPlan(){
   const input=document.getElementById('plan-uid').value.trim();

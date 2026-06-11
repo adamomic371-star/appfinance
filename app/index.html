@@ -902,6 +902,7 @@ html{transition:background-color .3s,color .3s}
       <div class="g2">
         <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR €</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP £</option></select></div>
         <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">🌙 Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">☀️ Light</button></div></div>
+        <div class="card"><div class="ct">📲 App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Kazka sul dispositivo</button></div>
       </div>
     </div>
   </main>
@@ -1355,9 +1356,20 @@ async function doRegister(){
 }
 
 async function doGoogle(){
-  try{await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());}
-  catch(e){toast(ferr(e.code),'err');}
+  try{
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<768){
+      await auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+    } else {
+      await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    }
+  }catch(e){toast(ferr(e.code),'err');}
 }
+// Gestisce redirect dopo login Google (mobile)
+try{
+  auth.getRedirectResult().then(result=>{
+    if(result.user)console.log('Redirect login ok');
+  }).catch(e=>console.warn('Redirect result:',e.message));
+}catch(e){}
 
 async function doReset(){
   const email=document.getElementById('reset-email').value.trim();
@@ -1950,7 +1962,8 @@ async function exportAllBackup(){
 }
 /* ══ FAB ══ */
 let fabOpen=false;
-function toggleFabMenu(){const m=document.getElementById('fab-menu');if(!m)return;fabOpen=!fabOpen;m.classList.toggle('show',fabOpen);buildFabMenu();}
+function toggleFabMenu(e){if(e)e.stopPropagation();const m=document.getElementById('fab-menu');if(!m)return;fabOpen=!fabOpen;m.classList.toggle('show',fabOpen);if(fabOpen)buildFabMenu();}
+document.addEventListener('click',e=>{if(fabOpen&&!e.target.closest('.fab')&&!e.target.closest('.fab-m')){document.getElementById('fab-menu')?.classList.remove('show');fabOpen=false;}});
 function buildFabMenu(){
   const m=document.getElementById('fab-menu');if(!m)return;
   const views=[
@@ -1971,7 +1984,18 @@ function buildFabMenu(){
   ];
   const av=document.querySelector('.view.active');
   const id=av?.id?.replace('view-','')||'';
-  m.innerHTML=views.filter(x=>x.v===id||(id==='portfolio'&&x.v==='portfolio')).slice(0,5).map(x=>`<button class="fab-mi" onclick="cm('fab-menu');fabOpen=false;${x.fn}">${x.label}</button>`).join('')||'<div style="padding:.5rem .875rem;font-size:.78rem;color:var(--tx3)">Naviga in una sezione</div>';
+  const matched=views.filter(x=>x.v===id||(id==='portfolio'&&x.v==='portfolio'));
+  if(matched.length){
+    m.innerHTML=matched.slice(0,6).map(x=>`<button class="fab-mi" onclick="cm('fab-menu');fabOpen=false;${x.fn}">${x.label}</button>`).join('');
+  } else {
+    // default rapid actions
+    m.innerHTML=[
+      {l:'💸 Transazione',fn:'om(\'modal-tx\')'},
+      {l:'🏦 Conto',fn:'om(\'modal-acc\')'},
+      {l:'🎯 Budget',fn:'om(\'modal-budget\')'},
+      {l:'🏆 Obiettivo',fn:'om(\'modal-goal\')'},
+    ].map(x=>`<button class="fab-mi" onclick="cm('fab-menu');fabOpen=false;${x.fn}">${x.l}</button>`).join('');
+  }
 }
 /* ══ SYNC INDICATOR ══ */
 function initSyncIndicator(){
@@ -2011,10 +2035,21 @@ window.addEventListener('beforeinstallprompt',e=>{
 });
 window.addEventListener('appinstalled',()=>{document.getElementById('pwa-banner').style.display='none';localStorage.removeItem('kz_pwa_dismissed');toast('✅ Kazka installata!','ok');});
 function installPWA(){
-  if(!pwaDeferredPrompt){toast('Apri con Chrome e aggiungi alla Home','warn');return;}
+  if(!pwaDeferredPrompt){
+    // fallback: mostra le istruzioni
+    toast('📲 Apri in Chrome → ⋯ → Installa app (o Aggiungi alla Home)','warn',5000);
+    return;
+  }
   pwaDeferredPrompt.prompt();
-  pwaDeferredPrompt.userChoice.then(()=>{pwaDeferredPrompt=null;document.getElementById('pwa-banner').style.display='none';});
+  pwaDeferredPrompt.userChoice.then(()=>{pwaDeferredPrompt=null;document.getElementById('pwa-banner').style.display='none';localStorage.removeItem('kz_pwa_dismissed');});
 }
+// Retry banner after 5s if beforeinstallprompt hasn't fired
+setTimeout(()=>{
+  if(pwaDeferredPrompt&&!localStorage.getItem('kz_pwa_dismissed')){
+    const b=document.getElementById('pwa-banner');
+    if(b&&b.style.display!=='block')b.style.display='block';
+  }
+},5000);
 function dismissPWA(){document.getElementById('pwa-banner').style.display='none';localStorage.setItem('kz_pwa_dismissed','1');}
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded',()=>{

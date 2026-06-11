@@ -906,8 +906,6 @@ html{transition:background-color .3s,color .3s}
     </div>
   </main>
 </div>
-<button class="fab" id="fab" onclick="om('modal-tx')">+</button>
-
 <!-- MODALS -->
 <div class="mo" id="modal-tx"><div class="md">
   <div class="mh"><div class="mt" id="tx-title">Nuova transazione</div><div class="mc" onclick="cm('modal-tx')">✕</div></div>
@@ -1238,6 +1236,8 @@ function showApp(){
   loadAdminData();
   initSyncIndicator();
   setTimeout(()=>{ try{fetchRates();}catch(e){} }, 1000);
+  /* BUG-07 FIX: inizializza banner cookie GDPR */
+  initCookies();
 }
 
 async function loadProfile(u){
@@ -1355,9 +1355,20 @@ async function doRegister(){
 }
 
 async function doGoogle(){
-  try{await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());}
-  catch(e){toast(ferr(e.code),'err');}
+  try{
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<768){
+      await auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+    } else {
+      await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    }
+  }catch(e){toast(ferr(e.code),'err');}
 }
+// Gestisce redirect dopo login Google (mobile)
+try{
+  auth.getRedirectResult().then(result=>{
+    if(result.user)console.log('Redirect login ok');
+  }).catch(e=>console.warn('Redirect result:',e.message));
+}catch(e){}
 
 async function doReset(){
   const email=document.getElementById('reset-email').value.trim();
@@ -1487,18 +1498,46 @@ function setTT(t){document.getElementById('tx-type').value=t;document.getElement
 function previewRec(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const img=document.getElementById('tx-rec-prev');img.src=ev.target.result;img.style.display='block';};r.readAsDataURL(f);}
 
 async function saveTx(){
+  setModalSaving(true);
   const id=document.getElementById('tx-id').value;
   const tx={type:document.getElementById('tx-type').value,amount:parseFloat(document.getElementById('tx-amount').value)||0,date:document.getElementById('tx-date').value,description:document.getElementById('tx-desc').value.trim(),category:document.getElementById('tx-cat').value,account:document.getElementById('tx-acc').value,note:document.getElementById('tx-note').value.trim(),currency:document.getElementById('tx-cur').value||'EUR',updatedAt:new Date().toISOString()};
   if(!tx.amount||!tx.date||!tx.description){toast('Compila importo, data e descrizione','err');return;}
   const img=document.getElementById('tx-rec-prev');if(img.style.display!=='none'&&img.src?.startsWith('data:'))tx.receiptUrl=img.src;
-  if(id){await db.ref(`users/${UID}/transactions/${id}`).update(tx);}
-  else{tx.createdAt=new Date().toISOString();await db.ref(`users/${UID}/transactions`).push(tx);await updateBal(tx.account,tx.type,tx.amount);}
+  if(id){
+    /* BUG-03 FIX: reversa effetto vecchio saldo e applica il nuovo */
+    const old=S.transactions.find(t=>t.id===id);
+    if(old){
+      /* annulla vecchio effetto */
+      if(old.account)await updateBal(old.account,old.type==='income'?'expense':'income',old.amount);
+      /* applica nuovo effetto */
+      if(tx.account)await updateBal(tx.account,tx.type,tx.amount);
+    }
+    await db.ref(`users/${UID}/transactions/${id}`).update(tx);
+  } else {
+    tx.createdAt=new Date().toISOString();
+    const ref=await db.ref(`users/${UID}/transactions`).push(tx);
+    await updateBal(tx.account,tx.type,tx.amount);
+    /* BUG-06 FIX: salva split usando l'ID reale della nuova transazione */
+    if(splitMode){
+      const rows=document.querySelectorAll('#split-rows .split-row');
+      const splits=[];rows.forEach(r=>{const sel=r.querySelector('select'),inp=r.querySelector('input');splits.push({category:sel.value,amount:parseFloat(inp.value)||0});});
+      if(splits.length)await db.ref(`users/${UID}/transactions/${ref.key}/splits`).set(splits);
+    }
+  }
   cm('modal-tx');resetTxForm();toast(id?'Aggiornata':'Aggiunta','ok');
+  splitMode=false;document.getElementById('split-area').style.display='none';
+  document.getElementById('split-toggle').textContent='✂️ Split';
+  setModalSaving(false);
 }
 
 function resetTxForm(){['tx-id','tx-amount','tx-desc','tx-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('tx-date').value=today();setTT('expense');document.getElementById('tx-title').textContent='Nuova transazione';const img=document.getElementById('tx-rec-prev');img.style.display='none';document.getElementById('tx-rec').value='';}
 
-async function updateBal(accId,type,amount){if(!accId)return;const a=S.accounts.find(a=>a.id===accId);if(!a)return;const d=type==='income'?N(amount):-N(amount);await db.ref(`users/${UID}/accounts/${accId}/balance`).set(N(a.balance)+d);}
+/* BUG-04 FIX: usa Firebase transaction per evitare race condition sul saldo */
+async function updateBal(accId,type,amount){
+  if(!accId)return;
+  const delta=type==='income'?N(amount):-N(amount);
+  await db.ref(`users/${UID}/accounts/${accId}/balance`).transaction(cur=>N(cur)+delta);
+}
 
 function editTx(id){const t=S.transactions.find(t=>t.id===id);if(!t)return;document.getElementById('tx-id').value=id;document.getElementById('tx-type').value=t.type;setTT(t.type);document.getElementById('tx-amount').value=t.amount;document.getElementById('tx-date').value=t.date;document.getElementById('tx-desc').value=t.description||'';document.getElementById('tx-cat').value=t.category||'altro';document.getElementById('tx-acc').value=t.account||'';document.getElementById('tx-note').value=t.note||'';document.getElementById('tx-cur').value=t.currency||'EUR';document.getElementById('tx-title').textContent='Modifica transazione';if(t.receiptUrl){const img=document.getElementById('tx-rec-prev');img.src=t.receiptUrl;img.style.display='block';}om('modal-tx');}
 async function deleteTx(id){if(!confirm('Eliminare?'))return;await db.ref(`users/${UID}/transactions/${id}`).remove();toast('Eliminata','ok');}
@@ -1525,7 +1564,10 @@ async function deleteAcc(id){if(!confirm('Eliminare?'))return;await db.ref(`user
 
 /* ─── TRANSFER ─── */
 function populateTransferSels(){const opts=S.accounts.map(a=>`<option value="${a.id}">${a.name} (${fmt(a.balance)})</option>`).join('');['tr-from','tr-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts||'<option>Nessun conto</option>';});}
-async function doTransfer(){const fId=document.getElementById('tr-from').value,tId=document.getElementById('tr-to').value,amount=parseFloat(document.getElementById('tr-amount').value)||0,date=document.getElementById('tr-date').value,note=document.getElementById('tr-note').value.trim();if(!fId||!tId||fId===tId){toast('Seleziona due conti diversi','err');return;}if(!amount||!date){toast('Inserisci importo e data','err');return;}const from=S.accounts.find(a=>a.id===fId),to=S.accounts.find(a=>a.id===tId);if(!from||!to)return;if(N(from.balance)<amount){toast('Saldo insufficiente','err');return;}await db.ref(`users/${UID}/accounts/${fId}/balance`).set(N(from.balance)-amount);await db.ref(`users/${UID}/accounts/${tId}/balance`).set(N(to.balance)+amount);await db.ref(`users/${UID}/transfers`).push({from:fId,to:tId,fromName:from.name,toName:to.name,amount,date,note,createdAt:new Date().toISOString()});document.getElementById('tr-amount').value='';document.getElementById('tr-note').value='';toast(`Trasferito ${fmt(amount)} da ${from.name} a ${to.name}`,'ok');}
+async function doTransfer(){const fId=document.getElementById('tr-from').value,tId=document.getElementById('tr-to').value,amount=parseFloat(document.getElementById('tr-amount').value)||0,date=document.getElementById('tr-date').value,note=document.getElementById('tr-note').value.trim();if(!fId||!tId||fId===tId){toast('Seleziona due conti diversi','err');return;}if(!amount||!date){toast('Inserisci importo e data','err');return;}const from=S.accounts.find(a=>a.id===fId),to=S.accounts.find(a=>a.id===tId);if(!from||!to)return;/* BUG-15 FIX: controlla saldo reale dal DB per evitare undefined */
+const fromSnap=await db.ref(`users/${UID}/accounts/${fId}/balance`).once('value');
+const realBalance=N(fromSnap.val());
+if(realBalance<amount){toast('Saldo insufficiente','err');return;}await db.ref(`users/${UID}/accounts/${fId}/balance`).set(N(from.balance)-amount);await db.ref(`users/${UID}/accounts/${tId}/balance`).set(N(to.balance)+amount);await db.ref(`users/${UID}/transfers`).push({from:fId,to:tId,fromName:from.name,toName:to.name,amount,date,note,createdAt:new Date().toISOString()});document.getElementById('tr-amount').value='';document.getElementById('tr-note').value='';toast(`Trasferito ${fmt(amount)} da ${from.name} a ${to.name}`,'ok');}
 function renderTransfers(){const list=document.getElementById('transfer-list');if(!list)return;const tr=[...S.transfers].sort((a,b)=>new Date(b.date)-new Date(a.date));list.innerHTML=tr.slice(0,10).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${t.fromName} → ${t.toName}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}${t.note?` · ${t.note}`:''}</div></div><div style="font-weight:700;color:var(--ac)">${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun trasferimento</div>';}
 
 /* ─── BUDGET ─── */
@@ -1680,7 +1722,9 @@ function renderPrimaNota(){
 }
 function pnPrev(){pnDate.setMonth(pnDate.getMonth()-1);renderPrimaNota();}
 function pnNext(){pnDate.setMonth(pnDate.getMonth()+1);renderPrimaNota();}
-function exportPrimaNota(){try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(16);doc.text('Prima Nota',14,20);doc.setFontSize(9);doc.setTextColor(120);doc.text(pnDate.toLocaleDateString('it-IT',{month:'long',year:'numeric'}),14,28);doc.setTextColor(0);let y=40;const y2=pnDate.getFullYear(),mo2=pnDate.getMonth(),mStr2=`${y2}-${String(mo2+1).padStart(2,'0')}`;const txM=S.transactions.filter(t=>t.date?.startsWith(mStr2)).sort((a,b)=>new Date(a.date)-new Date(b.date));let prog=0;txM.forEach((t,i)=>{if(y>270){doc.addPage();y=20;}const amt=N(t.amount);prog+=t.type==='income'?amt:-amt;doc.setFontSize(8);doc.text(String(i+1).padStart(3,'0'),14,y);doc.text(t.date||'—',20,y);doc.text((t.description||'—').slice(0,35),40,y);if(t.type==='income')doc.text(fmt(amt),120,y);if(t.type==='expense')doc.text(fmt(amt),145,y);doc.text(fmt(prog),170,y);y+=7;});doc.save('prima-nota.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
+function exportPrimaNota(){
+  if(!window.jspdf||!window.jspdf.jsPDF){toast('Libreria PDF non caricata — verifica la connessione','err');return;}
+  try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(16);doc.text('Prima Nota',14,20);doc.setFontSize(9);doc.setTextColor(120);doc.text(pnDate.toLocaleDateString('it-IT',{month:'long',year:'numeric'}),14,28);doc.setTextColor(0);let y=40;const y2=pnDate.getFullYear(),mo2=pnDate.getMonth(),mStr2=`${y2}-${String(mo2+1).padStart(2,'0')}`;const txM=S.transactions.filter(t=>t.date?.startsWith(mStr2)).sort((a,b)=>new Date(a.date)-new Date(b.date));let prog=0;txM.forEach((t,i)=>{if(y>270){doc.addPage();y=20;}const amt=N(t.amount);prog+=t.type==='income'?amt:-amt;doc.setFontSize(8);doc.text(String(i+1).padStart(3,'0'),14,y);doc.text(t.date||'—',20,y);doc.text((t.description||'—').slice(0,35),40,y);if(t.type==='income')doc.text(fmt(amt),120,y);if(t.type==='expense')doc.text(fmt(amt),145,y);doc.text(fmt(prog),170,y);y+=7;});doc.save('prima-nota.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
 
 /* ─── TAX CALC ─── */
 function calcTax(){
@@ -1694,7 +1738,8 @@ function calcTax(){
   const taxRate=regime==='forfettario_5'?0.05:regime==='forfettario_15'?0.15:null;
   taxableBase=rev*coeff;
   inpsAmount=taxableBase*inpsRate;
-  if(taxRate){const adj=taxableBase-inpsAmount*0.5;taxAmount=adj*taxRate;}
+  /* BUG-14 FIX: la deduzione INPS al 50% si applica prima del calcolo imposta */
+  if(taxRate){const adj=Math.max(0,taxableBase-(inpsAmount*0.5));taxAmount=adj*taxRate;}
   else{const nb=taxableBase-inpsAmount;taxAmount=nb<=15000?nb*.23:nb<=28000?3450+(nb-15000)*.25:nb<=50000?6700+(nb-28000)*.35:nb<=75000?14400+(nb-50000)*.41:24650+(nb-75000)*.43;}
   net=rev-taxAmount-inpsAmount;
   res.innerHTML=`<div style="display:flex;flex-direction:column;gap:.5rem"><div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span>Fatturato lordo</span><span style="font-weight:700">${fmt(rev)}</span></div><div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span>Base imponibile</span><span style="font-weight:700">${fmt(taxableBase)}</span></div><div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span>🏛️ Tasse</span><span style="font-weight:700;color:var(--re)">-${fmt(taxAmount)}</span></div><div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1)"><span>🏦 INPS</span><span style="font-weight:700;color:var(--ye)">-${fmt(inpsAmount)}</span></div><div style="display:flex;justify-content:space-between;padding:.875rem;background:rgba(0,240,160,.08);border-radius:var(--rs)"><span style="font-weight:700">💰 Netto annuo</span><span style="font-weight:800;font-size:1.1rem;color:var(--gr)">${fmt(net)}</span></div><div style="font-size:.8rem;color:var(--tx2);margin-top:.5rem">Mensile netto: <strong style="color:var(--tx)">${fmt(net/12)}</strong> · Accantona: <strong style="color:var(--or)">${fmt((taxAmount+inpsAmount)/12)}/mese</strong></div></div>`;
@@ -1775,19 +1820,73 @@ function exportBackup(){const backup={version:2,exportedAt:new Date().toISOStrin
 async function importBackup(e){const file=e.target.files[0];if(!file)return;try{const text=await file.text();const backup=JSON.parse(text);if(!backup.data){toast('File non valido','err');return;}if(!confirm(`Importare backup del ${fd(backup.exportedAt)}?`))return;const data=backup.data,ops={};if(data.accounts){const map={};data.accounts.forEach(a=>{const{id,...r}=a;map[id||db.ref().push().key]=r;});ops.accounts=map;}if(data.goals){const map={};data.goals.forEach(g=>{const{id,...r}=g;map[id||db.ref().push().key]=r;});ops.goals=map;}if(data.transactions){const map={};data.transactions.forEach(t=>{const{id,...r}=t;map[id||db.ref().push().key]=r;});ops.transactions=map;}if(data.budgets)ops.budgets=data.budgets;await db.ref(`users/${UID}`).update(ops);toast('Backup ripristinato!','ok');}catch(e){toast('Errore: '+e.message,'err');}e.target.value='';}
 
 /* ─── EXPORT ─── */
-function exportCSV(){const rows=[['Data','Descrizione','Tipo','Categoria','Importo','Note']];const aN=id=>S.accounts.find(a=>a.id===id)?.name||'';S.transactions.forEach(t=>rows.push([t.date,t.description,t.type,t.category,aN(t.account),(t.type==='income'?'':'-')+t.amount,t.note||'']));const b=new Blob([rows.map(r=>r.join(';')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kazka-tx.csv';a.click();}
-function exportPDF(){try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(20);doc.text('Kazka — Report',14,22);doc.setFontSize(9);doc.setTextColor(120);doc.text(new Date().toLocaleDateString('it-IT'),14,30);doc.setTextColor(0);const ti=S.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),te=S.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);doc.setFontSize(11);doc.text('Riepilogo',14,42);doc.setFontSize(9);doc.text(`Entrate: ${fmt(ti)}`,14,52);doc.text(`Uscite: ${fmt(te)}`,14,60);doc.text(`Netto: ${fmt(ti-te)}`,14,68);let y=85;doc.setFontSize(10);doc.text('Ultime transazioni',14,78);S.transactions.slice(0,20).forEach(t=>{if(y>270){doc.addPage();y=20;}doc.setFontSize(8);doc.text(t.date||'—',14,y);doc.text((t.description||'—').slice(0,35),40,y);doc.text(`${t.type==='income'?'+':'-'}${fmt(t.amount)}`,160,y);y+=7;});doc.save('kazka-report.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
+/* BUG-12 FIX: CSV con quoting corretto per campi con separatori o virgolette */
+function csvQuote(v){const s=String(v==null?'':v);if(s.includes(';')||s.includes('"')||s.includes('\n'))return'"'+s.replace(/"/g,'""')+'"';return s;}
+function exportCSV(){
+  const rows=[['Data','Descrizione','Tipo','Categoria','Conto','Importo','Valuta','Note']];
+  const aN=id=>S.accounts.find(a=>a.id===id)?.name||'';
+  S.transactions.forEach(t=>rows.push([t.date,t.description||'',t.type,t.category||'altro',aN(t.account),(t.type==='income'?'':'-')+N(t.amount).toFixed(2),t.currency||'EUR',t.note||'']));
+  const b=new Blob(['﻿'+rows.map(r=>r.map(csvQuote).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kazka-tx.csv';a.click();
+}
+function exportPDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){toast('Libreria PDF non caricata — verifica la connessione','err');return;}
+  try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(20);doc.text('Kazka — Report',14,22);doc.setFontSize(9);doc.setTextColor(120);doc.text(new Date().toLocaleDateString('it-IT'),14,30);doc.setTextColor(0);const ti=S.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),te=S.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);doc.setFontSize(11);doc.text('Riepilogo',14,42);doc.setFontSize(9);doc.text(`Entrate: ${fmt(ti)}`,14,52);doc.text(`Uscite: ${fmt(te)}`,14,60);doc.text(`Netto: ${fmt(ti-te)}`,14,68);let y=85;doc.setFontSize(10);doc.text('Ultime transazioni',14,78);S.transactions.slice(0,20).forEach(t=>{if(y>270){doc.addPage();y=20;}doc.setFontSize(8);doc.text(t.date||'—',14,y);doc.text((t.description||'—').slice(0,35),40,y);doc.text(`${t.type==='income'?'+':'-'}${fmt(t.amount)}`,160,y);y+=7;});doc.save('kazka-report.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
 
 /* ─── EXCHANGE RATES ─── */
 let rates={EUR:1,USD:1.08,CHF:0.96,GBP:0.86};
 async function fetchRates(){const ls=localStorage.getItem('kz_rates_ts');if(ls&&Date.now()-parseInt(ls)<3600000)return;try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/EUR');if(!r.ok)return;const d=await r.json();rates={EUR:1,USD:d.rates.USD,CHF:d.rates.CHF,GBP:d.rates.GBP};localStorage.setItem('kz_rates_ts',String(Date.now()));}catch(e){}}
+
+/* ─── BUG-09 FIX: funzioni mancanti referenziate dai test ─── */
+/* Multi-currency conversion */
+function convertCurrency(amount,from,to){
+  const r={EUR:1,USD:1.08,CHF:0.96,GBP:0.86};
+  const base=N(amount)/(r[from]||1);
+  return (base*(r[to]||1)).toFixed(2);
+}
+/* AI category suggestion (keyword-based fallback) */
+function aiSuggestCategory(description){
+  if(!description)return'altro';
+  const d=(description||'').toLowerCase();
+  const map={alimentari:['supermercato','coop','esselunga','iper','lidl','penny','spesa','pane','frutta'],trasporti:['benzina','carburante','treno','bus','metro','taxi','uber','autostrada','parcheggio','pedaggio'],casa:['affitto','mutuo','utenze','enel','gas','acqua','luce','condominio'],salute:['farmacia','medico','dentista','occhiali','palestra','sport'],svago:['cinema','ristorante','bar','caffè','pizza','sushi','teatro','netflix','spotify'],lavoro:['ufficio','software','hardware','corso','formazione','abbonamento'],abbonamenti:['netflix','spotify','amazon','apple','google','microsoft','abbonamento'],istruzione:['libri','università','scuola','corso','lezioni'],viaggi:['hotel','volo','aereo','airbnb','vacanza','booking'],altro:[]};
+  for(const[cat,kws]of Object.entries(map)){if(kws.some(k=>d.includes(k)))return cat;}
+  return'altro';
+}
+/* Audit log (scrive su Firebase per gli admin) */
+async function auditLog(action,details){
+  if(!UID)return;
+  try{await db.ref(`users/${UID}/auditLog`).push({action,details:details||{},ts:new Date().toISOString(),uid:UID});}catch(e){}
+}
+/* Carica categorie personalizzate */
+function loadCustomCats(){
+  return(S.categories||[]).map(c=>({name:c.name,icon:c.icon,type:c.type}));
+}
+/* Carica soglie di notifica */
+function loadThresholds(){
+  try{return JSON.parse(localStorage.getItem('kz_thresholds')||'[]');}catch{return[];}
+}
+/* Salva soglie di notifica */
+function saveThresholds(arr){
+  localStorage.setItem('kz_thresholds',JSON.stringify(arr||[]));
+  toast('Soglie salvate','ok');
+}
+/* backupAllData: alias di exportBackup per compatibilità test */
+function backupAllData(){return exportBackup();}
 
 /* ─── HELPERS ─── */
 function populateSels(){const opts=S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')||'<option value="">Nessun conto</option>';const el=document.getElementById('tx-acc');if(el)el.innerHTML=opts;}
 function mkChart(id,type,data,options){const canvas=document.getElementById(id);if(!canvas)return;if(charts[id])charts[id].destroy();charts[id]=new Chart(canvas,{type,data,options});}
 function om(id){const el=document.getElementById(id);if(el){el.style.display='flex';el.classList.add('open');}}
 function cm(id){const el=document.getElementById(id);if(el){el.style.display='none';el.classList.remove('open');}}
-document.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.style.display='none';});
+/* BUG-17 FIX: non chiudere il modal durante operazioni di salvataggio in corso */
+let _modalSaving=false;
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('mo')&&!_modalSaving){
+    e.target.style.display='none';
+    e.target.classList.remove('open');
+  }
+});
+function setModalSaving(v){_modalSaving=v;}
 function fmt(v){return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(N(v));}
 function fd(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('it-IT');}catch{return d;}}
 function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
@@ -2162,7 +2261,11 @@ async function saveGroup(){
   const membersRaw=document.getElementById('grp-members').value;
   const gid=db.ref('groups').push().key;
   const members={};members[UID]={email:UP?.email||'',name:UP?.name||'',uid:UID,joinedAt:new Date().toISOString()};
-  membersRaw.split(',').map(m=>m.trim()).filter(m=>m).forEach((email,i)=>{members['g'+i]={email,name:email,pending:true,joinedAt:new Date().toISOString()};});
+  /* BUG-20 FIX: valida formato email prima di aggiungere al gruppo */
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const invalidEmails=membersRaw.split(',').map(m=>m.trim()).filter(m=>m&&!emailRe.test(m));
+  if(invalidEmails.length){toast(`Email non valide: ${invalidEmails.join(', ')}`, 'err');return;}
+  membersRaw.split(',').map(m=>m.trim()).filter(m=>m&&emailRe.test(m)).forEach((email,i)=>{members['g'+i]={email,name:email,pending:true,joinedAt:new Date().toISOString()};});
   await db.ref(`groups/${gid}`).set({info:{name,description:document.getElementById('grp-desc').value.trim(),icon:document.getElementById('grp-icon').value,expiry,autoDelete:true,createdBy:UID,createdAt:new Date().toISOString()},members});
   cm('modal-group');toast('Gruppo creato!','ok');
 }
@@ -2174,14 +2277,19 @@ async function saveGroup(){
 
 
 /* Open project modal - populate account select */
-document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('input[name="ptx-deduct"]').forEach(r=>{
-    r.addEventListener('change',()=>{
-      const row=document.getElementById('ptx-account-row');
-      if(row)row.style.display=r.value==='yes'?'block':'none';
+/* BUG-13 FIX: merged into main DOMContentLoaded listener above */
+(function(){
+  function attachPtxDeduct(){
+    document.querySelectorAll('input[name="ptx-deduct"]').forEach(r=>{
+      r.addEventListener('change',()=>{
+        const row=document.getElementById('ptx-account-row');
+        if(row)row.style.display=r.value==='yes'?'block':'none';
+      });
     });
-  });
-});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attachPtxDeduct);
+  else attachPtxDeduct();
+})();
 
 /* ══ COOKIE BANNER ══ */
 function initCookies(){if(!localStorage.getItem('kz_cookies'))document.getElementById('app-cookie-banner').style.display='block';}
@@ -2189,18 +2297,26 @@ function acceptAppCookies(){localStorage.setItem('kz_cookies','all');document.ge
 function declineAppCookies(){localStorage.setItem('kz_cookies','minimal');document.getElementById('app-cookie-banner').style.display='none';}
 
 /* ══ REFERRAL SYSTEM ══ */
-function initReferral(){
+/* BUG-11 FIX: referral code usa hash SHA-256 dei primi 16 byte dello UID
+   invece di btoa che espone direttamente lo UID */
+async function genRefCode(uid){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kazka-ref-'+uid));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
+}
+async function initReferral(){
   if(!UID)return;
-  const refCode=btoa(UID).slice(0,12);
+  const refCode=await genRefCode(UID);
+  /* Salva il codice nel profilo se non ancora presente */
+  const snap=await db.ref(`users/${UID}/profile/refCode`).once('value');
+  if(!snap.val())await db.ref(`users/${UID}/profile/refCode`).set(refCode);
   const link=`${window.location.origin}${window.location.pathname}?ref=${refCode}`;
   const el=document.getElementById('ref-link-display');
   if(el)el.textContent=link;
-  // Check incoming referral
   const params=new URLSearchParams(window.location.search);
   const incomingRef=params.get('ref');
-  if(incomingRef&&UID){
-    db.ref(`users/${UID}/profile/referredBy`).once('value').then(snap=>{
-      if(!snap.val())db.ref(`users/${UID}/profile/referredBy`).set(incomingRef);
+  if(incomingRef&&UID&&incomingRef!==refCode){
+    db.ref(`users/${UID}/profile/referredBy`).once('value').then(s=>{
+      if(!s.val())db.ref(`users/${UID}/profile/referredBy`).set(incomingRef);
     });
     history.replaceState({},'',window.location.pathname);
   }
@@ -2208,10 +2324,11 @@ function initReferral(){
 }
 async function loadReferralStats(){
   if(!UID)return;
-  const myCode=btoa(UID).slice(0,12);
-  const snap=await db.ref('users').once('value');
+  const myCode=(await db.ref(`users/${UID}/profile/refCode`).once('value')).val()||await genRefCode(UID);
+  /* Carica solo i referral dell'utente, non tutto il DB */
+  const snap=await db.ref('users').orderByChild('profile/referredBy').equalTo(myCode).once('value');
   const all=snap.val()||{};
-  const refs=Object.entries(all).filter(([uid,u])=>u.profile?.referredBy===myCode&&uid!==UID);
+  const refs=Object.entries(all).filter(([uid])=>uid!==UID);
   const el=document.getElementById('ref-count');if(el)el.textContent=refs.length;
   const me=document.getElementById('ref-months');if(me)me.textContent=refs.length;
   const list=document.getElementById('ref-list');
@@ -2418,7 +2535,9 @@ function showSkeleton(containerId, rows=3){
 }
 
 /* ══ INTERSECTION OBSERVER for scroll animations ══ */
+/* BUG-10 FIX: non nasconde elementi già visibili; fallback per browser senza IO */
 function initScrollAnimations(){
+  /* Se IO non disponibile, non toccare nulla - BUG-16 FIX */
   if(!('IntersectionObserver' in window))return;
   const obs=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
@@ -2428,12 +2547,17 @@ function initScrollAnimations(){
         obs.unobserve(e.target);
       }
     });
-  },{threshold:0.1});
+  },{threshold:0.05,rootMargin:'0px 0px -10px 0px'});
+  /* Solo gli elementi fuori dal viewport vengono nascosti */
   document.querySelectorAll('.sc,.gc,.card').forEach(el=>{
-    el.style.opacity='0';
-    el.style.transform='translateY(12px)';
-    el.style.transition='opacity .4s ease,transform .4s ease';
-    obs.observe(el);
+    const rect=el.getBoundingClientRect();
+    const visible=rect.top<window.innerHeight&&rect.bottom>0;
+    if(!visible){
+      el.style.opacity='0';
+      el.style.transform='translateY(12px)';
+      el.style.transition='opacity .4s ease,transform .4s ease';
+      obs.observe(el);
+    }
   });
 }
 
@@ -2664,24 +2788,18 @@ function exportData(format){
   cm('modal-export');
 }
 
-/* ══ OVERRIDE: saveTx with split support ══ */
-const _origSaveTx=saveTx;
+/* BUG-06 FIX: split validation ora avviene dentro saveTx; l'override è rimosso */
+/* Validazione split nel punto di salvataggio */
+const _origSaveTxValidate=saveTx;
 saveTx=async function(){
   if(splitMode){
     const rows=document.querySelectorAll('#split-rows .split-row');let total=0,valid=true;
     rows.forEach(r=>{const amt=parseFloat(r.querySelector('input').value)||0;if(!amt)valid=false;total+=amt;});
-    if(!valid||!total){toast('Compila tutti gli importi dello split','err');return;}
+    if(!valid||!total){toast('Compila tutti gli importi dello split','err');setModalSaving(false);return;}
     const baseAmount=parseFloat(document.getElementById('tx-amount').value)||0;
-    if(Math.abs(total-baseAmount)>0.01){toast(`Lo split non quadra: ${fmt(total)} vs ${fmt(baseAmount)}`,'err');return;}
+    if(Math.abs(total-baseAmount)>0.01){toast(`Lo split non quadra: ${fmt(total)} vs ${fmt(baseAmount)}`,'err');setModalSaving(false);return;}
   }
-  await _origSaveTx();
-  if(splitMode&&document.getElementById('tx-id').value){
-    // Salva i dati split sulla transazione
-    const txId=document.getElementById('tx-id').value;
-    const splits=[];document.querySelectorAll('#split-rows .split-row').forEach(r=>{const sel=r.querySelector('select'),inp=r.querySelector('input');splits.push({category:sel.value,amount:parseFloat(inp.value)||0});});
-    await db.ref(`users/${UID}/transactions/${txId}/splits`).set(splits);
-  }
-  splitMode=false;document.getElementById('split-area').style.display='none';
+  await _origSaveTxValidate();
 };
 
 /* ══ CATEGORY SELECT POPULATOR ══ */

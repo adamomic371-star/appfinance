@@ -488,6 +488,7 @@ function copyRef(){navigator.clipboard?.writeText(window.location.origin+'/appfi
 
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 
 <!-- Schema.org structured data for SEO -->

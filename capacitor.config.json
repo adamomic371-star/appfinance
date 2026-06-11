@@ -1,29 +1,20 @@
 {
   "appId": "com.kazka.finance",
   "appName": "Kazka",
-  "webDir": ".",
-  "bundledWebRuntime": false,
+  "webDir": "app",
   "server": {
-    "androidScheme": "https"
-  },
-  "android": {
-    "allowMixedContent": true
-  },
-  "ios": {
-    "contentInset": "always",
-    "allowsLinkPreview": false
+    "androidScheme": "https",
+    "hostname": "adamomic371-star.github.io",
+    "url": "https://adamomic371-star.github.io/appfinance"
   },
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 2000,
-      "backgroundColor": "#1a1a2e"
+      "launchAutoHide": true,
+      "backgroundColor": "#050912"
     },
-    "PushNotifications": {
-      "presentationOptions": ["badge", "sound", "alert"]
-    },
-    "LocalNotifications": {
-      "smallIcon": "ic_stat_icon",
-      "iconColor": "#6c63ff"
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#050912"
     }
   }
 }

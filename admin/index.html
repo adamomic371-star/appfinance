@@ -658,17 +658,31 @@ async function doLogout(){
   document.getElementById('l-user').value='';
 }
 
+let adminRealtimeOff=null;
+function debounce(fn,ms){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms);};}
+function rebuildAdminData(){
+  ALL_TX=[];ALL_ACC=[];ALL_INV=[];
+  Object.entries(ALL_U).forEach(([uid,u])=>{const p=u.profile||{};Object.entries(u.transactions||{}).forEach(([id,t])=>ALL_TX.push({...t,id,uid,uEmail:p.email||uid,uName:p.name||'—'}));Object.entries(u.accounts||{}).forEach(([id,a])=>ALL_ACC.push({...a,id,uid}));Object.entries(u.invoices||{}).forEach(([id,i])=>ALL_INV.push({...i,id,uid,uName:p.name||'—'}));});
+  ALL_TX.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  document.getElementById('tb-u').textContent=Object.keys(ALL_U).length;
+  document.getElementById('tb-tx').textContent=ALL_TX.length;
+  document.getElementById('tb-g').textContent=Object.keys(ALL_G).length;
+  renderDash();renderUsers();renderSubs();renderGroups();renderTx();renderAnalytics();renderRevenue();renderInv();loadLogs();loadPlans();loadFeatureFlags();loadApiKeys();loadTeam();loadNotifications();loadBackupHistory();
+}
+function subscribeAdminData(){
+  if(adminRealtimeOff)adminRealtimeOff();
+  const rbd=debounce(rebuildAdminData,300);
+  const offUsers=db.ref('users').on('value',snap=>{ALL_U=snap.val()||{};rbd();});
+  const offGroups=db.ref('groups').on('value',snap=>{ALL_G=snap.val()||{};rbd();});
+  adminRealtimeOff=()=>{db.ref('users').off('value',offUsers);db.ref('groups').off('value',offGroups);};
+}
 async function loadAll(){
   try{
     const[us,gs]=await Promise.all([db.ref('users').once('value'),db.ref('groups').once('value')]);
-    ALL_U=us.val()||{};ALL_G=gs.val()||{};ALL_TX=[];ALL_ACC=[];ALL_INV=[];
-    Object.entries(ALL_U).forEach(([uid,u])=>{const p=u.profile||{};Object.entries(u.transactions||{}).forEach(([id,t])=>ALL_TX.push({...t,id,uid,uEmail:p.email||uid,uName:p.name||'—'}));Object.entries(u.accounts||{}).forEach(([id,a])=>ALL_ACC.push({...a,id,uid}));Object.entries(u.invoices||{}).forEach(([id,i])=>ALL_INV.push({...i,id,uid,uName:p.name||'—'}));});
-    ALL_TX.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-    document.getElementById('tb-u').textContent=Object.keys(ALL_U).length;
-    document.getElementById('tb-tx').textContent=ALL_TX.length;
-    document.getElementById('tb-g').textContent=Object.keys(ALL_G).length;
-    renderDash();renderUsers();renderSubs();renderGroups();renderTx();renderAnalytics();renderRevenue();renderInv();loadLogs();loadPlans();loadFeatureFlags();loadApiKeys();loadTeam();loadNotifications();loadBackupHistory();
-    toast('Dati caricati','ok');
+    ALL_U=us.val()||{};ALL_G=gs.val()||{};
+    rebuildAdminData(); // Initial render immediately
+    subscribeAdminData(); // Real-time listeners for changes
+    toast('Dati caricati — aggiornamento in tempo reale attivo','ok');
   }catch(e){toast('Errore: '+e.message,'err');console.error(e);}
 }
 

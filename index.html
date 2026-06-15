@@ -10,9 +10,26 @@
 <meta property="og:description" content="Traccia spese, gestisci budget e raggiungi i tuoi obiettivi finanziari. Gratis per sempre.">
 <meta property="og:type" content="website">
 <meta name="robots" content="index, follow">
+<meta property="og:url" content="https://adamomic371-star.github.io/appfinance/">
+<meta property="og:image" content="https://adamomic371-star.github.io/appfinance/assets/icons/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kazka — App Finanze Personali Gratis">
+<meta name="twitter:description" content="Traccia spese, gestisci budget e raggiungi i tuoi obiettivi finanziari. Gratis per sempre.">
+<meta name="twitter:image" content="https://adamomic371-star.github.io/appfinance/assets/icons/og-image.png">
+<meta name="theme-color" content="#7B68EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/icons/icon-512.png">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 <link rel="canonical" href="https://adamomic371-star.github.io/appfinance/">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) - cookie-consent aware -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'analytics_storage':'denied','ad_storage':'denied'});gtag('js',new Date());gtag('config','G-XXXXXXXXXX',{cookie_flags:'max-age=7200;secure;samesite=none'});function acceptCookiesAll(){localStorage.setItem('kz_cookies','all');document.getElementById('cookie-banner').style.display='none';gtag('consent','update',{'analytics_storage':'granted'});}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#050912;--bg2:#090f1e;--bg3:#0d1528;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF);--r:14px}
@@ -146,9 +163,11 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 .cookie-accept{flex:1;padding:.65rem;background:var(--grad);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.875rem;cursor:pointer}
 .cookie-decline{padding:.65rem 1rem;background:var(--bg3);border:1px solid var(--b2);color:var(--tx2);border-radius:8px;font-size:.875rem;cursor:pointer}
 
-/* RESPONSIVE */
+/* MOBILE NAV */
+.nav-links{display:flex;align-items:center;gap:2rem}
 @media(max-width:768px){
-  .nav-links{display:none}
+  .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--b1);padding:1rem;gap:1rem;transform:translateY(-120%);opacity:0;transition:transform .3s ease,opacity .3s ease;pointer-events:none;z-index:100}
+  .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
   .nav-tog{display:block}
   .hero{padding:7rem 0 4rem}
   .preview-grid{grid-template-columns:1fr 1fr}
@@ -248,11 +267,12 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
   </div>
 </section>
 
+<main>
 <!-- FEATURES -->
 <section class="features" id="features">
   <div class="container">
     <div class="section-label">Funzionalità</div>
-    <div class="section-title">Tutto quello che ti serve,<br>in un unico posto</div>
+    <h2 class="section-title">Tutto quello che ti serve,<br>in un unico posto</h2>
     <p class="section-sub">Da semplice tracciamento spese a gestione aziendale completa. Kazka cresce con te.</p>
     <div class="feat-grid">
       <div class="feat-card"><div class="feat-icon" style="background:rgba(0,240,160,.12)">📊</div><div class="feat-title">Dashboard intelligente</div><div class="feat-desc">Panoramica completa di entrate, uscite, saldo e previsioni. Widget personalizzabili per vedere subito ciò che conta.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Tempo reale</span></div></div>
@@ -272,7 +292,7 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 <section class="pricing" id="pricing">
   <div class="container">
     <div class="section-label">Prezzi</div>
-    <div class="section-title">Inizia gratis, aggiorna quando vuoi</div>
+    <h2 class="section-title">Inizia gratis, aggiorna quando vuoi</h2>
     <p class="section-sub" style="margin:0 auto">Nessuna carta di credito richiesta. Cancella quando vuoi. Prezzi IVA inclusa.</p>
     <div class="pricing-grid">
 
@@ -375,7 +395,7 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 <section class="testimonials">
   <div class="container">
     <div class="section-label">Recensioni</div>
-    <div class="section-title">Chi già usa Kazka</div>
+    <h2 class="section-title">Chi già usa Kazka</h2>
     <div class="test-grid">
       <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-text">"Finalmente un'app in italiano che non è complicatissima. Ho capito in 5 minuti dove vanno i miei soldi ogni mese."</div><div class="test-author"><div class="test-av">M</div><div><div class="test-name">Marco R.</div><div class="test-role">Dipendente, Milano</div></div></div></div>
       <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-text">"Il modulo fatture è perfetto per la mia Partita IVA. Converto un preventivo in fattura in 30 secondi. Prima usavo Excel."</div><div class="test-author"><div class="test-av">S</div><div><div class="test-name">Sara L.</div><div class="test-role">Freelance designer, Roma</div></div></div></div>
@@ -388,7 +408,7 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 <section class="faq" id="faq">
   <div class="container" style="text-align:center">
     <div class="section-label">Domande frequenti</div>
-    <div class="section-title">Hai domande? Ecco le risposte</div>
+    <h2 class="section-title">Hai domande? Ecco le risposte</h2>
     <div class="faq-list">
       <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Il piano Free è davvero gratuito per sempre?</div><div class="faq-a">Sì, nessun limite di tempo. Il piano Free include transazioni illimitate, 2 conti, budget mensile e gruppi. Non chiediamo la carta di credito per registrarsi.</div></div>
       <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">I miei dati sono al sicuro?</div><div class="faq-a">I dati sono salvati su Firebase (Google Cloud Europe) con crittografia in transito e a riposo. Non vendiamo mai i tuoi dati a terzi. Puoi esportare o eliminare tutto in qualsiasi momento.</div></div>
@@ -413,6 +433,7 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
   </div>
 </section>
 
+</main>
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -471,8 +492,8 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 
 <script>
 // Cookie banner
-function checkCookies(){if(!localStorage.getItem('kz_cookies'))document.getElementById('cookie-banner').style.display='block';}
-function acceptCookies(){localStorage.setItem('kz_cookies','all');document.getElementById('cookie-banner').style.display='none';}
+function checkCookies(){if(!localStorage.getItem('kz_cookies'))document.getElementById('cookie-banner').style.display='block';else if(localStorage.getItem('kz_cookies')==='all'&&typeof gtag==='function')gtag('consent','update',{'analytics_storage':'granted'});}
+function acceptCookies(){localStorage.setItem('kz_cookies','all');document.getElementById('cookie-banner').style.display='none';try{if(typeof gtag==='function')gtag('consent','update',{'analytics_storage':'granted'});}catch(e){}}
 function declineCookies(){localStorage.setItem('kz_cookies','minimal');document.getElementById('cookie-banner').style.display='none';}
 checkCookies();
 
@@ -480,7 +501,7 @@ checkCookies();
 function toggleFaq(el){el.classList.toggle('open');}
 
 // Mobile nav
-function toggleMobileNav(){const links=document.querySelector('.nav-links');links.style.display=links.style.display==='flex'?'none':'flex';links.style.flexDirection='column';links.style.position='absolute';links.style.top='60px';links.style.left='0';links.style.right='0';links.style.background='var(--bg2)';links.style.padding='1rem';links.style.borderBottom='1px solid var(--b1)';}
+function toggleMobileNav(){const links=document.querySelector('.nav-links'),ov=document.getElementById('nav-overlay');if(!ov){ov=document.createElement('div');ov.id='nav-overlay';ov.style.cssText='position:fixed;inset:0;z-index:99;display:none';ov.onclick=toggleMobileNav;document.body.appendChild(ov);}const open=links.classList.toggle('open');ov.style.display=open?'block':'none';}
 
 // Referral modal
 function showReferral(){document.getElementById('ref-modal').style.display='flex';}

@@ -12,11 +12,14 @@
     "sync:test": "Copy-Item app/app.html test/app/app.html -Force"
   },
   "devDependencies": {
+    "@capacitor/android": "^6.1.0",
     "@capacitor/cli": "^6.1.0",
     "@capacitor/core": "^6.1.0",
-    "@capacitor/android": "^6.1.0",
     "@capacitor/ios": "^6.1.0",
     "@playwright/test": "^1.48.0",
     "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "@capacitor/push-notifications": "^6.0.0"
   }
 }

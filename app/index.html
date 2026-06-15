@@ -391,6 +391,9 @@ html{transition:background-color .3s,color .3s}
   #toast.show{transform:translateY(0)}
 }
 
+/* ── TOGGLE SWITCH ── */
+#notif-toggle:checked+span{background:var(--gr)!important}
+
 /* ── BETTER BUTTON PRESS ── */
 .btn:active{transform:scale(.96)}
 .bt-item:active .bt-icon svg{transform:scale(.85)}
@@ -1058,6 +1061,19 @@ html{transition:background-color .3s,color .3s}
         <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR €</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP £</option></select></div>
         <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">🌙 Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">☀️ Light</button></div></div>
         <div class="card"><div class="ct">📲 App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Kazka sul dispositivo</button></div>
+        <div class="card" id="notif-settings-card">
+          <div class="ct">🔔 Notifiche</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+            <div style="font-size:.875rem;font-weight:500">Notifiche sul dispositivo</div>
+            <label style="position:relative;display:inline-block;width:44px;height:26px;cursor:pointer">
+              <input type="checkbox" id="notif-toggle" onchange="toggleDeviceNotif(this.checked)" style="opacity:0;width:0;height:0">
+              <span style="position:absolute;inset:0;background:var(--b2);border-radius:13px;transition:background .25s"></span>
+              <span style="position:absolute;left:3px;bottom:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.2)"></span>
+            </label>
+          </div>
+          <div id="notif-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.75rem">Verifica permessi…</div>
+          <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif">Invia notifica di test</button>
+        </div>
       </div>
     </div>
   </main>
@@ -1401,6 +1417,78 @@ async function initFCM(){
     });
   }catch(e){console.warn('FCM init:',e.message);}
 }
+/* ─── NOTIFICATION SETTINGS ─── */
+function initNotifSettings(){
+  const t=document.getElementById('notif-toggle');
+  const s=document.getElementById('notif-status');
+  if(!t||!s)return;
+  const saved=localStorage.getItem('kz_notif_enabled');
+  t.checked=saved==='true';
+  if(Notification.permission==='granted'){
+    s.textContent='✅ Notifiche attive sul dispositivo';
+    s.style.color='var(--gr)';
+  } else if(Notification.permission==='denied'){
+    s.textContent='⛔ Permesso notifiche negato — abilita dalle impostazioni del browser';
+    s.style.color='var(--re)';
+  } else {
+    s.textContent='⚠️ Richiedi il permesso per ricevere notifiche';
+    s.style.color='var(--ye)';
+  }
+}
+async function toggleDeviceNotif(enabled){
+  localStorage.setItem('kz_notif_enabled',enabled?'true':'false');
+  const s=document.getElementById('notif-status');
+  if(!s)return;
+  if(enabled){
+    if(Notification.permission==='default'){
+      const perm=await Notification.requestPermission();
+      if(perm==='granted'){
+        s.textContent='✅ Notifiche attive sul dispositivo';
+        s.style.color='var(--gr)';
+        initFCM();
+        toast('Notifiche attivate','ok');
+      } else {
+        s.textContent='⚠️ Permesso negato — abilita dalle impostazioni del browser';
+        s.style.color='var(--re)';
+        document.getElementById('notif-toggle').checked=false;
+        localStorage.setItem('kz_notif_enabled','false');
+      }
+    } else if(Notification.permission==='granted'){
+      s.textContent='✅ Notifiche già attive';
+      s.style.color='var(--gr)';
+      toast('Notifiche già attive','ok');
+    } else {
+      s.textContent='⛔ Impossibile abilitare — permesso negato permanentemente';
+      s.style.color='var(--re)';
+      document.getElementById('notif-toggle').checked=false;
+      localStorage.setItem('kz_notif_enabled','false');
+    }
+  } else {
+    s.textContent='🔕 Notifiche disattivate';
+    s.style.color='var(--tx3)';
+    toast('Notifiche disattivate','warn');
+  }
+}
+async function sendTestNotif(){
+  if(!UID){toast('Effettua il login','err');return;}
+  const btn=document.getElementById('btn-test-notif');
+  if(btn)btn.disabled=true;
+  try{
+    const body='🕐 Questa è una notifica di test inviata da Kazka. Se vedi questo messaggio, le notifiche funzionano correttamente!';
+    await db.ref(`users/${UID}/notifications`).push({
+      title:'✅ Notifica di test',
+      body,
+      type:'system',
+      ts:new Date().toISOString(),
+      read:false
+    });
+    toast('Notifica di test inviata!','ok');
+  }catch(e){
+    toast('Errore invio notifica','err');
+    console.warn(e);
+  }
+  if(btn)setTimeout(()=>btn.disabled=false,2000);
+}
 /* ─── AUTH ─── */
 auth.getRedirectResult().then(result=>{
   if(result && result.user) console.log('Google login ok:', result.user.email);
@@ -1447,6 +1535,24 @@ function showApp(){
   setTimeout(()=>{ try{fetchRates();}catch(e){} }, 1000);
   /* BUG-07 FIX: inizializza banner cookie GDPR */
   initCookies();
+  /* Notifica di test automatica dopo 1 minuto */
+  if(localStorage.getItem('kz_notif_enabled')==='true'&&Notification.permission==='granted'){
+    setTimeout(async()=>{
+      try{
+        const snap=await db.ref(`users/${UID}/notifications`).limitToLast(1).once('value');
+        const last=snap.val()?Object.values(snap.val())[0]:null;
+        if(!last||!last.title?.includes('✅ Notifica di test')){
+          await db.ref(`users/${UID}/notifications`).push({
+            title:'✅ Notifica di test automatica',
+            body:'🕐 Le notifiche sono attive! Questo messaggio è stato inviato 1 minuto dopo l\'avvio.',
+            type:'system',
+            ts:new Date().toISOString(),
+            read:false
+          });
+        }
+      }catch(e){console.warn('Test notif auto:',e.message);}
+    },60000);
+  }
 }
 
 async function loadProfile(u){
@@ -1623,6 +1729,7 @@ function showView(n,{noTab}={}){
   if(n==='taxcalc')setTimeout(calcTax,50);
   if(n==='admin'){setTimeout(()=>{try{renderAdmin();}catch(e){}},50);}
   if(n==='categories'){setTimeout(()=>{try{renderCategories();}catch(e){}},50);}
+  if(n==='settings'){setTimeout(()=>{try{initNotifSettings();}catch(e){}},50);}
   if(n==='debtstrategy'){setTimeout(()=>{try{renderDebtStrategy();}catch(e){}},50);}
   if(n==='sharedgoals'){setTimeout(()=>{try{renderSharedGoals();}catch(e){}},50);}
 }

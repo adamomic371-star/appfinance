@@ -127,6 +127,8 @@ tr:hover td{background:var(--b1)}
 </style>
 </head>
 <body>
+<div id="admin-spinner" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1rem"><div style="width:40px;height:40px;border:3px solid var(--b1);border-top-color:var(--ac);border-radius:50%;animation:loading-spin .8s linear infinite"></div><div style="font-size:.9rem;color:var(--tx2)">Caricamento dati…</div></div>
+<style>@keyframes loading-spin{to{transform:rotate(360deg)}}</style>
 
 <div id="login-screen">
   <div class="lb">
@@ -576,6 +578,8 @@ firebase.initializeApp(FB_CFG);
 const auth=firebase.auth(), db=firebase.database();
 let ADMIN_UID=null;
 let ALL_U={},ALL_TX=[],ALL_ACC=[],ALL_INV=[],ALL_G={},cfg={registration:true,maintenance:false};
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+async function tryDb(fn,...args){try{return await fn(...args);}catch(e){toast('Errore DB: '+e.message,'err');throw e;}}
 
 /* BUG-02 FIX: login tramite Firebase Auth + verifica ruolo admin lato server */
 async function doLogin(){
@@ -677,13 +681,15 @@ function subscribeAdminData(){
   adminRealtimeOff=()=>{db.ref('users').off('value',offUsers);db.ref('groups').off('value',offGroups);};
 }
 async function loadAll(){
+  const sp=document.getElementById('admin-spinner');if(sp)sp.style.display='flex';
   try{
     const[us,gs]=await Promise.all([db.ref('users').once('value'),db.ref('groups').once('value')]);
     ALL_U=us.val()||{};ALL_G=gs.val()||{};
-    rebuildAdminData(); // Initial render immediately
-    subscribeAdminData(); // Real-time listeners for changes
+    rebuildAdminData();
+    subscribeAdminData();
     toast('Dati caricati — aggiornamento in tempo reale attivo','ok');
   }catch(e){toast('Errore: '+e.message,'err');console.error(e);}
+  if(sp)sp.style.display='none';
 }
 
 function renderDash(){
@@ -701,10 +707,10 @@ function renderDash(){
   document.getElementById('d-g').textContent=Object.keys(ALL_G).length;
   const dc=document.getElementById('d-churn');if(dc)dc.textContent=churn;
   const sorted=ul.filter(u=>u.profile?.createdAt).sort((a,b)=>new Date(b.profile.createdAt)-new Date(a.profile.createdAt)).slice(0,5);
-  document.getElementById('recent-u').innerHTML=sorted.length?sorted.map(u=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0">${(u.profile.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div><span class="badge ${rb(u.profile.role)}">${u.profile.role||'user'}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessun utente</div>';
+  document.getElementById('recent-u').innerHTML=sorted.length?sorted.map(u=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0">${esc(u.profile.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500">${esc(u.profile.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(u.profile.email||'—')}</div></div><span class="badge ${rb(u.profile.role)}">${esc(u.profile.role||'user')}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessun utente</div>';
   const nowTs=Date.now(),in30=nowTs+30*864e5;
   const exp=Object.values(ALL_U).filter(u=>{const e=u.profile?.subscriptionExpiry;if(!e||e==='never')return false;const t=new Date(e).getTime();return t>now&&t<=in30;}).sort((a,b)=>new Date(a.profile.subscriptionExpiry)-new Date(b.profile.subscriptionExpiry));
-  document.getElementById('exp-subs').innerHTML=exp.length?exp.map(u=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${u.profile.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile.email||'—'}</div></div><span class="badge by">${fd(u.profile.subscriptionExpiry)}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessuna scadenza imminente</div>';
+  document.getElementById('exp-subs').innerHTML=exp.length?exp.map(u=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${esc(u.profile.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(u.profile.email||'—')}</div></div><span class="badge by">${fd(u.profile.subscriptionExpiry)}</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.8rem">Nessuna scadenza imminente</div>';
 }
 
 function renderUsers(q='',role='',plan=''){
@@ -713,39 +719,39 @@ function renderUsers(q='',role='',plan=''){
   const tbody=document.getElementById('u-tbody'),empty=document.getElementById('u-empty');
   if(!entries.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';
   const txN=uid=>ALL_TX.filter(t=>t.uid===uid).length;
-  tbody.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:24px;height:24px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm" style="font-size:.85rem">${p.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${p.email||uid.slice(0,16)+'...'}</div></div></div></td><td><span class="badge ${rb(p.role)}">${p.role||'user'}</span></td><td><span class="badge ${pb(p.plan)}">${p.plan||'free'}</span></td><td style="font-size:.8rem">${p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?fd(p.subscriptionExpiry):'—'}</td><td style="font-size:.8rem">${fd(p.createdAt)}</td><td style="font-weight:600">${txN(uid)}</td><td><div style="display:flex;gap:.3rem"><button class="btn bi bs bsm" onclick="openEdit('${uid}')">✏️</button><button class="btn bi bd bsm" onclick="qDel('${uid}')">🗑</button></div></td></tr>`;}).join('');
+  tbody.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:24px;height:24px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">${esc(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm" style="font-size:.85rem">${esc(p.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(p.email||uid.slice(0,16)+'...')}</div></div></div></td><td><span class="badge ${rb(p.role)}">${esc(p.role||'user')}</span></td><td><span class="badge ${pb(p.plan)}">${esc(p.plan||'free')}</span></td><td style="font-size:.8rem">${p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?fd(p.subscriptionExpiry):'—'}</td><td style="font-size:.8rem">${fd(p.createdAt)}</td><td style="font-weight:600">${txN(uid)}</td><td><div style="display:flex;gap:.3rem"><button class="btn bi bs bsm" onclick="openEdit('${uid}')">✏️</button><button class="btn bi bd bsm" onclick="qDel('${uid}')">🗑</button></div></td></tr>`;}).join('');
 }
 function filterUsers(){renderUsers(document.getElementById('u-search').value,document.getElementById('uf-role').value,document.getElementById('uf-plan').value);}
 
-function openEdit(uid){const u=ALL_U[uid];if(!u)return;const p=u.profile||{};document.getElementById('eu-uid').value=uid;document.getElementById('eu-title').textContent=p.name||'Utente';document.getElementById('eu-role').value=p.role||'user';document.getElementById('eu-plan').value=p.plan||'free';document.getElementById('eu-start').value=p.subscriptionStart||today();document.getElementById('eu-exp').value=p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?p.subscriptionExpiry:'';document.getElementById('eu-notes').value=p.adminNotes||'';const txN=ALL_TX.filter(t=>t.uid===uid).length,inc=ALL_TX.filter(t=>t.uid===uid&&t.type==='income').reduce((s,t)=>s+N(t.amount),0),exp2=ALL_TX.filter(t=>t.uid===uid&&t.type==='expense').reduce((s,t)=>s+N(t.amount),0);document.getElementById('eu-info').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"><div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.1rem">Email</div><div style="font-size:.78rem;word-break:break-all">${p.email||'—'}</div></div><div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.1rem">Transazioni</div><div style="font-size:.78rem;font-weight:600">${txN} · <span style="color:var(--gr)">+${fmt(inc)}</span> <span style="color:var(--re)">-${fmt(exp2)}</span></div></div></div>`;document.getElementById('eu-del').onclick=()=>{cm('modal-edit');qDel(uid);};om('modal-edit');}
+function openEdit(uid){const u=ALL_U[uid];if(!u)return;const p=u.profile||{};document.getElementById('eu-uid').value=uid;document.getElementById('eu-title').textContent=p.name||'Utente';document.getElementById('eu-role').value=p.role||'user';document.getElementById('eu-plan').value=p.plan||'free';document.getElementById('eu-start').value=p.subscriptionStart||today();document.getElementById('eu-exp').value=p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?p.subscriptionExpiry:'';document.getElementById('eu-notes').value=p.adminNotes||'';const txN=ALL_TX.filter(t=>t.uid===uid).length,inc=ALL_TX.filter(t=>t.uid===uid&&t.type==='income').reduce((s,t)=>s+N(t.amount),0),exp2=ALL_TX.filter(t=>t.uid===uid&&t.type==='expense').reduce((s,t)=>s+N(t.amount),0);document.getElementById('eu-info').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"><div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.1rem">Email</div><div style="font-size:.78rem;word-break:break-all">${esc(p.email||'—')}</div></div><div><div style="font-size:.65rem;color:var(--tx3);text-transform:uppercase;margin-bottom:.1rem">Transazioni</div><div style="font-size:.78rem;font-weight:600">${txN} · <span style="color:var(--gr)">+${fmt(inc)}</span> <span style="color:var(--re)">-${fmt(exp2)}</span></div></div></div>`;document.getElementById('eu-del').onclick=()=>{cm('modal-edit');qDel(uid);};om('modal-edit');}
 function addDays(n){const d=new Date();d.setDate(d.getDate()+n);document.getElementById('eu-exp').value=d.toISOString().split('T')[0];if(!document.getElementById('eu-start').value)document.getElementById('eu-start').value=today();}
-async function saveEdit(){const uid=document.getElementById('eu-uid').value,role=document.getElementById('eu-role').value,plan=document.getElementById('eu-plan').value,start=document.getElementById('eu-start').value,expVal=document.getElementById('eu-exp').value,notes=document.getElementById('eu-notes').value.trim();const expiry=expVal==='never_display'||!expVal?'never':expVal;await db.ref(`users/${uid}/profile`).update({role,plan,subscriptionStart:start||today(),subscriptionExpiry:expiry,adminNotes:notes,updatedByAdmin:new Date().toISOString()});cm('modal-edit');await loadAll();toast('Aggiornato','ok');wlog('update',`${uid}: ${role}/${plan}`);}
-async function qDel(uid){const u=ALL_U[uid];if(!confirm(`Eliminare ${u?.profile?.email||uid}?`))return;await db.ref(`users/${uid}`).remove();await loadAll();toast('Eliminato','ok');wlog('delete',u?.profile?.email||uid);}
-async function createUser(){const name=document.getElementById('nu-name').value.trim(),email=document.getElementById('nu-email').value.trim(),role=document.getElementById('nu-role').value,plan=document.getElementById('nu-plan').value,exp=document.getElementById('nu-exp').value||'never';if(!name||!email){toast('Compila nome ed email','err');return;}const uid='manual-'+Date.now();await db.ref(`users/${uid}/profile`).set({name,email,role,plan,subscriptionExpiry:exp,subscriptionStart:today(),uid,createdAt:new Date().toISOString(),createdByAdmin:true});cm('modal-new-user');await loadAll();toast('Utente creato','ok');wlog('create',`${email}(${role}/${plan})`);}
+async function saveEdit(){const uid=document.getElementById('eu-uid').value,role=document.getElementById('eu-role').value,plan=document.getElementById('eu-plan').value,start=document.getElementById('eu-start').value,expVal=document.getElementById('eu-exp').value,notes=document.getElementById('eu-notes').value.trim();const expiry=expVal==='never_display'||!expVal?'never':expVal;try{await db.ref(`users/${uid}/profile`).update({role,plan,subscriptionStart:start||today(),subscriptionExpiry:expiry,adminNotes:notes,updatedByAdmin:new Date().toISOString()});cm('modal-edit');await loadAll();toast('Aggiornato','ok');wlog('update',`${uid}: ${role}/${plan}`);}catch(e){toast('Errore salvataggio: '+e.message,'err');}}
+async function qDel(uid){const u=ALL_U[uid];if(!confirm(`Eliminare ${u?.profile?.email||uid}?`))return;try{await db.ref(`users/${uid}`).remove();await loadAll();toast('Eliminato','ok');wlog('delete',u?.profile?.email||uid);}catch(e){toast('Errore eliminazione: '+e.message,'err');}}
+async function createUser(){const name=document.getElementById('nu-name').value.trim(),email=document.getElementById('nu-email').value.trim(),role=document.getElementById('nu-role').value,plan=document.getElementById('nu-plan').value,exp=document.getElementById('nu-exp').value||'never';if(!name||!email){toast('Compila nome ed email','err');return;}const uid='manual-'+Date.now();try{await db.ref(`users/${uid}/profile`).set({name,email,role,plan,subscriptionExpiry:exp,subscriptionStart:today(),uid,createdAt:new Date().toISOString(),createdByAdmin:true});cm('modal-new-user');await loadAll();toast('Utente creato','ok');wlog('create',`${email}(${role}/${plan})`);}catch(e){toast('Errore creazione: '+e.message,'err');}}
 
-function renderSubs(){const ul=Object.entries(ALL_U).map(([uid,u])=>({uid,...u.profile}));document.getElementById('s-free').textContent=ul.filter(u=>!u.plan||u.plan==='free').length;document.getElementById('s-pro').textContent=ul.filter(u=>u.plan==='pro').length;document.getElementById('s-biz').textContent=ul.filter(u=>u.plan==='business').length;document.getElementById('s-exp').textContent=ul.filter(u=>u.plan&&u.plan!=='free'&&u.subscriptionExpiry&&u.subscriptionExpiry!=='never'&&new Date(u.subscriptionExpiry)<new Date()).length;const sorted=ul.filter(u=>u.email).sort((a,b)=>({'business':0,'pro':1,'free':2}[a.plan]||2)-({'business':0,'pro':1,'free':2}[b.plan]||2));document.getElementById('subs-tbody').innerHTML=sorted.map(u=>{const s=subStatus(u);return`<tr><td class="tdm">${u.name||'—'}</td><td style="font-size:.82rem">${u.email||'—'}</td><td><span class="badge ${pb(u.plan)}">${u.plan||'free'}</span></td><td style="font-size:.82rem">${u.subscriptionStart?fd(u.subscriptionStart):'—'}</td><td style="font-size:.82rem">${u.subscriptionExpiry&&u.subscriptionExpiry!=='never'?fd(u.subscriptionExpiry):'Illimitato'}</td><td><span class="badge ${s.badge}">${s.label}</span></td><td><button class="btn bi bs bsm" onclick="openEdit('${u.uid}')">✏️</button></td></tr>`;}).join('');}
+function renderSubs(){const ul=Object.entries(ALL_U).map(([uid,u])=>({uid,...u.profile}));document.getElementById('s-free').textContent=ul.filter(u=>!u.plan||u.plan==='free').length;document.getElementById('s-pro').textContent=ul.filter(u=>u.plan==='pro').length;document.getElementById('s-biz').textContent=ul.filter(u=>u.plan==='business').length;document.getElementById('s-exp').textContent=ul.filter(u=>u.plan&&u.plan!=='free'&&u.subscriptionExpiry&&u.subscriptionExpiry!=='never'&&new Date(u.subscriptionExpiry)<new Date()).length;const sorted=ul.filter(u=>u.email).sort((a,b)=>({'business':0,'pro':1,'free':2}[a.plan]||2)-({'business':0,'pro':1,'free':2}[b.plan]||2));document.getElementById('subs-tbody').innerHTML=sorted.map(u=>{const s=subStatus(u);return`<tr><td class="tdm">${esc(u.name||'—')}</td><td style="font-size:.82rem">${esc(u.email||'—')}</td><td><span class="badge ${pb(u.plan)}">${esc(u.plan||'free')}</span></td><td style="font-size:.82rem">${u.subscriptionStart?fd(u.subscriptionStart):'—'}</td><td style="font-size:.82rem">${u.subscriptionExpiry&&u.subscriptionExpiry!=='never'?fd(u.subscriptionExpiry):'Illimitato'}</td><td><span class="badge ${s.badge}">${s.label}</span></td><td><button class="btn bi bs bsm" onclick="openEdit('${u.uid}')">✏️</button></td></tr>`;}).join('');}
 
-function renderGroups(){const entries=Object.entries(ALL_G);document.getElementById('g-count').textContent=`${entries.length} gruppi`;const tbody=document.getElementById('g-tbody'),empty=document.getElementById('g-empty');if(!entries.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';tbody.innerHTML=entries.map(([gid,g])=>{const info=g.info||{};const mC=Object.keys(g.members||{}).length,eC=Object.keys(g.expenses||{}).length,tot=Object.values(g.expenses||{}).reduce((s,e)=>s+N(e.amount),0);return`<tr><td class="tdm">${info.name||'—'}</td><td style="font-size:.82rem">${info.createdBy||'—'}</td><td style="font-weight:600">${mC}</td><td style="font-weight:600">${eC}</td><td style="font-weight:700;color:var(--re)">${fmt(tot)}</td><td style="font-size:.82rem">${fd(info.createdAt)}</td><td><button class="btn bi bd bsm" onclick="delGroup('${gid}')">🗑</button></td></tr>`;}).join('');}
-async function delGroup(gid){if(!confirm('Eliminare gruppo?'))return;await db.ref(`groups/${gid}`).remove();await loadAll();toast('Eliminato','ok');}
+function renderGroups(){const entries=Object.entries(ALL_G);document.getElementById('g-count').textContent=`${entries.length} gruppi`;const tbody=document.getElementById('g-tbody'),empty=document.getElementById('g-empty');if(!entries.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';tbody.innerHTML=entries.map(([gid,g])=>{const info=g.info||{};const mC=Object.keys(g.members||{}).length,eC=Object.keys(g.expenses||{}).length,tot=Object.values(g.expenses||{}).reduce((s,e)=>s+N(e.amount),0);return`<tr><td class="tdm">${esc(info.name||'—')}</td><td style="font-size:.82rem">${esc(info.createdBy||'—')}</td><td style="font-weight:600">${mC}</td><td style="font-weight:600">${eC}</td><td style="font-weight:700;color:var(--re)">${fmt(tot)}</td><td style="font-size:.82rem">${fd(info.createdAt)}</td><td><button class="btn bi bd bsm" onclick="delGroup('${gid}')">🗑</button></td></tr>`;}).join('');}
+async function delGroup(gid){if(!confirm('Eliminare gruppo?'))return;try{await db.ref(`groups/${gid}`).remove();await loadAll();toast('Eliminato','ok');}catch(e){toast('Errore: '+e.message,'err');}}
 
-function renderTx(q='',type=''){let tx=ALL_TX;if(q)tx=tx.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.uName||'').toLowerCase().includes(q));if(type)tx=tx.filter(t=>t.type===type);document.getElementById('tx-count').textContent=`${tx.length} transazioni`;const tbody=document.getElementById('tx-tbody'),empty=document.getElementById('tx-empty');if(!tx.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';const CI={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',altro:'📦'};tbody.innerHTML=tx.slice(0,200).map(t=>`<tr><td style="font-size:.82rem">${t.uName}</td><td style="font-size:.82rem">${fd(t.date)}</td><td class="tdm">${CI[t.category]||'📦'} ${t.description||'—'}</td><td style="font-size:.82rem">${cap(t.category||'altro')}</td><td><span class="badge ${t.type==='income'?'bg':'br'}">${t.type==='income'?'Entrata':'Uscita'}</span></td><td style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</td><td><button class="btn bi bd bsm" onclick="delTx('${t.uid}','${t.id}')">🗑</button></td></tr>`).join('');}
+function renderTx(q='',type=''){let tx=ALL_TX;if(q)tx=tx.filter(t=>(t.description||'').toLowerCase().includes(q)||(t.uName||'').toLowerCase().includes(q));if(type)tx=tx.filter(t=>t.type===type);document.getElementById('tx-count').textContent=`${tx.length} transazioni`;const tbody=document.getElementById('tx-tbody'),empty=document.getElementById('tx-empty');if(!tx.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';const CI={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',altro:'📦'};tbody.innerHTML=tx.slice(0,200).map(t=>`<tr><td style="font-size:.82rem">${esc(t.uName)}</td><td style="font-size:.82rem">${fd(t.date)}</td><td class="tdm">${CI[t.category]||'📦'} ${esc(t.description||'—')}</td><td style="font-size:.82rem">${cap(t.category||'altro')}</td><td><span class="badge ${t.type==='income'?'bg':'br'}">${t.type==='income'?'Entrata':'Uscita'}</span></td><td style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</td><td><button class="btn bi bd bsm" onclick="delTx('${t.uid}','${t.id}')">🗑</button></td></tr>`).join('');}
 function filterTx(){renderTx(document.getElementById('tx-search').value.toLowerCase(),document.getElementById('tx-type-f').value);}
-async function delTx(uid,id){if(!confirm('Eliminare?'))return;await db.ref(`users/${uid}/transactions/${id}`).remove();await loadAll();toast('Eliminata','ok');}
+async function delTx(uid,id){if(!confirm('Eliminare?'))return;try{await db.ref(`users/${uid}/transactions/${id}`).remove();await loadAll();toast('Eliminata','ok');}catch(e){toast('Errore: '+e.message,'err');}}
 
 function renderAnalytics(){const inc=ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),exp2=ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0),avg=Object.keys(ALL_U).length?Math.round(ALL_TX.length/Object.keys(ALL_U).length):0;document.getElementById('an-stats').innerHTML=`<div class="sc"><div class="sl">Volume entrate</div><div class="sv" style="color:var(--gr)">${fmt(inc)}</div></div><div class="sc"><div class="sl">Volume uscite</div><div class="sv" style="color:var(--re)">${fmt(exp2)}</div></div><div class="sc"><div class="sl">Netto</div><div class="sv">${fmt(inc-exp2)}</div></div><div class="sc"><div class="sl">Media tx/utente</div><div class="sv">${avg}</div></div>`;const plans={};Object.values(ALL_U).forEach(u=>{const p=u.profile?.plan||'free';plans[p]=(plans[p]||0)+1;});const tot=Object.keys(ALL_U).length||1;const PC={free:'var(--tx2)',pro:'var(--ac)',business:'#00E5FF'};document.getElementById('plan-dist').innerHTML=Object.entries(plans).map(([p,n])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem;font-weight:500;color:${PC[p]||'var(--tx)'}">${cap(p)}</span><div style="display:flex;align-items:center;gap:.75rem"><div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((n/tot)*100)}%;background:${PC[p]||'var(--ac)'};border-radius:3px"></div></div><span style="font-size:.875rem;font-weight:700">${n}</span></div></div>`).join('')||'<div class="empty">Nessun dato</div>';const cats={};ALL_TX.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+N(t.amount);});const sc=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);const mc=sc[0]?.[1]||1;const CI2={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};document.getElementById('top-cats').innerHTML=sc.map(([c,v])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">${CI2[c]||'📦'} ${cap(c)}</span><div style="display:flex;align-items:center;gap:.75rem"><div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((v/mc)*100)}%;background:var(--re);border-radius:3px"></div></div><span style="font-size:.875rem;font-weight:700">${fmt(v)}</span></div></div>`).join('')||'<div class="empty">Nessun dato</div>';}
 
-function renderInv(){const tbody=document.getElementById('inv-tbody'),empty=document.getElementById('inv-empty');const IS={draft:'bgy',sent:'by',paid:'bg',overdue:'br'};document.getElementById('inv-count').textContent=`${ALL_INV.length} fatture`;if(!ALL_INV.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';tbody.innerHTML=ALL_INV.map(i=>{const total=N(i.amount)*(1+N(i.vat||22)/100);return`<tr><td style="font-size:.82rem">${i.uName}</td><td class="tdm">${i.client||'—'}</td><td style="font-size:.82rem">${i.invoiceNum||'—'}</td><td style="font-size:.82rem">${fd(i.date)}</td><td style="font-weight:700">${fmt(total)}</td><td><span class="badge ${IS[i.status]||'bgy'}">${cap(i.status||'draft')}</span></td></tr>`;}).join('');}
+function renderInv(){const tbody=document.getElementById('inv-tbody'),empty=document.getElementById('inv-empty');const IS={draft:'bgy',sent:'by',paid:'bg',overdue:'br'};document.getElementById('inv-count').textContent=`${ALL_INV.length} fatture`;if(!ALL_INV.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';tbody.innerHTML=ALL_INV.map(i=>{const total=N(i.amount)*(1+N(i.vat||22)/100);return`<tr><td style="font-size:.82rem">${esc(i.uName)}</td><td class="tdm">${esc(i.client||'—')}</td><td style="font-size:.82rem">${esc(i.invoiceNum||'—')}</td><td style="font-size:.82rem">${fd(i.date)}</td><td style="font-weight:700">${fmt(total)}</td><td><span class="badge ${IS[i.status]||'bgy'}">${cap(i.status||'draft')}</span></td></tr>`;}).join('');}
 
 async function wlog(type,msg){try{await db.ref('admin_logs').push({type,msg,admin:ADMIN_UID||'admin',ts:new Date().toISOString()});}catch(e){}}
 async function loadLogs(){try{const snap=await db.ref('admin_logs').limitToLast(60).once('value');const logs=Object.entries(snap.val()||{}).map(([id,l])=>({id,...l})).reverse();const c=document.getElementById('logs-list'),e=document.getElementById('logs-empty');if(!logs.length){c.innerHTML='';e.style.display='block';return;}e.style.display='none';const IC={login:'🔑',logout:'🚪',create:'✅',delete:'🗑',update:'✏️',reset:'🔄',nuke:'🚨'};c.innerHTML=logs.map(l=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--b1);font-size:.8rem"><div style="width:26px;height:26px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">${IC[l.type]||'📋'}</div><div style="flex:1"><div style="color:var(--tx)">${l.msg}</div><div style="color:var(--tx3);font-size:.72rem">${l.admin} · ${fdt(l.ts)}</div></div></div>`).join('');}catch(e){}}
-async function clearLogs(){if(!confirm('Cancellare log?'))return;await db.ref('admin_logs').remove();loadLogs();toast('Log cancellati','ok');}
+async function clearLogs(){if(!confirm('Cancellare log?'))return;try{await db.ref('admin_logs').remove();loadLogs();toast('Log cancellati','ok');}catch(e){toast('Errore: '+e.message,'err');}}
 
 async function loadSettings(){try{const snap=await db.ref('admin_settings').once('value');if(snap.val())cfg={...cfg,...snap.val()};['registration','maintenance'].forEach(k=>{const id={registration:'tog-reg',maintenance:'tog-maint'}[k];const el=document.getElementById(id);if(el)el.classList.toggle('on',!!cfg[k]);});}catch(e){}}
-async function toggleSetting(key){cfg[key]=!cfg[key];await db.ref(`admin_settings/${key}`).set(cfg[key]);loadSettings();toast(`${key}: ${cfg[key]?'attivo':'disattivo'}`,'ok');}
+async function toggleSetting(key){cfg[key]=!cfg[key];try{await db.ref(`admin_settings/${key}`).set(cfg[key]);loadSettings();toast(`${key}: ${cfg[key]?'attivo':'disattivo'}`,'ok');}catch(e){cfg[key]=!cfg[key];toast('Errore: '+e.message,'err');}}
 
-async function deleteUser(){const input=document.getElementById('del-uid').value.trim();if(!input){toast('Inserisci UID o email','err');return;}const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;await db.ref(`users/${uid}`).remove();cm('modal-del');await loadAll();toast('Eliminato','ok');wlog('delete',input);}
-async function resetTx(){const input=document.getElementById('rst-uid').value.trim();if(!input){toast('Inserisci UID o email','err');return;}const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;await db.ref(`users/${uid}/transactions`).remove();cm('modal-rst');await loadAll();toast('Reset OK','ok');wlog('reset',input);}
-async function nukeAll(){if(document.getElementById('nuke-c').value!=='CANCELLA TUTTO'){toast('Testo errato','err');return;}await db.ref('users').remove();cm('modal-nuke');await loadAll();toast('Eseguito','ok');wlog('nuke','CANCELLAZIONE TOTALE');}
+async function deleteUser(){const input=document.getElementById('del-uid').value.trim();if(!input){toast('Inserisci UID o email','err');return;}const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;try{await db.ref(`users/${uid}`).remove();cm('modal-del');await loadAll();toast('Eliminato','ok');wlog('delete',input);}catch(e){toast('Errore: '+e.message,'err');}}
+async function resetTx(){const input=document.getElementById('rst-uid').value.trim();if(!input){toast('Inserisci UID o email','err');return;}const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;try{await db.ref(`users/${uid}/transactions`).remove();cm('modal-rst');await loadAll();toast('Reset OK','ok');wlog('reset',input);}catch(e){toast('Errore: '+e.message,'err');}}
+async function nukeAll(){if(document.getElementById('nuke-c').value!=='CANCELLA TUTTO'){toast('Testo errato','err');return;}try{await db.ref('users').remove();cm('modal-nuke');await loadAll();toast('Eseguito','ok');wlog('nuke','CANCELLAZIONE TOTALE');}catch(e){toast('Errore: '+e.message,'err');}}
 
 function exportAllCSV(){const rows=[['UID','Utente','Email','Data','Descrizione','Tipo','Cat.','Importo']];ALL_TX.forEach(t=>rows.push([t.uid,t.uName,t.uEmail,t.date,t.description||'',t.type,t.category||'',(t.type==='income'?'':'-')+t.amount]));dl('kazka-tx.csv',rows);wlog('export','CSV tx');}
 function exportUsersCSV(){const rows=[['UID','Nome','Email','Ruolo','Piano','Scadenza','Registrato']];Object.entries(ALL_U).forEach(([uid,u])=>{const p=u.profile||{};rows.push([uid,p.name||'',p.email||'',p.role||'user',p.plan||'free',p.subscriptionExpiry||'',p.createdAt||'']);});dl('kazka-users.csv',rows);}
@@ -807,8 +813,8 @@ function viewAsUser(uid){
     <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:700px;max-height:90vh;overflow-y:auto">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1);position:sticky;top:0;background:var(--bg2);z-index:1">
         <div style="display:flex;align-items:center;gap:.75rem">
-          <div style="width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div>
-          <div><div style="font-weight:700;font-size:1rem">${p.name||'—'}</div><div style="font-size:.8rem;color:var(--tx2)">${p.email||'—'} · ${p.plan||'free'}</div></div>
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff">${esc(p.name||'?').charAt(0).toUpperCase()}</div>
+          <div><div style="font-weight:700;font-size:1rem">${esc(p.name||'—')}</div><div style="font-size:.8rem;color:var(--tx2)">${esc(p.email||'—')} · ${esc(p.plan||'free')}</div></div>
         </div>
         <button onclick="this.parentElement.parentElement.parentElement.remove()" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:6px;color:var(--tx2);cursor:pointer;border:none">✕</button>
       </div>
@@ -820,7 +826,7 @@ function viewAsUser(uid){
           <div class="sc"><div class="sl">Transazioni</div><div class="sv">${tx.length}</div></div>
         </div>
         <div class="ct" style="margin-bottom:.5rem">Ultime transazioni</div>
-        ${tx.slice(0,20).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><span style="margin-right:.4rem">${CI[t.category]||'📦'}</span>${t.description||'—'}</div><div style="font-weight:600;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('')||'<div class="empty">Nessuna transazione</div>'}
+        ${tx.slice(0,20).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><span style="margin-right:.4rem">${CI[t.category]||'📦'}</span>${esc(t.description||'—')}</div><div style="font-weight:600;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('')||'<div class="empty">Nessuna transazione</div>'}
       </div>
     </div>
   </div>`;
@@ -867,8 +873,7 @@ async function loadBackupHistory(){
 async function saveEmailJS(){
   const cfg2={service:document.getElementById('ej-service').value.trim(),template:document.getElementById('ej-template').value.trim(),key:document.getElementById('ej-key').value.trim()};
   if(!cfg2.service||!cfg2.template||!cfg2.key){toast('Compila tutti i campi','err');return;}
-  await db.ref('admin_settings/emailjs').set(cfg2);
-  toast('Configurazione EmailJS salvata','ok');
+  try{await db.ref('admin_settings/emailjs').set(cfg2);toast('Configurazione EmailJS salvata','ok');}catch(e){toast('Errore: '+e.message,'err');}
 }
 async function loadEmailJS(){
   try{
@@ -885,7 +890,7 @@ function filterEmailUsers(){
   const entries=Object.entries(ALL_U).filter(([uid,u])=>{const p=u.profile||{};return!q||(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q);});
   const el=document.getElementById('eml-list');
   if(!entries.length){el.innerHTML='<div class="empty">Nessun utente</div>';return;}
-  el.innerHTML=entries.slice(0,50).map(([uid,u])=>{const p=u.profile||{};return`<label style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--b1);cursor:pointer;font-size:.85rem"><input type="checkbox" class="eml-chk" value="${uid}" checked>${p.name||'—'} <span style="color:var(--tx2)">${p.email||''}</span></label>`;}).join('');
+  el.innerHTML=entries.slice(0,50).map(([uid,u])=>{const p=u.profile||{};return`<label style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--b1);cursor:pointer;font-size:.85rem"><input type="checkbox" class="eml-chk" value="${uid}" checked>${esc(p.name||'—')} <span style="color:var(--tx2)">${esc(p.email||'')}</span></label>`;}).join('');
 }
 async function sendEmailBulk(){
   const cfg2=await loadEmailJS();
@@ -917,12 +922,9 @@ async function sendNotification(){
   const link=document.getElementById('notif-link').value.trim()||'';
   if(!title||!body){toast('Compila titolo e messaggio','err');return;}
   const notif={title,body,icon,target,link,date:new Date().toISOString(),by:ADMIN_UID};
-  await db.ref('admin_notifications').push(notif);
+  try{await db.ref('admin_notifications').push(notif);toast('Notifica inviata!','ok');wlog('notify',`${title} → ${target}`);loadNotifications();}catch(e){toast('Errore: '+e.message,'err');}
   document.getElementById('notif-title').value='';
   document.getElementById('notif-body').value='';
-  toast('Notifica inviata!','ok');
-  wlog('notify',`${title} → ${target}`);
-  loadNotifications();
 }
 async function loadNotifications(){
   try{
@@ -1004,17 +1006,12 @@ async function createApiKey(){
   const scope=[...sel.selectedOptions].map(o=>o.value).join(',')||'read';
   const exp=document.getElementById('apk-exp').value||'never';
   if(!name){toast('Inserisci nome','err');return;}
-  const key='kazka_'+Array.from({length:32},()=>'abcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.random()*36)).join('');
-  await db.ref(`admin_settings/apiKeys/${Date.now()}`).set({name,key,scope,exp,createdAt:new Date().toISOString(),createdBy:ADMIN_UID});
-  cm('modal-apikey');document.getElementById('apk-name').value='';document.getElementById('apk-exp').value='';
-  await loadApiKeys();
-  toast(`API Key creata: ${key.slice(0,16)}...`,'ok');
+  const buf=new Uint8Array(24);crypto.getRandomValues(buf);const key='kazka_'+Array.from(buf,b=>'abcdefghijklmnopqrstuvwxyz0123456789'[b%36]).join('');
+  try{await db.ref(`admin_settings/apiKeys/${Date.now()}`).set({name,key,scope,exp,createdAt:new Date().toISOString(),createdBy:ADMIN_UID});cm('modal-apikey');document.getElementById('apk-name').value='';document.getElementById('apk-exp').value='';await loadApiKeys();toast(`API Key creata: ${key.slice(0,16)}...`,'ok');}catch(e){toast('Errore: '+e.message,'err');}
 }
 async function revokeApiKey(id){
   if(!confirm('Revocare questa API Key?'))return;
-  await db.ref(`admin_settings/apiKeys/${id}`).remove();
-  await loadApiKeys();
-  toast('API Key revocata','ok');
+  try{await db.ref(`admin_settings/apiKeys/${id}`).remove();await loadApiKeys();toast('API Key revocata','ok');}catch(e){toast('Errore: '+e.message,'err');}
 }
 
 /* ─── AZIONI MASSIVE ─── */
@@ -1167,9 +1164,7 @@ async function saveAllPlans(){
   PLANS=collectPlans();
   const obj={};
   PLANS.forEach((p,i)=>obj[i]=p);
-  await db.ref('config/plans').set(obj);
-  toast('Piani salvati e pubblicati!','ok');
-  wlog('update','Piani aggiornati: '+PLANS.map(p=>p.name).join(', '));
+  try{await db.ref('config/plans').set(obj);toast('Piani salvati e pubblicati!','ok');wlog('update','Piani aggiornati: '+PLANS.map(p=>p.name).join(', '));}catch(e){toast('Errore salvataggio: '+e.message,'err');}
 }
 
 function addNewPlan(){
@@ -1200,10 +1195,7 @@ async function assignPlan(){
   const exp=document.getElementById('plan-exp').value||'never';
   if(!input){toast('Inserisci email o UID','err');return;}
   const uid=Object.entries(ALL_U).find(([,u])=>u.profile?.email===input)?.[0]||input;
-  await db.ref(`users/${uid}/profile`).update({plan,subscriptionExpiry:exp,subscriptionStart:today(),updatedByAdmin:new Date().toISOString()});
-  await loadAll();
-  toast(`Piano ${plan} assegnato a ${input}`,'ok');
-  wlog('update',`Piano ${plan} → ${input}`);
+  try{await db.ref(`users/${uid}/profile`).update({plan,subscriptionExpiry:exp,subscriptionStart:today(),updatedByAdmin:new Date().toISOString()});await loadAll();toast(`Piano ${plan} assegnato a ${input}`,'ok');wlog('update',`Piano ${plan} → ${input}`);}catch(e){toast('Errore: '+e.message,'err');}
 }
 
 </script>

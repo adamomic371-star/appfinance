@@ -4,10 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kazka — Finance</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050912">
+<link rel="apple-touch-icon" href="../assets/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="../assets/icons/icon-512.png">
 <link rel="manifest" href="../manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#050912;--bg2:#090f1e;--bg3:#0d1528;--bg4:#111c32;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF);--grad-b:linear-gradient(135deg,#FF8C42,#FFD166);--nh:60px;--sw:240px;--r:14px;--rs:8px}
@@ -195,6 +199,7 @@ tr:hover td{background:var(--b1)}
 @keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes countUp{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
@@ -447,6 +452,12 @@ html{transition:background-color .3s,color .3s}
       </div>
     </div>
   </div>
+</div>
+
+<!-- BOOT LOADER -->
+<div id="boot-loader" style="display:flex;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:1rem">
+  <div style="width:40px;height:40px;border:3px solid var(--b1);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite"></div>
+  <div style="font-family:'Syne',sans-serif;font-size:.9rem;color:var(--tx2)">Caricamento…</div>
 </div>
 
 <!-- APP SHELL -->
@@ -1257,6 +1268,8 @@ const FB={apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",authDomain:"financeap
 firebase.initializeApp(FB);
 const auth=firebase.auth(), db=firebase.database();
 
+/* ─── GLOBAL ERROR HANDLER ─── */
+window.onerror=function(msg,url,line,col,err){try{const key=Date.now().toString(36);if(!window._errLog)window._errLog={};window._errLog[key]={msg:msg?.slice(0,200),url,line,col,time:new Date().toISOString()};if(Object.keys(window._errLog).length>50){const keys=Object.keys(window._errLog).slice(0,Object.keys(window._errLog).length-50);keys.forEach(k=>delete window._errLog[k]);}}catch(e){}if(typeof toast==='function')toast('Errore imprevisto','err');};
 /* ─── CONSTANTS ─── */
 const CI={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',istruzione:'📚',viaggi:'✈️',altro:'📦'};
 const CC=['#7B68EE','#00F0A0','#00E5FF','#FF8C42','#FF3355','#FFD166','#FF3D78','#3ecf8e','#60a5fa','#a78bfa'];
@@ -1284,7 +1297,7 @@ async function initFCM(){
     const perm=await Notification.requestPermission();
     if(perm!=='granted')return;
     // Ottieni la VAPID Key dal tuo Firebase Console -> Cloud Messaging -> Web Push Certificate
-    const vapidKey='YOUR_VAPID_KEY'; // ← SOSTITUISCI CON QUELLA DEL TUO PROGETTO FIREBASE
+    const vapidKey='BB8n2W9trmRHHFKfbJV_TiU2Ul9Qj9lvMXpuM_ujtkrjbsTMyxnYEmbP5Xwu9WJPROhtVEX-WlpW5vEo1NBkx2k';
     fcmToken=await messaging.getToken({vapidKey});
     if(fcmToken) await db.ref(`users/${UID}/fcmTokens/${fcmToken.replace(/[:.]/g,'_')}`).set({token:fcmToken,device:navigator.userAgent?.slice(0,100)||'unknown',ts:new Date().toISOString()});
     messaging.onMessage(payload=>{
@@ -1332,11 +1345,13 @@ auth.onAuthStateChanged(async u=>{
 function showAuth(){
   document.getElementById('auth').style.display='flex';
   document.getElementById('app').style.display='none';
+  const bl=document.getElementById('boot-loader');if(bl)bl.style.display='none';
 }
 
 function showApp(){
   document.getElementById('auth').style.display='none';
   document.getElementById('app').style.display='block';
+  const bl=document.getElementById('boot-loader');if(bl)bl.style.display='none';
   applyTheme(theme);
   setMode(mode);
   const sc=document.getElementById('set-cur'); if(sc)sc.value=defaultCur;
@@ -1618,8 +1633,8 @@ function enableSwipe(el,onSwipeLeft,onSwipeRight){
   el.addEventListener('touchmove',e=>{
     dx=e.touches[0].clientX-sx;
     if(Math.abs(dx)>10)swiping=true;
-    if(swiping&&onSwipeLeft&&dx<-30)el.style.transform=`translateX(${Math.max(dx,0)}px)`;
-    if(swiping&&onSwipeRight&&dx>30)el.style.transform=`translateX(${Math.min(dx,0)}px)`;
+    if(swiping&&onSwipeLeft&&dx<0)el.style.transform=`translateX(${Math.max(dx,-80)}px)`;
+    if(swiping&&onSwipeRight&&dx>0)el.style.transform=`translateX(${Math.min(dx,80)}px)`;
   },{passive:true});
   el.addEventListener('touchend',()=>{
     if(!swiping)return;
@@ -1780,7 +1795,7 @@ function calcMainAccFreeMoney(main){
   const m=new Date().toISOString().slice(0,7);
   const budgets=S.budgets[m]||{};
   const alloc=Object.values(budgets).reduce((s,b)=>s+N(b.limit),0);
-  const goals=S.goals.reduce((s,g)=>s+N(g.target||0)-N(g.saved||0),0);
+  const goals=S.goals.reduce((s,g)=>s+N(g.target||0)-N(g.current||0),0);
   const rec=S.recurring.reduce((s,r)=>{const f={weekly:4.33,monthly:1,quarterly:1/3,yearly:1/12}[r.frequency]||1;return s+N(r.amount)*f;},0);
   const debtR=S.debts.reduce((s,d)=>s+N(d.rate),0);
   const committed=alloc+rec+debtR;
@@ -1808,7 +1823,7 @@ function setMainAcc(){
 
 /* ─── TRANSFER ─── */
 function populateTransferSels(){const opts=S.accounts.map(a=>`<option value="${a.id}">${a.name} (${fmt(a.balance)})</option>`).join('');['tr-from','tr-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts||'<option>Nessun conto</option>';});}
-async function doTransfer(){const fId=document.getElementById('tr-from').value,tId=document.getElementById('tr-to').value,amount=parseFloat(document.getElementById('tr-amount').value)||0,date=document.getElementById('tr-date').value,note=document.getElementById('tr-note').value.trim();if(!fId||!tId||fId===tId){toast('Seleziona due conti diversi','err');return;}if(!amount||!date){toast('Inserisci importo e data','err');return;}const fromName=S.accounts.find(a=>a.id===fId)?.name||'',toName=S.accounts.find(a=>a.id===tId)?.name||'';/* Legge entrambi i saldi dal DB per evitare dati obsoleti */
+async function doTransfer(){const fId=document.getElementById('tr-from').value,tId=document.getElementById('tr-to').value,amount=parseFloat(document.getElementById('tr-amount').value)||0,date=document.getElementById('tr-date').value,note=document.getElementById('tr-note').value.trim();if(!fId||!tId||fId===tId){toast('Seleziona due conti diversi','err');return;}if(!amount||!date){toast('Inserisci importo e data','err');return;}const fAcc=S.accounts.find(a=>a.id===fId),tAcc=S.accounts.find(a=>a.id===tId);if(!fAcc||!tAcc){toast('Conto non trovato','err');return;}const fromName=fAcc.name,toName=tAcc.name;/* Legge entrambi i saldi dal DB per evitare dati obsoleti */
 const [fromSnap,toSnap]=await Promise.all([db.ref(`users/${UID}/accounts/${fId}/balance`).once('value'),db.ref(`users/${UID}/accounts/${tId}/balance`).once('value')]);const realFrom=N(fromSnap.val()),realTo=N(toSnap.val());if(realFrom<amount){toast('Saldo insufficiente','err');return;}const newFrom=realFrom-amount;const newTo=realTo+amount;await db.ref(`users/${UID}/accounts/${fId}/balance`).set(newFrom);await db.ref(`users/${UID}/accounts/${tId}/balance`).set(newTo);/* Aggiorna i conti nell'array corrente (il listener Firebase potrebbe averlo sostituito) */S.accounts.forEach(a=>{if(a.id===fId)a.balance=newFrom;if(a.id===tId)a.balance=newTo;});await db.ref(`users/${UID}/transfers`).push({from:fId,to:tId,fromName,toName,amount,date,note,createdAt:new Date().toISOString()});document.getElementById('tr-amount').value='';document.getElementById('tr-note').value='';toast(`Trasferito ${fmt(amount)} da ${fromName} a ${toName}`,'ok');renderAccounts();updateDashWidgets();}
 function renderTransfers(){const list=document.getElementById('transfer-list');if(!list)return;const tr=[...S.transfers].sort((a,b)=>new Date(b.date)-new Date(a.date));list.innerHTML=tr.slice(0,10).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${t.fromName} → ${t.toName}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}${t.note?` · ${t.note}`:''}</div></div><div style="font-weight:700;color:var(--ac)">${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun trasferimento</div>';}
 
@@ -2003,8 +2018,8 @@ function renderPrimaNota(){
 }
 function pnPrev(){pnDate.setMonth(pnDate.getMonth()-1);renderPrimaNota();}
 function pnNext(){pnDate.setMonth(pnDate.getMonth()+1);renderPrimaNota();}
-function exportPrimaNota(){
-  if(!window.jspdf||!window.jspdf.jsPDF){toast('Libreria PDF non caricata — verifica la connessione','err');return;}
+async function exportPrimaNota(){
+  try{await loadJsPDF();}catch(e){toast('Errore caricamento libreria PDF','err');return;}
   try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(16);doc.text('Prima Nota',14,20);doc.setFontSize(9);doc.setTextColor(120);doc.text(pnDate.toLocaleDateString('it-IT',{month:'long',year:'numeric'}),14,28);doc.setTextColor(0);let y=40;const y2=pnDate.getFullYear(),mo2=pnDate.getMonth(),mStr2=`${y2}-${String(mo2+1).padStart(2,'0')}`;const txM=S.transactions.filter(t=>t.date?.startsWith(mStr2)).sort((a,b)=>new Date(a.date)-new Date(b.date));let prog=0;txM.forEach((t,i)=>{if(y>270){doc.addPage();y=20;}const amt=N(t.amount);prog+=t.type==='income'?amt:-amt;doc.setFontSize(8);doc.text(String(i+1).padStart(3,'0'),14,y);doc.text(t.date||'—',20,y);doc.text((t.description||'—').slice(0,35),40,y);if(t.type==='income')doc.text(fmt(amt),120,y);if(t.type==='expense')doc.text(fmt(amt),145,y);doc.text(fmt(prog),170,y);y+=7;});doc.save('prima-nota.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
 
 /* ─── TAX CALC ─── */
@@ -2146,8 +2161,8 @@ function exportCSV(){
   const b=new Blob(['﻿'+rows.map(r=>r.map(csvQuote).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kazka-tx.csv';a.click();
 }
-function exportPDF(){
-  if(!window.jspdf||!window.jspdf.jsPDF){toast('Libreria PDF non caricata — verifica la connessione','err');return;}
+async function exportPDF(){
+  try{await loadJsPDF();}catch(e){toast('Errore caricamento libreria PDF','err');return;}
   try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(20);doc.text('Kazka — Report',14,22);doc.setFontSize(9);doc.setTextColor(120);doc.text(new Date().toLocaleDateString('it-IT'),14,30);doc.setTextColor(0);const ti=S.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),te=S.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);doc.setFontSize(11);doc.text('Riepilogo',14,42);doc.setFontSize(9);doc.text(`Entrate: ${fmt(ti)}`,14,52);doc.text(`Uscite: ${fmt(te)}`,14,60);doc.text(`Netto: ${fmt(ti-te)}`,14,68);let y=85;doc.setFontSize(10);doc.text('Ultime transazioni',14,78);S.transactions.slice(0,20).forEach(t=>{if(y>270){doc.addPage();y=20;}doc.setFontSize(8);doc.text(t.date||'—',14,y);doc.text((t.description||'—').slice(0,35),40,y);doc.text(`${t.type==='income'?'+':'-'}${fmt(t.amount)}`,160,y);y+=7;});doc.save('kazka-report.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
 
 /* ─── EXCHANGE RATES ─── */
@@ -2192,7 +2207,10 @@ function backupAllData(){return exportBackup();}
 
 /* ─── HELPERS ─── */
 function populateSels(){const opts=S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')||'<option value="">Nessun conto</option>';const el=document.getElementById('tx-acc');if(el)el.innerHTML=opts;}
-function mkChart(id,type,data,options){const canvas=document.getElementById(id);if(!canvas)return;if(charts[id])charts[id].destroy();charts[id]=new Chart(canvas,{type,data,options});}
+function loadScript(url){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=url;s.onload=()=>res();s.onerror=rej;document.head.appendChild(s);});}
+function loadChartJS(){return window.Chart?Promise.resolve():loadScript('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js');}
+function loadJsPDF(){return window.jspdf?.jsPDF?Promise.resolve():loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');}
+function mkChart(id,type,data,options){const canvas=document.getElementById(id);if(!canvas)return;loadChartJS().then(()=>{if(charts[id])charts[id].destroy();charts[id]=new Chart(canvas,{type,data,options});}).catch(()=>{});}
 function om(id){const el=document.getElementById(id);if(el){el.style.display='flex';el.classList.add('open');}}
 function cm(id){const el=document.getElementById(id);if(el){el.style.display='none';el.classList.remove('open');}}
 /* BUG-17 FIX: non chiudere il modal durante operazioni di salvataggio in corso */
@@ -2382,14 +2400,17 @@ document.addEventListener('DOMContentLoaded',()=>{
 function updateDashWidgets(){
   const m=new Date().toISOString().slice(0,7);
   const txM=S.transactions.filter(t=>t.date?.startsWith(m));
-  const inc=txM.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0);
   const exp=txM.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);
   const recTot=S.recurring.reduce((s,r)=>{const f={weekly:4.33,monthly:1,quarterly:1/3,yearly:1/12}[r.frequency]||1;return s+N(r.amount)*f;},0);
   const debtR=S.debts.reduce((s,d)=>s+N(d.rate),0);
-  const fixedInc=N(fmCfg.income||inc);
-  const free=fixedInc-recTot-debtR-exp;
+  /* Soldi Liberi = saldo conto principale − impegni */
+  if(!mainAccId||!S.accounts.find(a=>a.id===mainAccId))mainAccId=S.accounts[0]?.id||'';
+  const main=S.accounts.find(a=>a.id===mainAccId);
+  const mBal=main?N(main.balance):0;
+  const budgets=S.budgets[m]||{};const alloc=Object.values(budgets).reduce((s,b)=>s+N(b.limit),0);
+  const free=mBal-(alloc+recTot+debtR);
   const wfm=document.getElementById('w-freemoney');
-  if(wfm){wfm.textContent=fmt(free);wfm.style.color=free>=0?'var(--gr)':'var(--re)';}
+  if(wfm){wfm.textContent=fmt(Math.max(0,free));wfm.style.color=free>=0?'var(--gr)':'var(--re)';}
   // Next 30 days expenses forecast
   const today2=new Date();
   const in30=new Date();in30.setDate(in30.getDate()+30);

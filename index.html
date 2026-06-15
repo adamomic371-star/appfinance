@@ -501,7 +501,7 @@ checkCookies();
 function toggleFaq(el){el.classList.toggle('open');}
 
 // Mobile nav
-function toggleMobileNav(){const links=document.querySelector('.nav-links'),ov=document.getElementById('nav-overlay');if(!ov){ov=document.createElement('div');ov.id='nav-overlay';ov.style.cssText='position:fixed;inset:0;z-index:99;display:none';ov.onclick=toggleMobileNav;document.body.appendChild(ov);}const open=links.classList.toggle('open');ov.style.display=open?'block':'none';}
+function toggleMobileNav(){const links=document.querySelector('.nav-links');let ov=document.getElementById('nav-overlay');if(!ov){ov=document.createElement('div');ov.id='nav-overlay';ov.style.cssText='position:fixed;inset:0;z-index:99;display:none';ov.onclick=toggleMobileNav;document.body.appendChild(ov);}const open=links.classList.toggle('open');ov.style.display=open?'block':'none';}
 
 // Referral modal
 function showReferral(){document.getElementById('ref-modal').style.display='flex';}

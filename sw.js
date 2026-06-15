@@ -120,7 +120,7 @@ self.addEventListener('fetch', e => {
           });
           if (entry) return new Response(JSON.stringify(entry.data), { headers: { 'Content-Type': 'application/json' } });
         } catch(e) {}
-        return caches.match(BASE + 'app/index.html') || caches.match(BASE + '404.html');
+        return (await caches.match(BASE + 'app/index.html')) || (await caches.match(BASE + '404.html'));
       })
     );
     return;

@@ -110,8 +110,6 @@ tr:hover td{background:var(--b1)}
 .pb{height:6px;background:var(--b1);border-radius:3px;overflow:hidden;margin:.5rem 0}
 .pf{height:100%;border-radius:3px;transition:width .5s ease}
 .est{text-align:center;padding:3rem 1rem;color:var(--tx3)}
-.fab{position:fixed;bottom:1.75rem;right:1.75rem;width:52px;height:52px;border-radius:50%;background:var(--grad);color:#fff;font-size:1.4rem;display:none;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(123,104,238,.4);cursor:pointer;z-index:50;transition:transform .2s}
-.fab:hover{transform:scale(1.08)}
 #toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:.875rem 1.25rem;color:var(--tx);font-size:.875rem;box-shadow:0 8px 30px rgba(0,0,0,.4);transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:300px;display:flex;align-items:center;gap:.6rem}
 #toast.show{transform:translateX(0)}
 #toast.ok{border-left:3px solid var(--gr)}#toast.err{border-left:3px solid var(--re)}#toast.warn{border-left:3px solid var(--ye)}
@@ -199,8 +197,8 @@ tr:hover td{background:var(--b1)}
 @keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes countUp{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
 /* View transition */
@@ -1337,7 +1335,7 @@ auth.onAuthStateChanged(async u=>{
     subscribeData();
     subscribeNotifs();
     setTimeout(initFCM,2000);
-  } else if(!u){
+  } else {
     showAuth();
   }
 });
@@ -1371,7 +1369,7 @@ async function loadProfile(u){
   const snap=await db.ref(`users/${u.uid}/profile`).once('value');
   UP=snap.val();
   if(!UP){
-    UP={uid:u.uid,email:u.email,name:u.displayName||u.email.split('@')[0],plan:'free',role:'user',createdAt:new Date().toISOString()};
+    const eml=u.email||'';UP={uid:u.uid,email:eml,name:u.displayName||eml.split('@')[0]||'Utente',plan:'free',role:'user',createdAt:new Date().toISOString()};
     await db.ref(`users/${u.uid}/profile`).set(UP);
   }
   const ini=(UP.name||'K').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
@@ -1400,14 +1398,11 @@ function subscribeData(){
     });
   });
   db.ref(`users/${UID}/budgets`).on('value',snap=>{S.budgets=snap.val()||{};renderBudget();});
-  db.ref('groups').on('value',snap=>{
-    const raw=snap.val()||{};
-    S.groups={};
-    Object.entries(raw).forEach(([gid,g])=>{
-      if(g.members&&(g.members[UID]||Object.values(g.members||{}).some(m=>m.email===UP?.email)))
-        S.groups[gid]=g;
-    });
-    renderGroups();
+  db.ref(`users/${UID}/groups`).on('value',snap=>{
+    const gids=snap.val()?Object.keys(snap.val()):[];
+    S.groups={};let cnt=0;
+    gids.forEach(gid=>{db.ref(`groups/${gid}`).once('value',s=>{const g=s.val();if(g){S.groups[gid]=g;}cnt++;if(cnt===gids.length)renderGroups();});});
+    if(!gids.length)renderGroups();
   });
   // Subscribe projects
   db.ref(`users/${UID}/projects`).on('value',snap=>{
@@ -1418,7 +1413,7 @@ function subscribeData(){
 
   db.ref(`users/${UID}/categories`).on('value',snap=>{const raw=snap.val()||{};S.categories=Object.entries(raw).map(([id,v])=>({id,...v}));renderCategories();});
   db.ref(`users/${UID}/invoiceTemplates`).on('value',snap=>{const raw=snap.val()||{};S.invoiceTemplates=Object.entries(raw).map(([id,v])=>({id,...v}));});
-  db.ref('sharedGoals').on('value',snap=>{const raw=snap.val()||{};S.sharedGoals={};Object.entries(raw).forEach(([gid,g])=>{if(g.members&&(g.members[UID]||Object.values(g.members||{}).some(m=>m.uid===UID)))S.sharedGoals[gid]=g;});renderSharedGoals();});
+  db.ref(`users/${UID}/sharedGoals`).on('value',snap=>{const raw=snap.val()||{};S.sharedGoals={};Object.entries(raw).forEach(([gid])=>{db.ref(`sharedGoals/${gid}`).once('value',s=>{const g=s.val();if(g)S.sharedGoals[gid]=g;});});renderSharedGoals();});
   ['portfolio','insurance'].forEach(p=>{
     db.ref(`users/${UID}/${p}`).on('value',snap=>{
       const raw=snap.val();
@@ -1640,7 +1635,7 @@ function enableSwipe(el,onSwipeLeft,onSwipeRight){
     if(!swiping)return;
     if(dx<-60&&onSwipeLeft)onSwipeLeft(el);
     else if(dx>60&&onSwipeRight)onSwipeRight(el);
-    el.style.transform='';el.style.transition='transform .2s';setTimeout(()=>el.style.transition='',250);
+    el.style.transition='transform .2s';el.style.transform='';setTimeout(()=>el.style.transition='',250);
   },{passive:true});
 }
 function wrapSwipeRow(html,id,onEdit,onDelete){
@@ -1914,6 +1909,7 @@ function calcFreeMoney(){
 }
 function saveFM(){fmCfg={income:parseFloat(document.getElementById('fm-income').value)||0,otherIncome:parseFloat(document.getElementById('fm-other').value)||0};localStorage.setItem('kz_fm',JSON.stringify(fmCfg));calcFreeMoney();toast('Salvato','ok');}
 
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 /* ─── GROUPS ─── */
 
 
@@ -1924,7 +1920,8 @@ function openGroup(gid){
   // Calculate balances
   const balances={};members.forEach(m=>{balances[m.name||m.email]=0;});
   Object.values(g.expenses||{}).forEach(e=>{const payer=members.find(m=>m.uid===e.payerId||m.email===e.payerId);const pName=payer?.name||e.payerName||e.payerId;const share=e.amount/members.length;members.forEach(m=>{const n=m.name||m.email;if(!balances[n])balances[n]=0;if(n===pName)balances[n]+=(e.amount-share);else balances[n]-=share;});});
-  document.getElementById('gd-members').innerHTML=members.map(m=>{const n=m.name||m.email;const b=balances[n]||0;const absB=Math.abs(b);const neg=b<0;const safeN=n.replace(/'/g,"\\'");return`<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--b1)"><div style="width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">${n.charAt(0).toUpperCase()}</div><div style="flex:1"><div style="font-size:.875rem;font-weight:500">${n}</div><div style="font-size:.72rem;color:var(--tx3)">${m.email||''}</div></div><div style="text-align:right"><div style="font-weight:700;font-size:.875rem;color:${b>=0?'var(--gr)':'var(--re)'}">${b>=0?'+':''}${fmt(b)}</div><div style="font-size:.7rem;color:var(--tx3)">${b>0?'da ricevere':b<0?'deve pagare':'in pari'}</div>${neg?`<button class="btn bp bsm" style="margin-top:.35rem;font-size:.72rem;padding:.25rem .6rem" onclick="payWithPaypal('${m.uid}','${gid}','${absB}','${safeN}')">🟦 Invia soldi ora</button>`:''}</div></div>`;}).join('');
+  const escQ=s=>s.replace(/['\\]/g,'\\$&');const gidQ=escQ(gid);
+  document.getElementById('gd-members').innerHTML=members.map(m=>{const n=m.name||m.email;const b=balances[n]||0;const absB=Math.abs(b);const neg=b<0;const uidQ=escQ(m.uid||''),nameQ=escQ(n);const absQ=escQ(String(absB));return`<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--b1)"><div style="width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">${esc(n).charAt(0).toUpperCase()}</div><div style="flex:1"><div style="font-size:.875rem;font-weight:500">${esc(n)}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(m.email||'')}</div></div><div style="text-align:right"><div style="font-weight:700;font-size:.875rem;color:${b>=0?'var(--gr)':'var(--re)'}">${b>=0?'+':''}${fmt(b)}</div><div style="font-size:.7rem;color:var(--tx3)">${b>0?'da ricevere':b<0?'deve pagare':'in pari'}</div>${neg?`<button class="btn bp bsm" style="margin-top:.35rem;font-size:.72rem;padding:.25rem .6rem" onclick="payWithPaypal('${uidQ}','${gidQ}','${absQ}','${nameQ}')">🟦 Invia soldi ora</button>`:''}</div></div>`;}).join('');
   const expenses=Object.values(g.expenses||{}).sort((a,b)=>new Date(b.date)-new Date(a.date));
   document.getElementById('gd-expenses').innerHTML=expenses.slice(0,10).map(e=>`<tr><td>${e.payerName||'—'}</td><td class="tdm">${e.description||'—'}</td><td style="font-weight:700;color:var(--re)">${fmt(e.amount)}</td></tr>`).join('');
   const ps=document.getElementById('ge-payer');if(ps)ps.innerHTML=members.map(m=>`<option value="${m.uid||m.email}">${m.name||m.email}</option>`).join('');
@@ -2228,7 +2225,7 @@ function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
 function today(){return new Date().toISOString().split('T')[0];}
 function N(v){return Number(v)||0;}
 function showErr(el,msg){if(el){el.textContent=msg;el.style.display='block';}}
-function toast(msg,type='ok'){const t=document.getElementById('toast');if(!t)return;t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]||'ℹ'}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
+function toast(msg,type='ok',dur){const t=document.getElementById('toast');if(!t)return;t.innerHTML=`<span>${{ok:'✓',err:'✕',warn:'⚠'}[type]||'ℹ'}</span> ${msg}`;t.className='toast '+type+' show';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur||3500);}
 function ferr(c){const m={'auth/user-not-found':'Email non trovata','auth/wrong-password':'Password errata','auth/email-already-in-use':'Email già registrata','auth/weak-password':'Password troppo corta (min. 6)','auth/invalid-email':'Email non valida','auth/too-many-requests':'Troppi tentativi — riprova più tardi','auth/invalid-credential':'Credenziali non valide','auth/network-request-failed':'Errore di rete — controlla la connessione','auth/popup-blocked':'Popup bloccato — consenti i popup per questo sito','auth/cancelled-popup-request':'Accesso annullato','auth/popup-closed-by-user':'Finestra chiusa — riprova','auth/timeout':'Connessione scaduta — riprova','auth/account-exists-with-different-credential':'Email già usata con un altro metodo di accesso','auth/unauthorized-domain':'Dominio non autorizzato — aggiungi questo dominio in Firebase Console → Authentication → Settings → Authorized domains','auth/operation-not-allowed':'Accesso Google non abilitato — abilitalo in Firebase Console → Authentication → Sign-in method'};return m[c]||'Errore — riprova';}
 
 /* ══ ADMIN PANEL ══ */

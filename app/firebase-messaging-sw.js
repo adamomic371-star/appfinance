@@ -21,17 +21,17 @@ messaging.onBackgroundMessage(payload => {
   const tag = data.tag || 'kazka-' + Date.now();
   self.registration.showNotification(title, {
     body,
-    icon: './assets/icons/icon-192.png',
-    badge: './assets/icons/icon-192.png',
+    icon: '../assets/icons/icon-192.png',
+    badge: '../assets/icons/icon-192.png',
     vibrate: [200, 100, 200],
     tag,
-    data: { url: data.url || './app/index.html', ...data }
+    data: { url: data.url || './index.html', ...data }
   });
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const url = event.notification.data?.url || './app/index.html';
+  const url = event.notification.data?.url || './index.html';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clist => {
       for (const c of clist) {

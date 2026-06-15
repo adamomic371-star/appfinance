@@ -1,0 +1,11 @@
+node_modules/
+functions/node_modules/
+.local/
+.env
+_*
+*.ps1
+test-results/
+playwright-report/
+appfinance/
+cleaner/
+cleaner.html

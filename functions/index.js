@@ -34,8 +34,8 @@ exports.sendPushOnNotification = functions.database
       notification: {
         title,
         body,
-        icon: './assets/icons/icon-192.png',
-        badge: './assets/icons/icon-192.png',
+        icon: 'https://adamomic371-star.github.io/appfinance/assets/icons/icon-192.png',
+        badge: 'https://adamomic371-star.github.io/appfinance/assets/icons/icon-192.png',
         sound: 'default',
       },
       data: {

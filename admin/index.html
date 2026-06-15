@@ -685,7 +685,6 @@ async function loadAll(){
   try{
     const[us,gs]=await Promise.all([db.ref('users').once('value'),db.ref('groups').once('value')]);
     ALL_U=us.val()||{};ALL_G=gs.val()||{};
-    rebuildAdminData();
     subscribeAdminData();
     toast('Dati caricati — aggiornamento in tempo reale attivo','ok');
   }catch(e){toast('Errore: '+e.message,'err');console.error(e);}
@@ -719,7 +718,7 @@ function renderUsers(q='',role='',plan=''){
   const tbody=document.getElementById('u-tbody'),empty=document.getElementById('u-empty');
   if(!entries.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';
   const txN=uid=>ALL_TX.filter(t=>t.uid===uid).length;
-  tbody.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:24px;height:24px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">${esc(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm" style="font-size:.85rem">${esc(p.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(p.email||uid.slice(0,16)+'...')}</div></div></div></td><td><span class="badge ${rb(p.role)}">${esc(p.role||'user')}</span></td><td><span class="badge ${pb(p.plan)}">${esc(p.plan||'free')}</span></td><td style="font-size:.8rem">${p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?fd(p.subscriptionExpiry):'—'}</td><td style="font-size:.8rem">${fd(p.createdAt)}</td><td style="font-weight:600">${txN(uid)}</td><td><div style="display:flex;gap:.3rem"><button class="btn bi bs bsm" onclick="openEdit('${uid}')">✏️</button><button class="btn bi bd bsm" onclick="qDel('${uid}')">🗑</button></div></td></tr>`;}).join('');
+  tbody.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};const uq=uid.replace(/'/g,"\\'");return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:24px;height:24px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">${esc(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm" style="font-size:.85rem">${esc(p.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(p.email||uid.slice(0,16)+'...')}</div></div></div></td><td><span class="badge ${rb(p.role)}">${esc(p.role||'user')}</span></td><td><span class="badge ${pb(p.plan)}">${esc(p.plan||'free')}</span></td><td style="font-size:.8rem">${p.subscriptionExpiry&&p.subscriptionExpiry!=='never'?fd(p.subscriptionExpiry):'—'}</td><td style="font-size:.8rem">${fd(p.createdAt)}</td><td style="font-weight:600">${txN(uid)}</td><td><div style="display:flex;gap:.3rem"><button class="btn bi bs bsm" onclick="openEdit('${uq}')">✏️</button><button class="btn bi bd bsm" onclick="qDel('${uq}')">🗑</button></div></td></tr>`;}).join('');
 }
 function filterUsers(){renderUsers(document.getElementById('u-search').value,document.getElementById('uf-role').value,document.getElementById('uf-plan').value);}
 
@@ -771,7 +770,7 @@ function renderRevenue(){
   const totalU=Object.keys(ALL_U).length||1;
   const paidU=Object.values(ALL_U).filter(u=>u.profile?.plan&&u.profile.plan!=='free').length;
   const cr=totalU>0?((paidU/totalU)*100).toFixed(1):'0';
-  const mrr=Object.values(ALL_U).reduce((s,u)=>{const p=u.profile;if(!p||!p.plan||p.plan==='free')return s;const pp={pro:2.49,business:4.99,allinclusive:7.99,lifetime:149.99}[p.plan]||0;return s+pp;},0);
+  const mrr=Object.values(ALL_U).reduce((s,u)=>{const p=u.profile;if(!p||!p.plan||p.plan==='free'||p.plan==='lifetime')return s;const pp={pro:2.49,business:4.99,allinclusive:7.99}[p.plan]||0;return s+pp;},0);
   const churn=Object.values(ALL_U).filter(u=>{const p=u.profile;return p?.plan&&p.plan!=='free'&&p.subscriptionExpiry&&p.subscriptionExpiry!=='never'&&new Date(p.subscriptionExpiry)<now&&new Date(p.subscriptionExpiry)>=cut;}).length;
   const churnRate=paidU>0?((churn/paidU)*100).toFixed(1):'0';
   const ltv=paidU>0?fmt(mrr*12/paidU):'—';
@@ -800,7 +799,7 @@ function filterImpersonate(){
   const entries=Object.entries(ALL_U).filter(([uid,u])=>{const p=u.profile||{};return!q||(p.name||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q);});
   const tb=document.getElementById('imp-tbody'),em=document.getElementById('imp-empty');
   if(!entries.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';
-  tb.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};const bal=ALL_TX.filter(t=>t.uid===uid).reduce((s,t)=>s+(t.type==='income'?N(t.amount):-N(t.amount)),0);return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm">${p.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${p.email||'—'}</div></div></div></td><td style="font-size:.82rem">${p.email||'—'}</td><td><span class="badge ${pb(p.plan)}">${p.plan||'free'}</span></td><td>${ALL_TX.filter(t=>t.uid===uid).length}</td><td style="font-weight:700;color:${bal>=0?'var(--gr)':'var(--re)'}">${fmt(Math.abs(bal))}</td><td><button class="btn bs bsm" onclick="viewAsUser('${uid}')">👁 Vedi</button></td></tr>`;}).join('');
+  tb.innerHTML=entries.map(([uid,u])=>{const p=u.profile||{};const bal=ALL_TX.filter(t=>t.uid===uid).reduce((s,t)=>s+(t.type==='income'?N(t.amount):-N(t.amount)),0);const uq=uid.replace(/'/g,"\\'");return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${esc(p.name||'?').charAt(0).toUpperCase()}</div><div><div class="tdm">${esc(p.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(p.email||'—')}</div></div></div></td><td style="font-size:.82rem">${esc(p.email||'—')}</td><td><span class="badge ${pb(p.plan)}">${esc(p.plan||'free')}</span></td><td>${ALL_TX.filter(t=>t.uid===uid).length}</td><td style="font-weight:700;color:${bal>=0?'var(--gr)':'var(--re)'}">${fmt(Math.abs(bal))}</td><td><button class="btn bs bsm" onclick="viewAsUser('${uq}')">👁 Vedi</button></td></tr>`;}).join('');
 }
 function viewAsUser(uid){
   const u=ALL_U[uid];if(!u){toast('Utente non trovato','err');return;}
@@ -932,7 +931,7 @@ async function loadNotifications(){
     const list=Object.entries(snap.val()||{}).map(([id,n])=>({id,...n})).reverse();
     const el=document.getElementById('notif-list');
     if(!list.length){el.innerHTML='<div class="empty">Nessuna notifica inviata</div>';return;}
-    el.innerHTML=list.map(n=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="font-size:1.2rem">${n.icon||'🔔'}</div><div style="flex:1"><div style="font-weight:600;font-size:.85rem">${n.title}</div><div style="font-size:.78rem;color:var(--tx2)">${n.body}</div><div style="font-size:.7rem;color:var(--tx3);margin-top:.15rem">${fd(n.date)} · ${n.target}</div></div></div>`).join('');
+    el.innerHTML=list.map(n=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--b1)"><div style="font-size:1.2rem">${n.icon||'🔔'}</div><div style="flex:1"><div style="font-weight:600;font-size:.85rem">${esc(n.title||'')}</div><div style="font-size:.78rem;color:var(--tx2)">${esc(n.body||'')}</div><div style="font-size:.7rem;color:var(--tx3);margin-top:.15rem">${fd(n.date)} · ${esc(n.target||'')}</div></div></div>`).join('');
   }catch(e){}
 }
 
@@ -944,25 +943,29 @@ async function loadTeam(){
     const tb=document.getElementById('team-tbody'),em=document.getElementById('team-empty');
     if(!team.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';
     const RL={'super_admin':'Super Admin','admin':'Admin','support':'Supporto','viewer':'Visualizzatore'};
-    tb.innerHTML=team.map(m=>`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${(m.name||'?').charAt(0).toUpperCase()}</div><div class="tdm">${m.name||'—'}</div></div></td><td>${m.email||'—'}</td><td><span class="badge ${m.role==='super_admin'?'br':m.role==='support'?'by':'bp2'}">${RL[m.role]||m.role}</span></td><td style="font-size:.8rem">${m.permissions||'Tutti'}</td><td style="font-size:.8rem">${m.lastLogin?fd(m.lastLogin):'—'}</td><td><button class="btn bi bd bsm" onclick="removeTeamMember('${m.uid}')">🗑</button></td></tr>`).join('');
+    tb.innerHTML=team.map(m=>{const muq=(m.uid||'').replace(/'/g,"\\'");return`<tr><td><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff">${esc(m.name||'?').charAt(0).toUpperCase()}</div><div class="tdm">${esc(m.name||'—')}</div></div></td><td>${esc(m.email||'—')}</td><td><span class="badge ${m.role==='super_admin'?'br':m.role==='support'?'by':'bp2'}">${RL[m.role]||m.role}</span></td><td style="font-size:.8rem">${esc(m.permissions||'Tutti')}</td><td style="font-size:.8rem">${m.lastLogin?fd(m.lastLogin):'—'}</td><td><button class="btn bi bd bsm" onclick="removeTeamMember('${muq}')">🗑</button></td></tr>`;}).join('');
   }catch(e){}
 }
 async function inviteAdmin(){
   const email=document.getElementById('inv-email').value.trim();
   const role=document.getElementById('inv-role').value;
   if(!email){toast('Inserisci email','err');return;}
-  const uid='team-'+Date.now();
-  await db.ref(`admin_team/${uid}`).set({email,role,name:email.split('@')[0],permissions:role==='support'?'read':role==='viewer'?'view':'all',invitedAt:new Date().toISOString(),invitedBy:ADMIN_UID});
-  cm('modal-invite');document.getElementById('inv-email').value='';
-  await loadTeam();
-  toast(`Invitato ${email} come ${role}`,'ok');
-  wlog('invite',`${email} → ${role}`);
+  try{
+    const uid='team-'+Date.now();
+    await db.ref(`admin_team/${uid}`).set({email,role,name:email.split('@')[0],permissions:role==='support'?'read':role==='viewer'?'view':'all',invitedAt:new Date().toISOString(),invitedBy:ADMIN_UID});
+    cm('modal-invite');document.getElementById('inv-email').value='';
+    await loadTeam();
+    toast(`Invitato ${email} come ${role}`,'ok');
+    wlog('invite',`${email} → ${role}`);
+  }catch(e){toast('Errore: '+e.message,'err');}
 }
 async function removeTeamMember(uid){
   if(!confirm('Rimuovere membro dal team?'))return;
-  await db.ref(`admin_team/${uid}`).remove();
-  await loadTeam();
-  toast('Membro rimosso','ok');
+  try{
+    await db.ref(`admin_team/${uid}`).remove();
+    await loadTeam();
+    toast('Membro rimosso','ok');
+  }catch(e){toast('Errore: '+e.message,'err');}
 }
 
 /* ─── FEATURE FLAGS ─── */
@@ -997,7 +1000,7 @@ async function loadApiKeys(){
     const el=document.getElementById('apikey-list');
     if(!el)return;
     if(!keys.length){el.innerHTML='<div class="empty">Nessuna API Key</div>';return;}
-    el.innerHTML=keys.map(k=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--b1);font-size:.82rem"><div><div style="font-weight:600">${k.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${k.key?.slice(0,16)}... · ${k.scope||'read'}</div></div><button class="btn bi bd bsm" onclick="revokeApiKey('${k.id}')">🗑</button></div>`).join('');
+    el.innerHTML=keys.map(k=>{const kq=(k.id||'').replace(/'/g,"\\'");return`<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--b1);font-size:.82rem"><div><div style="font-weight:600">${esc(k.name||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${esc((k.key||'').slice(0,16))}... · ${esc(k.scope||'read')}</div></div><button class="btn bi bd bsm" onclick="revokeApiKey('${kq}')">🗑</button></div>`;}).join('');
   }catch(e){}
 }
 async function createApiKey(){

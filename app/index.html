@@ -1,3 +1,4 @@
+<!-- Codice sviluppato da Adamo Michele -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark" data-mode="personal">
 <head>
@@ -2006,7 +2007,7 @@ function renderDashboard(){
     ?S.accounts.map(a=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .875rem;background:var(--bg3);border-radius:var(--rs);margin-bottom:.5rem"><div style="display:flex;align-items:center;gap:.5rem"><div style="width:26px;height:26px;border-radius:8px;background:${a.color||'var(--ac)'}22;display:flex;align-items:center;justify-content:center">${AI_IC[a.type]||'🏦'}</div><span style="font-size:.875rem">${a.name}</span></div><span style="font-weight:700;color:${N(a.balance)>=0?'var(--gr)':'var(--re)'}">${fmt(a.balance)}</span></div>`).join('')
     :'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Aggiungi un conto</div>';
   const dr=document.getElementById('dash-recent');
-  if(dr)dr.innerHTML=S.transactions.slice(0,6).map(t=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem;border-radius:var(--rs);margin-bottom:.3rem"><div style="width:34px;height:34px;border-radius:10px;background:${t.type==='income'?'rgba(0,240,160,.15)':'rgba(255,51,85,.12)'};display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">${CI[t.category]||'📦'}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.description||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}</div></div><div style="font-weight:700;font-size:.875rem;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessuna transazione</div>';
+  if(dr)dr.innerHTML=S.transactions.slice(0,6).map(t=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem;border-radius:var(--rs);margin-bottom:.3rem"><div style="width:34px;height:34px;border-radius:10px;background:${t.type==='income'?'rgba(0,240,160,.15)':'rgba(255,51,85,.12)'};display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">${CI[t.category]||'📦'}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.description||'—')}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}</div></div><div style="font-weight:700;font-size:.875rem;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessuna transazione</div>';
   renderDashCharts();
 }
 
@@ -2042,7 +2043,7 @@ function renderTransactions(){
   const pageTx=tx.slice(start,end);
   tbody.innerHTML=pageTx.map(t=>`<tr>
     <td style="font-size:.82rem">${fd(t.date)}</td>
-    <td class="tdm">${CI[t.category]||'📦'} ${t.description||'—'}${t.note?`<div style="font-size:.72rem;color:var(--tx3)">${t.note}</div>`:''}</td>
+    <td class="tdm">${CI[t.category]||'📦'} ${esc(t.description||'—')}${t.note?`<div style="font-size:.72rem;color:var(--tx3)">${esc(t.note)}</div>`:''}</td>
     <td><span class="badge bg-gy">${cap(t.category||'altro')}</span></td>
     <td style="font-size:.82rem">${aN(t.account)}</td>
     <td style="font-weight:700;color:${t.type==='income'?'var(--gr)':'var(--re)'}">${t.type==='income'?'+':'-'}${CS[t.currency]||'€'}${N(t.amount).toFixed(2)}</td>
@@ -2274,17 +2275,17 @@ function openGroup(gid){
   // Calculate balances
   const balances={};members.forEach(m=>{balances[m.name||m.email]=0;});
   Object.values(g.expenses||{}).forEach(e=>{const payer=members.find(m=>m.uid===e.payerId||m.email===e.payerId);const pName=payer?.name||e.payerName||e.payerId;const share=e.amount/members.length;members.forEach(m=>{const n=m.name||m.email;if(!balances[n])balances[n]=0;if(n===pName)balances[n]+=(e.amount-share);else balances[n]-=share;});});
-  const escQ=s=>s.replace(/['\\]/g,'\\$&');const gidQ=escQ(gid);
+  const escQ=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,"\\'").replace(/\\/g,'\\\\').replace(/</g,'&lt;').replace(/>/g,'&gt;');const gidQ=escQ(gid);
   document.getElementById('gd-members').innerHTML=members.map(m=>{const n=m.name||m.email;const b=balances[n]||0;const absB=Math.abs(b);const neg=b<0;const uidQ=escQ(m.uid||''),nameQ=escQ(n);const absQ=escQ(String(absB));return`<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--b1)"><div style="width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">${esc(n).charAt(0).toUpperCase()}</div><div style="flex:1"><div style="font-size:.875rem;font-weight:500">${esc(n)}</div><div style="font-size:.72rem;color:var(--tx3)">${esc(m.email||'')}</div></div><div style="text-align:right"><div style="font-weight:700;font-size:.875rem;color:${b>=0?'var(--gr)':'var(--re)'}">${b>=0?'+':''}${fmt(b)}</div><div style="font-size:.7rem;color:var(--tx3)">${b>0?'da ricevere':b<0?'deve pagare':'in pari'}</div>${neg?`<button class="btn bp bsm" style="margin-top:.35rem;font-size:.72rem;padding:.25rem .6rem" onclick="payWithPaypal('${uidQ}','${gidQ}','${absQ}','${nameQ}')">🟦 Invia soldi ora</button>`:''}</div></div>`;}).join('');
   const expenses=Object.values(g.expenses||{}).sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('gd-expenses').innerHTML=expenses.slice(0,10).map(e=>`<tr><td>${e.payerName||'—'}</td><td class="tdm">${e.description||'—'}</td><td style="font-weight:700;color:var(--re)">${fmt(e.amount)}</td></tr>`).join('');
-  const ps=document.getElementById('ge-payer');if(ps)ps.innerHTML=members.map(m=>`<option value="${m.uid||m.email}">${m.name||m.email}</option>`).join('');
+  document.getElementById('gd-expenses').innerHTML=expenses.slice(0,10).map(e=>`<tr><td>${esc(e.payerName||'—')}</td><td class="tdm">${esc(e.description||'—')}</td><td style="font-weight:700;color:var(--re)">${fmt(e.amount)}</td></tr>`).join('');
+  const ps=document.getElementById('ge-payer');if(ps)ps.innerHTML=members.map(m=>`<option value="${esc(m.uid||m.email)}">${esc(m.name||m.email)}</option>`).join('');
   document.getElementById('ge-date').value=today();
   if(chatOff)chatOff();
   const chatEl=document.getElementById('gd-chat');
   chatOff=db.ref(`groups/${gid}/chat`).limitToLast(50).on('value',snap=>{
     const msgs=Object.entries(snap.val()||{}).map(([id,m])=>({id,...m}));
-    chatEl.innerHTML=msgs.map(m=>{const mine=m.uid===UID;return`<div class="${mine?'chat-mine':'chat-other'}">${m.text}<div class="chat-meta">${mine?'Tu':m.name||'?'} · ${new Date(m.ts||0).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div></div>`;}).join('');
+    chatEl.innerHTML=msgs.map(m=>{const mine=m.uid===UID;return`<div class="${mine?'chat-mine':'chat-other'}">${esc(m.text)}<div class="chat-meta">${mine?'Tu':esc(m.name||'?')} · ${new Date(m.ts||0).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div></div>`;}).join('');
     chatEl.scrollTop=chatEl.scrollHeight;
   });
   showView('group-detail');

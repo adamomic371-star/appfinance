@@ -1,3 +1,4 @@
+// Codice sviluppato da Adamo Michele
 const CACHE = 'kazka-v8';
 const BASE = self.registration.scope;
 

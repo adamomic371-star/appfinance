@@ -207,12 +207,13 @@ tr:hover td{background:var(--b1)}
   .auth-box{margin:.5rem}
   .auth-body{padding:1.25rem}
   .auth-logo{font-size:1.3rem}
-  #dash-widgets{grid-template-columns:1fr!important;gap:.625rem!important}
+  #dash-widgets{gap:.5rem!important}
+  [id^=w-]{padding:.875rem!important}
+  [id^=w-]>div:first-child{font-size:.6rem!important}
+  [id^=w-]>div:nth-child(2){font-size:1.2rem!important}
+  [id^=w-]>div:nth-child(3){font-size:.65rem!important}
   .gg{gap:.75rem}
   #other-acc-section .gg{gap:.75rem}
-  [id^=w-]{padding:.875rem!important}
-  [id^=w-]>div:first-child{font-size:.65rem!important}
-  [id^=w-]>div:nth-child(2){font-size:1.3rem!important}
   .ni{min-height:44px}
 }
 /* ══ SMALL PHONES (≤400px) ══ */
@@ -662,14 +663,14 @@ html{transition:background-color .3s,color .3s}
       <!-- WIDGET ROW -->
       <div style="display:none;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem" id="dash-widgets">
         <div class="card" style="background:linear-gradient(135deg,rgba(0,240,160,.1),rgba(0,229,255,.06));border-color:rgba(0,240,160,.2);padding:1rem;cursor:pointer;border-radius:var(--r)" onclick="showView('freemoney')">
-          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gr);margin-bottom:.35rem;opacity:.9">Soldi Liberi</div>
-          <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gr);overflow-wrap:break-word;word-break:break-word" id="w-freemoney">—</div>
-          <div style="font-size:.7rem;color:var(--tx2);margin-top:.2rem;opacity:.8">disponibili questo mese</div>
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gr);margin-bottom:.35rem;opacity:.9">💰 Soldi Liberi</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gr);overflow-wrap:break-word;word-break:break-word;line-height:1.2" id="w-freemoney">—</div>
+          <div style="font-size:.7rem;color:var(--tx2);margin-top:.15rem;opacity:.7">disponibili questo mese</div>
         </div>
         <div class="card" style="background:linear-gradient(135deg,rgba(255,59,92,.08),rgba(255,140,66,.06));border-color:rgba(255,59,92,.18);padding:1rem;cursor:pointer;border-radius:var(--r)" onclick="showView('monthly')">
-          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--or);margin-bottom:.35rem;opacity:.9">Prossimi 30 gg</div>
-          <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--or);overflow-wrap:break-word;word-break:break-word" id="w-next30">—</div>
-          <div style="font-size:.7rem;color:var(--tx2);margin-top:.2rem;opacity:.8">spese previste</div>
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--or);margin-bottom:.35rem;opacity:.9">📅 Spese Future</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--or);overflow-wrap:break-word;word-break:break-word;line-height:1.2" id="w-next30">—</div>
+          <div style="font-size:.7rem;color:var(--tx2);margin-top:.15rem;opacity:.7" id="w-next30-sub">spese previste</div>
         </div>
       </div>
       <div id="w-debt-row" style="display:none;margin-bottom:1rem">
@@ -2695,7 +2696,12 @@ function updateDashWidgets(){
   const today2=new Date();
   const in30=new Date();in30.setDate(in30.getDate()+30);
   const future=recTot*1+debtR;
-  const wn=document.getElementById('w-next30');if(wn)wn.textContent=fmt(future+exp);
+  const n30=document.getElementById('w-next30');if(n30)n30.textContent=fmt(future+exp);
+  const n30sub=document.getElementById('w-next30-sub');
+  if(n30sub){
+    const rc=S.recurring.length||0,db=S.debts.length||0,tot=rc+db;
+    n30sub.textContent=tot>0?`${tot} spese in programma`:'nessuna spesa imminente';
+  }
   // Debt widget
   const drow=document.getElementById('w-debt-row');
   if(S.debts.length&&drow){

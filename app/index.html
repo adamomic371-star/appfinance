@@ -20,12 +20,12 @@
 [data-theme=light]{--bg:#EDEFF6;--bg2:#FFFFFF;--bg3:#F5F6FC;--bg4:#E8EBF5;--b1:rgba(0,0,0,.05);--b2:rgba(0,0,0,.09);--b3:rgba(0,0,0,.14);--tx:#161B33;--tx2:#545E82;--tx3:#8892B0;--tx4:#C8CDE0;--sh:0 4px 24px rgba(0,0,0,.08);--sh-sm:0 2px 8px rgba(0,0,0,.05)}
 [data-mode=business] .p-only{display:none!important}
 [data-mode=personal] .b-only{display:none!important}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:y contain;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:y contain;-webkit-tap-highlight-color:transparent}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
 
 /* AUTH */
-#auth{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;background:var(--bg);background-image:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%)}
+#auth{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:1rem;background:var(--bg);background-image:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%)}
 .auth-box{width:100%;max-width:420px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
 .auth-head{background:var(--grad);padding:1.75rem 2rem;text-align:center}
 .auth-logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff}
@@ -75,7 +75,7 @@ input,select,textarea{font-family:inherit}
 .sb-bot{margin-top:auto;padding:1rem;border-top:1px solid var(--b1)}
 .s-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:85;animation:fadeInBg .2s ease}
 
-#mc{margin-left:var(--sw);margin-top:var(--nh);padding:1.5rem;min-height:calc(100vh - var(--nh));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+#mc{margin-left:var(--sw);margin-top:var(--nh);padding:1.5rem;min-height:calc(100vh - var(--nh));min-height:calc(100dvh - var(--nh));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .view{display:none}.view.active{display:block}
 
 /* COMPONENTS */

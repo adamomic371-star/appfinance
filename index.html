@@ -19,7 +19,7 @@
 <meta name="twitter:title" content="Kazka — App Finanze Personali Gratis">
 <meta name="twitter:description" content="Traccia spese, gestisci budget e raggiungi i tuoi obiettivi finanziari. Gratis per sempre.">
 <meta name="twitter:image" content="https://adamomic371-star.github.io/appfinance/assets/icons/og-image.png">
-<meta name="theme-color" content="#7B68EE">
+<meta name="theme-color" content="#8B5CF6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
@@ -35,28 +35,29 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'analytics_storage':'denied','ad_storage':'denied'});gtag('js',new Date());gtag('config','G-XXXXXXXXXX',{cookie_flags:'max-age=7200;secure;samesite=none'});function acceptCookiesAll(){localStorage.setItem('kz_cookies','all');document.getElementById('cookie-banner').style.display='none';gtag('consent','update',{'analytics_storage':'granted'});}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#050912;--bg2:#090f1e;--bg3:#0d1528;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--ac:#7B68EE;--ac2:#00E5FF;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--or:#FF8C42;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF);--r:14px}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;line-height:1.6}
+:root{--bg:#080612;--bg2:#110C24;--bg3:#191236;--bg4:#231A48;--b1:rgba(139,92,246,.08);--b2:rgba(139,92,246,.18);--ac:#8B5CF6;--ac2:#22D3EE;--gr:#34D399;--re:#F43F5E;--ye:#FBBF24;--or:#FB923C;--pi:#E879F9;--tx:#F8FAFC;--tx2:#94A3B8;--tx3:#64748B;--tx4:#475569;--grad:linear-gradient(135deg,#8B5CF6,#22D3EE);--grad-b:linear-gradient(135deg,#FB923C,#FBBF24);--grad-c:linear-gradient(135deg,#F43F5E,#E879F9);--r:16px;--rs:10px;--mesh:radial-gradient(ellipse at 20% 10%,rgba(139,92,246,.08),transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(34,211,238,.06),transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(232,121,249,.04),transparent 50%)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:var(--mesh);color:var(--tx);overflow-x:hidden;line-height:1.6}
 a{text-decoration:none;color:inherit}
 .container{max-width:1120px;margin:0 auto;padding:0 1.5rem}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 0;background:rgba(5,9,18,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 0;background:rgba(8,6,18,.78);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--b1)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .nav-logo{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-links{display:flex;align-items:center;gap:2rem}
 .nav-links a{font-size:.875rem;color:var(--tx2);transition:color .2s}
 .nav-links a:hover{color:var(--tx)}
 .nav-cta{display:flex;gap:.75rem}
-.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
-.btn-primary{background:var(--grad);color:#fff}.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
-.btn-outline{background:transparent;border:1px solid var(--b2);color:var(--tx)}.btn-outline:hover{border-color:var(--ac);color:var(--ac)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.4rem;border-radius:var(--rs);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-decoration:none;position:relative;overflow:hidden}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 20px rgba(139,92,246,.3)}.btn-primary:hover{opacity:.95;transform:translateY(-2px);box-shadow:0 6px 28px rgba(139,92,246,.4)}
+.btn-outline{background:transparent;border:1px solid var(--b2);color:var(--tx)}.btn-outline:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-2px);box-shadow:0 4px 16px rgba(139,92,246,.1)}
 .nav-tog{display:none;background:none;border:none;color:var(--tx);font-size:1.25rem;cursor:pointer}
 
 /* HERO */
 .hero{padding:9rem 0 5rem;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(123,104,238,.12) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;background:rgba(123,104,238,.12);border:1px solid rgba(123,104,238,.25);border-radius:20px;font-size:.8rem;font-weight:600;color:var(--ac);margin-bottom:1.5rem}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:1000px;background:radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 70%);pointer-events:none;animation:bgShift 12s ease infinite;background-size:200% 200%}
+.hero::after{content:'';position:absolute;bottom:-300px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(34,211,238,.06),transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);border-radius:20px;font-size:.8rem;font-weight:600;color:var(--ac);margin-bottom:1.5rem;box-shadow:0 0 20px rgba(139,92,246,.06)}
 .hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:1.25rem;max-width:800px;margin-left:auto;margin-right:auto}
 .hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:1.1rem;color:var(--tx2);max-width:580px;margin:0 auto 2rem;line-height:1.7}

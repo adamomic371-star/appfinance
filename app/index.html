@@ -761,7 +761,7 @@ html{transition:background-color .3s,color .3s}
         <div class="card glass-card glow-or" style="padding:1rem;cursor:pointer" onclick="showView('monthly')">
           <div class="wig-title" style="color:var(--or)">📅 Spese Future</div>
           <div class="wig-val" style="color:var(--or)" id="w-next30">—</div>
-          <div class="wig-sub" id="w-next30-sub">spese previste</div>
+          <div class="wig-sub" id="w-next30-sub">spese previste in 30gg</div>
         </div>
       </div>
       <div id="w-debt-row" style="display:none;margin-bottom:1rem">
@@ -1188,6 +1188,7 @@ html{transition:background-color .3s,color .3s}
       <div class="g2">
         <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR €</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP £</option></select></div>
         <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">🌙 Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">☀️ Light</button></div></div>
+        <div class="card"><div class="ct">📊 Previsioni</div><div style="font-size:.82rem;color:var(--tx2);margin-bottom:.5rem">Giorni di previsione spese future</div><input type="number" id="set-forecast" class="btn bs" style="width:100%;padding:.7rem .875rem" min="1" max="365" value="30" onchange="forecastDays=Math.max(1,parseInt(this.value)||30);localStorage.setItem('kz_forecast_days',forecastDays);updateDashWidgets();toast('Giorni previsione aggiornati','ok')"></div>
         <div class="card"><div class="ct">📲 App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Kazka sul dispositivo</button></div>
         <div class="card" id="notif-settings-card">
           <div class="ct">🔔 Notifiche</div>
@@ -1513,6 +1514,7 @@ let UID=null, UP=null;
 let S={transactions:[],accounts:[],budgets:{},goals:[],recurring:[],invoices:[],travel:[],transfers:[],debts:[],groups:{},quotes:[],suppliers:[],categories:[],invoiceTemplates:[],sharedGoals:{}};
 let charts={}, theme=localStorage.getItem('kz_theme')||'dark', mode=localStorage.getItem('kz_mode')||'personal';
 let defaultCur=localStorage.getItem('kz_cur')||'EUR';
+let forecastDays=parseInt(localStorage.getItem('kz_forecast_days'))||30;
 let currentGid=null, chatOff=null, calDate=new Date(), monthlyDate=new Date(), pnDate=new Date();
 let notifications=[];
 let fmCfg=JSON.parse(localStorage.getItem('kz_fm')||'{}');
@@ -1658,6 +1660,7 @@ function showApp(){
   setMode(mode);
   const sc=document.getElementById('set-cur'); if(sc)sc.value=defaultCur;
   const sc2=document.getElementById('set-cur2'); if(sc2)sc2.value=defaultCur;
+  const sf=document.getElementById('set-forecast'); if(sf)sf.value=forecastDays;
   updateNotifBadge();
   showAdminNav();
   loadAdminData();
@@ -2877,15 +2880,15 @@ function updateDashWidgets(){
   const free=mBal-(alloc+recTot+debtR);
   const wfm=document.getElementById('w-freemoney');
   if(wfm){animateValue(wfm,Math.max(0,free),500);wfm.style.color=free>=0?'var(--gr)':'var(--re)';wfm.style.animation='numberCount .4s ease forwards';}
-  // Next 30 days expenses forecast
+  // Next N days expenses forecast
   const today2=new Date();
-  const in30=new Date();in30.setDate(in30.getDate()+30);
+  const inN=new Date();inN.setDate(inN.getDate()+forecastDays);
   const future=recTot*1+debtR;
   const n30=document.getElementById('w-next30');if(n30){animateValue(n30,future+exp,500);n30.style.animation='numberCount .4s ease forwards';}
   const n30sub=document.getElementById('w-next30-sub');
   if(n30sub){
     const rc=S.recurring.length||0,db=S.debts.length||0,tot=rc+db;
-    n30sub.textContent=tot>0?`${tot} spese in programma`:'nessuna spesa imminente';
+    n30sub.textContent=tot>0?`${tot} spese in ${forecastDays}gg`:`nessuna spesa nei prossimi ${forecastDays}gg`;
   }
   // Debt widget
   const drow=document.getElementById('w-debt-row');

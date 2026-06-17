@@ -32,7 +32,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Google tag (gtag.js) - cookie-consent aware -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'analytics_storage':'denied','ad_storage':'denied'});gtag('js',new Date());gtag('config','G-XXXXXXXXXX',{cookie_flags:'max-age=7200;secure;samesite=none'});function acceptCookiesAll(){localStorage.setItem('kz_cookies','all');document.getElementById('cookie-banner').style.display='none';gtag('consent','update',{'analytics_storage':'granted'});}</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'analytics_storage':'denied','ad_storage':'denied'});gtag('js',new Date());gtag('config','G-XXXXXXXXXX',{cookie_flags:'max-age=7200;secure;samesite=none'});</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#080612;--bg2:#110C24;--bg3:#191236;--bg4:#231A48;--b1:rgba(139,92,246,.08);--b2:rgba(139,92,246,.18);--ac:#8B5CF6;--ac2:#22D3EE;--gr:#34D399;--re:#F43F5E;--ye:#FBBF24;--or:#FB923C;--pi:#E879F9;--tx:#F8FAFC;--tx2:#94A3B8;--tx3:#64748B;--tx4:#475569;--grad:linear-gradient(135deg,#8B5CF6,#22D3EE);--grad-b:linear-gradient(135deg,#FB923C,#FBBF24);--grad-c:linear-gradient(135deg,#F43F5E,#E879F9);--r:16px;--rs:10px;--mesh:radial-gradient(ellipse at 20% 10%,rgba(139,92,246,.08),transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(34,211,238,.06),transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(232,121,249,.04),transparent 50%)}
@@ -43,8 +43,7 @@ a{text-decoration:none;color:inherit}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:rgba(8,6,18,.7);backdrop-filter:blur(28px) saturate(1.5);border-bottom:1px solid var(--b1)}
 .nav-inner{display:flex;align-items:center;gap:.65rem}
-.nav-logo{margin-right:auto}
-.nav-logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:.35rem}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:.35rem;margin-right:auto}
 .nav-links{position:fixed;top:56px;left:0;right:0;flex-direction:column;background:rgba(17,12,36,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);padding:1rem;gap:.5rem;transform:translateY(-120%);opacity:0;transition:transform .3s ease,opacity .3s ease;pointer-events:none;z-index:100;display:flex}
 .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
 .nav-links a{font-size:.9rem;color:var(--tx2);transition:color .2s;padding:.5rem .75rem;border-radius:var(--rs)}
@@ -101,12 +100,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:
 .feat-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.75rem}
 .feat-tag{font-size:.65rem;font-weight:600;padding:.18rem .5rem;border-radius:20px;background:var(--b1);color:var(--tx2)}
 
-/* PERSONAL VS BUSINESS (mobile first) */
-.modes{padding:3rem 0}
-.mode-tabs{display:flex;gap:.4rem;background:var(--bg2);border:1px solid var(--b1);border-radius:8px;padding:.3rem;width:100%;margin:1.5rem auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.mode-tab{flex:1;text-align:center;padding:.45rem .6rem;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.mode-tab.active{background:var(--grad);color:#fff}
-.mode-content{display:grid;grid-template-columns:1fr;gap:2rem;align-items:center;margin-top:1.5rem}
+
 
 /* PRICING (mobile first) */
 .pricing{padding:3rem 0;text-align:center}
@@ -215,8 +209,6 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
   footer{padding:2.5rem 0}
   .footer-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
   .footer-bottom{flex-direction:row;justify-content:space-between}
-  .mode-tabs{width:fit-content;margin:1.5rem auto}
-  .mode-tab{flex:none;padding:.55rem 1.25rem;font-size:.85rem}
 }
 
 /* ====== DESKTOP 769px+ ====== */
@@ -610,7 +602,7 @@ function showReferral(){document.getElementById('ref-modal').style.display='flex
 function copyRef(){navigator.clipboard?.writeText(window.location.origin+'/appfinance/app/?ref=YOURCODE').then(()=>alert('Link copiato!'));}
 
 // Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
 // Register service worker per PWABuilder
 if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>

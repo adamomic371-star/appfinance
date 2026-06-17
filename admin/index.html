@@ -9,35 +9,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#07090f;--bg2:#0e1220;--bg3:#141929;--b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);--ac:#7B68EE;--gr:#00F0A0;--re:#FF3355;--ye:#FFD166;--tx:#EEF2FF;--tx2:#7A85A8;--tx3:#3A4268;--grad:linear-gradient(135deg,#7B68EE,#00E5FF);--r:12px;--rs:7px}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+:root{--bg:#080612;--bg2:#110C24;--bg3:#191236;--bg4:#231A48;--b1:rgba(139,92,246,.08);--b2:rgba(139,92,246,.16);--ac:#8B5CF6;--ac2:#22D3EE;--gr:#34D399;--re:#F43F5E;--ye:#FBBF24;--or:#FB923C;--tx:#F8FAFC;--tx2:#94A3B8;--tx3:#64748B;--tx4:#475569;--grad:linear-gradient(135deg,#8B5CF6,#22D3EE);--sh-sm:0 4px 16px rgba(0,0,0,.3);--ts:.25s cubic-bezier(.34,1.56,.64,1);--ts2:.35s cubic-bezier(.4,0,.2,1);--r:14px;--rs:9px;--mesh:radial-gradient(ellipse at 20% 10%,rgba(139,92,246,.08),transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(34,211,238,.06),transparent 50%)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:var(--mesh);color:var(--tx);min-height:100vh;overflow-x:hidden}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
 
 /* LOGIN */
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(123,104,238,.15),transparent 70%);position:relative}
-#login-screen::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(124,111,247,.04),transparent 40%),radial-gradient(circle at 70% 60%,rgba(0,229,255,.04),transparent 40%);animation:bgShift 12s ease infinite;background-size:200% 200%;pointer-events:none}
-.lb{width:100%;max-width:400px;background:rgba(14,18,32,.8);-webkit-backdrop-filter:blur(20px) saturate(1.3);backdrop-filter:blur(20px) saturate(1.3);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.3);animation:fadeIn .4s both}
-.lh{background:var(--grad);padding:2rem;text-align:center}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(139,92,246,.18),transparent 60%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(34,211,238,.08),transparent 50%);position:relative;overflow:hidden}
+#login-screen::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 30%,rgba(139,92,246,.1),transparent 50%),radial-gradient(circle at 80% 70%,rgba(34,211,238,.08),transparent 50%),radial-gradient(circle at 50% 50%,rgba(232,121,249,.05),transparent 50%);pointer-events:none;z-index:0;animation:bgShift 10s ease infinite;background-size:200% 200%}
+#login-screen::after{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(139,92,246,.04),transparent 40%),radial-gradient(circle at 70% 60%,rgba(34,211,238,.04),transparent 40%);animation:bgShift 14s ease infinite 2s;background-size:200% 200%;pointer-events:none;z-index:0}
+.lb{width:100%;max-width:400px;background:rgba(17,12,36,.78);-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 40px rgba(139,92,246,.08);animation:scaleIn .45s cubic-bezier(.34,1.56,.64,1) both}
+.lh{background:var(--grad);padding:2rem;text-align:center;position:relative;overflow:hidden}
+.lh::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 60%);animation:bgShift 6s ease infinite;pointer-events:none}
 .ll{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff}
 .lbg{display:inline-block;margin-top:.5rem;padding:.2rem .75rem;background:rgba(0,0,0,.2);border-radius:20px;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.08em}
 .lbd{padding:1.75rem}
 .fg{margin-bottom:1rem}
 .fg label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:.4rem}
-.fg input{width:100%;padding:.8rem 1rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.9rem;transition:border-color .2s;-webkit-appearance:none}
-.fg input:focus{outline:none;border-color:var(--ac)}
+.fg input{width:100%;padding:.8rem 1rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.9rem;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.fg input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
 .fg input::placeholder{color:var(--tx3)}
-.lbtn{width:100%;padding:.95rem;background:var(--grad);color:#fff;border-radius:var(--rs);font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s}
-.lbtn:hover{opacity:.9}
+.lbtn{width:100%;padding:.95rem;background:var(--grad);color:#fff;border-radius:var(--rs);font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .25s,transform .2s,box-shadow .25s;position:relative;overflow:hidden}
+.lbtn:hover{opacity:.95;transform:translateY(-1px);box-shadow:0 8px 28px rgba(139,92,246,.35),0 0 40px rgba(139,92,246,.12)}
 .lbtn:disabled{opacity:.5;cursor:not-allowed}
-.lerr{margin-top:.75rem;padding:.75rem;background:rgba(255,51,85,.1);border:1px solid rgba(255,51,85,.3);border-radius:var(--rs);color:var(--re);font-size:.8rem;display:none}
-.lcred{margin-top:1rem;padding:.75rem;background:rgba(123,104,238,.08);border:1px solid rgba(123,104,238,.2);border-radius:var(--rs);font-size:.78rem;color:var(--tx2);text-align:center}
+.lerr{margin-top:.75rem;padding:.75rem;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);border-radius:var(--rs);color:var(--re);font-size:.8rem;display:none}
+.lcred{margin-top:1rem;padding:.75rem;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:var(--rs);font-size:.78rem;color:var(--tx2);text-align:center}
 
 /* PANEL */
 #admin-panel{display:none}
-.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:rgba(7,9,15,.85);backdrop-filter:blur(20px) saturate(1.3);border-bottom:1px solid var(--b1);box-shadow:0 1px 0 var(--b1),0 4px 20px rgba(0,0,0,.15)}
+.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:rgba(8,6,18,.72);-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5);border-bottom:1px solid var(--b1);box-shadow:0 1px 0 var(--b1),0 8px 32px rgba(0,0,0,.2)}
 .t-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.t-badge{padding:.2rem .6rem;background:rgba(255,51,85,.15);color:var(--re);border:1px solid rgba(255,51,85,.25);border-radius:5px;font-size:.65rem;font-weight:800;letter-spacing:.08em}
+.t-badge{padding:.2rem .6rem;background:rgba(244,63,94,.15);color:var(--re);border:1px solid rgba(244,63,94,.25);border-radius:5px;font-size:.65rem;font-weight:800;letter-spacing:.08em}
 .t-stat{text-align:center}
 .t-stat span:first-child{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--gr);display:block}
 .t-stat span:last-child{font-size:.6rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;display:block}
@@ -46,32 +48,32 @@ input,select,textarea{font-family:inherit}
 /* Ripple + admin panel animations */
 .btn{position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.15);transform:scale(0);animation:ripple .5s ease-out;pointer-events:none}
 .layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 53px)}
-.sidebar{background:var(--bg2);border-right:1px solid var(--b1);padding:1rem 0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar{background:rgba(8,6,18,.82);-webkit-backdrop-filter:blur(32px) saturate(1.4);backdrop-filter:blur(32px) saturate(1.4);border-right:1px solid var(--b1);padding:1rem 0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;display:flex;flex-direction:column;background-image:linear-gradient(180deg,transparent 0%,rgba(139,92,246,.02) 100%)}
 .ss{padding:.35rem 1rem .2rem;font-size:.6rem;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem}
 .ni{display:flex;align-items:center;gap:.65rem;padding:.65rem 1rem;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--tx2);transition:all .15s;border-left:3px solid transparent;margin:.1rem .5rem;border-radius:0 var(--rs) var(--rs) 0}
 .ni:hover{color:var(--tx);background:var(--b1)}
-.ni.active{color:var(--ac);background:rgba(123,104,238,.1);border-left-color:var(--ac)}
+.ni.active{color:var(--ac);background:rgba(139,92,246,.14);border-left-color:var(--ac);box-shadow:inset 0 0 20px rgba(139,92,246,.04)}
 .sb-bot{margin-top:auto;padding:1rem;border-top:1px solid var(--b1)}
 .main{padding:1.5rem;overflow-y:auto}
 .view{display:none}.view.active{display:block}
 .ph{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem}
 .pt{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700}
 .ps{font-size:.8rem;color:var(--tx2);margin-top:.15rem}
-.card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.card{background:linear-gradient(135deg,rgba(17,12,36,.8),rgba(25,18,54,.6));border:1px solid var(--b1);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;transition:transform var(--ts2),box-shadow var(--ts2),border-color var(--ts2);position:relative;overflow:hidden;box-shadow:var(--sh-sm),0 0 20px rgba(139,92,246,.04)}.card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.02),transparent);transition:left .5s;pointer-events:none}.card:hover::before{left:100%}.card:hover{border-color:var(--b2);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.25),0 0 30px rgba(139,92,246,.06)}
 .ct{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:.875rem}
 .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1rem;margin-bottom:1rem}
-.sc{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:1.1rem}
+.sc{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--b1);border-radius:var(--r);padding:1.1rem;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;box-shadow:0 4px 16px rgba(0,0,0,.15);position:relative;overflow:hidden}.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:opacity .25s}.sc:hover::after{opacity:1}.sc:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.25),0 0 30px rgba(139,92,246,.06)}
 .sl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.4rem}
 .sv{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border-radius:var(--rs);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-.bp{background:var(--grad);color:#fff}.bp:hover{opacity:.88}
-.bd{background:rgba(255,51,85,.15);border:1px solid rgba(255,51,85,.3);color:var(--re)}.bd:hover{background:rgba(255,51,85,.25)}
-.bs{background:var(--bg3);border:1px solid var(--b2);color:var(--tx)}.bs:hover{border-color:var(--ac);color:var(--ac)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border-radius:var(--rs);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);border:none;position:relative;overflow:hidden}
+.bp{background:var(--grad);color:#fff;box-shadow:0 4px 16px rgba(139,92,246,.25)}.bp:hover{opacity:.95;box-shadow:0 6px 24px rgba(139,92,246,.35),0 0 40px rgba(139,92,246,.1);transform:translateY(-1px)}
+.bd{background:linear-gradient(135deg,rgba(244,63,94,.12),rgba(244,63,94,.06));border:1.5px solid rgba(244,63,94,.3);color:var(--re)}.bd:hover{background:linear-gradient(135deg,rgba(244,63,94,.2),rgba(244,63,94,.1));transform:translateY(-2px);box-shadow:0 6px 20px rgba(244,63,94,.15)}
+.bs{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1.5px solid var(--b2);color:var(--tx);min-height:36px}.bs:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-1px);box-shadow:0 4px 12px rgba(139,92,246,.1)}
 .bsm{padding:.4rem .8rem;font-size:.75rem}
 .bi{width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:var(--rs)}
 .badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:20px;font-size:.68rem;font-weight:700}
-.bg{background:rgba(0,240,160,.12);color:var(--gr)}.br{background:rgba(255,51,85,.12);color:var(--re)}.by{background:rgba(255,209,102,.12);color:var(--ye)}.bb{background:rgba(0,229,255,.12);color:#00E5FF}.bp2{background:rgba(123,104,238,.12);color:var(--ac)}.bgy{background:var(--b1);color:var(--tx2)}
+.bg{background:rgba(52,211,153,.15);color:var(--gr);box-shadow:inset 0 0 20px rgba(52,211,153,.05)}.br{background:rgba(244,63,94,.15);color:var(--re);box-shadow:inset 0 0 20px rgba(244,63,94,.05)}.by{background:rgba(251,191,36,.15);color:var(--ye);box-shadow:inset 0 0 20px rgba(251,191,36,.05)}.bb{background:rgba(34,211,238,.15);color:var(--ac2);box-shadow:inset 0 0 20px rgba(34,211,238,.05)}.bp2{background:rgba(139,92,246,.15);color:var(--ac);box-shadow:inset 0 0 20px rgba(139,92,246,.05)}.bgy{background:var(--b1);color:var(--tx2)}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 th{padding:.65rem 1rem;text-align:left;font-size:.65rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--b1)}
 td{padding:.75rem 1rem;border-bottom:1px solid var(--b1);color:var(--tx2)}
@@ -80,13 +82,13 @@ tr:hover td{background:var(--b1)}
 .tdm{color:var(--tx);font-weight:500}
 .tw{overflow-x:auto}
 .empty{text-align:center;padding:2.5rem;color:var(--tx3);font-size:.875rem}
-.si{flex:1;min-width:180px;padding:.65rem 1rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.85rem;-webkit-appearance:none}
-.si:focus{outline:none;border-color:var(--ac)}
+.si{flex:1;min-width:180px;padding:.65rem 1rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.85rem;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
+.si:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(139,92,246,.08)}
 .si::placeholder{color:var(--tx3)}
 .sb2{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
 .mo.open{display:flex}
-.md{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.md{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.5),0 0 60px rgba(139,92,246,.06)}
 .mh{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1)}
 .mt{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700}
 .mc{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:6px;color:var(--tx2);cursor:pointer}
@@ -95,8 +97,8 @@ tr:hover td{background:var(--b1)}
 .mf{padding:.875rem 1.4rem;border-top:1px solid var(--b1);display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap}
 .fg2{margin-bottom:.875rem}
 .fg2 label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:.35rem}
-.fg2 input,.fg2 select,.fg2 textarea{width:100%;padding:.7rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.875rem;transition:border-color .2s;-webkit-appearance:none}
-.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{outline:none;border-color:var(--ac)}
+.fg2 input,.fg2 select,.fg2 textarea{width:100%;padding:.7rem .875rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.875rem;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(139,92,246,.1),0 0 20px rgba(139,92,246,.04)}
 .fg2 select option{background:var(--bg3)}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 .sr{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--b1)}
@@ -105,14 +107,14 @@ tr:hover td{background:var(--b1)}
 .tog.on{background:var(--ac)}
 .tog::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
 .tog.on::after{transform:translateX(20px)}
-#toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:.8rem 1.1rem;color:var(--tx);font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);transform:translateX(120%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:280px;display:flex;align-items:center;gap:.5rem}
+#toast{position:fixed;bottom:1.25rem;right:1.25rem;background:rgba(17,12,36,.9);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border:1px solid var(--b2);border-radius:var(--r);padding:.8rem 1.1rem;color:var(--tx);font-size:.85rem;box-shadow:0 8px 40px rgba(0,0,0,.45),0 0 30px rgba(139,92,246,.06);transform:translateX(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;max-width:280px;display:flex;align-items:center;gap:.5rem}
 #toast.show{transform:translateX(0)}
-#toast.ok{border-left:3px solid var(--gr)}#toast.err{border-left:3px solid var(--re)}#toast.warn{border-left:3px solid var(--ye)}
+#toast.ok{border-left:3px solid var(--gr);box-shadow:0 8px 40px rgba(0,0,0,.45),0 0 30px rgba(52,211,153,.06)}#toast.err{border-left:3px solid var(--re);box-shadow:0 8px 40px rgba(0,0,0,.45),0 0 30px rgba(244,63,94,.06)}#toast.warn{border-left:3px solid var(--ye);box-shadow:0 8px 40px rgba(0,0,0,.45),0 0 30px rgba(251,191,36,.06)}
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
   .sidebar{position:fixed;left:0;top:53px;bottom:0;z-index:200;transform:translateX(-100%);transition:transform .3s ease;display:flex!important}
   .sidebar.open{transform:translateX(0)}
-  .mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;display:none}
+  .mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);z-index:199;display:none}
   .mob-overlay.show{display:block}
   .main{padding:.875rem .75rem}
   .g2,.fr{grid-template-columns:1fr}
@@ -131,13 +133,13 @@ tr:hover td{background:var(--b1)}
 </style>
 </head>
 <body>
-<div id="admin-spinner" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1rem"><div style="width:40px;height:40px;border:3px solid var(--b1);border-top-color:var(--ac);border-radius:50%;animation:loading-spin .8s linear infinite"></div><div style="font-size:.9rem;color:var(--tx2)">Caricamento dati…</div></div>
-<style>@keyframes loading-spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes bgShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}@keyframes slideFadeIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes ripple{to{transform:scale(4);opacity:0}}@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+<div id="admin-spinner" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1rem"><div style="width:40px;height:40px;border:3px solid var(--b1);border-top-color:var(--ac);border-radius:50%;animation:loading-spin .8s linear infinite;box-shadow:0 0 20px rgba(139,92,246,.15)"></div><div style="font-size:.9rem;color:var(--tx2)">Caricamento dati…</div></div>
+<style>@keyframes loading-spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}@keyframes bgShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}@keyframes slideFadeIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes ripple{to{transform:scale(4);opacity:0}}@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
 <div id="login-screen">
   <div class="lb">
     <div class="lh">
-      <div class="ll"><svg width="24" height="24" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:6px"><rect width="32" height="32" rx="7" fill="#fff"/><g fill="none" stroke="#7C6FF7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="9" x2="11" y2="23"/><line x1="11" y1="16" x2="19" y2="9"/><line x1="12.5" y1="16" x2="19" y2="23"/></g></svg>Kazka</div>
+      <div class="ll"><svg width="24" height="24" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:6px"><rect width="32" height="32" rx="7" fill="#fff"/><g fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="9" x2="11" y2="23"/><line x1="11" y1="16" x2="19" y2="9"/><line x1="12.5" y1="16" x2="19" y2="23"/></g></svg>Kazka</div>
       <div class="lbg">🔐 ADMIN PANEL</div>
     </div>
     <div class="lbd">
@@ -168,7 +170,7 @@ tr:hover td{background:var(--b1)}
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:.75rem">
       <button class="mob-tog" onclick="toggleAdminSidebar()" style="width:34px;height:34px;display:none;align-items:center;justify-content:center;background:var(--bg3);border-radius:var(--rs);color:var(--tx2);font-size:1rem;cursor:pointer">☰</button>
-      <div class="t-logo"><svg width="18" height="18" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:6px"><defs><linearGradient id="al" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7C6FF7"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient></defs><rect width="32" height="32" rx="7" fill="url(#al)"/><g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="9" x2="11" y2="23"/><line x1="11" y1="16" x2="19" y2="9"/><line x1="12.5" y1="16" x2="19" y2="23"/></g></svg>Kazka</div>
+      <div class="t-logo"><svg width="18" height="18" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:6px"><defs><linearGradient id="al" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs><rect width="32" height="32" rx="7" fill="url(#al)"/><g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="9" x2="11" y2="23"/><line x1="11" y1="16" x2="19" y2="9"/><line x1="12.5" y1="16" x2="19" y2="23"/></g></svg>Kazka</div>
       <div class="t-badge">ADMIN</div>
     </div>
     <div style="display:flex;align-items:center;gap:1rem">
@@ -204,7 +206,7 @@ tr:hover td{background:var(--b1)}
       </div>
       <div class="sb-bot">
         <div style="display:flex;align-items:center;gap:.6rem">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF3355,#FF8C42);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff" id="admin-av">A</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F43F5E,#FB923C);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff" id="admin-av">A</div>
           <div><div style="font-size:.8rem;font-weight:600" id="admin-name">Admin</div><div style="font-size:.65rem;color:var(--re)">Super Admin</div></div>
         </div>
       </div>
@@ -221,7 +223,7 @@ tr:hover td{background:var(--b1)}
           <div class="sc"><div class="sl">Pro/Business</div><div class="sv" style="color:var(--ac)" id="d-p">—</div></div>
           <div class="sc"><div class="sl">Transazioni</div><div class="sv" id="d-tx">—</div></div>
           <div class="sc"><div class="sl">Entrate tot.</div><div class="sv" style="color:var(--gr)" id="d-inc">—</div></div>
-          <div class="sc"><div class="sl">Gruppi</div><div class="sv" style="color:#00E5FF" id="d-g">—</div></div>
+          <div class="sc"><div class="sl">Gruppi</div><div class="sv" style="color:var(--ac2)" id="d-g">—</div></div>
           <div class="sc"><div class="sl">Churn (30gg)</div><div class="sv" style="color:var(--ye)" id="d-churn">—</div></div>
         </div>
         <div class="g2">
@@ -252,7 +254,7 @@ tr:hover td{background:var(--b1)}
         <div class="sg">
           <div class="sc"><div class="sl">Free</div><div class="sv" id="s-free">—</div></div>
           <div class="sc"><div class="sl">Pro</div><div class="sv" style="color:var(--ac)" id="s-pro">—</div></div>
-          <div class="sc"><div class="sl">Business</div><div class="sv" style="color:#00E5FF" id="s-biz">—</div></div>
+          <div class="sc"><div class="sl">Business</div><div class="sv" style="color:var(--ac2)" id="s-biz">—</div></div>
           <div class="sc"><div class="sl">Scaduti</div><div class="sv" style="color:var(--re)" id="s-exp">—</div></div>
         </div>
         <div class="card"><div class="tw"><table><thead><tr><th>Utente</th><th>Email</th><th>Piano</th><th>Inizio</th><th>Scadenza</th><th>Stato</th><th></th></tr></thead><tbody id="subs-tbody"></tbody></table></div></div>
@@ -298,7 +300,7 @@ tr:hover td{background:var(--b1)}
           <div class="sc"><div class="sl">Tasso conversione</div><div class="sv" style="color:var(--ac)" id="rev-cr">—</div></div>
           <div class="sc"><div class="sl">MRR (mensile)</div><div class="sv" style="color:var(--gr)" id="rev-mrr">—</div></div>
           <div class="sc"><div class="sl">Churn rate</div><div class="sv" style="color:var(--re)" id="rev-churn">—</div></div>
-          <div class="sc"><div class="sl">LTV medio</div><div class="sv" style="color:#00E5FF" id="rev-ltv">—</div></div>
+          <div class="sc"><div class="sl">LTV medio</div><div class="sv" style="color:var(--ac2)" id="rev-ltv">—</div></div>
         </div>
         <div class="g2">
           <div class="card"><div class="ct">Andamento entrate</div><div style="height:220px" id="rev-chart"><canvas></canvas></div></div>
@@ -440,7 +442,7 @@ tr:hover td{background:var(--b1)}
         <div class="card">
           <div class="ct">Confronto con la concorrenza</div>
           <div class="tw"><table><thead><tr><th>App</th><th>Piano base</th><th>Piano pro</th><th>Business</th><th>Lifetime</th></tr></thead><tbody>
-            <tr style="background:rgba(123,104,238,.06)"><td class="tdm">⚡ Kazka</td><td>€0</td><td style="color:var(--gr)">€2,49/mese</td><td style="color:var(--gr)">€4,99/mese</td><td style="color:var(--gr)">€149,99</td></tr>
+            <tr style="background:rgba(139,92,246,.06)"><td class="tdm">⚡ Kazka</td><td>€0</td><td style="color:var(--gr)">€2,49/mese</td><td style="color:var(--gr)">€4,99/mese</td><td style="color:var(--gr)">€149,99</td></tr>
             <tr><td>Toshl Finance</td><td>€0 (limite 2/mese)</td><td>€3,99/mese</td><td>€8,99/mese</td><td>—</td></tr>
             <tr><td>Spendee</td><td>€0</td><td>€2,99/mese</td><td>€6,99/mese</td><td>—</td></tr>
             <tr><td>YNAB</td><td>—</td><td>€14,99/mese</td><td>€14,99/mese</td><td>—</td></tr>
@@ -449,7 +451,7 @@ tr:hover td{background:var(--b1)}
         </div>
 
         <!-- ASSEGNA PIANO MANUALE -->
-        <div class="card" style="border-color:rgba(123,104,238,.25);margin-top:1rem">
+        <div class="card" style="border-color:rgba(139,92,246,.25);margin-top:1rem">
           <div class="ct">Assegna piano manualmente a un utente</div>
           <div class="fr">
             <div class="fg2"><label>Email o UID utente</label><input type="text" id="plan-uid" placeholder="email@utente.com"></div>
@@ -467,11 +469,11 @@ tr:hover td{background:var(--b1)}
       </div>
       <div class="view" id="view-danger">
         <div class="ph"><div><div class="pt" style="color:var(--re)">⚠ Zona Pericolo</div></div></div>
-        <div class="card" style="border-color:rgba(255,51,85,.25)">
+        <div class="card" style="border-color:rgba(244,63,94,.25)">
           <div style="display:flex;flex-direction:column;gap:.875rem">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:var(--rs)"><div><div style="font-weight:600;margin-bottom:.25rem">Elimina utente</div><div style="font-size:.8rem;color:var(--tx2)">Rimuove profilo e tutti i dati</div></div><button class="btn bd bsm" onclick="om('modal-del')">Elimina</button></div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg3);border-radius:var(--rs)"><div><div style="font-weight:600;margin-bottom:.25rem">Reset transazioni</div><div style="font-size:.8rem;color:var(--tx2)">Cancella tutte le transazioni di un utente</div></div><button class="btn bd bsm" onclick="om('modal-rst')">Reset</button></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(255,51,85,.05);border-radius:var(--rs);border:1px solid rgba(255,51,85,.25)"><div><div style="font-weight:600;color:var(--re);margin-bottom:.25rem">⚠ CANCELLA TUTTO</div><div style="font-size:.8rem;color:var(--tx2)">Elimina tutti i dati dal database</div></div><button class="btn bd bsm" onclick="om('modal-nuke')">ESEGUI</button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(244,63,94,.05);border-radius:var(--rs);border:1px solid rgba(244,63,94,.25)"><div><div style="font-weight:600;color:var(--re);margin-bottom:.25rem">⚠ CANCELLA TUTTO</div><div style="font-size:.8rem;color:var(--tx2)">Elimina tutti i dati dal database</div></div><button class="btn bd bsm" onclick="om('modal-nuke')">ESEGUI</button></div>
           </div>
         </div>
       </div>
@@ -523,7 +525,7 @@ tr:hover td{background:var(--b1)}
 
 <div class="mo" id="modal-nuke"><div class="md" style="max-width:420px">
   <div class="mh"><div class="mt" style="color:var(--re)">🚨 CANCELLA TUTTO</div><div class="mc" onclick="cm('modal-nuke')">✕</div></div>
-  <div class="mb"><p style="font-size:.875rem;color:var(--tx2);margin-bottom:.75rem">Irreversibile. Digita <strong>CANCELLA TUTTO</strong>:</p><input style="width:100%;padding:.75rem;background:var(--bg3);border:1.5px solid rgba(255,51,85,.4);border-radius:var(--rs);color:var(--tx);font-size:.875rem" type="text" id="nuke-c" placeholder="CANCELLA TUTTO"></div>
+  <div class="mb"><p style="font-size:.875rem;color:var(--tx2);margin-bottom:.75rem">Irreversibile. Digita <strong>CANCELLA TUTTO</strong>:</p><input style="width:100%;padding:.75rem;background:var(--bg3);border:1.5px solid rgba(244,63,94,.4);border-radius:var(--rs);color:var(--tx);font-size:.875rem" type="text" id="nuke-c" placeholder="CANCELLA TUTTO"></div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-nuke')">Annulla</button><button class="btn bd" onclick="nukeAll()">Esegui</button></div>
 </div></div>
 
@@ -532,7 +534,7 @@ tr:hover td{background:var(--b1)}
   <div class="mb">
     <div class="fg2"><label>UID transazione</label><input type="text" id="rev-tx-uid" placeholder="UID transazione"></div>
     <div class="fg2"><label>Motivazione</label><textarea id="rev-reason" rows="2" placeholder="Motivo della reversa..."></textarea></div>
-    <div style="padding:.8rem;background:rgba(255,51,85,.08);border-radius:var(--rs);font-size:.78rem;color:var(--re)">La transazione verrà annullata e registrata come storno nel database.</div>
+    <div style="padding:.8rem;background:rgba(244,63,94,.08);border-radius:var(--rs);font-size:.78rem;color:var(--re)">La transazione verrà annullata e registrata come storno nel database.</div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-reverse')">Annulla</button><button class="btn bd" onclick="reverseTransaction()">↩️ Reversa</button></div>
 </div></div>
@@ -555,7 +557,7 @@ tr:hover td{background:var(--b1)}
     <div class="fg2"><label>Azione</label><select id="mass-action"><option value="delete">Elimina selezionati</option><option value="plan-free">Imposta piano Free</option><option value="plan-pro">Imposta piano Pro</option><option value="plan-business">Imposta piano Business</option><option value="export">Esporta selezionati</option></select></div>
     <div class="fg2"><label>Filtro destinatari</label><select id="mass-filter" onchange="updateMassCount()"><option value="all">Tutti gli utenti</option><option value="free">Solo Free</option><option value="pro">Solo Pro</option><option value="business">Solo Business</option><option value="expired">Scaduti</option></select></div>
     <div style="padding:.75rem;background:var(--bg3);border-radius:var(--rs);margin:.5rem 0;font-size:.85rem" id="mass-count">0 utenti selezionati</div>
-    <div style="padding:.8rem;background:rgba(255,51,85,.08);border-radius:var(--rs);font-size:.78rem;color:var(--re)">Questa azione è irreversibile. Verrà applicata a tutti gli utenti filtrati.</div>
+    <div style="padding:.8rem;background:rgba(244,63,94,.08);border-radius:var(--rs);font-size:.78rem;color:var(--re)">Questa azione è irreversibile. Verrà applicata a tutti gli utenti filtrati.</div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-mass')">Annulla</button><button class="btn bd" onclick="executeMassAction()">Esegui azione massiva</button></div>
 </div></div>
@@ -741,7 +743,7 @@ function renderTx(q='',type=''){let tx=ALL_TX;if(q)tx=tx.filter(t=>(t.descriptio
 function filterTx(){renderTx(document.getElementById('tx-search').value.toLowerCase(),document.getElementById('tx-type-f').value);}
 async function delTx(uid,id){if(!confirm('Eliminare?'))return;try{await db.ref(`users/${uid}/transactions/${id}`).remove();await loadAll();toast('Eliminata','ok');}catch(e){toast('Errore: '+e.message,'err');}}
 
-function renderAnalytics(){const inc=ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),exp2=ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0),avg=Object.keys(ALL_U).length?Math.round(ALL_TX.length/Object.keys(ALL_U).length):0;document.getElementById('an-stats').innerHTML=`<div class="sc"><div class="sl">Volume entrate</div><div class="sv" style="color:var(--gr)">${fmt(inc)}</div></div><div class="sc"><div class="sl">Volume uscite</div><div class="sv" style="color:var(--re)">${fmt(exp2)}</div></div><div class="sc"><div class="sl">Netto</div><div class="sv">${fmt(inc-exp2)}</div></div><div class="sc"><div class="sl">Media tx/utente</div><div class="sv">${avg}</div></div>`;const plans={};Object.values(ALL_U).forEach(u=>{const p=u.profile?.plan||'free';plans[p]=(plans[p]||0)+1;});const tot=Object.keys(ALL_U).length||1;const PC={free:'var(--tx2)',pro:'var(--ac)',business:'#00E5FF'};document.getElementById('plan-dist').innerHTML=Object.entries(plans).map(([p,n])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem;font-weight:500;color:${PC[p]||'var(--tx)'}">${cap(p)}</span><div style="display:flex;align-items:center;gap:.75rem"><div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((n/tot)*100)}%;background:${PC[p]||'var(--ac)'};border-radius:3px"></div></div><span style="font-size:.875rem;font-weight:700">${n}</span></div></div>`).join('')||'<div class="empty">Nessun dato</div>';const cats={};ALL_TX.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+N(t.amount);});const sc=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);const mc=sc[0]?.[1]||1;const CI2={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};document.getElementById('top-cats').innerHTML=sc.map(([c,v])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">${CI2[c]||'📦'} ${cap(c)}</span><div style="display:flex;align-items:center;gap:.75rem"><div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((v/mc)*100)}%;background:var(--re);border-radius:3px"></div></div><span style="font-size:.875rem;font-weight:700">${fmt(v)}</span></div></div>`).join('')||'<div class="empty">Nessun dato</div>';}
+function renderAnalytics(){const inc=ALL_TX.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),exp2=ALL_TX.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0),avg=Object.keys(ALL_U).length?Math.round(ALL_TX.length/Object.keys(ALL_U).length):0;document.getElementById('an-stats').innerHTML=`<div class="sc"><div class="sl">Volume entrate</div><div class="sv" style="color:var(--gr)">${fmt(inc)}</div></div><div class="sc"><div class="sl">Volume uscite</div><div class="sv" style="color:var(--re)">${fmt(exp2)}</div></div><div class="sc"><div class="sl">Netto</div><div class="sv">${fmt(inc-exp2)}</div></div><div class="sc"><div class="sl">Media tx/utente</div><div class="sv">${avg}</div></div>`;const plans={};Object.values(ALL_U).forEach(u=>{const p=u.profile?.plan||'free';plans[p]=(plans[p]||0)+1;});const tot=Object.keys(ALL_U).length||1;const PC={free:'var(--tx2)',pro:'var(--ac)',business:'var(--ac2)'};document.getElementById('plan-dist').innerHTML=Object.entries(plans).map(([p,n])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem;font-weight:500;color:${PC[p]||'var(--tx)'}">${cap(p)}</span><div style="display:flex;align-items:center;gap:.75rem"><div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((n/tot)*100)}%;background:${PC[p]||'var(--ac)'};border-radius:3px"></div></div><span style="font-size:.875rem;font-weight:700">${n}</span></div></div>`).join('')||'<div class="empty">Nessun dato</div>';const cats={};ALL_TX.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+N(t.amount);});const sc=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);const mc=sc[0]?.[1]||1;const CI2={alimentari:'🛒',trasporti:'🚗',casa:'🏠',salute:'💊',svago:'🎬',lavoro:'💼',abbonamenti:'📱',viaggi:'✈️',altro:'📦'};document.getElementById('top-cats').innerHTML=sc.map(([c,v])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--b1)"><span style="font-size:.875rem">${CI2[c]||'📦'} ${cap(c)}</span><div style="display:flex;align-items:center;gap:.75rem"><div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round((v/mc)*100)}%;background:var(--re);border-radius:3px"></div></div><span style="font-size:.875rem;font-weight:700">${fmt(v)}</span></div></div>`).join('')||'<div class="empty">Nessun dato</div>';}
 
 function renderInv(){const tbody=document.getElementById('inv-tbody'),empty=document.getElementById('inv-empty');const IS={draft:'bgy',sent:'by',paid:'bg',overdue:'br'};document.getElementById('inv-count').textContent=`${ALL_INV.length} fatture`;if(!ALL_INV.length){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';tbody.innerHTML=ALL_INV.map(i=>{const total=N(i.amount)*(1+N(i.vat||22)/100);return`<tr><td style="font-size:.82rem">${esc(i.uName)}</td><td class="tdm">${esc(i.client||'—')}</td><td style="font-size:.82rem">${esc(i.invoiceNum||'—')}</td><td style="font-size:.82rem">${fd(i.date)}</td><td style="font-weight:700">${fmt(total)}</td><td><span class="badge ${IS[i.status]||'bgy'}">${cap(i.status||'draft')}</span></td></tr>`;}).join('');}
 
@@ -794,7 +796,7 @@ function renderRevenue(){
   if(REV_CHART){REV_CHART.destroy();}
   const labels=[];const data=[];
   for(let i=days-1;i>=0;i--){const d=new Date(now.getTime()-i*864e5);labels.push(d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}));const dayTot=ALL_TX.filter(t=>t.type==='income'&&t.date&&t.date.startsWith(d.toISOString().split('T')[0])).reduce((s,t)=>s+N(t.amount),0);data.push(dayTot);}
-  REV_CHART=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Entrate',data,borderColor:'#00F0A0',backgroundColor:'rgba(0,240,160,.1)',fill:true,tension:.4,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A85A8',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A85A8',font:{size:10},callback:v=>'€'+v}}}}});
+  REV_CHART=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Entrate',data,borderColor:'var(--gr)',backgroundColor:'rgba(52,211,153,.1)',fill:true,tension:.4,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'var(--tx3)',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'var(--tx2)',font:{size:10},callback:v=>'€'+v}}}}});
 }
 
 /* ─── IMPERSONATE ─── */
@@ -1103,10 +1105,10 @@ function addDays2(n){const d=new Date();d.setDate(d.getDate()+n);document.getEle
 /* ─── PIANI DINAMICI ─── */
 const DEFAULT_PLANS=[
   {id:'free',name:'Free',color:'#888',badge:'',price:0,priceYear:0,period:'per sempre',subtitle:'Per iniziare',popular:false,lifetime:false,features:['✅ Transazioni illimitate','✅ 2 conti','✅ Budget mensile','✅ 3 obiettivi','❌ Report avanzati','❌ Business mode','❌ Fatture','❌ Export CSV/PDF']},
-  {id:'pro',name:'Pro',color:'#7B68EE',badge:'POPOLARE',price:2.49,priceYear:19.99,period:'/mese',subtitle:'vs Toshl €3.99 · Spendee €2.99',popular:true,lifetime:false,features:['✅ Tutto di Free','✅ Conti illimitati','✅ Obiettivi illimitati','✅ Report avanzati','✅ Export CSV/PDF','✅ Tasso di cambio live','✅ Notifiche push','❌ Business mode','❌ Fatture & Clienti']},
-  {id:'business',name:'Business',color:'#FF8C42',badge:'',price:4.99,priceYear:39.99,period:'/mese',subtitle:'vs YNAB €14.99 · Emma £4.99',popular:false,lifetime:false,features:['✅ Tutto di Pro','✅ Business mode','✅ Fatture & Clienti','✅ Preventivi → Fattura','✅ Prima Nota','✅ Gestione fornitori','✅ Regime fiscale','✅ Viaggi & Trasferte']},
-  {id:'allinclusive',name:'All-Inclusive',color:'#00F0A0',badge:'',price:7.99,priceYear:59.99,period:'/mese',subtitle:'Tutto senza limiti',popular:false,lifetime:false,features:['✅ Tutto di Business','✅ Multi-utente (5 slot)','✅ Accesso prioritario','✅ Supporto dedicato','✅ Progetti avanzati','✅ API access','✅ White-label opzionale','✅ Backup automatici']},
-  {id:'lifetime',name:'Lifetime Deal',color:'#FF3355',badge:'LIFETIME ∞',price:149.99,priceYear:0,period:'pagamento unico',subtitle:'Paga una volta, tieni per sempre',popular:false,lifetime:true,features:['✅ Piano All-Inclusive','✅ Tutte le feature future','✅ Nessun rinnovo','✅ Priorità assoluta','✅ Badge esclusivo','⚡ Quantità limitata']}
+  {id:'pro',name:'Pro',color:'#8B5CF6',badge:'POPOLARE',price:2.49,priceYear:19.99,period:'/mese',subtitle:'vs Toshl €3.99 · Spendee €2.99',popular:true,lifetime:false,features:['✅ Tutto di Free','✅ Conti illimitati','✅ Obiettivi illimitati','✅ Report avanzati','✅ Export CSV/PDF','✅ Tasso di cambio live','✅ Notifiche push','❌ Business mode','❌ Fatture & Clienti']},
+  {id:'business',name:'Business',color:'#FB923C',badge:'',price:4.99,priceYear:39.99,period:'/mese',subtitle:'vs YNAB €14.99 · Emma £4.99',popular:false,lifetime:false,features:['✅ Tutto di Pro','✅ Business mode','✅ Fatture & Clienti','✅ Preventivi → Fattura','✅ Prima Nota','✅ Gestione fornitori','✅ Regime fiscale','✅ Viaggi & Trasferte']},
+  {id:'allinclusive',name:'All-Inclusive',color:'#34D399',badge:'',price:7.99,priceYear:59.99,period:'/mese',subtitle:'Tutto senza limiti',popular:false,lifetime:false,features:['✅ Tutto di Business','✅ Multi-utente (5 slot)','✅ Accesso prioritario','✅ Supporto dedicato','✅ Progetti avanzati','✅ API access','✅ White-label opzionale','✅ Backup automatici']},
+  {id:'lifetime',name:'Lifetime Deal',color:'#F43F5E',badge:'LIFETIME ∞',price:149.99,priceYear:0,period:'pagamento unico',subtitle:'Paga una volta, tieni per sempre',popular:false,lifetime:true,features:['✅ Piano All-Inclusive','✅ Tutte le feature future','✅ Nessun rinnovo','✅ Priorità assoluta','✅ Badge esclusivo','⚡ Quantità limitata']}
 ];
 
 let PLANS=[];
@@ -1133,7 +1135,7 @@ function renderPlansEditor(){
           <label style="font-size:.75rem;display:flex;align-items:center;gap:.3rem"><input type="checkbox" ${p.lifetime?'checked':''} id="plt_${i}"> Lifetime</label>
           <button class="btn bs bsm" onclick="movePlan(${i},-1)">↑</button>
           <button class="btn bs bsm" onclick="movePlan(${i},1)">↓</button>
-          <button class="btn bsm" style="background:rgba(255,51,85,.15);color:var(--re);border:1px solid rgba(255,51,85,.3)" onclick="deletePlan(${i})">🗑</button>
+          <button class="btn bsm" style="background:rgba(244,63,94,.15);color:var(--re);border:1px solid rgba(244,63,94,.3)" onclick="deletePlan(${i})">🗑</button>
         </div>
       </div>
       <div class="fr" style="flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
@@ -1177,7 +1179,7 @@ async function saveAllPlans(){
 
 function addNewPlan(){
   PLANS=collectPlans();
-  PLANS.push({id:'nuovo_piano',name:'Nuovo Piano',color:'#7B68EE',badge:'',price:9.99,priceYear:0,period:'/mese',subtitle:'',popular:false,lifetime:false,features:['✅ Feature 1','✅ Feature 2']});
+  PLANS.push({id:'nuovo_piano',name:'Nuovo Piano',color:'#8B5CF6',badge:'',price:9.99,priceYear:0,period:'/mese',subtitle:'',popular:false,lifetime:false,features:['✅ Feature 1','✅ Feature 2']});
   renderPlansEditor();
   document.getElementById('plans-editor').lastElementChild?.scrollIntoView({behavior:'smooth'});
 }

@@ -107,7 +107,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 0;background:rg
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin-top:3rem;max-width:1100px;margin-left:auto;margin-right:auto}
 .price-card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:2rem 1.5rem;position:relative;text-align:left;transition:all .2s}
 .price-card:hover{border-color:var(--b2);transform:translateY(-3px)}
-.price-card.popular{border-color:rgba(123,104,238,.4);background:linear-gradient(135deg,rgba(123,104,238,.08),rgba(0,229,255,.05))}
+.price-card.popular{border-color:rgba(139,92,246,.4);background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(34,211,238,.05))}
 .popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:.65rem;font-weight:800;padding:.3rem 1rem;border-radius:20px;letter-spacing:.06em;white-space:nowrap}
 .price-name{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.75rem}
 .price-amount{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:.2rem}
@@ -145,8 +145,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 0;background:rg
 
 /* CTA */
 .cta-section{padding:6rem 0;text-align:center;position:relative}
-.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(123,104,238,.08),transparent 70%);pointer-events:none}
-.cta-box{background:var(--bg2);border:1px solid rgba(123,104,238,.25);border-radius:20px;padding:4rem 2rem;max-width:640px;margin:0 auto;position:relative}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(139,92,246,.08),transparent 70%);pointer-events:none}
+.cta-box{background:var(--bg2);border:1px solid rgba(139,92,246,.25);border-radius:20px;padding:4rem 2rem;max-width:640px;margin:0 auto;position:relative}
 
 /* FOOTER */
 footer{padding:3rem 0;border-top:1px solid var(--b1)}
@@ -170,20 +170,74 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 /* MOBILE NAV */
 .nav-links{display:flex;align-items:center;gap:2rem}
 @media(max-width:768px){
-  .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--b1);padding:1rem;gap:1rem;transform:translateY(-120%);opacity:0;transition:transform .3s ease,opacity .3s ease;pointer-events:none;z-index:100}
+  .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;background:rgba(17,12,36,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);padding:1rem;gap:1rem;transform:translateY(-120%);opacity:0;transition:transform .35s ease,opacity .35s ease;pointer-events:none;z-index:100}
   .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
   .nav-tog{display:block}
-  .hero{padding:7rem 0 4rem}
-  .preview-grid{grid-template-columns:1fr 1fr}
-  .stats-grid{grid-template-columns:1fr 1fr}
-  .mode-content{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr 1fr}
-  .price-card.popular{transform:none}
+  .nav-cta .btn{padding:.5rem 1rem;font-size:.8rem}
+  .container{padding:0 1rem}
+  .hero{padding:7rem 0 3rem}
+  .hero-badge{font-size:.7rem;padding:.35rem .75rem}
+  .hero h1{font-size:clamp(1.6rem,6vw,2.2rem)}
+  .hero p{font-size:.95rem;margin-bottom:1.5rem}
+  .hero-cta .btn{width:100%;justify-content:center;padding:.75rem 1rem!important;font-size:.9rem!important}
+  .hero-trust{gap:1rem;font-size:.75rem}
+  .preview-frame{padding:1rem;border-radius:12px}
+  .preview-grid{grid-template-columns:1fr 1fr;gap:.5rem}
+  .preview-value{font-size:.9rem}
+  .preview-chart{height:60px}
+  .stats{padding:3rem 0}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:1rem}
+  .stat-n{font-size:1.5rem}
+  .features{padding:4rem 0}
+  .feat-grid{grid-template-columns:1fr;gap:1rem}
+  .feat-card{padding:1.25rem}
+  .section-title{font-size:clamp(1.3rem,5vw,1.8rem)}
+  .pricing{padding:4rem 0}
+  .pricing-grid{gap:1rem}
+  .price-card{padding:1.5rem 1.25rem}
+  .price-amount{font-size:1.6rem}
+  .testimonials{padding:4rem 0}
+  .test-grid{gap:1rem}
+  .faq{padding:4rem 0}
+  .faq-q{padding:.875rem 1.125rem;font-size:.875rem}
+  .faq-a{padding:0 1.125rem}
+  .faq-item.open .faq-a{padding:0 1.125rem .875rem}
+  .cta-section{padding:4rem 0}
+  .cta-box{padding:2.5rem 1.25rem;border-radius:var(--r)}
+  .cta-box h2{font-size:1.4rem!important}
+  footer{padding:2rem 0}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
+  .footer-bottom{flex-direction:column;text-align:center}
+  #cookie-banner{left:.75rem;right:.75rem;padding:1rem}
+  .cookie-text{font-size:.78rem}
+  .cookie-btns{flex-direction:column}
+  .pricing-grid{grid-template-columns:1fr}
+  .price-card.popular,.price-card[style*="border-color"]{transform:none!important}
+  .mode-content{grid-template-columns:1fr;gap:2rem}
+  .mode-tabs{width:100%;justify-content:center}
+  .mode-tab{flex:1;text-align:center;padding:.5rem .75rem;font-size:.8rem}
 }
 @media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr;gap:.75rem}
+  .stat-n{font-size:1.25rem}
+  .stat-l{font-size:.75rem}
+  .preview-grid{grid-template-columns:1fr 1fr}
+  .preview-card{padding:.625rem}
+  .preview-value{font-size:.8rem}
+  .preview-label{font-size:.55rem}
+  .hero-trust{flex-direction:column;gap:.5rem;align-items:flex-start}
+  .hero-trust span{width:100%}
+  .footer-grid{grid-template-columns:1fr;gap:1.25rem}
+  .feat-card{padding:1rem}
+  .ref-modal-inner{padding:1.25rem!important;margin:.5rem}
+  .ref-modal-inner h2{font-size:1rem!important}
+}
+@media(max-width:360px){
+  .container{padding:0 .75rem}
+  .hero{padding:6rem 0 2rem}
+  .hero h1{font-size:clamp(1.3rem,5vw,1.6rem)}
+  .hero-cta .btn{font-size:.8rem!important;padding:.65rem .75rem!important}
   .stats-grid{grid-template-columns:1fr 1fr}
-  .footer-grid{grid-template-columns:1fr}
-  .hero-trust{gap:1rem}
   .pricing-grid{grid-template-columns:1fr}
 }
 </style>
@@ -204,7 +258,7 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 <!-- NAV -->
 <nav>
   <div class="container"><div class="nav-inner">
-    <a href="#" class="nav-logo"><svg width="20" height="20" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:6px"><defs><linearGradient id="llg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7C6FF7"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient></defs><rect width="32" height="32" rx="7" fill="url(#llg)"/><g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="9" x2="11" y2="23"/><line x1="11" y1="16" x2="19" y2="9"/><line x1="12.5" y1="16" x2="19" y2="23"/></g></svg>Kazka</a>
+    <a href="#" class="nav-logo"><svg width="20" height="20" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:6px"><defs><linearGradient id="llg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs><rect width="32" height="32" rx="7" fill="url(#llg)"/><g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="9" x2="11" y2="23"/><line x1="11" y1="16" x2="19" y2="9"/><line x1="12.5" y1="16" x2="19" y2="23"/></g></svg>Kazka</a>
     <div class="nav-links">
       <a href="#features">Funzioni</a>
       <a href="#pricing">Prezzi</a>
@@ -241,18 +295,18 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
         <div class="preview-bar"><div class="preview-dot"></div><div class="preview-dot"></div><div class="preview-dot"></div></div>
         <div class="preview-grid">
           <div class="preview-card"><div class="preview-label">Saldo totale</div><div class="preview-value">€12.450</div></div>
-          <div class="preview-card"><div class="preview-label">Entrate mese</div><div class="preview-value" style="color:#00F0A0">€2.800</div></div>
-          <div class="preview-card"><div class="preview-label">Uscite mese</div><div class="preview-value" style="color:#FF3355">€1.340</div></div>
-          <div class="preview-card"><div class="preview-label">Risparmio</div><div class="preview-value" style="color:#00E5FF">€1.460</div></div>
+          <div class="preview-card"><div class="preview-label">Entrate mese</div><div class="preview-value" style="color:var(--gr)">€2.800</div></div>
+          <div class="preview-card"><div class="preview-label">Uscite mese</div><div class="preview-value" style="color:var(--re)">€1.340</div></div>
+          <div class="preview-card"><div class="preview-label">Risparmio</div><div class="preview-value" style="color:var(--ac2)">€1.460</div></div>
         </div>
         <div class="preview-chart">
-          <div class="preview-bar-item" style="height:40%;background:rgba(123,104,238,.5)"></div>
-          <div class="preview-bar-item" style="height:65%;background:rgba(123,104,238,.5)"></div>
-          <div class="preview-bar-item" style="height:50%;background:rgba(123,104,238,.5)"></div>
-          <div class="preview-bar-item" style="height:80%;background:rgba(0,229,255,.5)"></div>
-          <div class="preview-bar-item" style="height:60%;background:rgba(123,104,238,.5)"></div>
-          <div class="preview-bar-item" style="height:90%;background:rgba(0,240,160,.7)"></div>
-          <div class="preview-bar-item" style="height:70%;background:rgba(123,104,238,.5)"></div>
+          <div class="preview-bar-item" style="height:40%;background:rgba(139,92,246,.5)"></div>
+          <div class="preview-bar-item" style="height:65%;background:rgba(139,92,246,.5)"></div>
+          <div class="preview-bar-item" style="height:50%;background:rgba(139,92,246,.5)"></div>
+          <div class="preview-bar-item" style="height:80%;background:rgba(34,211,238,.5)"></div>
+          <div class="preview-bar-item" style="height:60%;background:rgba(139,92,246,.5)"></div>
+          <div class="preview-bar-item" style="height:90%;background:rgba(52,211,153,.7)"></div>
+          <div class="preview-bar-item" style="height:70%;background:rgba(139,92,246,.5)"></div>
         </div>
       </div>
     </div>
@@ -279,15 +333,15 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
     <h2 class="section-title">Tutto quello che ti serve,<br>in un unico posto</h2>
     <p class="section-sub">Da semplice tracciamento spese a gestione aziendale completa. Kazka cresce con te.</p>
     <div class="feat-grid">
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(0,240,160,.12)">📊</div><div class="feat-title">Dashboard intelligente</div><div class="feat-desc">Panoramica completa di entrate, uscite, saldo e previsioni. Widget personalizzabili per vedere subito ciò che conta.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Tempo reale</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(123,104,238,.12)">🎯</div><div class="feat-title">Budget mensile per categoria</div><div class="feat-desc">Imposta limiti per alimentari, trasporti, svago e altro. Alert automatici quando stai per superarli.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Notifiche</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(0,229,255,.12)">🏆</div><div class="feat-title">Obiettivi di risparmio</div><div class="feat-desc">Vacanze, casa, auto o fondo emergenza. Visualizza il progresso e rimani motivato con timeline e grafici.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(52,211,153,.12)">📊</div><div class="feat-title">Dashboard intelligente</div><div class="feat-desc">Panoramica completa di entrate, uscite, saldo e previsioni. Widget personalizzabili per vedere subito ciò che conta.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Tempo reale</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(139,92,246,.12)">🎯</div><div class="feat-title">Budget mensile per categoria</div><div class="feat-desc">Imposta limiti per alimentari, trasporti, svago e altro. Alert automatici quando stai per superarli.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Notifiche</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(34,211,238,.12)">🏆</div><div class="feat-title">Obiettivi di risparmio</div><div class="feat-desc">Vacanze, casa, auto o fondo emergenza. Visualizza il progresso e rimani motivato con timeline e grafici.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
       <div class="feat-card"><div class="feat-icon" style="background:rgba(255,140,66,.12)">📈</div><div class="feat-title">Portafoglio investimenti</div><div class="feat-desc">Traccia azioni, ETF e crypto con prezzi live. Vedi rendimento, variazione e valore totale in tempo reale.</div><div class="feat-tags"><span class="feat-tag">Pro</span><span class="feat-tag">Live prices</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(255,51,85,.12)">🧾</div><div class="feat-title">Fatture e clienti</div><div class="feat-desc">Emetti fatture con IVA, crea preventivi, gestisci clienti e fornitori. Prima Nota e calcolo regime fiscale incluso.</div><div class="feat-tags"><span class="feat-tag">Business</span><span class="feat-tag">IVA auto</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(255,209,102,.12)">🫂</div><div class="feat-title">Spese condivise</div><div class="feat-desc">Crea gruppi con amici o coinquilini, dividi le spese equamente e gestisci chi deve quanto con chat integrata.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Chat</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(0,240,160,.12)">💰</div><div class="feat-title">Calcolatore soldi liberi</div><div class="feat-desc">Scopri quanto ti rimane davvero dopo tutte le spese fisse, rate e abbonamenti. Regola 50/30/20 automatica.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(123,104,238,.12)">📁</div><div class="feat-title">Tracciamento progetti</div><div class="feat-desc">Tieni traccia di ristrutturazioni, nuovi progetti e spese straordinarie. Scegli se detrarre o solo monitorare.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(0,229,255,.12)">🔮</div><div class="feat-title">Cashflow forecast</div><div class="feat-desc">Previsione del saldo a 3, 6 e 12 mesi basata su entrate, uscite ricorrenti e obiettivi. Pianifica in anticipo.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(244,63,94,.12)">🧾</div><div class="feat-title">Fatture e clienti</div><div class="feat-desc">Emetti fatture con IVA, crea preventivi, gestisci clienti e fornitori. Prima Nota e calcolo regime fiscale incluso.</div><div class="feat-tags"><span class="feat-tag">Business</span><span class="feat-tag">IVA auto</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(251,191,36,.12)">🫂</div><div class="feat-title">Spese condivise</div><div class="feat-desc">Crea gruppi con amici o coinquilini, dividi le spese equamente e gestisci chi deve quanto con chat integrata.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Chat</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(52,211,153,.12)">💰</div><div class="feat-title">Calcolatore soldi liberi</div><div class="feat-desc">Scopri quanto ti rimane davvero dopo tutte le spese fisse, rate e abbonamenti. Regola 50/30/20 automatica.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(139,92,246,.12)">📁</div><div class="feat-title">Tracciamento progetti</div><div class="feat-desc">Tieni traccia di ristrutturazioni, nuovi progetti e spese straordinarie. Scegli se detrarre o solo monitorare.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
+      <div class="feat-card"><div class="feat-icon" style="background:rgba(34,211,238,.12)">🔮</div><div class="feat-title">Cashflow forecast</div><div class="feat-desc">Previsione del saldo a 3, 6 e 12 mesi basata su entrate, uscite ricorrenti e obiettivi. Pianifica in anticipo.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
     </div>
   </div>
 </section>
@@ -373,8 +427,8 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
         <a href="app/" class="price-btn price-btn-outline">Inizia All-Inclusive</a>
       </div>
 
-      <div class="price-card" style="border-color:rgba(255,51,85,.3);background:linear-gradient(135deg,rgba(255,51,85,.08),rgba(255,140,66,.06))">
-        <div class="popular-badge" style="background:linear-gradient(135deg,#FF3355,#FF8C42)">🔥 LIFETIME DEAL</div>
+      <div class="price-card" style="border-color:rgba(244,63,94,.3);background:linear-gradient(135deg,rgba(244,63,94,.08),rgba(255,140,66,.06))">
+        <div class="popular-badge" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED)">🔥 LIFETIME DEAL</div>
         <div class="price-name" style="color:var(--re)">Lifetime</div>
         <div class="price-amount">€149,99</div>
         <div class="price-period">pagamento unico</div>
@@ -387,7 +441,7 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
           <li class="yes">Badge Founding Member</li>
           <li class="yes">Quantità limitata</li>
         </ul>
-        <a href="app/" class="price-btn price-btn-primary" style="background:linear-gradient(135deg,#FF3355,#FF8C42)">Acquista Lifetime ∞</a>
+        <a href="app/" class="price-btn price-btn-primary" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED)">Acquista Lifetime ∞</a>
       </div>
 
     </div>

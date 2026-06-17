@@ -48,23 +48,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 0;background:rg
 .nav-links a{font-size:.875rem;color:var(--tx2);transition:color .2s}
 .nav-links a:hover{color:var(--tx)}
 .nav-cta{display:flex;gap:.75rem}
-.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.4rem;border-radius:var(--rs);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-decoration:none;position:relative;overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1.2rem;border-radius:var(--rs);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-decoration:none;position:relative;overflow:hidden}
 .btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 20px rgba(139,92,246,.3)}.btn-primary:hover{opacity:.95;transform:translateY(-2px);box-shadow:0 6px 28px rgba(139,92,246,.4)}
 .btn-outline{background:transparent;border:1px solid var(--b2);color:var(--tx)}.btn-outline:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-2px);box-shadow:0 4px 16px rgba(139,92,246,.1)}
 .nav-tog{display:none;background:none;border:none;color:var(--tx);font-size:1.25rem;cursor:pointer}
 
 /* HERO */
-.hero{padding:9rem 0 5rem;text-align:center;position:relative;overflow:hidden}
+.hero{padding:7rem 0 4rem;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:1000px;height:1000px;background:radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 70%);pointer-events:none;animation:bgShift 12s ease infinite;background-size:200% 200%}
 .hero::after{content:'';position:absolute;bottom:-300px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(34,211,238,.06),transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);border-radius:20px;font-size:.8rem;font-weight:600;color:var(--ac);margin-bottom:1.5rem;box-shadow:0 0 20px rgba(139,92,246,.06)}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:1.25rem;max-width:800px;margin-left:auto;margin-right:auto}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .85rem;background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);border-radius:20px;font-size:.75rem;font-weight:600;color:var(--ac);margin-bottom:1.25rem;box-shadow:0 0 20px rgba(139,92,246,.06)}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:1rem;max-width:740px;margin-left:auto;margin-right:auto}
 .hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:1.1rem;color:var(--tx2);max-width:580px;margin:0 auto 2rem;line-height:1.7}
-.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
-.hero-trust{display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.82rem;color:var(--tx3)}
+.hero p{font-size:1rem;color:var(--tx2);max-width:580px;margin:0 auto 1.5rem;line-height:1.7}
+.hero-cta{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+.hero-trust{display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;font-size:.78rem;color:var(--tx3)}
 .hero-trust span{display:flex;align-items:center;gap:.4rem}
-.app-preview{max-width:900px;margin:4rem auto 0;position:relative}
+.app-preview{max-width:860px;margin:3rem auto 0;position:relative}
 .preview-frame{background:var(--bg2);border:1px solid var(--b1);border-radius:16px;padding:1.5rem;box-shadow:0 40px 80px rgba(0,0,0,.5)}
 .preview-bar{display:flex;gap:.4rem;margin-bottom:1rem}
 .preview-dot{width:10px;height:10px;border-radius:50%;background:var(--b2)}
@@ -175,12 +175,12 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
   .nav-tog{display:block}
   .nav-cta .btn{padding:.5rem 1rem;font-size:.8rem}
   .container{padding:0 1rem}
-  .hero{padding:7rem 0 3rem}
-  .hero-badge{font-size:.7rem;padding:.35rem .75rem}
-  .hero h1{font-size:clamp(1.6rem,6vw,2.2rem)}
-  .hero p{font-size:.95rem;margin-bottom:1.5rem}
-  .hero-cta .btn{width:100%;justify-content:center;padding:.75rem 1rem!important;font-size:.9rem!important}
-  .hero-trust{gap:1rem;font-size:.75rem}
+  .hero{padding:6rem 0 2.5rem}
+  .hero-badge{font-size:.65rem;padding:.3rem .7rem}
+  .hero h1{font-size:clamp(1.5rem,6vw,1.8rem)}
+  .hero p{font-size:.85rem;margin-bottom:1.25rem}
+  .hero-cta .btn{width:100%;justify-content:center;padding:.5rem .85rem!important;font-size:.8rem!important}
+  .hero-trust{gap:.75rem;font-size:.7rem}
   .preview-frame{padding:1rem;border-radius:12px}
   .preview-grid{grid-template-columns:1fr 1fr;gap:.5rem}
   .preview-value{font-size:.9rem}
@@ -234,9 +234,9 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
 }
 @media(max-width:360px){
   .container{padding:0 .75rem}
-  .hero{padding:6rem 0 2rem}
-  .hero h1{font-size:clamp(1.3rem,5vw,1.6rem)}
-  .hero-cta .btn{font-size:.8rem!important;padding:.65rem .75rem!important}
+  .hero{padding:5rem 0 1.5rem}
+  .hero h1{font-size:clamp(1.15rem,5vw,1.4rem)}
+  .hero-cta .btn{font-size:.75rem!important;padding:.45rem .7rem!important}
   .stats-grid{grid-template-columns:1fr 1fr}
   .pricing-grid{grid-template-columns:1fr}
 }
@@ -280,8 +280,8 @@ footer{padding:3rem 0;border-top:1px solid var(--b1)}
     <h1>La tua <span>finanza intelligente</span>, finalmente in italiano</h1>
     <p>Traccia spese, gestisci budget, invia fatture e raggiungi i tuoi obiettivi finanziari. Gratuito per sempre, senza sorprese.</p>
     <div class="hero-cta">
-      <a href="app/" class="btn btn-primary" style="padding:.875rem 2rem;font-size:1rem">🚀 Inizia gratis — nessuna carta</a>
-      <a href="#features" class="btn btn-outline" style="padding:.875rem 2rem;font-size:1rem">Scopri le funzioni</a>
+      <a href="app/" class="btn btn-primary">🚀 Inizia gratis — nessuna carta</a>
+      <a href="#features" class="btn btn-outline">Scopri le funzioni</a>
     </div>
     <div class="hero-trust">
       <span>✅ Piano gratuito per sempre</span>

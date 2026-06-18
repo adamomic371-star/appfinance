@@ -10,11 +10,11 @@
   "plugins": {
     "SplashScreen": {
       "launchAutoHide": true,
-      "backgroundColor": "#050912"
+      "backgroundColor": "#080612"
     },
     "StatusBar": {
       "style": "DARK",
-      "backgroundColor": "#050912"
+      "backgroundColor": "#080612"
     }
   }
 }

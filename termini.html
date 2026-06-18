@@ -3,26 +3,27 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Termini di servizio — Kazka</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080612;--bg2:#110C24;--b1:rgba(139,92,246,.08);--ac:#8B5CF6;--ac2:#22D3EE;--tx:#F8FAFC;--tx2:#94A3B8;--grad:linear-gradient(135deg,#8B5CF6,#22D3EE);--mesh:radial-gradient(ellipse at 20% 10%,rgba(139,92,246,.08),transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(34,211,238,.06),transparent 50%)}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:var(--mesh);color:var(--tx);line-height:1.7}
-nav{position:sticky;top:0;z-index:10;padding:1rem 1.5rem;background:rgba(8,6,18,.78);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
-.back{font-size:.875rem;color:var(--tx2);text-decoration:none}
+:root{--bg:#080612;--bg2:#110C24;--b1:rgba(139,92,246,.08);--ac:#8B5CF6;--ac2:#22D3EE;--tx:#F8FAFC;--tx2:#94A3B8;--tx3:#64748B;--r:16px;--rs:10px;--grad:linear-gradient(135deg,#8B5CF6,#22D3EE);--mesh:radial-gradient(ellipse at 20% 10%,rgba(139,92,246,.08),transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(34,211,238,.06),transparent 50%)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:var(--mesh);color:var(--tx);line-height:1.7;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.7rem 1.25rem;background:rgba(8,6,18,.78);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+.back{font-size:.82rem;color:var(--tx2);text-decoration:none}
 .back:hover{color:var(--tx)}
-.wrap{max-width:760px;margin:0 auto;padding:3rem 1.5rem}
-h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:.5rem}
-.meta{font-size:.82rem;color:var(--tx2);margin-bottom:2.5rem}
-h2{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin:2rem 0 .75rem}
-p{color:var(--tx2);font-size:.9rem;margin-bottom:.875rem}
-ul{color:var(--tx2);font-size:.9rem;margin:.5rem 0 .875rem 1.25rem;display:flex;flex-direction:column;gap:.3rem}
+.wrap{max-width:760px;margin:0 auto;padding:4.5rem 1rem 2rem}
+h1{font-family:'Syne',sans-serif;font-size:clamp(1.3rem,4vw,2rem);font-weight:800;margin-bottom:.35rem}
+.meta{font-size:.78rem;color:var(--tx2);margin-bottom:1.5rem}
+h2{font-family:'Syne',sans-serif;font-size:clamp(1rem,3vw,1.15rem);font-weight:700;margin:1.5rem 0 .6rem}
+p{color:var(--tx2);font-size:.85rem;margin-bottom:.75rem}
+ul{color:var(--tx2);font-size:.85rem;margin:.4rem 0 .75rem 1.1rem;display:flex;flex-direction:column;gap:.25rem}
 strong{color:var(--tx)}
 a{color:var(--ac)}
-hr{border:none;border-top:1px solid var(--b1);margin:2rem 0}
+hr{border:none;border-top:1px solid var(--b1);margin:1.5rem 0}
+@media(max-width:480px){.wrap{padding:4rem .85rem 1.5rem}h1{font-size:clamp(1.1rem,5vw,1.3rem)}.back{font-size:.75rem}}
 </style>
 </head>
 <body>

@@ -79,8 +79,9 @@ input,select,textarea{font-family:inherit}
 .ss-chev{font-size:.55rem;transition:transform .2s;color:var(--tx4)}
 .ss.coll .ss-chev{transform:rotate(-90deg)}
 .sgp{overflow:hidden;transition:max-height .35s ease}
-.ss.coll+.sgp{max-height:0!important}
-@media(min-width:769px){.ss{cursor:default}.ss-chev{display:none}}
+.ss.coll+.sgp{max-height:0;overflow:hidden}
+.nfav{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:auto;font-size:.7rem;cursor:pointer;border-radius:4px;transition:all .15s;opacity:0;flex-shrink:0;order:1}.ni:hover .nfav,.ni.nfav-on .nfav{opacity:1}.nfav:hover{background:var(--b1)}.ni.nfav-on .nfav{opacity:1;color:var(--ye)}.ni.nfav-on{color:var(--ye)}#fav-empty{padding:1rem .75rem;font-size:.78rem;color:var(--tx3);text-align:center;display:none}
+@media(min-width:769px){.ss{cursor:default}}
 .ni{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;margin:.1rem .5rem;border-radius:var(--rs);color:var(--tx2);font-size:.875rem;font-weight:500;cursor:pointer;transition:all var(--ts2);min-height:42px}
 .ni:hover{background:var(--b1);color:var(--tx)}
 .ni.active{background:rgba(139,92,246,.14);color:var(--ac);box-shadow:inset 0 0 20px rgba(139,92,246,.04)}
@@ -670,46 +671,49 @@ html{transition:background-color .3s,color .3s}
   <div class="s-ov" id="s-ov" onclick="toggleSidebar()"></div>
   <aside id="sidebar">
     <div id="sidebar-groups">
+      <div class="ss" onclick="togG(this)">⭐ Preferiti<span class="ss-chev">▼</span></div>
+      <div class="sgp" id="fav-list"><div id="fav-empty">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div></div>
       <div class="ss" onclick="togG(this)">Principale<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard">📊 Dashboard</div>
-      <div class="ni" onclick="showView('transactions')" id="nav-transactions">💸 Transazioni</div>
-      <div class="ni" onclick="showView('accounts')" id="nav-accounts">🏦 Conti & Carte</div>
-      <div class="ni" onclick="showView('transfer')" id="nav-transfer">↔️ Trasferimenti</div></div>
+      <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard">📊 Dashboard<span class="nfav" onclick="event.stopPropagation();toggleFav('dashboard')">☆</span></div>
+      <div class="ni" onclick="showView('transactions')" id="nav-transactions">💸 Transazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('transactions')">☆</span></div>
+      <div class="ni" onclick="showView('accounts')" id="nav-accounts">🏦 Conti & Carte<span class="nfav" onclick="event.stopPropagation();toggleFav('accounts')">☆</span></div>
+      <div class="ni" onclick="showView('transfer')" id="nav-transfer">↔️ Trasferimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('transfer')">☆</span></div></div>
       <div class="ss" onclick="togG(this)">Pianificazione<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('budget')" id="nav-budget">🎯 Budget</div>
-      <div class="ni" onclick="showView('categories')" id="nav-categories">🏷️ Categorie</div>
-      <div class="ni" onclick="showView('goals')" id="nav-goals">🏆 Obiettivi</div>
-      <div class="ni" onclick="showView('calendar')" id="nav-calendar">📅 Scadenzario</div>
-      <div class="ni" onclick="showView('recurring')" id="nav-recurring">🔁 Ricorrenti</div>
-      <div class="ni" onclick="showView('debts')" id="nav-debts">💳 Debiti</div>
-      <div class="ni" onclick="showView('freemoney')" id="nav-freemoney">💰 Soldi Liberi</div></div>
+      <div class="sgp"><div class="ni" onclick="showView('budget')" id="nav-budget">🎯 Budget<span class="nfav" onclick="event.stopPropagation();toggleFav('budget')">☆</span></div>
+      <div class="ni" onclick="showView('categories')" id="nav-categories">🏷️ Categorie<span class="nfav" onclick="event.stopPropagation();toggleFav('categories')">☆</span></div>
+      <div class="ni" onclick="showView('goals')" id="nav-goals">🏆 Obiettivi<span class="nfav" onclick="event.stopPropagation();toggleFav('goals')">☆</span></div>
+      <div class="ni" onclick="showView('calendar')" id="nav-calendar">📅 Scadenzario<span class="nfav" onclick="event.stopPropagation();toggleFav('calendar')">☆</span></div>
+      <div class="ni" onclick="showView('recurring')" id="nav-recurring">🔁 Ricorrenti<span class="nfav" onclick="event.stopPropagation();toggleFav('recurring')">☆</span></div>
+      <div class="ni" onclick="showView('debts')" id="nav-debts">💳 Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debts')">☆</span></div>
+      <div class="ni" onclick="showView('freemoney')" id="nav-freemoney">💰 Soldi Liberi<span class="nfav" onclick="event.stopPropagation();toggleFav('freemoney')">☆</span></div></div>
       <div class="ss" onclick="togG(this)">Social<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('groups')" id="nav-groups">🫂 Gruppi & Chat</div>
-      <div class="ni" onclick="showView('sharedgoals')" id="nav-sharedgoals">🤝 Obiettivi Condivisi</div></div>
+      <div class="sgp"><div class="ni" onclick="showView('groups')" id="nav-groups">🫂 Gruppi & Chat<span class="nfav" onclick="event.stopPropagation();toggleFav('groups')">☆</span></div>
+      <div class="ni" onclick="showView('sharedgoals')" id="nav-sharedgoals">🤝 Obiettivi Condivisi<span class="nfav" onclick="event.stopPropagation();toggleFav('sharedgoals')">☆</span></div></div>
       <div class="ss b-only" onclick="togG(this)">Business<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni b-only" onclick="showView('invoices')" id="nav-invoices">🧾 Fatture</div>
-      <div class="ni b-only" onclick="showView('quotes')" id="nav-quotes">📋 Preventivi</div>
-      <div class="ni b-only" onclick="showView('suppliers')" id="nav-suppliers">🏢 Fornitori</div>
-      <div class="ni b-only" onclick="showView('primanota')" id="nav-primanota">📊 Prima Nota</div>
-      <div class="ni b-only" onclick="showView('taxcalc')" id="nav-taxcalc">🧮 Regime Fiscale</div>
-      <div class="ni b-only" onclick="showView('travel')" id="nav-travel">✈️ Viaggi</div></div>
-      <div class="ss" onclick="togG(this)">Analisi<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('projects')" id="nav-projects">📁 Progetti</div>
-      <div class="ni" onclick="showView('reports')" id="nav-reports">📈 Report</div>
-      <div class="ni" onclick="showView('score')" id="nav-score">⭐ Score</div>
-      <div class="ni" onclick="showView('portfolio')" id="nav-portfolio">📈 Portafoglio</div>
-      <div class="ni" onclick="showView('networth')" id="nav-networth">💎 Net Worth</div>
-      <div class="ni" onclick="showView('cashflow')" id="nav-cashflow">🔮 Cashflow</div>
-      <div class="ni" onclick="showView('debtstrategy')" id="nav-debtstrategy">📊 Strategia Debiti</div>
-      <div class="ni" onclick="showView('pension')" id="nav-pension">🏖️ Pensione</div>
-      <div class="ni" onclick="showView('insurance')" id="nav-insurance">🛡️ Assicurazioni</div>
-      <div class="ni" onclick="showView('monthly')" id="nav-monthly">📆 Spese Mensili</div></div>
+      <div class="sgp"><div class="ni b-only" onclick="showView('invoices')" id="nav-invoices">🧾 Fatture<span class="nfav" onclick="event.stopPropagation();toggleFav('invoices')">☆</span></div>
+      <div class="ni b-only" onclick="showView('quotes')" id="nav-quotes">📋 Preventivi<span class="nfav" onclick="event.stopPropagation();toggleFav('quotes')">☆</span></div>
+      <div class="ni b-only" onclick="showView('suppliers')" id="nav-suppliers">🏢 Fornitori<span class="nfav" onclick="event.stopPropagation();toggleFav('suppliers')">☆</span></div>
+      <div class="ni b-only" onclick="showView('primanota')" id="nav-primanota">📊 Prima Nota<span class="nfav" onclick="event.stopPropagation();toggleFav('primanota')">☆</span></div>
+      <div class="ni b-only" onclick="showView('taxcalc')" id="nav-taxcalc">🧮 Regime Fiscale<span class="nfav" onclick="event.stopPropagation();toggleFav('taxcalc')">☆</span></div>
+      <div class="ni b-only" onclick="showView('travel')" id="nav-travel">✈️ Viaggi<span class="nfav" onclick="event.stopPropagation();toggleFav('travel')">☆</span></div></div>
+      <div class="ss coll" onclick="togG(this)">Analisi<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('reports')" id="nav-reports">📈 Report<span class="nfav" onclick="event.stopPropagation();toggleFav('reports')">☆</span></div>
+      <div class="ni" onclick="showView('score')" id="nav-score">⭐ Score Finanziario<span class="nfav" onclick="event.stopPropagation();toggleFav('score')">☆</span></div>
+      <div class="ni" onclick="showView('portfolio')" id="nav-portfolio">📈 Portafoglio Investimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('portfolio')">☆</span></div>
+      <div class="ni" onclick="showView('networth')" id="nav-networth">💎 Net Worth<span class="nfav" onclick="event.stopPropagation();toggleFav('networth')">☆</span></div>
+      <div class="ni" onclick="showView('cashflow')" id="nav-cashflow">🔮 Cashflow Proiettato<span class="nfav" onclick="event.stopPropagation();toggleFav('cashflow')">☆</span></div>
+      <div class="ni" onclick="showView('monthly')" id="nav-monthly">📆 Spese Mensili<span class="nfav" onclick="event.stopPropagation();toggleFav('monthly')">☆</span></div></div>
+      <div class="ss coll" onclick="togG(this)">Strategie & Lungo Termine<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('projects')" id="nav-projects">📁 Progetti<span class="nfav" onclick="event.stopPropagation();toggleFav('projects')">☆</span></div>
+      <div class="ni" onclick="showView('debtstrategy')" id="nav-debtstrategy">📊 Strategia Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debtstrategy')">☆</span></div>
+      <div class="ni" onclick="showView('pension')" id="nav-pension">🏖️ Pensione<span class="nfav" onclick="event.stopPropagation();toggleFav('pension')">☆</span></div>
+      <div class="ni" onclick="showView('insurance')" id="nav-insurance">🛡️ Assicurazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('insurance')">☆</span></div></div>
       <div class="ss" onclick="togG(this)">Account<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('notifications')" id="nav-notifications">🔔 Notifiche</div>
-      <div class="ni" onclick="showView('referral')" id="nav-referral">🎁 Referral</div>
-      <div class="ni" onclick="showView('profile')" id="nav-profile">👤 Profilo</div>
-      <div class="ni" onclick="showView('settings')" id="nav-settings">⚙️ Impostazioni</div>
-      <div class="ni" onclick="showView('admin')" id="nav-admin" style="display:none">👑 Admin</div></div>
+      <div class="sgp"><div class="ni" onclick="showView('notifications')" id="nav-notifications">🔔 Notifiche<span class="nfav" onclick="event.stopPropagation();toggleFav('notifications')">☆</span></div>
+      <div class="ni" onclick="showView('referral')" id="nav-referral">🎁 Referral<span class="nfav" onclick="event.stopPropagation();toggleFav('referral')">☆</span></div>
+      <div class="ni" onclick="showView('profile')" id="nav-profile">👤 Profilo<span class="nfav" onclick="event.stopPropagation();toggleFav('profile')">☆</span></div>
+      <div class="ni" onclick="showView('settings')" id="nav-settings">⚙️ Impostazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('settings')">☆</span></div>
+      <div class="ni" onclick="showView('admin')" id="nav-admin" style="display:none">👑 Admin<span class="nfav" onclick="event.stopPropagation();toggleFav('admin')">☆</span></div></div>
     </div>
     <div class="sb-bot">
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
@@ -1672,6 +1676,7 @@ function showApp(){
   setTimeout(initEdgeSwipe,500);
   setTimeout(initNavShadow,500);
   setTimeout(initSidebarCollapse,500);
+  setTimeout(()=>{renderFavs();updateFavStars();},550);
   setTimeout(initKeyboardHide,200);
   setTimeout(()=>{ try{fetchRates();}catch(e){} }, 1000);
   /* BUG-07 FIX: inizializza banner cookie GDPR */
@@ -1935,7 +1940,6 @@ function applyTheme(t){theme=t;document.documentElement.setAttribute('data-theme
 function toggleTheme(){applyTheme(theme==='dark'?'light':'dark');}
 /* ─── SIDEBAR COLLAPSE ─── */
 function togG(h){
-  if(window.innerWidth>768)return;
   h.classList.toggle('coll');
   const g=h.nextElementSibling;
   if(!g||!g.classList.contains('sgp'))return;
@@ -1945,12 +1949,45 @@ function togG(h){
     g.style.maxHeight=g.scrollHeight+'px';
   }
 }
+/* ─── FAVORITES ─── */
+function getFavs(){try{return JSON.parse(localStorage.getItem('kz_favs')||'[]');}catch(e){return [];}}
+function setFavs(v){localStorage.setItem('kz_favs',JSON.stringify(v));}
+function toggleFav(n){
+  let f=getFavs();const i=f.indexOf(n);
+  if(i>-1)f.splice(i,1);else f.push(n);
+  setFavs(f);renderFavs();updateFavStars();
+}
+function isFav(n){return getFavs().indexOf(n)>-1;}
+function updateFavStars(){
+  const f=getFavs();
+  document.querySelectorAll('.ni').forEach(el=>{
+    const id=el.id?.replace('nav-','');
+    if(!id)return;
+    const star=el.querySelector('.nfav');
+    if(!star)return;
+    const isFav=f.indexOf(id)>-1;
+    star.textContent=isFav?'★':'☆';
+    el.classList.toggle('nfav-on',isFav);
+  });
+}
+function renderFavs(){
+  const c=document.getElementById('fav-list');
+  if(!c)return;
+  const f=getFavs();
+  if(!f.length){c.innerHTML='<div id="fav-empty">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div>';return;}
+  c.innerHTML=f.map(n=>{
+    const nav=document.getElementById('nav-'+n);
+    if(!nav)return '';
+    const label=nav.textContent.replace('☆','').replace('★','').trim();
+    return `<div class="ni" onclick="showView('${n}')">${label}<span class="nfav nfav-on" onclick="event.stopPropagation();toggleFav('${n}')">★</span></div>`;
+  }).join('');
+}
 function initSidebarCollapse(){
-  if(window.innerWidth>768)return;
   const active=document.querySelector('.ni.active');
   document.querySelectorAll('.ss').forEach(h=>{
     const g=h.nextElementSibling;
     if(!g||!g.classList.contains('sgp'))return;
+    if(h.textContent.trim().startsWith('⭐ Preferiti'))return;
     const hasActive=g.contains(active);
     if(!hasActive){
       h.classList.add('coll');

@@ -39,9 +39,28 @@
 body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:var(--mesh);color:var(--tx);overflow-x:hidden;line-height:1.6}
 a{text-decoration:none;color:inherit}
 .container{max-width:1120px;margin:0 auto;padding:0 1rem}
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal.show{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal-left.show{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal-right.show{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(.9);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal-scale.show{opacity:1;transform:scale(1)}
+/* Floating orbs */
+.hero-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.hero-orbs .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:orbFloat 20s ease-in-out infinite}
+.hero-orbs .orb:nth-child(1){width:400px;height:400px;background:#2563EB;top:-10%;left:-5%;animation-duration:25s}
+.hero-orbs .orb:nth-child(2){width:350px;height:350px;background:#06B6D4;bottom:-10%;right:-5%;animation-duration:20s;animation-delay:-5s}
+.hero-orbs .orb:nth-child(3){width:300px;height:300px;background:#EF4444;top:50%;left:50%;transform:translate(-50%,-50%);animation-duration:30s;animation-delay:-10s;opacity:.08}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.95)}75%{transform:translate(40px,30px) scale(1.05)}}
+/* BG shift */
+@keyframes bgShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(37,99,235,.3),0 0 40px rgba(37,99,235,.1)}50%{box-shadow:0 0 35px rgba(37,99,235,.5),0 0 60px rgba(37,99,235,.2)}}
+@keyframes shimmerBar{0%{transform:scaleY(.3);opacity:.4}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(.3);opacity:.4}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:rgba(8,6,18,.7);backdrop-filter:blur(28px) saturate(1.5);border-bottom:1px solid var(--b1)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:rgba(8,6,18,.7);backdrop-filter:blur(28px) saturate(1.5);border-bottom:1px solid var(--b1);transition:padding .3s ease,background .3s ease,box-shadow .3s ease}
+nav.nav-scrolled{padding:.4rem 0;background:rgba(8,6,18,.92);box-shadow:0 4px 30px rgba(0,0,0,.3)}
 .nav-inner{display:flex;align-items:center;gap:.65rem}
 .nav-logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:.35rem;margin-right:auto}
 .nav-links{position:fixed;top:56px;left:0;right:0;flex-direction:column;background:rgba(17,12,36,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);padding:1rem;gap:.5rem;transform:translateY(-120%);opacity:0;transition:transform .3s ease,opacity .3s ease;pointer-events:none;z-index:100;display:flex}
@@ -60,13 +79,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(37,99,235,.12),transparent 70%),radial-gradient(ellipse 80% 40% at 20% 100%,rgba(6,182,212,.06),transparent 70%);pointer-events:none}
 .hero-inner{display:grid;grid-template-columns:1fr;gap:2.5rem;align-items:center;width:100%}
 .hero-left{text-align:center}
-.hero-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.22rem .6rem;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:20px;font-size:.65rem;font-weight:600;color:var(--ac);margin-bottom:1.25rem}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,7vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:.75rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.22rem .6rem;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:20px;font-size:.65rem;font-weight:600;color:var(--ac);margin-bottom:1.25rem;animation:fadeInUp .6s ease-out}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,7vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:.75rem;animation:fadeInUp .6s ease-out .15s both}
 .hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:.85rem;color:var(--tx2);max-width:480px;margin:0 auto 1.5rem;line-height:1.65}
-.hero-cta{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem}
+.hero p{font-size:.85rem;color:var(--tx2);max-width:480px;margin:0 auto 1.5rem;line-height:1.65;animation:fadeInUp .6s ease-out .3s both}
+.hero-cta{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;animation:fadeInUp .6s ease-out .45s both}
 .hero-cta .btn{width:100%;justify-content:center;padding:.55rem 1rem;font-size:.82rem}
-.hero-trust{display:flex;flex-direction:column;align-items:center;gap:.4rem;font-size:.68rem;color:var(--tx3)}
+.hero-trust{display:flex;flex-direction:column;align-items:center;gap:.4rem;font-size:.68rem;color:var(--tx3);animation:fadeInUp .6s ease-out .6s both}
 .hero-trust span{display:flex;align-items:center;gap:.3rem}
 .app-preview{position:relative}
 .app-preview::before{content:'';position:absolute;inset:-20px;background:radial-gradient(ellipse at 50% 50%,rgba(37,99,235,.08),transparent 60%);pointer-events:none;border-radius:50%}
@@ -146,7 +165,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:
 /* CTA (mobile first) */
 .cta-section{padding:3rem 0;text-align:center;position:relative}
 .cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(37,99,235,.08),transparent 70%);pointer-events:none}
-.cta-box{background:var(--bg2);border:1px solid rgba(37,99,235,.25);border-radius:var(--r);padding:2.5rem 1.25rem;max-width:100%;margin:0 auto;position:relative}
+.cta-box{background:var(--bg2);border:1px solid rgba(37,99,235,.25);border-radius:var(--r);padding:2.5rem 1.25rem;max-width:100%;margin:0 auto;position:relative;animation:pulseGlow 4s ease-in-out infinite}
 .cta-box h2{font-size:clamp(1.15rem,5vw,1.4rem)!important}
 .cta-btn{padding:.75rem 1.5rem!important;font-size:.9rem!important;margin:0 auto;display:inline-flex}
 
@@ -277,6 +296,9 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 </head>
 <body>
 
+<!-- Floating background orbs -->
+<div class="hero-orbs"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+
 <!-- COOKIE BANNER -->
 <div id="cookie-banner">
   <div class="cookie-title">🍪 Usiamo i cookie</div>
@@ -289,7 +311,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 </div>
 
 <!-- NAV -->
-<nav>
+<nav id="navbar">
   <div class="container"><div class="nav-inner">
     <a href="#" class="nav-logo">⚡Axiom</a>
     <div class="nav-links">
@@ -310,7 +332,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 <section class="hero">
   <div class="container">
     <div class="hero-inner">
-      <div class="hero-left">
+      <div class="hero-left reveal-left">
         <div class="hero-badge">⚡ App finanze personali italiana</div>
         <h1>La tua <span>finanza intelligente</span>, finalmente in italiano</h1>
         <p>Traccia spese, gestisci budget, invia fatture e raggiungi i tuoi obiettivi. Gratuito, senza sorprese.</p>
@@ -325,7 +347,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
           <span>🇮🇹 100% in italiano</span>
         </div>
       </div>
-      <div class="app-preview">
+      <div class="app-preview reveal-right">
         <div class="preview-frame">
           <div class="preview-bar"><div class="preview-dot"></div><div class="preview-dot"></div><div class="preview-dot"></div></div>
           <div class="preview-grid">
@@ -353,10 +375,10 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 <section class="stats">
   <div class="container">
     <div class="stats-grid">
-      <div><div class="stat-n">100%</div><div class="stat-l">Gratuito per sempre</div></div>
-      <div><div class="stat-n">0€</div><div class="stat-l">Costo di avvio</div></div>
-      <div><div class="stat-n">15+</div><div class="stat-l">Sezioni e strumenti</div></div>
-      <div><div class="stat-n">EU</div><div class="stat-l">Dati in Europa (Firebase)</div></div>
+      <div class="reveal"><div class="stat-n" data-count="100">0%</div><div class="stat-l">Gratuito per sempre</div></div>
+      <div class="reveal" style="transition-delay:.1s"><div class="stat-n">0€</div><div class="stat-l">Costo di avvio</div></div>
+      <div class="reveal" style="transition-delay:.2s"><div class="stat-n">15+</div><div class="stat-l">Sezioni e strumenti</div></div>
+      <div class="reveal" style="transition-delay:.3s"><div class="stat-n">EU</div><div class="stat-l">Dati in Europa (Firebase)</div></div>
     </div>
   </div>
 </section>
@@ -365,19 +387,19 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 <!-- FEATURES -->
 <section class="features" id="features">
   <div class="container">
-    <div class="section-label">Funzionalità</div>
-    <h2 class="section-title">Tutto quello che ti serve,<br>in un unico posto</h2>
-    <p class="section-sub">Da semplice tracciamento spese a gestione aziendale completa. Axiom cresce con te.</p>
+    <div class="section-label reveal">Funzionalità</div>
+    <h2 class="section-title reveal">Tutto quello che ti serve,<br>in un unico posto</h2>
+    <p class="section-sub reveal">Da semplice tracciamento spese a gestione aziendale completa. Axiom cresce con te.</p>
     <div class="feat-grid">
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(52,211,153,.12)">📊</div><div class="feat-title">Dashboard intelligente</div><div class="feat-desc">Panoramica completa di entrate, uscite, saldo e previsioni. Widget personalizzabili per vedere subito ciò che conta.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Tempo reale</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(37,99,235,.12)">🎯</div><div class="feat-title">Budget mensile per categoria</div><div class="feat-desc">Imposta limiti per alimentari, trasporti, svago e altro. Alert automatici quando stai per superarli.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Notifiche</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(6,182,212,.12)">🏆</div><div class="feat-title">Obiettivi di risparmio</div><div class="feat-desc">Vacanze, casa, auto o fondo emergenza. Visualizza il progresso e rimani motivato con timeline e grafici.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(255,140,66,.12)">📈</div><div class="feat-title">Portafoglio investimenti</div><div class="feat-desc">Traccia azioni, ETF e crypto con prezzi live. Vedi rendimento, variazione e valore totale in tempo reale.</div><div class="feat-tags"><span class="feat-tag">Pro</span><span class="feat-tag">Live prices</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(238,68,68,.12)">🧾</div><div class="feat-title">Fatture e clienti</div><div class="feat-desc">Emetti fatture con IVA, crea preventivi, gestisci clienti e fornitori. Prima Nota e calcolo regime fiscale incluso.</div><div class="feat-tags"><span class="feat-tag">Business</span><span class="feat-tag">IVA auto</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(251,191,36,.12)">🫂</div><div class="feat-title">Spese condivise</div><div class="feat-desc">Crea gruppi con amici o coinquilini, dividi le spese equamente e gestisci chi deve quanto con chat integrata.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Chat</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(52,211,153,.12)">💰</div><div class="feat-title">Calcolatore soldi liberi</div><div class="feat-desc">Scopri quanto ti rimane davvero dopo tutte le spese fisse, rate e abbonamenti. Regola 50/30/20 automatica.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(37,99,235,.12)">📁</div><div class="feat-title">Tracciamento progetti</div><div class="feat-desc">Tieni traccia di ristrutturazioni, nuovi progetti e spese straordinarie. Scegli se detrarre o solo monitorare.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
-      <div class="feat-card"><div class="feat-icon" style="background:rgba(6,182,212,.12)">🔮</div><div class="feat-title">Cashflow forecast</div><div class="feat-desc">Previsione del saldo a 3, 6 e 12 mesi basata su entrate, uscite ricorrenti e obiettivi. Pianifica in anticipo.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:0s"><div class="feat-icon" style="background:rgba(52,211,153,.12)">📊</div><div class="feat-title">Dashboard intelligente</div><div class="feat-desc">Panoramica completa di entrate, uscite, saldo e previsioni. Widget personalizzabili per vedere subito ciò che conta.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Tempo reale</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.05s"><div class="feat-icon" style="background:rgba(37,99,235,.12)">🎯</div><div class="feat-title">Budget mensile per categoria</div><div class="feat-desc">Imposta limiti per alimentari, trasporti, svago e altro. Alert automatici quando stai per superarli.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Notifiche</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.1s"><div class="feat-icon" style="background:rgba(6,182,212,.12)">🏆</div><div class="feat-title">Obiettivi di risparmio</div><div class="feat-desc">Vacanze, casa, auto o fondo emergenza. Visualizza il progresso e rimani motivato con timeline e grafici.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.15s"><div class="feat-icon" style="background:rgba(255,140,66,.12)">📈</div><div class="feat-title">Portafoglio investimenti</div><div class="feat-desc">Traccia azioni, ETF e crypto con prezzi live. Vedi rendimento, variazione e valore totale in tempo reale.</div><div class="feat-tags"><span class="feat-tag">Pro</span><span class="feat-tag">Live prices</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.2s"><div class="feat-icon" style="background:rgba(238,68,68,.12)">🧾</div><div class="feat-title">Fatture e clienti</div><div class="feat-desc">Emetti fatture con IVA, crea preventivi, gestisci clienti e fornitori. Prima Nota e calcolo regime fiscale incluso.</div><div class="feat-tags"><span class="feat-tag">Business</span><span class="feat-tag">IVA auto</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.25s"><div class="feat-icon" style="background:rgba(251,191,36,.12)">🫂</div><div class="feat-title">Spese condivise</div><div class="feat-desc">Crea gruppi con amici o coinquilini, dividi le spese equamente e gestisci chi deve quanto con chat integrata.</div><div class="feat-tags"><span class="feat-tag">Gratis</span><span class="feat-tag">Chat</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.3s"><div class="feat-icon" style="background:rgba(52,211,153,.12)">💰</div><div class="feat-title">Calcolatore soldi liberi</div><div class="feat-desc">Scopri quanto ti rimane davvero dopo tutte le spese fisse, rate e abbonamenti. Regola 50/30/20 automatica.</div><div class="feat-tags"><span class="feat-tag">Gratis</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.35s"><div class="feat-icon" style="background:rgba(37,99,235,.12)">📁</div><div class="feat-title">Tracciamento progetti</div><div class="feat-desc">Tieni traccia di ristrutturazioni, nuovi progetti e spese straordinarie. Scegli se detrarre o solo monitorare.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
+      <div class="feat-card reveal-scale" style="transition-delay:.4s"><div class="feat-icon" style="background:rgba(6,182,212,.12)">🔮</div><div class="feat-title">Cashflow forecast</div><div class="feat-desc">Previsione del saldo a 3, 6 e 12 mesi basata su entrate, uscite ricorrenti e obiettivi. Pianifica in anticipo.</div><div class="feat-tags"><span class="feat-tag">Pro</span></div></div>
     </div>
   </div>
 </section>
@@ -385,12 +407,12 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 <!-- PRICING -->
 <section class="pricing" id="pricing">
   <div class="container">
-    <div class="section-label">Prezzi</div>
-    <h2 class="section-title">Inizia gratis, aggiorna quando vuoi</h2>
-    <p class="section-sub" style="margin:0 auto">Nessuna carta di credito richiesta. Cancella quando vuoi. Prezzi IVA inclusa.</p>
+    <div class="section-label reveal">Prezzi</div>
+    <h2 class="section-title reveal">Inizia gratis, aggiorna quando vuoi</h2>
+    <p class="section-sub reveal" style="margin:0 auto">Nessuna carta di credito richiesta. Cancella quando vuoi. Prezzi IVA inclusa.</p>
     <div class="pricing-grid">
 
-      <div class="price-card">
+      <div class="price-card reveal-scale" style="transition-delay:0s">
         <div class="price-name">Free</div>
         <div class="price-amount">€0</div>
         <div class="price-period">per sempre</div>
@@ -408,7 +430,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
         <a href="app/" class="price-btn price-btn-outline">Inizia gratis</a>
       </div>
 
-      <div class="price-card popular">
+      <div class="price-card reveal-scale popular" style="transition-delay:.1s">
         <div class="popular-badge">⭐ PIÙ POPOLARE</div>
         <div class="price-name" style="color:var(--ac)">Pro</div>
         <div class="price-amount" style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">€2,49</div>
@@ -427,7 +449,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
         <a href="app/" class="price-btn price-btn-primary">Inizia Pro →</a>
       </div>
 
-      <div class="price-card">
+      <div class="price-card reveal-scale" style="transition-delay:.2s">
         <div class="price-name" style="color:var(--or)">Business</div>
         <div class="price-amount">€4,99</div>
         <div class="price-period">/mese</div>
@@ -445,7 +467,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
         <a href="app/" class="price-btn price-btn-outline">Inizia Business</a>
       </div>
 
-      <div class="price-card">
+      <div class="price-card reveal-scale" style="transition-delay:.3s">
         <div class="price-name" style="color:var(--gr)">All-Inclusive</div>
         <div class="price-amount">€7,99</div>
         <div class="price-period">/mese</div>
@@ -463,7 +485,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
         <a href="app/" class="price-btn price-btn-outline">Inizia All-Inclusive</a>
       </div>
 
-      <div class="price-card" style="border-color:rgba(238,68,68,.3);background:linear-gradient(135deg,rgba(238,68,68,.08),rgba(255,140,66,.06))">
+      <div class="price-card reveal-scale" style="transition-delay:.4s;border-color:rgba(238,68,68,.3);background:linear-gradient(135deg,rgba(238,68,68,.08),rgba(255,140,66,.06))">
         <div class="popular-badge" style="background:linear-gradient(135deg,#2563EB,#7C3AED)">🔥 LIFETIME DEAL</div>
         <div class="price-name" style="color:var(--re)">Lifetime</div>
         <div class="price-amount">€149,99</div>
@@ -488,12 +510,12 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 <!-- TESTIMONIALS -->
 <section class="testimonials">
   <div class="container">
-    <div class="section-label">Recensioni</div>
-    <h2 class="section-title">Chi già usa Axiom</h2>
+    <div class="section-label reveal">Recensioni</div>
+    <h2 class="section-title reveal">Chi già usa Axiom</h2>
     <div class="test-grid">
-      <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-text">"Finalmente un'app in italiano che non è complicatissima. Ho capito in 5 minuti dove vanno i miei soldi ogni mese."</div><div class="test-author"><div class="test-av">M</div><div><div class="test-name">Marco R.</div><div class="test-role">Dipendente, Milano</div></div></div></div>
-      <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-text">"Il modulo fatture è perfetto per la mia Partita IVA. Converto un preventivo in fattura in 30 secondi. Prima usavo Excel."</div><div class="test-author"><div class="test-av">S</div><div><div class="test-name">Sara L.</div><div class="test-role">Freelance designer, Roma</div></div></div></div>
-      <div class="test-card"><div class="test-stars">★★★★☆</div><div class="test-text">"La sezione gruppi è geniale per le spese condivise con i coinquilini. Addio messaggi su WhatsApp per chi deve quanto."</div><div class="test-author"><div class="test-av">A</div><div><div class="test-name">Alessandro P.</div><div class="test-role">Studente universitario, Bologna</div></div></div></div>
+      <div class="test-card reveal-scale" style="transition-delay:0s"><div class="test-stars">★★★★★</div><div class="test-text">"Finalmente un'app in italiano che non è complicatissima. Ho capito in 5 minuti dove vanno i miei soldi ogni mese."</div><div class="test-author"><div class="test-av">M</div><div><div class="test-name">Marco R.</div><div class="test-role">Dipendente, Milano</div></div></div></div>
+      <div class="test-card reveal-scale" style="transition-delay:.1s"><div class="test-stars">★★★★★</div><div class="test-text">"Il modulo fatture è perfetto per la mia Partita IVA. Converto un preventivo in fattura in 30 secondi. Prima usavo Excel."</div><div class="test-author"><div class="test-av">S</div><div><div class="test-name">Sara L.</div><div class="test-role">Freelance designer, Roma</div></div></div></div>
+      <div class="test-card reveal-scale" style="transition-delay:.2s"><div class="test-stars">★★★★☆</div><div class="test-text">"La sezione gruppi è geniale per le spese condivise con i coinquilini. Addio messaggi su WhatsApp per chi deve quanto."</div><div class="test-author"><div class="test-av">A</div><div><div class="test-name">Alessandro P.</div><div class="test-role">Studente universitario, Bologna</div></div></div></div>
     </div>
   </div>
 </section>
@@ -501,21 +523,21 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 <!-- FAQ -->
 <section class="faq" id="faq">
   <div class="container" style="text-align:center">
-    <div class="section-label">Domande frequenti</div>
-    <h2 class="section-title">Hai domande? Ecco le risposte</h2>
+    <div class="section-label reveal">Domande frequenti</div>
+    <h2 class="section-title reveal">Hai domande? Ecco le risposte</h2>
     <div class="faq-list">
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Il piano Free è davvero gratuito per sempre?</div><div class="faq-a">Sì, nessun limite di tempo. Il piano Free include transazioni illimitate, 2 conti, budget mensile e gruppi. Non chiediamo la carta di credito per registrarsi.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">I miei dati sono al sicuro?</div><div class="faq-a">I dati sono salvati su Firebase (Google Cloud Europe) con crittografia in transito e a riposo. Non vendiamo mai i tuoi dati a terzi. Puoi esportare o eliminare tutto in qualsiasi momento.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Posso usare Axiom su smartphone?</div><div class="faq-a">Sì! Axiom è una PWA (Progressive Web App): si installa sul telefono come un'app nativa da qualsiasi browser, funziona anche offline e si aggiorna automaticamente.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Come funziona il piano Lifetime?</div><div class="faq-a">Paghi una volta sola €149,99 e hai accesso al piano All-Inclusive per sempre, incluse tutte le feature future. Nessun rinnovo annuale. La quantità è limitata.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Posso cancellare l'abbonamento?</div><div class="faq-a">Sì, in qualsiasi momento senza penali. Torni automaticamente al piano Free con tutti i tuoi dati intatti. Offriamo anche garanzia rimborso 30 giorni sui piani a pagamento.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Supporta la Partita IVA e il regime forfettario?</div><div class="faq-a">Sì! Il modulo Business include calcolo automatico per regime forfettario (5% e 15%), ordinario con IRPEF progressiva, contributi INPS per artigiani e commercianti e Prima Nota per il commercialista.</div></div>
+      <div class="faq-item reveal" style="transition-delay:0s" onclick="toggleFaq(this)"><div class="faq-q">Il piano Free è davvero gratuito per sempre?</div><div class="faq-a">Sì, nessun limite di tempo. Il piano Free include transazioni illimitate, 2 conti, budget mensile e gruppi. Non chiediamo la carta di credito per registrarsi.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.05s" onclick="toggleFaq(this)"><div class="faq-q">I miei dati sono al sicuro?</div><div class="faq-a">I dati sono salvati su Firebase (Google Cloud Europe) con crittografia in transito e a riposo. Non vendiamo mai i tuoi dati a terzi. Puoi esportare o eliminare tutto in qualsiasi momento.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.1s" onclick="toggleFaq(this)"><div class="faq-q">Posso usare Axiom su smartphone?</div><div class="faq-a">Sì! Axiom è una PWA (Progressive Web App): si installa sul telefono come un'app nativa da qualsiasi browser, funziona anche offline e si aggiorna automaticamente.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.15s" onclick="toggleFaq(this)"><div class="faq-q">Come funziona il piano Lifetime?</div><div class="faq-a">Paghi una volta sola €149,99 e hai accesso al piano All-Inclusive per sempre, incluse tutte le feature future. Nessun rinnovo annuale. La quantità è limitata.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.2s" onclick="toggleFaq(this)"><div class="faq-q">Posso cancellare l'abbonamento?</div><div class="faq-a">Sì, in qualsiasi momento senza penali. Torni automaticamente al piano Free con tutti i tuoi dati intatti. Offriamo anche garanzia rimborso 30 giorni sui piani a pagamento.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.25s" onclick="toggleFaq(this)"><div class="faq-q">Supporta la Partita IVA e il regime forfettario?</div><div class="faq-a">Sì! Il modulo Business include calcolo automatico per regime forfettario (5% e 15%), ordinario con IRPEF progressiva, contributi INPS per artigiani e commercianti e Prima Nota per il commercialista.</div></div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="cta-section">
+<section class="cta-section reveal">
   <div class="container">
     <div class="cta-box">
       <div style="font-size:2.5rem;margin-bottom:1rem">⚡</div>
@@ -601,8 +623,61 @@ function toggleMobileNav(){const links=document.querySelector('.nav-links');let 
 function showReferral(){document.getElementById('ref-modal').style.display='flex';}
 function copyRef(){navigator.clipboard?.writeText(window.location.origin+'/appfinance/app/?ref=YOURCODE').then(()=>alert('Link copiato!'));}
 
+// Scroll reveal
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');if(!e.target.closest('.feat-grid')&&!e.target.closest('.pricing-grid')&&!e.target.closest('.test-grid'))observer.unobserve(e.target);}});},{threshold:.15});
+
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>observer.observe(el));
+
+// Nav shrink on scroll
+const navbar=document.getElementById('navbar');
+let lastScroll=0;
+window.addEventListener('scroll',()=>{
+  const sy=window.scrollY;
+  if(sy>60){navbar.classList.add('nav-scrolled');}else{navbar.classList.remove('nav-scrolled');}
+  lastScroll=sy;
+},{passive:true});
+
+// Counter animation
+function animateCounters(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseInt(el.dataset.count);
+    const duration=2000;
+    const start=performance.now();
+    function update(now){
+      const p=Math.min((now-start)/duration,1);
+      const eased=1-Math.pow(1-p,3);
+      el.textContent=Math.floor(eased*target)+(p<1?'%':'%');
+      if(p<1)requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+// Trigger counter on stats reveal
+const statsObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){animateCounters();statsObserver.unobserve(e.target);}
+  });
+},{threshold:.5});
+const statsSection=document.querySelector('.stats-grid');
+if(statsSection)statsObserver.observe(statsSection);
+
+// Card tilt 3D effect
+document.querySelectorAll('.feat-card,.price-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(800px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='perspective(800px) rotateY(0deg) rotateX(0deg) translateY(0px)';
+  });
+});
+
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+
 // Register service worker per PWABuilder
 if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>

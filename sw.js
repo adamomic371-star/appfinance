@@ -1,5 +1,5 @@
 // Codice sviluppato da Adamo Michele
-const CACHE = 'axiom-v10';
+const CACHE = 'axiom-v11';
 const BASE = self.registration.scope;
 
 const PRECACHE = [

@@ -1,10 +1,11 @@
-<!-- Codice sviluppato da Adamo Michele -->
+<!-- Codice sviluppato da Adamo Michele · v1.0 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark" data-mode="personal">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Axiom</title>
+<meta name="app-version" content="1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0F172A">
@@ -1321,6 +1322,12 @@ html{transition:background-color .3s,color .3s}
       </div>
     </div>
   </main>
+  <!-- ══ UPDATE BANNER ══ -->
+  <div id="update-banner" style="position:fixed;bottom:calc(5rem + env(safe-area-inset-bottom,0px));left:1rem;right:1rem;background:var(--bg2);border:1px solid var(--ac);border-radius:var(--r);padding:1rem 1.25rem;z-index:9999;box-shadow:0 8px 40px rgba(0,0,0,.5);display:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
+    <div style="font-size:.875rem;font-weight:700;margin-bottom:.35rem">📦 Nuova versione disponibile</div>
+    <div style="font-size:.78rem;color:var(--tx2);margin-bottom:.75rem">Aggiorna per avere le ultime funzionalità e correzioni.</div>
+    <button onclick="applyUpdate()" style="width:100%;padding:.75rem;background:var(--grad);color:#fff;border:none;border-radius:var(--rs);font-weight:700;font-size:.875rem;cursor:pointer">🔄 Aggiorna ora</button>
+  </div>
 </div>
 <!-- MODALS -->
 <div class="mo" id="modal-tx"><div class="md">
@@ -3978,7 +3985,23 @@ document.addEventListener('deviceready',()=>{
   });
 },false);
 
-if('serviceWorker' in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('../sw.js').catch(()=>{});}
+if('serviceWorker' in navigator&&location.protocol!=='file:'){
+  navigator.serviceWorker.register('../sw.js').then(reg=>{
+    reg.addEventListener('updatefound',()=>{
+      const nw=reg.installing;
+      nw.addEventListener('statechange',()=>{
+        if(nw.state==='installed'&&navigator.serviceWorker.controller)
+          document.getElementById('update-banner').style.display='block';
+      });
+    });
+  }).catch(()=>{});
+}
+function applyUpdate(){
+  navigator.serviceWorker.getRegistration().then(reg=>{
+    if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+    window.location.reload();
+  });
+}
 </script>
 </body>
 </html>

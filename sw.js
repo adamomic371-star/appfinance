@@ -1,5 +1,5 @@
 // Codice sviluppato da Adamo Michele
-const CACHE = 'kazka-v8';
+const CACHE = 'kazka-v9';
 const BASE = self.registration.scope;
 
 const PRECACHE = [
@@ -13,6 +13,12 @@ const PRECACHE = [
   BASE + 'termini.html',
   BASE + 'admin/',
   BASE + 'admin/index.html',
+  'https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
 ];
 
 self.addEventListener('install', e => {
@@ -100,9 +106,9 @@ async function syncPendingData() {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  if (url.origin !== self.location.origin && !url.href.includes('firebase')) return;
 
-  if (url.href.includes('firebase')) {
+  // Firebase RTDB = data API, cache with special strategy
+  if (url.hostname.includes('firebaseio.com')) {
     e.respondWith(
       fetch(e.request).then(r => {
         const c = r.clone();
@@ -115,13 +121,28 @@ self.addEventListener('fetch', e => {
           const db = await openDB();
           const entry = await new Promise((resolve, reject) => {
             const tx = db.transaction('localData', 'readonly');
-            const req = tx.objectStore('localData').get(url.href);
+            const store = tx.objectStore('localData');
+            const req = store.get(url.href);
             req.onsuccess = () => resolve(req.result);
             req.onerror = () => reject(req.error);
           });
           if (entry) return new Response(JSON.stringify(entry.data), { headers: { 'Content-Type': 'application/json' } });
         } catch(e) {}
         return (await caches.match(BASE + 'app/index.html')) || (await caches.match(BASE + '404.html'));
+      })
+    );
+    return;
+  }
+
+  // CDN / Google Fonts / Firebase SDK — stale-while-revalidate
+  if (url.hostname !== self.location.hostname) {
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        const fetchPromise = fetch(e.request).then(r => {
+          caches.open(CACHE).then(ch => ch.put(e.request, r.clone()));
+          return r;
+        }).catch(() => cached);
+        return cached || fetchPromise;
       })
     );
     return;

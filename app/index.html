@@ -83,6 +83,7 @@ input,select,textarea{font-family:inherit}
 .nfav{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:auto;font-size:.7rem;cursor:pointer;border-radius:4px;transition:all .15s;opacity:0;flex-shrink:0;order:1}.ni:hover .nfav,.ni.nfav-on .nfav{opacity:1}.nfav:hover{background:var(--b1)}.ni.nfav-on .nfav{opacity:1;color:var(--ye)}.ni.nfav-on{color:var(--ye)}#fav-empty{padding:1rem .75rem;font-size:.78rem;color:var(--tx3);text-align:center;display:none}
 @media(min-width:769px){.ss{cursor:default}}
 .ni{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;margin:.1rem .5rem;border-radius:var(--rs);color:var(--tx2);font-size:.875rem;font-weight:500;cursor:pointer;transition:all var(--ts2);min-height:42px}
+.ni-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--b1);border-radius:8px;font-size:.85rem;flex-shrink:0;transition:all var(--ts2)}.ni.active .ni-icon{background:rgba(139,92,246,.18)}
 .ni:hover{background:var(--b1);color:var(--tx)}
 .ni.active{background:rgba(139,92,246,.14);color:var(--ac);box-shadow:inset 0 0 20px rgba(139,92,246,.04)}
 .sb-bot{margin-top:auto;padding:1rem;border-top:1px solid var(--b1)}
@@ -377,6 +378,10 @@ tbody tr:nth-child(10){animation-delay:.3s}
 .adm-s{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}.adm-c{flex:1;min-width:120px;background:linear-gradient(135deg,var(--bg2),rgba(25,18,54,.4));border:1px solid var(--b1);border-radius:var(--r);padding:1rem;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;box-shadow:0 4px 16px rgba(0,0,0,.15)}.adm-c::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:opacity .25s}.adm-c:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.25),0 0 20px rgba(139,92,246,.04)}.adm-c:hover::after{opacity:1}.adm-cv{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin:.25rem 0}.adm-srch{width:100%;padding:.65rem .875rem;background:var(--bg3);border:1.5px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-size:.875rem;margin-bottom:.75rem;outline:none;transition:border-color .2s,box-shadow .2s}.adm-srch:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(139,92,246,.08),0 0 20px rgba(139,92,246,.04)}
 /* ── FAB ── */
 .fab{position:fixed;bottom:1.5rem;right:1.5rem;width:56px;height:56px;border-radius:50%;background:var(--grad);color:#fff;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px rgba(139,92,246,.45),0 0 40px rgba(139,92,246,.15);cursor:pointer;z-index:50;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,opacity .2s;border:none}.fab:hover{transform:scale(1.1);box-shadow:0 8px 36px rgba(139,92,246,.55),0 0 60px rgba(139,92,246,.2)}.fab:active{transform:scale(.92)}.fab-m{position:absolute;bottom:68px;right:0;display:none;flex-direction:column;gap:.35rem;background:rgba(17,12,36,.9);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--b2);border-radius:var(--rs);padding:.4rem;box-shadow:0 8px 40px rgba(0,0,0,.5);min-width:180px}.fab-m.show{display:flex}.fab-mi{padding:.6rem .875rem;border-radius:6px;font-size:.82rem;font-weight:500;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:all .15s;border:none;background:none;white-space:nowrap}.fab-mi:hover{background:var(--b1);color:var(--tx)}
+/* ── Transaction select ── */
+tr.tx-sel{background:rgba(139,92,246,.08)}tr.tx-sel td{border-bottom-color:rgba(139,92,246,.15)}
+/* ── Global Search ── */
+.glob-r{padding:.75rem 1rem;font-size:.85rem;cursor:pointer;border-bottom:1px solid var(--b1);transition:background .15s;display:flex;align-items:center;gap:.5rem}.glob-r:hover{background:var(--b1)}.glob-r:last-child{border-bottom:none}
 /* ── Sync Indicator ── */
 #sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;transition:background .3s}.sync-ok{background:var(--gr)}.sync-err{background:var(--re)}.sync-syncing{background:var(--ye);animation:syncPulse .8s ease infinite}@keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.4}}
 /* ── PWA Install Banner ── */
@@ -510,6 +515,7 @@ html{transition:background-color .3s,color .3s}
 
 /* ── TOGGLE SWITCH ── */
 #notif-toggle:checked+span{background:var(--gr)!important}
+#notif-push-toggle:checked+span{background:var(--gr)!important}
 
 /* ── BETTER BUTTON PRESS ── */
 .btn:active{transform:scale(.96)}
@@ -674,46 +680,46 @@ html{transition:background-color .3s,color .3s}
       <div class="ss" onclick="togG(this)">⭐ Preferiti<span class="ss-chev">▼</span></div>
       <div class="sgp" id="fav-list"><div id="fav-empty">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div></div>
       <div class="ss" onclick="togG(this)">Principale<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard">📊 Dashboard<span class="nfav" onclick="event.stopPropagation();toggleFav('dashboard')">☆</span></div>
-      <div class="ni" onclick="showView('transactions')" id="nav-transactions">💸 Transazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('transactions')">☆</span></div>
-      <div class="ni" onclick="showView('accounts')" id="nav-accounts">🏦 Conti & Carte<span class="nfav" onclick="event.stopPropagation();toggleFav('accounts')">☆</span></div>
-      <div class="ni" onclick="showView('transfer')" id="nav-transfer">↔️ Trasferimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('transfer')">☆</span></div></div>
+      <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard"><span class="ni-icon">📊</span>Dashboard<span class="nfav" onclick="event.stopPropagation();toggleFav('dashboard')">☆</span></div>
+      <div class="ni" onclick="showView('transactions')" id="nav-transactions"><span class="ni-icon">💸</span>Transazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('transactions')">☆</span></div>
+      <div class="ni" onclick="showView('accounts')" id="nav-accounts"><span class="ni-icon">🏦</span>Conti & Carte<span class="nfav" onclick="event.stopPropagation();toggleFav('accounts')">☆</span></div>
+      <div class="ni" onclick="showView('transfer')" id="nav-transfer"><span class="ni-icon">↔️</span>Trasferimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('transfer')">☆</span></div></div>
       <div class="ss" onclick="togG(this)">Pianificazione<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('budget')" id="nav-budget">🎯 Budget<span class="nfav" onclick="event.stopPropagation();toggleFav('budget')">☆</span></div>
-      <div class="ni" onclick="showView('categories')" id="nav-categories">🏷️ Categorie<span class="nfav" onclick="event.stopPropagation();toggleFav('categories')">☆</span></div>
-      <div class="ni" onclick="showView('goals')" id="nav-goals">🏆 Obiettivi<span class="nfav" onclick="event.stopPropagation();toggleFav('goals')">☆</span></div>
-      <div class="ni" onclick="showView('calendar')" id="nav-calendar">📅 Scadenzario<span class="nfav" onclick="event.stopPropagation();toggleFav('calendar')">☆</span></div>
-      <div class="ni" onclick="showView('recurring')" id="nav-recurring">🔁 Ricorrenti<span class="nfav" onclick="event.stopPropagation();toggleFav('recurring')">☆</span></div>
-      <div class="ni" onclick="showView('debts')" id="nav-debts">💳 Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debts')">☆</span></div>
-      <div class="ni" onclick="showView('freemoney')" id="nav-freemoney">💰 Soldi Liberi<span class="nfav" onclick="event.stopPropagation();toggleFav('freemoney')">☆</span></div></div>
+      <div class="sgp"><div class="ni" onclick="showView('budget')" id="nav-budget"><span class="ni-icon">🎯</span>Budget<span class="nfav" onclick="event.stopPropagation();toggleFav('budget')">☆</span></div>
+      <div class="ni" onclick="showView('categories')" id="nav-categories"><span class="ni-icon">🏷️</span>Categorie<span class="nfav" onclick="event.stopPropagation();toggleFav('categories')">☆</span></div>
+      <div class="ni" onclick="showView('goals')" id="nav-goals"><span class="ni-icon">🏆</span>Obiettivi<span class="nfav" onclick="event.stopPropagation();toggleFav('goals')">☆</span></div>
+      <div class="ni" onclick="showView('calendar')" id="nav-calendar"><span class="ni-icon">📅</span>Scadenzario<span class="nfav" onclick="event.stopPropagation();toggleFav('calendar')">☆</span></div>
+      <div class="ni" onclick="showView('recurring')" id="nav-recurring"><span class="ni-icon">🔁</span>Ricorrenti<span class="nfav" onclick="event.stopPropagation();toggleFav('recurring')">☆</span></div>
+      <div class="ni" onclick="showView('debts')" id="nav-debts"><span class="ni-icon">💳</span>Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debts')">☆</span></div>
+      <div class="ni" onclick="showView('freemoney')" id="nav-freemoney"><span class="ni-icon">💰</span>Soldi Liberi<span class="nfav" onclick="event.stopPropagation();toggleFav('freemoney')">☆</span></div></div>
       <div class="ss" onclick="togG(this)">Social<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('groups')" id="nav-groups">🫂 Gruppi & Chat<span class="nfav" onclick="event.stopPropagation();toggleFav('groups')">☆</span></div>
-      <div class="ni" onclick="showView('sharedgoals')" id="nav-sharedgoals">🤝 Obiettivi Condivisi<span class="nfav" onclick="event.stopPropagation();toggleFav('sharedgoals')">☆</span></div></div>
+      <div class="sgp"><div class="ni" onclick="showView('groups')" id="nav-groups"><span class="ni-icon">🫂</span>Gruppi & Chat<span class="nfav" onclick="event.stopPropagation();toggleFav('groups')">☆</span></div>
+      <div class="ni" onclick="showView('sharedgoals')" id="nav-sharedgoals"><span class="ni-icon">🤝</span>Obiettivi Condivisi<span class="nfav" onclick="event.stopPropagation();toggleFav('sharedgoals')">☆</span></div></div>
       <div class="ss b-only" onclick="togG(this)">Business<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni b-only" onclick="showView('invoices')" id="nav-invoices">🧾 Fatture<span class="nfav" onclick="event.stopPropagation();toggleFav('invoices')">☆</span></div>
-      <div class="ni b-only" onclick="showView('quotes')" id="nav-quotes">📋 Preventivi<span class="nfav" onclick="event.stopPropagation();toggleFav('quotes')">☆</span></div>
-      <div class="ni b-only" onclick="showView('suppliers')" id="nav-suppliers">🏢 Fornitori<span class="nfav" onclick="event.stopPropagation();toggleFav('suppliers')">☆</span></div>
-      <div class="ni b-only" onclick="showView('primanota')" id="nav-primanota">📊 Prima Nota<span class="nfav" onclick="event.stopPropagation();toggleFav('primanota')">☆</span></div>
-      <div class="ni b-only" onclick="showView('taxcalc')" id="nav-taxcalc">🧮 Regime Fiscale<span class="nfav" onclick="event.stopPropagation();toggleFav('taxcalc')">☆</span></div>
-      <div class="ni b-only" onclick="showView('travel')" id="nav-travel">✈️ Viaggi<span class="nfav" onclick="event.stopPropagation();toggleFav('travel')">☆</span></div></div>
+      <div class="sgp"><div class="ni b-only" onclick="showView('invoices')" id="nav-invoices"><span class="ni-icon">🧾</span>Fatture<span class="nfav" onclick="event.stopPropagation();toggleFav('invoices')">☆</span></div>
+      <div class="ni b-only" onclick="showView('quotes')" id="nav-quotes"><span class="ni-icon">📋</span>Preventivi<span class="nfav" onclick="event.stopPropagation();toggleFav('quotes')">☆</span></div>
+      <div class="ni b-only" onclick="showView('suppliers')" id="nav-suppliers"><span class="ni-icon">🏢</span>Fornitori<span class="nfav" onclick="event.stopPropagation();toggleFav('suppliers')">☆</span></div>
+      <div class="ni b-only" onclick="showView('primanota')" id="nav-primanota"><span class="ni-icon">📊</span>Prima Nota<span class="nfav" onclick="event.stopPropagation();toggleFav('primanota')">☆</span></div>
+      <div class="ni b-only" onclick="showView('taxcalc')" id="nav-taxcalc"><span class="ni-icon">🧮</span>Regime Fiscale<span class="nfav" onclick="event.stopPropagation();toggleFav('taxcalc')">☆</span></div>
+      <div class="ni b-only" onclick="showView('travel')" id="nav-travel"><span class="ni-icon">✈️</span>Viaggi<span class="nfav" onclick="event.stopPropagation();toggleFav('travel')">☆</span></div></div>
       <div class="ss coll" onclick="togG(this)">Analisi<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('reports')" id="nav-reports">📈 Report<span class="nfav" onclick="event.stopPropagation();toggleFav('reports')">☆</span></div>
-      <div class="ni" onclick="showView('score')" id="nav-score">⭐ Score Finanziario<span class="nfav" onclick="event.stopPropagation();toggleFav('score')">☆</span></div>
-      <div class="ni" onclick="showView('portfolio')" id="nav-portfolio">📈 Portafoglio Investimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('portfolio')">☆</span></div>
-      <div class="ni" onclick="showView('networth')" id="nav-networth">💎 Net Worth<span class="nfav" onclick="event.stopPropagation();toggleFav('networth')">☆</span></div>
-      <div class="ni" onclick="showView('cashflow')" id="nav-cashflow">🔮 Cashflow Proiettato<span class="nfav" onclick="event.stopPropagation();toggleFav('cashflow')">☆</span></div>
-      <div class="ni" onclick="showView('monthly')" id="nav-monthly">📆 Spese Mensili<span class="nfav" onclick="event.stopPropagation();toggleFav('monthly')">☆</span></div></div>
+      <div class="sgp"><div class="ni" onclick="showView('reports')" id="nav-reports"><span class="ni-icon">📈</span>Report<span class="nfav" onclick="event.stopPropagation();toggleFav('reports')">☆</span></div>
+      <div class="ni" onclick="showView('score')" id="nav-score"><span class="ni-icon">⭐</span>Score Finanziario<span class="nfav" onclick="event.stopPropagation();toggleFav('score')">☆</span></div>
+      <div class="ni" onclick="showView('portfolio')" id="nav-portfolio"><span class="ni-icon">📈</span>Portafoglio Investimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('portfolio')">☆</span></div>
+      <div class="ni" onclick="showView('networth')" id="nav-networth"><span class="ni-icon">💎</span>Net Worth<span class="nfav" onclick="event.stopPropagation();toggleFav('networth')">☆</span></div>
+      <div class="ni" onclick="showView('cashflow')" id="nav-cashflow"><span class="ni-icon">🔮</span>Cashflow Proiettato<span class="nfav" onclick="event.stopPropagation();toggleFav('cashflow')">☆</span></div>
+      <div class="ni" onclick="showView('monthly')" id="nav-monthly"><span class="ni-icon">📆</span>Spese Mensili<span class="nfav" onclick="event.stopPropagation();toggleFav('monthly')">☆</span></div></div>
       <div class="ss coll" onclick="togG(this)">Strategie & Lungo Termine<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('projects')" id="nav-projects">📁 Progetti<span class="nfav" onclick="event.stopPropagation();toggleFav('projects')">☆</span></div>
-      <div class="ni" onclick="showView('debtstrategy')" id="nav-debtstrategy">📊 Strategia Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debtstrategy')">☆</span></div>
-      <div class="ni" onclick="showView('pension')" id="nav-pension">🏖️ Pensione<span class="nfav" onclick="event.stopPropagation();toggleFav('pension')">☆</span></div>
-      <div class="ni" onclick="showView('insurance')" id="nav-insurance">🛡️ Assicurazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('insurance')">☆</span></div></div>
+      <div class="sgp"><div class="ni" onclick="showView('projects')" id="nav-projects"><span class="ni-icon">📁</span>Progetti<span class="nfav" onclick="event.stopPropagation();toggleFav('projects')">☆</span></div>
+      <div class="ni" onclick="showView('debtstrategy')" id="nav-debtstrategy"><span class="ni-icon">📊</span>Strategia Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debtstrategy')">☆</span></div>
+      <div class="ni" onclick="showView('pension')" id="nav-pension"><span class="ni-icon">🏖️</span>Pensione<span class="nfav" onclick="event.stopPropagation();toggleFav('pension')">☆</span></div>
+      <div class="ni" onclick="showView('insurance')" id="nav-insurance"><span class="ni-icon">🛡️</span>Assicurazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('insurance')">☆</span></div></div>
       <div class="ss" onclick="togG(this)">Account<span class="ss-chev">▼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('notifications')" id="nav-notifications">🔔 Notifiche<span class="nfav" onclick="event.stopPropagation();toggleFav('notifications')">☆</span></div>
-      <div class="ni" onclick="showView('referral')" id="nav-referral">🎁 Referral<span class="nfav" onclick="event.stopPropagation();toggleFav('referral')">☆</span></div>
-      <div class="ni" onclick="showView('profile')" id="nav-profile">👤 Profilo<span class="nfav" onclick="event.stopPropagation();toggleFav('profile')">☆</span></div>
-      <div class="ni" onclick="showView('settings')" id="nav-settings">⚙️ Impostazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('settings')">☆</span></div>
-      <div class="ni" onclick="showView('admin')" id="nav-admin" style="display:none">👑 Admin<span class="nfav" onclick="event.stopPropagation();toggleFav('admin')">☆</span></div></div>
+      <div class="sgp"><div class="ni" onclick="showView('notifications')" id="nav-notifications"><span class="ni-icon">🔔</span>Notifiche<span class="nfav" onclick="event.stopPropagation();toggleFav('notifications')">☆</span></div>
+      <div class="ni" onclick="showView('referral')" id="nav-referral"><span class="ni-icon">🎁</span>Referral<span class="nfav" onclick="event.stopPropagation();toggleFav('referral')">☆</span></div>
+      <div class="ni" onclick="showView('profile')" id="nav-profile"><span class="ni-icon">👤</span>Profilo<span class="nfav" onclick="event.stopPropagation();toggleFav('profile')">☆</span></div>
+      <div class="ni" onclick="showView('settings')" id="nav-settings"><span class="ni-icon">⚙️</span>Impostazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('settings')">☆</span></div>
+      <div class="ni" onclick="showView('admin')" id="nav-admin" style="display:none"><span class="ni-icon">👑</span>Admin<span class="nfav" onclick="event.stopPropagation();toggleFav('admin')">☆</span></div></div>
     </div>
     <div class="sb-bot">
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
@@ -736,6 +742,16 @@ html{transition:background-color .3s,color .3s}
   </div>
   <button class="fab" id="fab-btn" onclick="toggleFabMenu()" title="Aggiungi rapido">+</button>
   <div class="fab-m" id="fab-menu"></div>
+  <!-- GLOBAL SEARCH OVERLAY -->
+  <div id="global-search" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:1rem">
+    <div style="max-width:560px;margin:2rem auto;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid var(--b1)">
+        <input type="text" id="glob-srch" placeholder="Cerca transazioni, conti, categorie, progetti..." autocomplete="off" style="flex:1;background:none;border:none;color:var(--tx);font-size:.95rem;outline:none" oninput="globalSearch(this.value)">
+        <span style="font-size:.75rem;color:var(--tx3);padding:.25rem .5rem;background:var(--bg3);border-radius:4px;font-family:monospace">ESC</span>
+      </div>
+      <div id="glob-results" style="max-height:60vh;overflow-y:auto"></div>
+    </div>
+  </div>
   <div id="pwa-banner"><div style="font-size:.85rem;font-weight:600">📲 Installa Kazka sul tuo dispositivo</div><div class="pwa-btns"><button style="background:var(--grad);color:#fff" onclick="installPWA()">Installa</button><button style="background:var(--bg3);color:var(--tx2);border:1px solid var(--b2)" onclick="dismissPWA()">Più tardi</button></div></div>
   <main id="mc">
     <div class="view" id="view-admin"><div class="page-hd"><div><div class="pt">Pannello Admin</div><div class="ps" id="adm-subtitle">Gestione utenti e piattaforma</div></div><button class="btn bp" onclick="exportAllBackup()">📦 Backup DB</button></div><div class="adm-s" id="adm-kpi"></div><input class="adm-srch" id="adm-search" placeholder="Cerca per nome, email, ruolo..." oninput="renderAdmin()"><div id="adm-table-wrap" class="tw" style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Note</th><th></th></tr></thead><tbody id="adm-tbody"></tbody></table></div></div>
@@ -793,10 +809,12 @@ html{transition:background-color .3s,color .3s}
           <select id="f-type" class="btn bs bsm" onchange="filterTx()" style="padding:.5rem .875rem"><option value="">Tutte</option><option value="income">Entrate</option><option value="expense">Uscite</option></select>
           <select id="f-cat" class="btn bs bsm" onchange="filterTx()" style="padding:.5rem .875rem"><option value="">Cat.</option></select>
           <button class="btn bs bsm" onclick="exportCSV()">📥 CSV</button>
+          <button class="btn bs bsm" onclick="exportCSVmonthly()">📅 CSV Mese</button>
+          <button class="btn bd bsm" id="btn-mdel" style="display:none" onclick="deleteSelectedTx()">🗑 Elimina selez.</button>
           <button class="btn bp" onclick="om('modal-tx')">+ Aggiungi</button>
         </div>
       </div>
-      <div class="card"><div class="tw"><table><thead><tr><th>Data</th><th>Descrizione</th><th>Cat.</th><th>Conto</th><th>Importo</th><th></th></tr></thead><tbody id="tx-tbody"></tbody></table></div><div class="empty-state" id="tx-empty" style="display:none"><div class="empty-icon">💸</div><div class="empty-title">Nessuna transazione</div><div class="empty-desc">Aggiungi la tua prima entrata o uscita per iniziare a tracciare le tue finanze.</div><button class="btn bp bsm empty-btn" onclick="om('modal-tx')">+ Aggiungi transazione</button></div></div>
+      <div class="card"><div class="tw"><table><thead><tr><th style="width:32px"><input type="checkbox" onchange="selectAllTx()" id="sel-all-chk" style="accent-color:var(--ac);width:16px;height:16px;cursor:pointer"></th><th>Data</th><th>Descrizione</th><th>Cat.</th><th>Conto</th><th>Importo</th><th></th></tr></thead><tbody id="tx-tbody"></tbody></table></div><div class="empty-state" id="tx-empty" style="display:none"><div class="empty-icon">💸</div><div class="empty-title">Nessuna transazione</div><div class="empty-desc">Aggiungi la tua prima entrata o uscita per iniziare a tracciare le tue finanze.</div><button class="btn bp bsm empty-btn" onclick="om('modal-tx')">+ Aggiungi transazione</button></div></div>
     </div>
 
     <div class="view" id="view-accounts">
@@ -1077,7 +1095,20 @@ html{transition:background-color .3s,color .3s}
     </div>
 
     <div class="view" id="view-notifications">
-      <div class="page-hd"><div><div class="pt">Notifiche</div></div><button class="btn bs bsm" onclick="markAllRead()">✓ Tutte lette</button></div>
+      <div class="page-hd"><div><div class="pt">🔔 Notifiche</div></div><button class="btn bs bsm" onclick="markAllRead()">✓ Tutte lette</button></div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="ct">📱 Notifiche Push</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+          <div style="font-size:.85rem;color:var(--tx2)">Ricevi notifiche sul dispositivo</div>
+          <label style="position:relative;display:inline-block;width:44px;height:26px;cursor:pointer">
+            <input type="checkbox" id="notif-push-toggle" onchange="toggleDeviceNotif(this.checked)" style="opacity:0;width:0;height:0">
+            <span style="position:absolute;inset:0;background:var(--b2);border-radius:13px;transition:background .25s"></span>
+            <span style="position:absolute;left:3px;bottom:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.2)"></span>
+          </label>
+        </div>
+        <div id="notif-push-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.5rem">Verifica permessi…</div>
+        <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif">📨 Invia notifica di test</button>
+      </div>
       <div class="card" id="notif-list"></div>
     </div>
 
@@ -1193,7 +1224,7 @@ html{transition:background-color .3s,color .3s}
       <div class="page-hd"><div><div class="pt">Impostazioni</div></div></div>
       <div class="g2">
         <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR €</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP £</option></select></div>
-        <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">🌙 Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">☀️ Light</button></div></div>
+        <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">🌙 Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">☀️ Light</button><button class="btn bs bsm" onclick="applyTheme('auto')">🔮 Auto</button></div></div>
         <div class="card"><div class="ct">📊 Previsioni</div><div style="font-size:.82rem;color:var(--tx2);margin-bottom:.5rem">Giorni di previsione spese future</div><input type="number" id="set-forecast" class="btn bs" style="width:100%;padding:.7rem .875rem" min="1" max="365" value="30" onchange="forecastDays=Math.max(1,parseInt(this.value)||30);localStorage.setItem('kz_forecast_days',forecastDays);updateDashWidgets();toast('Giorni previsione aggiornati','ok')"></div>
         <div class="card"><div class="ct">📲 App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Kazka sul dispositivo</button></div>
         <div class="card" id="notif-settings-card">
@@ -1579,35 +1610,57 @@ function initNotifSettings(){
 }
 async function toggleDeviceNotif(enabled){
   localStorage.setItem('kz_notif_enabled',enabled?'true':'false');
-  const s=document.getElementById('notif-status');
-  if(!s)return;
+  ['notif-status','notif-push-status'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(enabled){
+      if(Notification.permission==='granted'){
+        el.textContent='✅ Notifiche attive sul dispositivo';
+        el.style.color='var(--gr)';
+      } else if(Notification.permission==='denied'){
+        el.textContent='⛔ Permesso negato';
+        el.style.color='var(--re)';
+      } else {
+        el.textContent='⚠️ Richiedi permesso';
+        el.style.color='var(--ye)';
+      }
+    } else {
+      el.textContent='🔕 Notifiche disattivate';
+      el.style.color='var(--tx3)';
+    }
+  });
+  // Sync both toggles
+  ['notif-toggle','notif-push-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=enabled;});
   if(enabled){
     if(Notification.permission==='default'){
       const perm=await Notification.requestPermission();
       if(perm==='granted'){
-        s.textContent='✅ Notifiche attive sul dispositivo';
-        s.style.color='var(--gr)';
         initFCM();
         toast('Notifiche attivate','ok');
+        ['notif-status','notif-push-status'].forEach(id=>{
+          const el=document.getElementById(id);
+          if(el){el.textContent='✅ Notifiche attive sul dispositivo';el.style.color='var(--gr)';}
+        });
       } else {
-        s.textContent='⚠️ Permesso negato — abilita dalle impostazioni del browser';
-        s.style.color='var(--re)';
-        document.getElementById('notif-toggle').checked=false;
+        ['notif-status','notif-push-status'].forEach(id=>{
+          const el=document.getElementById(id);
+          if(el){el.textContent='⚠️ Permesso negato';el.style.color='var(--re)';}
+        });
+        ['notif-toggle','notif-push-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
         localStorage.setItem('kz_notif_enabled','false');
       }
     } else if(Notification.permission==='granted'){
-      s.textContent='✅ Notifiche già attive';
-      s.style.color='var(--gr)';
+      initFCM();
       toast('Notifiche già attive','ok');
     } else {
-      s.textContent='⛔ Impossibile abilitare — permesso negato permanentemente';
-      s.style.color='var(--re)';
-      document.getElementById('notif-toggle').checked=false;
+      ['notif-status','notif-push-status'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el){el.textContent='⛔ Permesso negato permanentemente';el.style.color='var(--re)';}
+      });
+      ['notif-toggle','notif-push-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
       localStorage.setItem('kz_notif_enabled','false');
     }
   } else {
-    s.textContent='🔕 Notifiche disattivate';
-    s.style.color='var(--tx3)';
     toast('Notifiche disattivate','warn');
   }
 }
@@ -1681,6 +1734,7 @@ function showApp(){
   setTimeout(()=>{ try{fetchRates();}catch(e){} }, 1000);
   /* BUG-07 FIX: inizializza banner cookie GDPR */
   initCookies();
+  checkBackupReminder();
   /* Notifica di test automatica dopo 1 minuto */
   if(localStorage.getItem('kz_notif_enabled')==='true'&&Notification.permission==='granted'){
     setTimeout(async()=>{
@@ -1936,8 +1990,25 @@ function setMode(m){
   }
 }
 
-function applyTheme(t){theme=t;document.documentElement.setAttribute('data-theme',t);localStorage.setItem('kz_theme',t);const btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='dark'?'🌙':'☀️';}
-function toggleTheme(){applyTheme(theme==='dark'?'light':'dark');}
+let themeAuto=false,themeMedia;
+function applyTheme(t,{noMedia}={}){
+  theme=t;
+  if(t==='auto'){t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';themeAuto=true;}else{themeAuto=false;}
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('kz_theme',themeAuto?'auto':t);
+  const btn=document.getElementById('theme-btn');
+  if(btn)btn.textContent=themeAuto?'🔮':(t==='dark'?'🌙':'☀️');
+  if(!noMedia&&themeAuto&&!themeMedia){
+    themeMedia=window.matchMedia('(prefers-color-scheme:dark)');
+    themeMedia.addEventListener('change',e=>applyTheme('auto',{noMedia:true}));
+  }
+}
+function toggleTheme(){
+  const modes=['dark','light','auto'];
+  const cur=themeAuto?'auto':theme;
+  const idx=modes.indexOf(cur);
+  applyTheme(modes[(idx+1)%modes.length]);
+}
 /* ─── SIDEBAR COLLAPSE ─── */
 function togG(h){
   h.classList.toggle('coll');
@@ -2057,6 +2128,35 @@ function toggleSearch(){
     filterTx();
   }
 }
+/* ─── GLOBAL SEARCH ─── */
+function toggleGlobalSearch(show){
+  const el=document.getElementById('global-search');
+  if(!el)return;
+  if(show===undefined)show=el.style.display!=='flex';
+  el.style.display=show?'flex':'none';
+  if(show){setTimeout(()=>document.getElementById('glob-srch')?.focus(),100);document.getElementById('glob-results').innerHTML='';}
+}
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();toggleGlobalSearch();}
+  if(e.key==='Escape'){const gs=document.getElementById('global-search');if(gs?.style.display==='flex')toggleGlobalSearch(false);}
+});
+function globalSearch(q){
+  const r=document.getElementById('glob-results');
+  if(!r)return;
+  if(!q||q.length<2){r.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--tx3);font-size:.85rem">Digita almeno 2 caratteri</div>';return;}
+  const l=q.toLowerCase();
+  const tx=S.transactions.filter(t=>(t.description||'').toLowerCase().includes(l)||(t.category||'').toLowerCase().includes(l)||(t.note||'').toLowerCase().includes(l)).slice(0,8);
+  const ac=S.accounts.filter(a=>(a.name||'').toLowerCase().includes(l)).slice(0,5);
+  const ct=Object.keys(allCats()).filter(c=>c.toLowerCase().includes(l)).slice(0,5);
+  const pr=(S.projects||[]).filter(p=>(p.name||'').toLowerCase().includes(l)).slice(0,5);
+  let html='';
+  if(tx.length){html+=`<div style="padding:.65rem 1rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);border-top:1px solid var(--b1)">Transazioni (${tx.length})</div>`;tx.forEach(t=>{html+=`<div class="glob-r" onclick="toggleGlobalSearch(false);showView('transactions')">${CI[t.category]||'📦'} ${esc(t.description||'—')} <span style="color:${t.type==='income'?'var(--gr)':'var(--re)'};font-weight:600">${t.type==='income'?'+':'-'}${fmt(t.amount)}</span></div>`;});}
+  if(ac.length){html+=`<div style="padding:.65rem 1rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);border-top:1px solid var(--b1)">Conti (${ac.length})</div>`;ac.forEach(a=>{html+=`<div class="glob-r" onclick="toggleGlobalSearch(false);showView('accounts')">🏦 ${esc(a.name)} — ${fmt(a.balance)}</div>`;});}
+  if(ct.length){html+=`<div style="padding:.65rem 1rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);border-top:1px solid var(--b1)">Categorie (${ct.length})</div>`;ct.forEach(c=>{html+=`<div class="glob-r" onclick="toggleGlobalSearch(false);showView('categories')">${getCatIcon(c)} ${cap(c)}</div>`;});}
+  if(pr.length){html+=`<div style="padding:.65rem 1rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);border-top:1px solid var(--b1)">Progetti (${pr.length})</div>`;pr.forEach(p=>{html+=`<div class="glob-r" onclick="toggleGlobalSearch(false);showView('projects')">📁 ${esc(p.name)}</div>`;});}
+  if(!html)html='<div style="padding:1.5rem;text-align:center;color:var(--tx3);font-size:.85rem">Nessun risultato</div>';
+  r.innerHTML=html;
+}
 /* ─── BOTTOM TAB BAR ─── */
 function switchTabView(n){
   if(n==='more'){haptic('light');toggleSidebar();return;}
@@ -2151,6 +2251,7 @@ function renderDashCharts(){
 
 /* ─── TRANSACTIONS ─── */
 let txPage=1,txPageSize=50;
+let selectedTx=new Set();
 function renderTransactions(){
   const q=(document.getElementById('search-input')||{}).value?.toLowerCase()||(document.getElementById('mobile-search-input')||{}).value?.toLowerCase()||'';
   const type=(document.getElementById('f-type')||{}).value||'';
@@ -2170,7 +2271,9 @@ function renderTransactions(){
   const page=Math.min(txPage,Math.ceil(total/txPageSize)||1);
   const start=0,end=Math.min(page*txPageSize,total);
   const pageTx=tx.slice(start,end);
-  tbody.innerHTML=pageTx.map(t=>`<tr>
+  const allSel=pageTx.every(t=>selectedTx.has(t.id));
+  tbody.innerHTML=pageTx.map(t=>`<tr class="${selectedTx.has(t.id)?'tx-sel':''}">
+    <td style="width:32px"><input type="checkbox" ${selectedTx.has(t.id)?'checked':''} onchange="toggleSelectTx('${t.id}')" style="accent-color:var(--ac);width:16px;height:16px;cursor:pointer"></td>
     <td style="font-size:.82rem">${fd(t.date)}</td>
     <td class="tdm">${CI[t.category]||'📦'} ${esc(t.description||'—')}${t.note?`<div style="font-size:.72rem;color:var(--tx3)">${esc(t.note)}</div>`:''}</td>
     <td><span class="badge bg-gy">${cap(t.category||'altro')}</span></td>
@@ -2182,8 +2285,30 @@ function renderTransactions(){
     </div></td>
   </tr>`).join('');
   if(end<total){
-    tbody.innerHTML+=`<tr><td colspan="6" style="text-align:center;padding:.75rem"><button class="btn bs bsm" onclick="txPage++;renderTransactions();" style="width:100%;justify-content:center">⬇️ Carica altro (${total-end} rimanenti)</button></td></tr>`;
+    tbody.innerHTML+=`<tr><td colspan="7" style="text-align:center;padding:.75rem"><button class="btn bs bsm" onclick="txPage++;renderTransactions();" style="width:100%;justify-content:center">⬇️ Carica altro (${total-end} rimanenti)</button></td></tr>`;
   }
+  updateMdelBtn();
+}
+function toggleSelectTx(id){
+  if(selectedTx.has(id))selectedTx.delete(id);else selectedTx.add(id);
+  renderTransactions();
+}
+function selectAllTx(){
+  const ids=S.transactions.map(t=>t.id);
+  if(selectedTx.size===ids.length){selectedTx.clear();}else{ids.forEach(id=>selectedTx.add(id));}
+  renderTransactions();
+}
+async function deleteSelectedTx(){
+  if(!selectedTx.size){toast('Nessuna transazione selezionata','err');return;}
+  if(!confirm(`Eliminare ${selectedTx.size} transazioni?`))return;
+  const ops={};
+  selectedTx.forEach(id=>{ops[`transactions/${id}`]=null;const t=S.transactions.find(tx=>tx.id===id);if(t&&t.account){const a=S.accounts.find(ac=>ac.id===t.account);if(a){const bal=N(a.balance)+(t.type==='income'?-N(t.amount):N(t.amount));ops[`accounts/${t.account}/balance`]=bal;}}});
+  try{await db.ref(`users/${UID}`).update(ops);selectedTx.clear();toast('Eliminate','ok');}catch(e){toast('Errore','err');}
+}
+function updateMdelBtn(){
+  const btn=document.getElementById('btn-mdel');
+  if(!btn)return;
+  if(selectedTx.size){btn.style.display='inline-flex';btn.textContent='🗑 Elimina ('+selectedTx.size+')';}else{btn.style.display='none';}
 }
 function filterTx(){txPage=1;renderTransactions();}
 
@@ -2614,7 +2739,19 @@ function subscribeNotifs(){
 }
 function updateNotifBadge(){const unread=notifications.filter(n=>!n.read).length;const b=document.getElementById('notif-badge');if(b){b.textContent=unread;b.style.display=unread>0?'flex':'none';}const tb=document.getElementById('tab-notif-badge');if(tb){tb.textContent=unread;tb.style.display=unread>0?'flex':'none';tb.classList.remove('pulse');if(unread>0){void tb.offsetWidth;tb.classList.add('pulse');}}}
 async function addNotif(title,body,type='info'){if(!UID)return;await db.ref(`users/${UID}/notifications`).push({title,body,type,ts:new Date().toISOString(),read:false});}
-function renderNotifications(){const list=document.getElementById('notif-list');if(!list)return;if(!notifications.length){list.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">🔔 Nessuna notifica</div>';return;}const IC={budget:'🎯',goal:'🏆',recurring:'🔁',invoice:'🧾',info:'💡',system:'⚡',reminder:'⏰',paypal:'🟦'};list.innerHTML=notifications.map(n=>`<div onclick="readNotif('${n.id}')" style="display:flex;align-items:flex-start;gap:.875rem;padding:1rem;border-bottom:1px solid var(--b1);cursor:pointer;background:${n.read?'transparent':'rgba(139,92,246,.05)'}"><div style="width:36px;height:36px;border-radius:10px;background:var(--b1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">${IC[n.type]||'💡'}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:${n.read?'500':'700'};color:${n.read?'var(--tx2)':'var(--tx)'};margin-bottom:.2rem">${n.title}</div><div style="font-size:.8rem;color:var(--tx3);line-height:1.4">${n.body}</div></div>${!n.read?'<div style="width:8px;height:8px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:4px"></div>':''}</div>`).join('');}
+function renderNotifications(){
+  const list=document.getElementById('notif-list');if(!list)return;
+  const pt=document.getElementById('notif-push-toggle');if(pt){const saved=localStorage.getItem('kz_notif_enabled');pt.checked=saved==='true';}
+  const ps=document.getElementById('notif-push-status');
+  if(ps){
+    if(Notification.permission==='granted'){ps.textContent='✅ Notifiche attive';ps.style.color='var(--gr)';}
+    else if(Notification.permission==='denied'){ps.textContent='⛔ Permesso negato';ps.style.color='var(--re)';}
+    else{ps.textContent='⚠️ Attiva per ricevere notifiche';ps.style.color='var(--ye)';}
+  }
+  if(!notifications.length){list.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">🔔 Nessuna notifica</div>';return;}
+  const IC={budget:'🎯',goal:'🏆',recurring:'🔁',invoice:'🧾',info:'💡',system:'⚡',reminder:'⏰',paypal:'🟦'};
+  list.innerHTML=notifications.map(n=>`<div onclick="readNotif('${n.id}')" style="display:flex;align-items:flex-start;gap:.875rem;padding:1rem;border-bottom:1px solid var(--b1);cursor:pointer;background:${n.read?'transparent':'rgba(139,92,246,.05)'}"><div style="width:36px;height:36px;border-radius:10px;background:var(--b1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">${IC[n.type]||'💡'}</div><div style="flex:1;min-width:0"><div style="font-size:.875rem;font-weight:${n.read?'500':'700'};color:${n.read?'var(--tx2)':'var(--tx)'};margin-bottom:.2rem">${n.title}</div><div style="font-size:.8rem;color:var(--tx3);line-height:1.4">${n.body}</div></div>${!n.read?'<div style="width:8px;height:8px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:4px"></div>':''}</div>`).join('');
+}
 async function readNotif(id){const n=notifications.find(n=>n.id===id);if(n&&!n.read){n.read=true;await db.ref(`users/${UID}/notifications/${id}`).update({read:true});updateNotifBadge();renderNotifications();}}
 async function markAllRead(){if(!UID)return;const updates={};notifications.filter(n=>!n.read).forEach(n=>{updates[`users/${UID}/notifications/${n.id}/read`]=true;n.read=true;});if(Object.keys(updates).length){await db.ref().update(updates);}updateNotifBadge();renderNotifications();toast('Tutte lette','ok');}
 function checkNotifAlerts(){
@@ -2670,10 +2807,24 @@ function exportCSV(){
   const b=new Blob(['﻿'+rows.map(r=>r.map(csvQuote).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kazka-tx.csv';a.click();
 }
+function exportCSVmonthly(){
+  const m=new Date().toISOString().slice(0,7);
+  const rows=[['Data','Descrizione','Tipo','Categoria','Conto','Importo','Valuta','Note']];
+  const aN=id=>S.accounts.find(a=>a.id===id)?.name||'';
+  S.transactions.filter(t=>t.date?.startsWith(m)).forEach(t=>rows.push([t.date,t.description||'',t.type,t.category||'altro',aN(t.account),(t.type==='income'?'':'-')+N(t.amount).toFixed(2),t.currency||'EUR',t.note||'']));
+  const b=new Blob(['﻿'+rows.map(r=>r.map(csvQuote).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kazka-tx-${m}.csv`;a.click();
+}
 async function exportPDF(){
   try{await loadJsPDF();}catch(e){toast('Errore caricamento libreria PDF','err');return;}
   try{const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(20);doc.text('Kazka — Report',14,22);doc.setFontSize(9);doc.setTextColor(120);doc.text(new Date().toLocaleDateString('it-IT'),14,30);doc.setTextColor(0);const ti=S.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+N(t.amount),0),te=S.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+N(t.amount),0);doc.setFontSize(11);doc.text('Riepilogo',14,42);doc.setFontSize(9);doc.text(`Entrate: ${fmt(ti)}`,14,52);doc.text(`Uscite: ${fmt(te)}`,14,60);doc.text(`Netto: ${fmt(ti-te)}`,14,68);let y=85;doc.setFontSize(10);doc.text('Ultime transazioni',14,78);S.transactions.slice(0,20).forEach(t=>{if(y>270){doc.addPage();y=20;}doc.setFontSize(8);doc.text(t.date||'—',14,y);doc.text((t.description||'—').slice(0,35),40,y);doc.text(`${t.type==='income'?'+':'-'}${fmt(t.amount)}`,160,y);y+=7;});doc.save('kazka-report.pdf');toast('PDF esportato','ok');}catch(e){toast('Errore PDF','err');}}
 
+/* ─── BACKUP REMINDER ─── */
+function checkBackupReminder(){
+  const last=localStorage.getItem('kz_last_backup');
+  if(last&&Date.now()-parseInt(last)<2592000000)return;
+  setTimeout(()=>{if(!document.querySelector('.view.active')||document.querySelector('.view.active')?.id==='view-dashboard'){toast('📦 Non dimenticare il backup! Vai in Profilo → Export','warn');localStorage.setItem('kz_last_backup',String(Date.now()));}},5000);
+}
 /* ─── EXCHANGE RATES ─── */
 let rates={EUR:1,USD:1.08,CHF:0.96,GBP:0.86};
 async function fetchRates(){const ls=localStorage.getItem('kz_rates_ts');if(ls&&Date.now()-parseInt(ls)<3600000)return;try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/EUR');if(!r.ok)return;const d=await r.json();rates={EUR:1,USD:d.rates.USD,CHF:d.rates.CHF,GBP:d.rates.GBP};localStorage.setItem('kz_rates_ts',String(Date.now()));}catch(e){}}
@@ -2948,6 +3099,23 @@ function updateDashWidgets(){
       </div>`;
     }).join('');
   } else if(drow) drow.style.display='none';
+  // Budget alert
+  const bAlert=document.getElementById('dash-balert')||document.createElement('div');
+  bAlert.id='dash-balert';
+  const m2=new Date().toISOString().slice(0,7);
+  const b2=S.budgets[m2]||{};
+  const txM2=S.transactions.filter(t=>t.date?.startsWith(m2)&&t.type==='expense');
+  const nearLim=Object.entries(b2).filter(([cat,b])=>{const spent=txM2.filter(t=>t.category===cat).reduce((s,t)=>s+N(t.amount),0);const pct=spent/b.limit*100;return pct>=75&&pct<100;}).map(([cat,b])=>{const spent=txM2.filter(t=>t.category===cat).reduce((s,t)=>s+N(t.amount),0);const pct=Math.round(spent/b.limit*100);return{cat,spent,limit:b.limit,pct};});
+  const over=Object.entries(b2).filter(([cat,b])=>{const spent=txM2.filter(t=>t.category===cat).reduce((s,t)=>s+N(t.amount),0);return spent>=b.limit;}).map(([cat,b])=>{const spent=txM2.filter(t=>t.category===cat).reduce((s,t)=>s+N(t.amount),0);return{cat,spent,limit:b.limit,pct:100};});
+  if(nearLim.length||over.length){
+    bAlert.style.display='block';bAlert.style.marginBottom='1rem';
+    let html='';
+    if(over.length)html+=over.map(o=>`<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);border-radius:var(--rs);margin-bottom:.35rem"><span style="font-size:1.1rem">🚨</span><div style="flex:1;font-size:.82rem"><strong>${CI[o.cat]||'📦'} ${cap(o.cat)}</strong> — superato! ${fmt(o.spent)} / ${fmt(o.limit)}</div></div>`).join('');
+    if(nearLim.length)html+=nearLim.map(n=>`<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:var(--rs);margin-bottom:.35rem"><span style="font-size:1.1rem">⚠️</span><div style="flex:1;font-size:.82rem"><strong>${CI[n.cat]||'📦'} ${cap(n.cat)}</strong> al ${n.pct}% — ${fmt(n.spent)} / ${fmt(n.limit)}</div></div>`).join('');
+    bAlert.innerHTML=html;
+    const dw=document.getElementById('dash-widgets');
+    if(dw&&dw.parentElement&&!document.getElementById('dash-balert').parentElement)dw.parentElement.insertBefore(bAlert,dw.nextSibling);
+  }else{bAlert.style.display='none';}
 }
 
 /* ══ PROJECTS ══ */

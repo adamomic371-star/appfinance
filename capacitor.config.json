@@ -1,6 +1,6 @@
 {
-  "appId": "com.kazka.finance",
-  "appName": "Kazka",
+  "appId": "com.axiom.finance",
+  "appName": "Axiom",
   "webDir": "app",
   "server": {
     "androidScheme": "https",
@@ -10,11 +10,11 @@
   "plugins": {
     "SplashScreen": {
       "launchAutoHide": true,
-      "backgroundColor": "#080612"
+      "backgroundColor": "#0F172A"
     },
     "StatusBar": {
       "style": "DARK",
-      "backgroundColor": "#080612"
+      "backgroundColor": "#0F172A"
     }
   }
 }

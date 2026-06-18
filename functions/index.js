@@ -16,7 +16,7 @@ exports.sendPushOnNotification = functions.database
     const uid = context.params.uid;
     if (!uid) return;
 
-    const title = notif.title || 'Kazka';
+    const title = notif.title || 'Axiom';
     const body = notif.body || '';
     const type = notif.type || 'info';
 
@@ -41,7 +41,7 @@ exports.sendPushOnNotification = functions.database
       },
       data: {
         type,
-        clickAction: 'OPEN_KAZKA',
+        clickAction: 'OPEN_AXIOM',
       },
     };
 

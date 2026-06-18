@@ -1,5 +1,5 @@
 // Codice sviluppato da Adamo Michele
-const CACHE = 'kazka-v9';
+const CACHE = 'axiom-v10';
 const BASE = self.registration.scope;
 
 const PRECACHE = [
@@ -47,7 +47,7 @@ self.addEventListener('message', e => {
 });
 
 self.addEventListener('sync', e => {
-  if (e.tag === 'sync-kazka') {
+  if (e.tag === 'sync-axiom') {
     e.waitUntil(syncPendingData());
   }
 });
@@ -55,7 +55,7 @@ self.addEventListener('sync', e => {
 // BUG-19 FIX: proper IndexedDB promise wrapper
 function openDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('kazka_offline', 1);
+    const req = indexedDB.open('axiom_offline', 1);
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains('pending')) {

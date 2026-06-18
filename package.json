@@ -1,7 +1,7 @@
 {
-  "name": "kazka",
+  "name": "axiom",
   "version": "2.0.0",
-  "description": "Kazka — App Finanziaria Personale & Aziendale",
+  "description": "Axiom — App Finanziaria Personale & Aziendale",
   "private": true,
   "scripts": {
     "start": "npx http-server . -p 8080 --cors",

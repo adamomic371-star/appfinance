@@ -1,6 +1,6 @@
 {
-  "name": "kazka-push-functions",
-  "description": "Cloud Functions for Kazka push notifications",
+  "name": "axiom-push-functions",
+  "description": "Cloud Functions for Axiom push notifications",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions"

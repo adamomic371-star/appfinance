@@ -17,9 +17,9 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(payload => {
   const data = payload.data || {};
   const n = payload.notification || {};
-  const title = n.title || data.title || 'Kazka';
+  const title = n.title || data.title || 'Axiom';
   const body = n.body || data.body || 'Hai una nuova notifica';
-  const tag = data.tag || 'kazka-' + Date.now();
+  const tag = data.tag || 'axiom-' + Date.now();
   self.registration.showNotification(title, {
     body,
     icon: '../assets/icons/icon-192.png',

@@ -28,8 +28,14 @@
 <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 <link rel="canonical" href="https://adamomic371-star.github.io/appfinance/">
+<link rel="hreflang" href="https://adamomic371-star.github.io/appfinance/" hreflang="it">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Axiom","url":"https://adamomic371-star.github.io/appfinance/","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"App gratuita per gestire finanze personali e aziendali. Traccia spese, budget, obiettivi e fatture.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"author":{"@type":"Person","name":"Adamo Michele"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","ratingCount":"150"}}</script>
 <!-- Google tag (gtag.js) - cookie-consent aware -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'analytics_storage':'denied','ad_storage':'denied'});gtag('js',new Date());gtag('config','G-XXXXXXXXXX',{cookie_flags:'max-age=7200;secure;samesite=none'});</script>
@@ -57,6 +63,8 @@ a{text-decoration:none;color:inherit}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(239,68,68,.3),0 0 40px rgba(239,68,68,.1)}50%{box-shadow:0 0 35px rgba(239,68,68,.5),0 0 60px rgba(239,68,68,.2)}}
 @keyframes shimmerBar{0%{transform:scaleY(.3);opacity:.4}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(.3);opacity:.4}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:4px}
+.skip-link{position:absolute;top:-100%;left:0;z-index:9999;padding:.5rem 1rem;background:var(--ac);color:#fff;font-size:.9rem;font-weight:600;transition:top .2s}.skip-link:focus{top:0}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.65rem 0;background:rgba(8,6,18,.7);backdrop-filter:blur(28px) saturate(1.5);border-bottom:1px solid var(--b1);transition:padding .3s ease,background .3s ease,box-shadow .3s ease}
@@ -294,7 +302,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
 }
 </style>
 </head>
-<body>
+<body><a href="#hero-title" class="skip-link">Salta al contenuto</a>
 
 <!-- Floating background orbs -->
 <div class="hero-orbs"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
@@ -304,8 +312,8 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
   <div class="cookie-title">🍪 Usiamo i cookie</div>
   <div class="cookie-text">Utilizziamo cookie tecnici necessari e cookie analitici per migliorare l'esperienza. Nessun dato venduto a terzi. <a href="privacy.html" style="color:var(--ac)">Privacy Policy</a></div>
   <div class="cookie-btns">
-    <button class="cookie-accept" onclick="acceptCookies()">Accetta tutti</button>
-    <button class="cookie-decline" onclick="declineCookies()">Solo necessari</button>
+    <button class="cookie-accept" onclick="acceptCookies()" aria-label="Accetta tutti i cookie">Accetta tutti</button>
+    <button class="cookie-decline" onclick="declineCookies()" aria-label="Solo cookie necessari">Solo necessari</button>
     <a href="privacy.html" style="padding:.65rem;font-size:.8rem;color:var(--tx3);display:flex;align-items:center">Personalizza →</a>
   </div>
 </div>
@@ -324,7 +332,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
       <a href="app/" class="btn btn-outline">Accedi</a>
       <a href="app/" class="btn btn-primary">Inizia gratis →</a>
     </div>
-    <button class="nav-tog" onclick="toggleMobileNav()">☰</button>
+    <button class="nav-tog" onclick="toggleMobileNav()" aria-label="Menu navigazione">☰</button>
   </div></div>
 </nav>
 
@@ -334,7 +342,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
     <div class="hero-inner">
       <div class="hero-left reveal-left">
         <div class="hero-badge"><svg viewBox="0 0 32 32" width="14" height="14" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px"><line x1="5" y1="5" x2="16" y2="16" stroke="#2563EB" stroke-width="3.5" stroke-linecap="round"/><line x1="27" y1="5" x2="16" y2="16" stroke="#06B6D4" stroke-width="3.5" stroke-linecap="round"/><line x1="5" y1="27" x2="27" y2="5" stroke="#EF4444" stroke-width="3.5" stroke-linecap="round"/></svg> App finanze personali italiana</div>
-        <h1>La tua <span>finanza intelligente</span>, finalmente in italiano</h1>
+        <h1 id="hero-title">La tua <span>finanza intelligente</span>, finalmente in italiano</h1>
         <p>Traccia spese, gestisci budget, invia fatture e raggiungi i tuoi obiettivi. Gratuito, senza sorprese.</p>
         <div class="hero-cta">
           <a href="app/" class="btn btn-primary">🚀 Inizia gratis — nessuna carta</a>
@@ -526,12 +534,12 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
     <div class="section-label reveal">Domande frequenti</div>
     <h2 class="section-title reveal">Hai domande? Ecco le risposte</h2>
     <div class="faq-list">
-      <div class="faq-item reveal" style="transition-delay:0s" onclick="toggleFaq(this)"><div class="faq-q">Il piano Free è davvero gratuito per sempre?</div><div class="faq-a">Sì, nessun limite di tempo. Il piano Free include transazioni illimitate, 2 conti, budget mensile e gruppi. Non chiediamo la carta di credito per registrarsi.</div></div>
-      <div class="faq-item reveal" style="transition-delay:.05s" onclick="toggleFaq(this)"><div class="faq-q">I miei dati sono al sicuro?</div><div class="faq-a">I dati sono salvati su Firebase (Google Cloud Europe) con crittografia in transito e a riposo. Non vendiamo mai i tuoi dati a terzi. Puoi esportare o eliminare tutto in qualsiasi momento.</div></div>
-      <div class="faq-item reveal" style="transition-delay:.1s" onclick="toggleFaq(this)"><div class="faq-q">Posso usare Axiom su smartphone?</div><div class="faq-a">Sì! Axiom è una PWA (Progressive Web App): si installa sul telefono come un'app nativa da qualsiasi browser, funziona anche offline e si aggiorna automaticamente.</div></div>
-      <div class="faq-item reveal" style="transition-delay:.15s" onclick="toggleFaq(this)"><div class="faq-q">Come funziona il piano Lifetime?</div><div class="faq-a">Paghi una volta sola €149,99 e hai accesso al piano All-Inclusive per sempre, incluse tutte le feature future. Nessun rinnovo annuale. La quantità è limitata.</div></div>
-      <div class="faq-item reveal" style="transition-delay:.2s" onclick="toggleFaq(this)"><div class="faq-q">Posso cancellare l'abbonamento?</div><div class="faq-a">Sì, in qualsiasi momento senza penali. Torni automaticamente al piano Free con tutti i tuoi dati intatti. Offriamo anche garanzia rimborso 30 giorni sui piani a pagamento.</div></div>
-      <div class="faq-item reveal" style="transition-delay:.25s" onclick="toggleFaq(this)"><div class="faq-q">Supporta la Partita IVA e il regime forfettario?</div><div class="faq-a">Sì! Il modulo Business include calcolo automatico per regime forfettario (5% e 15%), ordinario con IRPEF progressiva, contributi INPS per artigiani e commercianti e Prima Nota per il commercialista.</div></div>
+      <div class="faq-item reveal" style="transition-delay:0s" onclick="toggleFaq(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"><div class="faq-q">Il piano Free è davvero gratuito per sempre?</div><div class="faq-a">Sì, nessun limite di tempo. Il piano Free include transazioni illimitate, 2 conti, budget mensile e gruppi. Non chiediamo la carta di credito per registrarsi.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.05s" onclick="toggleFaq(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"><div class="faq-q">I miei dati sono al sicuro?</div><div class="faq-a">I dati sono salvati su Firebase (Google Cloud Europe) con crittografia in transito e a riposo. Non vendiamo mai i tuoi dati a terzi. Puoi esportare o eliminare tutto in qualsiasi momento.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.1s" onclick="toggleFaq(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"><div class="faq-q">Posso usare Axiom su smartphone?</div><div class="faq-a">Sì! Axiom è una PWA (Progressive Web App): si installa sul telefono come un'app nativa da qualsiasi browser, funziona anche offline e si aggiorna automaticamente.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.15s" onclick="toggleFaq(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"><div class="faq-q">Come funziona il piano Lifetime?</div><div class="faq-a">Paghi una volta sola €149,99 e hai accesso al piano All-Inclusive per sempre, incluse tutte le feature future. Nessun rinnovo annuale. La quantità è limitata.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.2s" onclick="toggleFaq(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"><div class="faq-q">Posso cancellare l'abbonamento?</div><div class="faq-a">Sì, in qualsiasi momento senza penali. Torni automaticamente al piano Free con tutti i tuoi dati intatti. Offriamo anche garanzia rimborso 30 giorni sui piani a pagamento.</div></div>
+      <div class="faq-item reveal" style="transition-delay:.25s" onclick="toggleFaq(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"><div class="faq-q">Supporta la Partita IVA e il regime forfettario?</div><div class="faq-a">Sì! Il modulo Business include calcolo automatico per regime forfettario (5% e 15%), ordinario con IRPEF progressiva, contributi INPS per artigiani e commercianti e Prima Nota per il commercialista.</div></div>
     </div>
   </div>
 </section>

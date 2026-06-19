@@ -511,7 +511,7 @@ tr.tx-sel{background:rgba(239,68,68,.08)}tr.tx-sel td{border-bottom-color:rgba(2
 .bt-item.active .bt-icon{transform:scale(1.15)}
 .bt-item:active .bt-icon{transform:scale(.82)}
 .bt-label{font-size:.6rem;font-weight:600;letter-spacing:.02em;line-height:1;margin-top:2px}
-.bt-badge{position:absolute;top:2px;right:50%;transform:translateX(18px);min-width:18px;height:18px;border-radius:9px;background:var(--re);color:#fff;font-size:.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 8px rgba(255,59,92,.5);animation:pulse 2s ease-in-out infinite}
+.bt-badge{position:absolute;top:2px;right:50%;transform:translateX(18px);min-width:18px;height:18px;border-radius:9px;background:var(--re);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 8px rgba(255,59,92,.5)}.bt-badge.visible{display:flex;animation:pulse 2s ease-in-out infinite}
 /* ── PULL-TO-REFRESH ── */
 #ptr-indicator{position:absolute;top:-50px;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--tx2);gap:.5rem;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:10;font-weight:500}
 #ptr-indicator .ptr-spinner{width:18px;height:18px;border:2px solid var(--b2);border-top-color:var(--ac);border-radius:50%;animation:spin .6s linear infinite;display:none}
@@ -1909,11 +1909,19 @@ function subscribeData(){
     });
   });
   db.ref(`users/${UID}/budgets`).on('value',snap=>{S.budgets=snap.val()||{};scheduleRender('budgets');});
+  const groupListeners={};
   db.ref(`users/${UID}/groups`).on('value',snap=>{
     const gids=snap.val()?Object.keys(snap.val()):[];
-    S.groups={};let cnt=0;
-    gids.forEach(gid=>{db.ref(`groups/${gid}`).once('value',s=>{const g=s.val();if(g){S.groups[gid]=g;}cnt++;if(cnt===gids.length)scheduleRender('groups');});});
-    if(!gids.length)scheduleRender('groups');
+    // Detach listeners for removed groups
+    Object.keys(groupListeners).forEach(gid=>{if(!gids.includes(gid)){groupListeners[gid]();delete groupListeners[gid];delete S.groups[gid];}});
+    if(!gids.length){scheduleRender('groups');return;}
+    let loaded=0;
+    gids.forEach(gid=>{
+      if(!groupListeners[gid]){
+        groupListeners[gid]=db.ref(`groups/${gid}`).on('value',s=>{const g=s.val();if(g){S.groups[gid]=g;}else{delete S.groups[gid];}scheduleRender('groups');});
+      }
+      loaded++;if(loaded===gids.length&&!S.groups)scheduleRender('groups');
+    });
   });
   db.ref(`users/${UID}/projects`).on('value',snap=>{
     const raw=snap.val()||{};
@@ -1922,7 +1930,19 @@ function subscribeData(){
   });
   db.ref(`users/${UID}/categories`).on('value',snap=>{const raw=snap.val()||{};S.categories=Object.entries(raw).map(([id,v])=>({id,...v}));scheduleRender('categories');});
   db.ref(`users/${UID}/invoiceTemplates`).on('value',snap=>{const raw=snap.val()||{};S.invoiceTemplates=Object.entries(raw).map(([id,v])=>({id,...v}));});
-  db.ref(`users/${UID}/sharedGoals`).on('value',snap=>{const raw=snap.val()||{};S.sharedGoals={};Object.entries(raw).forEach(([gid])=>{db.ref(`sharedGoals/${gid}`).once('value',s=>{const g=s.val();if(g)S.sharedGoals[gid]=g;});});scheduleRender('sharedGoals');});
+  const sgListeners={};
+  db.ref(`users/${UID}/sharedGoals`).on('value',snap=>{
+    const raw=snap.val()||{};
+    const gids=Object.keys(raw);
+    // Detach listeners for removed shared goals
+    Object.keys(sgListeners).forEach(gid=>{if(!gids.includes(gid)){sgListeners[gid]();delete sgListeners[gid];delete S.sharedGoals[gid];}});
+    if(!gids.length){scheduleRender('sharedGoals');return;}
+    gids.forEach(gid=>{
+      if(!sgListeners[gid]){
+        sgListeners[gid]=db.ref(`sharedGoals/${gid}`).on('value',s=>{const g=s.val();if(g)S.sharedGoals[gid]=g;else delete S.sharedGoals[gid];scheduleRender('sharedGoals');});
+      }
+    });
+  });
   ['portfolio','insurance'].forEach(p=>{
     db.ref(`users/${UID}/${p}`).on('value',snap=>{
       const raw=snap.val();
@@ -2028,6 +2048,16 @@ async function doReset(){
 
 async function doLogout(){
   if(!confirm('Uscire?'))return;
+  // Detach all realtime listeners before logout to prevent permission errors
+  try{
+    const paths=['transactions','accounts','goals','recurring','invoices','travel','transfers','debts','quotes','suppliers','budgets','groups','projects','categories','invoiceTemplates','portfolio','insurance'];
+    paths.forEach(p=>{try{db.ref(`users/${UID}/${p}`).off();}catch(e){}});
+    try{db.ref(`users/${UID}/sharedGoals`).off();}catch(e){}
+    try{db.ref(`users/${UID}/notifications`).off();}catch(e){}
+    try{db.ref('.info/connected').off();}catch(e){}
+    if(notifOff){notifOff();notifOff=null;}
+    if(chatOff){chatOff();chatOff=null;}
+  }catch(e){}
   await auth.signOut();
   showAuth();
 }
@@ -2845,7 +2875,7 @@ function subscribeNotifs(){
     if(document.getElementById('view-notifications')?.classList.contains('active'))renderNotifications();
   });
 }
-function updateNotifBadge(){const unread=notifications.filter(n=>!n.read).length;const b=document.getElementById('notif-badge');if(b){b.textContent=unread;b.style.display=unread>0?'flex':'none';}const tb=document.getElementById('tab-notif-badge');if(tb){tb.textContent=unread;tb.style.display=unread>0?'flex':'none';tb.classList.remove('pulse');if(unread>0){void tb.offsetWidth;tb.classList.add('pulse');}}}
+function updateNotifBadge(){const unread=notifications.filter(n=>!n.read).length;const b=document.getElementById('notif-badge');if(b){b.textContent=unread;b.style.display=unread>0?'flex':'none';}const tb=document.getElementById('tab-notif-badge');if(tb){tb.textContent=unread;tb.style.display='';tb.classList.remove('pulse','visible');if(unread>0){tb.classList.add('visible');void tb.offsetWidth;tb.classList.add('pulse');}}}
 async function addNotif(title,body,type='info'){if(!UID)return;await db.ref(`users/${UID}/notifications`).push({title,body,type,ts:new Date().toISOString(),read:false});}
 function renderNotifications(){
   const list=document.getElementById('notif-list');if(!list)return;
@@ -3112,10 +3142,12 @@ function initSyncIndicator(){
   let syncTimer=null;
   const origPush=firebase.database.Reference.prototype.push;
   firebase.database.Reference.prototype.push=function(...args){
+    // Only intercept push with data (creates network write); push() with no args just creates a ref
+    if(!args.length||args[0]===undefined)return origPush.apply(this,args);
     dot.className='sync-syncing';dot.title='Salvataggio...';
-    clearTimeout(syncTimer);
+    clearTimeout(syncTimer);syncTimer=setTimeout(()=>{if(dot.className==='sync-syncing'){dot.className='sync-err';dot.title='Timeout';}},10000);
     const result=origPush.apply(this,args);
-    result.then(()=>{dot.className='sync-ok';dot.title='Connesso';}).catch(()=>{dot.className='sync-err';dot.title='Errore';});
+    Promise.resolve(result).then(()=>{dot.className='sync-ok';dot.title='Connesso';clearTimeout(syncTimer);}).catch(()=>{dot.className='sync-err';dot.title='Errore';clearTimeout(syncTimer);});
     return result;
   };
   ['set','update','remove'].forEach(method=>{

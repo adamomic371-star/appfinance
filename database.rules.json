@@ -13,7 +13,7 @@
       ".write": false,
       "$gid": {
         ".read": "auth != null && (data.child('members').child(auth.uid).exists() || root.child('users').child(auth.uid).child('profile').child('role').val() === 'admin')",
-        ".write": "auth != null && (data.child('members').child(auth.uid).exists() || !data.exists())"
+        ".write": "auth != null && (data.child('members').child(auth.uid).exists() || (!data.exists() && newData.child('members').child(auth.uid).exists()))"
       }
     },
     "sharedGoals": {

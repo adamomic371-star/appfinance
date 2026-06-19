@@ -6,6 +6,11 @@ const messaging=firebase.messaging();
 messaging.onBackgroundMessage(payload=>{
   const n=payload.notification||{};
   const title=n.title||'Axiom';
-  const options={body:n.body||'',icon:'./app/assets/icons/icon-192.png'};
+  const options={body:n.body||'',icon:'/appfinance/app/assets/icons/icon-192.png',data:{url:'/appfinance/app/'}};
   self.registration.showNotification(title,options);
+});
+self.addEventListener('notificationclick',event=>{
+  event.notification.close();
+  const url=event.notification.data?.url||'/appfinance/app/';
+  event.waitUntil(clients.openWindow(url));
 });

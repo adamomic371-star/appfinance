@@ -1635,6 +1635,8 @@ const CS={EUR:'€',USD:'$',CHF:'Fr',GBP:'£'};
 /* ─── STATE ─── */
 let UID=null, UP=null;
 let S={transactions:[],accounts:[],budgets:{},goals:[],recurring:[],invoices:[],travel:[],transfers:[],debts:[],groups:{},quotes:[],suppliers:[],categories:[],invoiceTemplates:[],sharedGoals:{}};
+// Tracks which data paths have received at least one Firebase snapshot
+const _dataReady={};
 let charts={}, theme=localStorage.getItem('kz_theme')||'dark', mode=localStorage.getItem('kz_mode')||'personal';
 let defaultCur=localStorage.getItem('kz_cur')||'EUR';
 let forecastDays=parseInt(localStorage.getItem('kz_forecast_days'))||30;
@@ -1905,6 +1907,7 @@ function subscribeData(){
       const raw=snap.val()||{};
       S[p]=Object.entries(raw).map(([id,v])=>({id,...v}));
       if(p==='transactions')S[p].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+      _dataReady[p]=true;
       scheduleRender(p);
     });
   });
@@ -2081,6 +2084,7 @@ function showView(n,{noTab,noPush}={}){
   document.getElementById('search-overlay')?.classList.remove('open');
   if(window.innerWidth<=768){document.getElementById('sidebar').classList.remove('open');document.getElementById('s-ov').style.display='none';}
   window.scrollTo(0,0);
+  if(n==='accounts'){try{renderAccounts();}catch(e){}}
   if(n==='reports')setTimeout(renderRepCharts,100);
   if(n==='transfer')populateTransferSels();
   if(n==='portfolio'){try{renderPortfolio();}catch(e){}}
@@ -2502,6 +2506,16 @@ async function deleteTx(id){if(!confirm('Eliminare?'))return;await db.ref(`users
 function renderAccounts(){
   const grid=document.getElementById('acc-grid'),empty=document.getElementById('acc-empty');
   if(!grid)return;
+  // Dati non ancora arrivati da Firebase: mostra skeleton invece dello stato vuoto
+  if(!_dataReady.accounts){
+    if(empty)empty.style.display='none';
+    document.getElementById('main-acc-section').style.display='none';
+    grid.innerHTML=`
+      <div class="skeleton" style="height:120px;border-radius:var(--r)"></div>
+      <div class="skeleton" style="height:120px;border-radius:var(--r)"></div>
+      <div class="skeleton" style="height:120px;border-radius:var(--r)"></div>`;
+    return;
+  }
   if(!S.accounts.length){grid.innerHTML='';if(empty)empty.style.display='block';document.getElementById('main-acc-section').style.display='none';return;}
   if(empty)empty.style.display='none';
   // Determine main account
@@ -2565,8 +2579,65 @@ function setMainAcc(){
 
 /* ─── TRANSFER ─── */
 function populateTransferSels(){const opts=S.accounts.map(a=>`<option value="${a.id}">${a.name} (${fmt(a.balance)})</option>`).join('');['tr-from','tr-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts||'<option>Nessun conto</option>';});}
-async function doTransfer(){const fId=document.getElementById('tr-from').value,tId=document.getElementById('tr-to').value,amount=parseFloat(document.getElementById('tr-amount').value)||0,date=document.getElementById('tr-date').value,note=document.getElementById('tr-note').value.trim();if(!fId||!tId||fId===tId){toast('Seleziona due conti diversi','err');return;}if(!amount||!date){toast('Inserisci importo e data','err');return;}const fAcc=S.accounts.find(a=>a.id===fId),tAcc=S.accounts.find(a=>a.id===tId);if(!fAcc||!tAcc){toast('Conto non trovato','err');return;}const fromName=fAcc.name,toName=tAcc.name;/* Legge entrambi i saldi dal DB per evitare dati obsoleti */
-const [fromSnap,toSnap]=await Promise.all([db.ref(`users/${UID}/accounts/${fId}/balance`).once('value'),db.ref(`users/${UID}/accounts/${tId}/balance`).once('value')]);const realFrom=N(fromSnap.val()),realTo=N(toSnap.val());if(realFrom<amount){toast('Saldo insufficiente','err');return;}const newFrom=realFrom-amount;const newTo=realTo+amount;await db.ref(`users/${UID}/accounts/${fId}/balance`).set(newFrom);await db.ref(`users/${UID}/accounts/${tId}/balance`).set(newTo);/* Aggiorna i conti nell'array corrente (il listener Firebase potrebbe averlo sostituito) */S.accounts.forEach(a=>{if(a.id===fId)a.balance=newFrom;if(a.id===tId)a.balance=newTo;});await db.ref(`users/${UID}/transfers`).push({from:fId,to:tId,fromName,toName,amount,date,note,createdAt:new Date().toISOString()});document.getElementById('tr-amount').value='';document.getElementById('tr-note').value='';toast(`Trasferito ${fmt(amount)} da ${fromName} a ${toName}`,'ok');renderAccounts();updateDashWidgets();}
+async function doTransfer(){
+  const fId=document.getElementById('tr-from').value,tId=document.getElementById('tr-to').value,
+    amount=parseFloat(document.getElementById('tr-amount').value)||0,
+    date=document.getElementById('tr-date').value,
+    note=document.getElementById('tr-note').value.trim();
+  if(!fId||!tId||fId===tId){toast('Seleziona due conti diversi','err');return;}
+  if(!amount||!date){toast('Inserisci importo e data','err');return;}
+  const fAcc=S.accounts.find(a=>a.id===fId),tAcc=S.accounts.find(a=>a.id===tId);
+  if(!fAcc||!tAcc){toast('Conto non trovato','err');return;}
+  const fromName=fAcc.name,toName=tAcc.name;
+
+  // Scala il saldo del conto sorgente in modo atomico.
+  // La funzione passata a .transaction() riceve il valore corrente dal server,
+  // quindi e' immune a scritture concorrenti da altri dispositivi.
+  let finalFrom=null;
+  try{
+    const fromResult=await db.ref(`users/${UID}/accounts/${fId}/balance`).transaction(current=>{
+      const bal=N(current);
+      if(bal<amount) return; // abort: undefined -> Firebase annulla senza scrivere
+      finalFrom=bal-amount;
+      return finalFrom;
+    });
+    if(!fromResult.committed){
+      toast('Saldo insufficiente','err');
+      return;
+    }
+  }catch(e){
+    toast('Errore durante il trasferimento','err');
+    console.error('Transfer from-tx error:',e);
+    return;
+  }
+
+  // Accredita il conto destinazione in modo atomico.
+  // Se questo fallisce dopo che il primo ha gia' scalato, eseguiamo un rollback manuale.
+  try{
+    const toResult=await db.ref(`users/${UID}/accounts/${tId}/balance`).transaction(current=>{
+      return N(current)+amount;
+    });
+    if(!toResult.committed) throw new Error('to-tx not committed');
+  }catch(e){
+    // Rollback: ripristina il saldo sorgente
+    console.error('Transfer to-tx error, rolling back:',e);
+    await db.ref(`users/${UID}/accounts/${fId}/balance`).transaction(current=>N(current)+amount).catch(()=>{});
+    toast('Errore durante il trasferimento, operazione annullata','err');
+    return;
+  }
+
+  // Registra il trasferimento nel log
+  await db.ref(`users/${UID}/transfers`).push({
+    from:fId,to:tId,fromName,toName,amount,date,note,
+    createdAt:new Date().toISOString()
+  });
+
+  document.getElementById('tr-amount').value='';
+  document.getElementById('tr-note').value='';
+  toast(`Trasferito ${fmt(amount)} da ${fromName} a ${toName}`,'ok');
+  renderAccounts();
+  updateDashWidgets();
+}
 function renderTransfers(){const list=document.getElementById('transfer-list');if(!list)return;const tr=[...S.transfers].sort((a,b)=>new Date(b.date)-new Date(a.date));list.innerHTML=tr.slice(0,10).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${t.fromName} → ${t.toName}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}${t.note?` · ${t.note}`:''}</div></div><div style="font-weight:700;color:var(--ac)">${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun trasferimento</div>';}
 
 /* ─── BUDGET ─── */

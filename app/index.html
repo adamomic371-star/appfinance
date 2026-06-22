@@ -454,7 +454,7 @@ tbody tr:nth-child(10){animation-delay:.3s}
 /* ── Admin Panel ── */
 .adm-s{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}.adm-c{flex:1;min-width:120px;background:linear-gradient(135deg,var(--bg2),rgba(25,18,54,.4));border:1px solid var(--b1);border-radius:var(--r);padding:1rem;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;box-shadow:0 4px 16px rgba(0,0,0,.15)}.adm-c::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:opacity .25s}.adm-c:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.25),0 0 20px rgba(239,68,68,.04)}.adm-c:hover::after{opacity:1}.adm-cv{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin:.25rem 0}.adm-srch{width:100%;padding:.65rem .875rem;background:var(--bg3);border:1.5px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-size:.875rem;margin-bottom:.75rem;outline:none;transition:border-color .2s,box-shadow .2s}.adm-srch:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(239,68,68,.08),0 0 20px rgba(239,68,68,.04)}
 /* ── FAB ── */
-.fab{position:fixed;bottom:1.5rem;right:1.5rem;width:56px;height:56px;border-radius:50%;background:var(--grad);color:#fff;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px rgba(239,68,68,.45),0 0 40px rgba(239,68,68,.15);cursor:pointer;z-index:50;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,opacity .2s;border:none}.fab:hover{transform:scale(1.1);box-shadow:0 8px 36px rgba(239,68,68,.55),0 0 60px rgba(239,68,68,.2)}.fab:active{transform:scale(.92)}.fab-m{position:absolute;bottom:68px;right:0;display:none;flex-direction:column;gap:.35rem;background:rgba(17,12,36,.9);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--b2);border-radius:var(--rs);padding:.4rem;box-shadow:0 8px 40px rgba(0,0,0,.5);min-width:180px}.fab-m.show{display:flex}.fab-mi{padding:.6rem .875rem;border-radius:6px;font-size:.82rem;font-weight:500;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:all .15s;border:none;background:none;white-space:nowrap}.fab-mi:hover{background:var(--b1);color:var(--tx)}
+.fab{position:fixed;bottom:1.5rem;right:1.5rem;width:56px;height:56px;border-radius:50%;background:var(--grad);color:#fff;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px rgba(239,68,68,.45),0 0 40px rgba(239,68,68,.15);cursor:pointer;z-index:60;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,opacity .2s;border:none}.fab:hover{transform:scale(1.1);box-shadow:0 8px 36px rgba(239,68,68,.55),0 0 60px rgba(239,68,68,.2)}.fab:active{transform:scale(.92)}.fab-m{position:absolute;bottom:68px;right:0;display:none;flex-direction:column;gap:.35rem;background:rgba(17,12,36,.9);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--b2);border-radius:var(--rs);padding:.4rem;box-shadow:0 8px 40px rgba(0,0,0,.5);min-width:180px}.fab-m.show{display:flex}.fab-mi{padding:.6rem .875rem;border-radius:6px;font-size:.82rem;font-weight:500;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:all .15s;border:none;background:none;white-space:nowrap}.fab-mi:hover{background:var(--b1);color:var(--tx)}
 /* ── Transaction select ── */
 tr.tx-sel{background:rgba(239,68,68,.08)}tr.tx-sel td{border-bottom-color:rgba(239,68,68,.15)}
 /* ── Global Search ── */
@@ -462,7 +462,7 @@ tr.tx-sel{background:rgba(239,68,68,.08)}tr.tx-sel td{border-bottom-color:rgba(2
 /* ── Sync Indicator ── */
 #sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;transition:background .3s}.sync-ok{background:var(--gr)}.sync-err{background:var(--re)}.sync-syncing{background:var(--ye);animation:syncPulse .8s ease infinite}@keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.4}}
 /* ── PWA Install Banner ── */
-#pwa-banner{position:fixed;bottom:0;left:0;right:0;background:rgba(17,12,36,.92);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid var(--b2);padding:.875rem 1rem;z-index:10000;display:none;box-shadow:0 -4px 30px rgba(0,0,0,.4);padding-bottom:calc(.875rem + env(safe-area-inset-bottom,0px))}
+#pwa-banner{position:fixed;bottom:0;left:0;right:0;background:rgba(17,12,36,.92);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid var(--b2);padding:.875rem 1rem;z-index:45;display:none;box-shadow:0 -4px 30px rgba(0,0,0,.4);padding-bottom:calc(.875rem + env(safe-area-inset-bottom,0px))}
 @media(max-width:768px){#pwa-banner{bottom:calc(60px + env(safe-area-inset-bottom,0px))}}.pwa-btns{display:flex;gap:.5rem;margin-top:.5rem}.pwa-btns button{flex:1;padding:.5rem;border-radius:var(--rs);font-weight:600;font-size:.8rem;cursor:pointer;border:none}
 /* ══ MOBILE MODAL BOTTOM SHEET ══ */
 @media(max-width:768px){
@@ -831,7 +831,7 @@ html{transition:background-color .3s,color .3s}
       <div id="glob-results" style="max-height:60vh;overflow-y:auto"></div>
     </div>
   </div>
-  <div id="pwa-banner"><div style="font-size:.85rem;font-weight:600">📲 Installa Axiom sul tuo dispositivo</div><div class="pwa-btns"><button style="background:var(--grad);color:#fff" onclick="installPWA()">Installa</button><button style="background:var(--bg3);color:var(--tx2);border:1px solid var(--b2)" onclick="dismissPWA()">Più tardi</button></div></div>
+  <div id="pwa-banner"><div style="display:flex;align-items:flex-start;gap:.5rem"><div style="flex:1;font-size:.85rem;font-weight:600">📲 Installa Axiom sul tuo dispositivo</div><button onclick="dismissPWA()" style="background:none;border:none;color:var(--tx3);font-size:1.2rem;cursor:pointer;padding:2px;line-height:1;flex-shrink:0" aria-label="Chiudi">✕</button></div><div class="pwa-btns"><button style="background:var(--grad);color:#fff" onclick="installPWA()" aria-label="Installa app">Installa</button><button style="background:var(--bg3);color:var(--tx2);border:1px solid var(--b2)" onclick="dismissPWA()" aria-label="Più tardi">Più tardi</button></div></div>
   <main id="mc">
     <div class="view" id="view-admin"><div class="page-hd"><div><div class="pt">Pannello Admin</div><div class="ps" id="adm-subtitle">Gestione utenti e piattaforma</div></div><button class="btn bp" onclick="exportAllBackup()">📦 Backup DB</button></div><div class="adm-s" id="adm-kpi"></div><input class="adm-srch" id="adm-search" placeholder="Cerca per nome, email, ruolo..." oninput="renderAdmin()"><div id="adm-table-wrap" class="tw" style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Note</th><th></th></tr></thead><tbody id="adm-tbody"></tbody></table></div></div>
     <div class="view active" id="view-dashboard">
@@ -893,7 +893,7 @@ html{transition:background-color .3s,color .3s}
           <button class="btn bp" onclick="om('modal-tx')">+ Aggiungi</button>
         </div>
       </div>
-      <div class="card"><div class="tw"><table><thead><tr><th style="width:32px"><input type="checkbox" onchange="selectAllTx()" id="sel-all-chk" style="accent-color:var(--ac);width:16px;height:16px;cursor:pointer"></th><th>Data</th><th>Descrizione</th><th>Cat.</th><th>Conto</th><th>Importo</th><th></th></tr></thead><tbody id="tx-tbody"></tbody></table></div><div class="empty-state" id="tx-empty" style="display:none"><div class="empty-icon">💸</div><div class="empty-title">Nessuna transazione</div><div class="empty-desc">Aggiungi la tua prima entrata o uscita per iniziare a tracciare le tue finanze.</div><button class="btn bp bsm empty-btn" onclick="om('modal-tx')">+ Aggiungi transazione</button></div></div>
+      <div class="card"><div id="tx-skeleton" class="tx-skeleton" style="display:block"><div class="sk-card"><div class="sk-line-lg"></div><div class="sk-line"></div><div class="sk-line" style="width:40%"></div></div><div class="sk-card"><div class="sk-line-lg"></div><div class="sk-line"></div><div class="sk-line" style="width:40%"></div></div><div class="sk-card"><div class="sk-line-lg"></div><div class="sk-line"></div><div class="sk-line" style="width:40%"></div></div></div><div class="tw" style="display:none"><table><thead><tr><th style="width:32px"><input type="checkbox" onchange="selectAllTx()" id="sel-all-chk" style="accent-color:var(--ac);width:16px;height:16px;cursor:pointer"></th><th>Data</th><th>Descrizione</th><th>Cat.</th><th>Conto</th><th>Importo</th><th></th></tr></thead><tbody id="tx-tbody"></tbody></table></div><div class="empty-state" id="tx-empty" style="display:none"><svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="display:block;margin:0 auto 1rem;opacity:.5"><circle cx="32" cy="32" r="24" stroke="var(--tx3)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M24 32l6 6 10-12" stroke="var(--gr)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="empty-title">Nessuna transazione</div><div class="empty-desc">Aggiungi la tua prima entrata o uscita per iniziare a tracciare le tue finanze.</div><button class="btn bp bsm empty-btn" onclick="om('modal-tx')">+ Aggiungi transazione</button></div></div>
     </div>
 
     <div class="view" id="view-accounts">
@@ -940,14 +940,16 @@ html{transition:background-color .3s,color .3s}
 
     <div class="view" id="view-budget">
       <div class="page-hd"><div><div class="pt">Budget Mensile</div><div class="ps" id="budget-month"></div></div><button class="btn bp" onclick="om('modal-budget')">+ Imposta budget</button></div>
+      <div id="budget-skeleton" class="skel-grid" style="display:none"><div class="sk-card" style="height:100px"></div><div class="sk-card" style="height:100px"></div><div class="sk-card" style="height:100px"></div></div>
       <div class="gg" id="budget-grid"></div>
-      <div class="est" id="budget-empty" style="display:none;margin-top:2rem">🎯 Nessun budget</div>
+      <div class="est" id="budget-empty" style="display:none;margin-top:2rem"><svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="display:block;margin:0 auto 1rem;opacity:.5"><circle cx="32" cy="32" r="24" stroke="var(--tx3)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M20 44V28l8-4 8 4 8-4v16l-8 4-8-4-8 4" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div style="font-size:1rem;font-weight:600;margin-bottom:.35rem">Nessun budget impostato</div><div style="font-size:.8rem;color:var(--tx2);margin-bottom:1rem">Crea un budget mensile per tenere traccia delle tue spese per categoria.</div><button class="btn bp bsm" onclick="om('modal-budget')">+ Imposta budget</button></div>
     </div>
 
     <div class="view" id="view-goals">
       <div class="page-hd"><div><div class="pt">Obiettivi</div></div><button class="btn bp" onclick="om('modal-goal')">+ Nuovo</button></div>
+      <div id="goals-skeleton" class="skel-grid" style="display:none"><div class="sk-card" style="height:120px"></div><div class="sk-card" style="height:120px"></div><div class="sk-card" style="height:120px"></div></div>
       <div class="gg" id="goals-grid"></div>
-      <div class="est" id="goals-empty" style="display:none;margin-top:2rem">🏆 Nessun obiettivo</div>
+      <div class="est" id="goals-empty" style="display:none;margin-top:2rem"><svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="display:block;margin:0 auto 1rem;opacity:.5"><circle cx="32" cy="32" r="24" stroke="var(--tx3)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M32 16v4m0 24v4M16 32h4m24 0h4" stroke="var(--tx3)" stroke-width="2" stroke-linecap="round"/><circle cx="32" cy="32" r="8" stroke="var(--ye)" stroke-width="2" fill="none"/><path d="M32 27l2 4 4 .5-3 3 1 4.5-4-2-4 2 1-4.5-3-3 4-.5 2-4z" fill="var(--ye)" opacity=".4"/></svg><div style="font-size:1rem;font-weight:600;margin-bottom:.35rem">Nessun obiettivo</div><div style="font-size:.8rem;color:var(--tx2);margin-bottom:1rem">Crea obiettivi di risparmio per raggiungere i tuoi traguardi finanziari.</div><button class="btn bp bsm" onclick="om('modal-goal')">+ Nuovo obiettivo</button></div>
     </div>
 
     <div class="view" id="view-calendar">
@@ -1323,8 +1325,8 @@ html{transition:background-color .3s,color .3s}
     </div>
   </main>
   <!-- ══ UPDATE BANNER ══ -->
-  <div id="update-banner" style="position:fixed;bottom:calc(5rem + env(safe-area-inset-bottom,0px));left:1rem;right:1rem;background:var(--bg2);border:1px solid var(--ac);border-radius:var(--r);padding:1rem 1.25rem;z-index:9999;box-shadow:0 8px 40px rgba(0,0,0,.5);display:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
-    <div style="font-size:.875rem;font-weight:700;margin-bottom:.35rem">📦 Nuova versione disponibile</div>
+  <div id="update-banner" style="position:fixed;bottom:calc(5rem + env(safe-area-inset-bottom,0px));left:1rem;right:1rem;background:var(--bg2);border:1px solid var(--ac);border-radius:var(--r);padding:1rem 1.25rem;z-index:45;box-shadow:0 8px 40px rgba(0,0,0,.5);display:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
+    <div style="display:flex;align-items:flex-start;gap:.5rem"><div style="flex:1;font-size:.875rem;font-weight:700">📦 Nuova versione disponibile</div><button onclick="document.getElementById('update-banner').style.display='none'" style="background:none;border:none;color:var(--tx3);font-size:1.2rem;cursor:pointer;padding:2px;line-height:1;flex-shrink:0" aria-label="Chiudi">✕</button></div>
     <div style="font-size:.78rem;color:var(--tx2);margin-bottom:.75rem">Aggiorna per avere le ultime funzionalità e correzioni.</div>
     <button onclick="applyUpdate()" style="width:100%;padding:.75rem;background:var(--grad);color:#fff;border:none;border-radius:var(--rs);font-weight:700;font-size:.875rem;cursor:pointer">🔄 Aggiorna ora</button>
   </div>
@@ -2395,6 +2397,9 @@ function renderDashCharts(){
 let txPage=1,txPageSize=50;
 let selectedTx=new Set();
 function renderTransactions(){
+  const skel=document.getElementById('tx-skeleton'),tw=document.querySelector('#view-transactions .tw');
+  if(skel)skel.style.display='none';
+  if(tw)tw.style.display='';
   const q=(document.getElementById('search-input')||{}).value?.toLowerCase()||(document.getElementById('mobile-search-input')||{}).value?.toLowerCase()||'';
   const type=(document.getElementById('f-type')||{}).value||'';
   const cat=(document.getElementById('f-cat')||{}).value||'';
@@ -2406,7 +2411,7 @@ function renderTransactions(){
   if(cat)tx=tx.filter(t=>t.category===cat);
   const tbody=document.getElementById('tx-tbody'),empty=document.getElementById('tx-empty');
   if(!tbody)return;
-  if(!tx.length){tbody.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(!tx.length){tbody.innerHTML='';if(empty)empty.style.display='block';if(tw)tw.style.display='none';return;}
   if(empty)empty.style.display='none';
   const aN=id=>S.accounts.find(a=>a.id===id)?.name||'—';
   const total=tx.length;
@@ -2642,6 +2647,8 @@ function renderTransfers(){const list=document.getElementById('transfer-list');i
 
 /* ─── BUDGET ─── */
 function renderBudget(){
+  const skel=document.getElementById('budget-skeleton');
+  if(skel)skel.style.display='none';
   const m=new Date().toISOString().slice(0,7);
   const bm=document.getElementById('budget-month');if(bm)bm.textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
   const budgets=S.budgets[m]||{};
@@ -2657,6 +2664,8 @@ async function deleteBudget(cat){const m=new Date().toISOString().slice(0,7);awa
 
 /* ─── GOALS ─── */
 function renderGoals(){
+  const skel=document.getElementById('goals-skeleton');
+  if(skel)skel.style.display='none';
   const grid=document.getElementById('goals-grid'),empty=document.getElementById('goals-empty');
   if(!grid)return;
   if(!S.goals.length){grid.innerHTML='';if(empty)empty.style.display='block';return;}

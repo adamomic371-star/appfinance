@@ -139,7 +139,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(
       caches.match(e.request).then(cached => {
         const fetchPromise = fetch(e.request).then(r => {
-          caches.open(CACHE).then(ch => ch.put(e.request, r.clone()));
+          try { caches.open(CACHE).then(ch => ch.put(e.request, r.clone())); } catch(e) {}
           return r;
         }).catch(() => cached);
         return cached || fetchPromise;
@@ -150,8 +150,10 @@ self.addEventListener('fetch', e => {
 
   e.respondWith(
     fetch(e.request).then(r => {
-      const c = r.clone();
-      caches.open(CACHE).then(ch => ch.put(e.request, c));
+      try {
+        const c = r.clone();
+        caches.open(CACHE).then(ch => ch.put(e.request, c));
+      } catch(e) {}
       return r;
     }).catch(() => caches.match(e.request).then(m => m || caches.match(BASE + '404.html')))
   );

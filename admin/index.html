@@ -15,3 +15,75 @@
 <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'></script>
 <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js'></script>
 <script src='https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js'></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #080612;
+  --bg2: #0F1130;
+  --bg3: #181B3D;
+  --bg4: #212450;
+  --primary: #EF4444;
+  --secondary: #2563EB;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --orange: #FB923C;
+  --tx: #F8FAFC;
+  --tx2: #94A3B8;
+  --tx3: #64748B;
+  --tx4: #475569;
+  --b1: rgba(239,68,68,.08);
+  --b2: rgba(239,68,68,.15);
+  --gradient: linear-gradient(135deg, #EF4444, #06B6D4);
+  --font: 'DM Sans', sans-serif;
+  --heading: 'Syne', sans-serif;
+  --radius: 12px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --card1: #0F1130;
+  --card2: #181B3D;
+  --card3: #212450;
+  --text: #F8FAFC;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --border: rgba(255,255,255,0.06);
+}
+[data-theme="light"] {
+  --bg: #F1F5F9;
+  --bg2: #FFFFFF;
+  --bg3: #F8FAFC;
+  --bg4: #E2E8F0;
+  --tx: #0F172A;
+  --tx2: #475569;
+  --tx3: #64748B;
+  --tx4: #94A3B8;
+  --b1: rgba(239,68,68,.08);
+  --b2: rgba(239,68,68,.15);
+  --card1: #FFFFFF;
+  --card2: #F8FAFC;
+  --card3: #E2E8F0;
+  --text: #0F172A;
+  --text2: #475569;
+  --text3: #64748B;
+  --border: rgba(0,0,0,0.06);
+  --shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+html { font-size: 15px; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tx3); }
+a { color: var(--text); text-decoration: none; }
+input, select, textarea, button { font-family: var(--font); outline: none; }
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-c { display: flex; align-items: center; }
+.flex-b { display: flex; justify-content: space-between; align-items: center; }
+.flex-g { gap: 12px; }
+.grid { display: grid; gap: 16px; }

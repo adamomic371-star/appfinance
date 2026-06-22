@@ -26,49 +26,46 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);background-image:var(
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
 
-/* AUTH */
-#auth{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:1rem;background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(239,68,68,.18),transparent 60%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(6,182,212,.08),transparent 50%);position:relative;overflow:hidden}
-#auth::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 30%,rgba(239,68,68,.1),transparent 50%),radial-gradient(circle at 80% 70%,rgba(6,182,212,.08),transparent 50%),radial-gradient(circle at 50% 50%,rgba(232,121,249,.05),transparent 50%);pointer-events:none;z-index:0;animation:bgShift 10s ease infinite;background-size:200% 200%}
-#auth::after{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(239,68,68,.04),transparent 40%),radial-gradient(circle at 70% 60%,rgba(6,182,212,.04),transparent 40%);animation:bgShift 14s ease infinite 2s;background-size:200% 200%;pointer-events:none;z-index:0}
-/* Auth floating particles */
-.auth-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.auth-particles span{position:absolute;display:block;width:var(--s,6px);height:var(--s,6px);background:var(--c,rgba(239,68,68,.3));border-radius:50%;animation:floatParticle var(--d,6s) ease-in-out infinite;animation-delay:var(--dd,0s);opacity:0}
-@keyframes floatParticle{0%{transform:translateY(100vh) translateX(0) scale(0);opacity:0}10%{opacity:var(--o,.6)}90%{opacity:var(--o,.6)}100%{transform:translateY(-10vh) translateX(var(--dx,30px)) scale(1);opacity:0}}
-.auth-box{width:100%;max-width:420px;background:rgba(17,12,36,.78);-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 40px rgba(239,68,68,.08);animation:scaleIn .45s cubic-bezier(.34,1.56,.64,1) both;position:relative;z-index:1}
-.auth-box::before{content:'';position:absolute;inset:-1px;border-radius:var(--r);background:linear-gradient(135deg,rgba(239,68,68,.3),transparent 30%,transparent 70%,rgba(6,182,212,.3));opacity:0;animation:borderGlow 4s ease-in-out infinite;pointer-events:none;z-index:-1;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;-webkit-mask-composite:xor;padding:1px}
-.auth-head{background:var(--grad);padding:1.75rem 2rem;text-align:center;position:relative;overflow:hidden;position:relative}
-.auth-head::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 60%);animation:bgShift 6s ease infinite;pointer-events:none}
-.auth-head::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.04) 50%,transparent 60%);animation:shimmer 6s ease-in-out infinite;background-size:400% 400%;pointer-events:none}
-.auth-logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;animation:float 4s ease-in-out infinite}
-.auth-sub{color:rgba(255,255,255,.75);font-size:.875rem;margin-top:.25rem;animation:fadeIn .6s ease .3s both}
-[data-theme=light] .auth-box{background:rgba(255,255,255,.82)}
-[data-theme=light] .auth-box::before{opacity:.5}
-.auth-tabs{display:flex;border-bottom:1px solid var(--b1)}
-.auth-tab{flex:1;padding:.875rem;text-align:center;font-size:.875rem;font-weight:600;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;transition:all .3s cubic-bezier(.34,1.56,.64,1);position:relative}
-.auth-tab::after{content:'';position:absolute;bottom:-2px;left:50%;width:0;height:2px;background:var(--grad);transition:all .3s cubic-bezier(.34,1.56,.64,1);border-radius:2px}
+/* AUTH - Axiom style */
+#auth{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:1rem;background:var(--bg);position:relative;overflow:hidden}
+.auth-bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0}
+.auth-bg-glow::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 50%,rgba(239,68,68,0.12),transparent 50%),radial-gradient(ellipse at 80% 50%,rgba(6,182,212,0.08),transparent 50%);animation:authGlow 8s ease-in-out infinite alternate}
+.auth-bg-glow::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.06),transparent 40%);animation:authGlow2 10s ease-in-out infinite alternate}
+@keyframes authGlow{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(2%,2%) rotate(3deg)}}
+@keyframes authGlow2{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(-2%,-1%) rotate(-3deg)}}
+.auth-box{position:relative;z-index:1;width:100%;max-width:420px;background:rgba(15,17,48,0.85);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border:1px solid var(--b1);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+[data-theme=light] .auth-box{background:rgba(255,255,255,.85)}
+.auth-header{text-align:center;padding:2rem 2rem 0.5rem}
+.auth-logo-wrap{margin-bottom:0.75rem}
+.auth-logo-wrap svg{width:48px;height:48px}
+.auth-title{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#EF4444,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.03em}
+.auth-subtitle{color:var(--tx2);font-size:0.9rem;margin-top:4px}
+.auth-tabs{display:flex;border-bottom:1px solid var(--b1);margin:0 2rem}
+.auth-tab{flex:1;padding:0.875rem 0.5rem;text-align:center;font-size:0.85rem;font-weight:600;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.3s}
 .auth-tab:hover{color:var(--tx)}
-.auth-tab.active{color:var(--ac);border-bottom-color:transparent}
-.auth-tab.active::after{width:60%;left:20%}
-.auth-body{padding:1.75rem}
-.auth-panel{display:none;animation:slideFadeIn .35s ease both}
-.auth-panel.active{display:block}
+.auth-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.auth-body{padding:1.5rem 2rem 2rem}
+.auth-panel{display:none}
+.auth-panel.active{display:block;animation:slideFadeIn .35s ease both}
 .fg{margin-bottom:1rem}
-.fg label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:.4rem}
-.fg input{width:100%;padding:.8rem 1rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-size:.9rem;transition:border-color .3s,box-shadow .3s,transform .2s;-webkit-appearance:none}
-.fg input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(239,68,68,.08),0 0 20px rgba(239,68,68,.06);transform:translateY(-1px)}
-.fg input:hover:not(:focus){border-color:var(--b3)}
+.fg label{display:block;font-size:0.78rem;font-weight:600;color:var(--tx2);margin-bottom:6px}
+.fg input{width:100%;padding:12px 16px;background:rgba(24,27,61,0.8);border:1px solid var(--b1);border-radius:10px;color:var(--tx);font-size:0.9rem;transition:border 0.2s,background 0.2s;-webkit-appearance:none}
+.fg input:focus{outline:none;border-color:var(--primary);background:rgba(33,36,80,0.6)}
 .fg input::placeholder{color:var(--tx3)}
-.btn-auth{width:100%;padding:.95rem;background:var(--grad);color:#fff;border-radius:var(--rs);font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .25s,transform .2s,box-shadow .25s;-webkit-appearance:none;position:relative;overflow:hidden}
-.btn-auth:hover{opacity:.95;transform:translateY(-2px);box-shadow:0 8px 28px rgba(239,68,68,.35),0 0 40px rgba(239,68,68,.12)}
-.btn-auth:active{transform:translateY(0) scale(.98)}
-.btn-auth:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-auth .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);transform:scale(0);animation:ripple .6s ease-out;pointer-events:none}
-.auth-google{width:100%;padding:.8rem;margin-bottom:1rem;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rs);color:var(--tx);font-weight:500;display:flex;align-items:center;justify-content:center;gap:.6rem;transition:border-color .2s,box-shadow .2s;cursor:pointer;-webkit-appearance:none}
-.auth-google:hover{border-color:var(--ac);box-shadow:0 0 0 3px rgba(239,68,68,.08)}
-.auth-sep{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;color:var(--tx3);font-size:.8rem}
-.auth-sep::before,.auth-sep::after{content:'';flex:1;height:1px;background:var(--b2)}
-
-
+.btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,#EF4444,#06B6D4);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:opacity 0.25s,transform 0.2s,box-shadow 0.25s}
+.btn-auth:hover{opacity:0.92;transform:translateY(-1px);box-shadow:0 4px 20px rgba(239,68,68,0.3)}
+.btn-auth:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.auth-google{width:100%;padding:12px;margin-bottom:0.75rem;background:rgba(255,255,255,0.06);border:1px solid var(--b1);border-radius:10px;color:var(--tx);font-weight:500;display:flex;align-items:center;justify-content:center;gap:0.6rem;cursor:pointer;transition:border 0.2s,background 0.2s}
+.auth-google:hover{background:rgba(255,255,255,0.1)}
+.auth-sep{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;color:var(--tx3);font-size:0.8rem}
+.auth-sep::before,.auth-sep::after{content:'';flex:1;height:1px;background:var(--b1)}
+.auth-err{color:var(--primary);font-size:0.82rem;margin-top:8px;text-align:center;min-height:20px}
+.auth-forgot{text-align:center;margin-top:1rem;font-size:0.85rem}
+.auth-forgot a{color:var(--primary)}
+.gdpr-row{display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.75rem;font-size:0.78rem;color:var(--tx2)}
+.gdpr-row input{width:15px;height:15px;accent-color:var(--primary);flex-shrink:0;margin-top:2px}
+.gdpr-row a{color:var(--primary)}
+.reset-desc{font-size:0.85rem;color:var(--tx2);margin-bottom:1rem}
 
 /* APP */
 #app{display:none}
@@ -668,11 +665,20 @@ html{transition:background-color .3s,color .3s}
 
 <!-- AUTH SCREEN -->
 <div id="auth">
-  <div class="auth-particles" id="auth-particles"></div>
+  <div class="auth-bg-glow"></div>
   <div class="auth-box">
-    <div class="auth-head">
-      <div class="auth-logo"><svg width="28" height="28" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:8px"><rect width="32" height="32" rx="7" fill="#0F172A"/><line x1="6" y1="27" x2="16" y2="5" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/><line x1="16" y1="5" x2="26" y2="27" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/><line x1="12" y1="16" x2="20" y2="20" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/><line x1="20" y1="16" x2="12" y2="20" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/></svg>Axiom</div>
-      <p class="auth-sub">La tua finanza intelligente</p>
+    <div class="auth-header">
+      <div class="auth-logo-wrap">
+        <svg width="44" height="44" viewBox="0 0 32 32">
+          <rect width="32" height="32" rx="7" fill="#0F172A"/>
+          <line x1="6" y1="27" x2="16" y2="5" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/>
+          <line x1="16" y1="5" x2="26" y2="27" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/>
+          <line x1="12" y1="16" x2="20" y2="20" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+          <line x1="20" y1="16" x2="12" y2="20" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="auth-title">Axiom</h1>
+      <p class="auth-subtitle">La tua finanza intelligente</p>
     </div>
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchTab('login')">Accedi</div>
@@ -680,9 +686,7 @@ html{transition:background-color .3s,color .3s}
       <div class="auth-tab" onclick="switchTab('reset')">Password</div>
     </div>
     <div class="auth-body">
-      <!-- LOGIN -->
       <div class="auth-panel active" id="panel-login">
-
         <button class="auth-google" onclick="doGoogle()">
           <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Continua con Google
@@ -690,27 +694,25 @@ html{transition:background-color .3s,color .3s}
         <div class="auth-sep">oppure</div>
         <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="la.tua@email.com" autocomplete="email"></div>
         <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-        <button class="btn-auth" id="btn-login" onclick="doLogin()" onmousedown="authRipple(event)">Accedi</button>
+        <button class="btn-auth" id="btn-login" onclick="doLogin()">Accedi</button>
         <div class="auth-err" id="login-err"></div>
-        <div style="text-align:center;margin-top:1rem;font-size:.875rem;color:var(--tx2)"><a href="#" onclick="switchTab('reset');return false;" style="color:var(--ac)">Password dimenticata?</a></div>
+        <div class="auth-forgot"><a href="#" onclick="switchTab('reset');return false;">Password dimenticata?</a></div>
       </div>
-      <!-- REGISTER -->
       <div class="auth-panel" id="panel-register">
         <div class="fg"><label>Nome</label><input type="text" id="r-name" placeholder="Mario Rossi" autocomplete="name"></div>
         <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="la.tua@email.com" autocomplete="email"></div>
         <div class="fg"><label>Password</label><input type="password" id="r-pass" placeholder="min. 6 caratteri" autocomplete="new-password"></div>
-        <div style="display:flex;align-items:flex-start;gap:.625rem;margin-bottom:.75rem;font-size:.78rem;color:var(--tx2)">
-          <input type="checkbox" id="r-gdpr" style="width:15px;height:15px;accent-color:var(--ac);flex-shrink:0;margin-top:2px">
-          <label for="r-gdpr">Accetto i <a href="../termini.html" target="_blank" style="color:var(--ac)">Termini di servizio</a> e la <a href="../privacy.html" target="_blank" style="color:var(--ac)">Privacy Policy</a> (obbligatorio)</label>
+        <div class="gdpr-row">
+          <input type="checkbox" id="r-gdpr">
+          <label for="r-gdpr">Accetto i <a href="../termini.html" target="_blank">Termini</a> e la <a href="../privacy.html" target="_blank">Privacy</a></label>
         </div>
-        <button class="btn-auth" id="btn-register" onclick="doRegister()" onmousedown="authRipple(event)">Crea account</button>
+        <button class="btn-auth" id="btn-register" onclick="doRegister()">Crea account</button>
         <div class="auth-err" id="register-err"></div>
       </div>
-      <!-- RESET -->
       <div class="auth-panel" id="panel-reset">
-        <p style="font-size:.875rem;color:var(--tx2);margin-bottom:1rem">Inserisci la tua email per reimpostare la password.</p>
+        <p class="reset-desc">Inserisci la tua email per reimpostare la password.</p>
         <div class="fg"><label>Email</label><input type="email" id="reset-email" placeholder="la.tua@email.com"></div>
-        <button class="btn-auth" onclick="doReset()" onmousedown="authRipple(event)">Invia link</button>
+        <button class="btn-auth" onclick="doReset()">Invia link</button>
         <div class="auth-err" id="reset-err"></div>
       </div>
     </div>
@@ -727,7 +729,7 @@ html{transition:background-color .3s,color .3s}
 <div id="app">
   <nav id="nav">
     <button class="nav-tog" onclick="toggleSidebar()">☰</button>
-    <div class="nav-logo"><svg width="18" height="18" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:4px"><rect width="32" height="32" rx="7" fill="#0F172A"/><line x1="6" y1="27" x2="16" y2="5" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/><line x1="16" y1="5" x2="26" y2="27" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/><line x1="12" y1="16" x2="20" y2="20" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/><line x1="20" y1="16" x2="12" y2="20" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/></svg>Axiom</div>
+    <div class="nav-logo"><svg width="18" height="18" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0F172A"/><line x1="6" y1="27" x2="16" y2="5" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/><line x1="16" y1="5" x2="26" y2="27" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/><line x1="12" y1="16" x2="20" y2="20" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/><line x1="20" y1="16" x2="12" y2="20" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/></svg>Axiom</div>
     <div class="mode-sw">
       <div class="mode-btn ap" id="mb-p" onclick="setMode('personal')">👤 Personal</div>
       <div class="mode-btn" id="mb-b" onclick="setMode('business')">💼 Business</div>
@@ -1307,7 +1309,7 @@ html{transition:background-color .3s,color .3s}
         <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR €</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP £</option></select></div>
         <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">🌙 Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">☀️ Light</button><button class="btn bs bsm" onclick="applyTheme('auto')">🔮 Auto</button></div></div>
         <div class="card"><div class="ct">📊 Previsioni</div><div style="font-size:.82rem;color:var(--tx2);margin-bottom:.5rem">Giorni di previsione spese future</div><input type="number" id="set-forecast" class="btn bs" style="width:100%;padding:.7rem .875rem" min="1" max="365" value="30" onchange="forecastDays=Math.max(1,parseInt(this.value)||30);localStorage.setItem('kz_forecast_days',forecastDays);updateDashWidgets();toast('Giorni previsione aggiornati','ok')"></div>
-        <div class="card"><div class="ct">📲 App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Axiom sul dispositivo</button></div>
+        <div class="card"><div class="ct">📲 App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa KAZKA sul dispositivo</button></div>
         <div class="card" id="notif-settings-card">
           <div class="ct">🔔 Notifiche</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
@@ -3045,7 +3047,7 @@ async function saveProfile(){const name=document.getElementById('prof-name')?.va
 async function changePass(){const pass=document.getElementById('prof-pass')?.value;if(!pass||pass.length<6){toast('Password min. 6 caratteri','err');return;}try{await auth.currentUser?.updatePassword(pass);toast('Password aggiornata','ok');document.getElementById('prof-pass').value='';}catch(e){toast('Rieffettua il login e riprova','err');}}
 
 /* ─── BACKUP ─── */
-function exportBackup(){const backup={version:2,exportedAt:new Date().toISOString(),user:{name:UP?.name,email:UP?.email},data:{transactions:S.transactions,accounts:S.accounts,budgets:S.budgets,goals:S.goals,recurring:S.recurring,invoices:S.invoices,travel:S.travel,transfers:S.transfers,debts:S.debts,quotes:S.quotes||[],suppliers:S.suppliers||[]}};const b=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`axiom-backup-${today()}.json`;a.click();toast('Backup esportato','ok');}
+function exportBackup(){const backup={version:2,exportedAt:new Date().toISOString(),user:{name:UP?.name,email:UP?.email},data:{transactions:S.transactions,accounts:S.accounts,budgets:S.budgets,goals:S.goals,recurring:S.recurring,invoices:S.invoices,travel:S.travel,transfers:S.transfers,debts:S.debts,quotes:S.quotes||[],suppliers:S.suppliers||[]}};const b=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kazka-backup-${today()}.json`;a.click();toast('Backup esportato','ok');}
 async function importBackup(e){const file=e.target.files[0];if(!file)return;try{const text=await file.text();const backup=JSON.parse(text);if(!backup.data){toast('File non valido','err');return;}if(!confirm(`Importare backup del ${fd(backup.exportedAt)}?`))return;const data=backup.data,ops={};if(data.accounts){const map={};data.accounts.forEach(a=>{const{id,...r}=a;map[id||db.ref().push().key]=r;});ops.accounts=map;}if(data.goals){const map={};data.goals.forEach(g=>{const{id,...r}=g;map[id||db.ref().push().key]=r;});ops.goals=map;}if(data.transactions){const map={};data.transactions.forEach(t=>{const{id,...r}=t;map[id||db.ref().push().key]=r;});ops.transactions=map;}if(data.budgets)ops.budgets=data.budgets;await db.ref(`users/${UID}`).update(ops);toast('Backup ripristinato!','ok');}catch(e){toast('Errore: '+e.message,'err');}e.target.value='';}
 
 /* ─── EXPORT ─── */
@@ -3056,7 +3058,7 @@ function exportCSV(){
   const aN=id=>S.accounts.find(a=>a.id===id)?.name||'';
   S.transactions.forEach(t=>rows.push([t.date,t.description||'',t.type,t.category||'altro',aN(t.account),(t.type==='income'?'':'-')+N(t.amount).toFixed(2),t.currency||'EUR',t.note||'']));
   const b=new Blob(['﻿'+rows.map(r=>r.map(csvQuote).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='axiom-tx.csv';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kazka-tx.csv';a.click();
 }
 function exportCSVmonthly(){
   const m=new Date().toISOString().slice(0,7);
@@ -3064,7 +3066,7 @@ function exportCSVmonthly(){
   const aN=id=>S.accounts.find(a=>a.id===id)?.name||'';
   S.transactions.filter(t=>t.date?.startsWith(m)).forEach(t=>rows.push([t.date,t.description||'',t.type,t.category||'altro',aN(t.account),(t.type==='income'?'':'-')+N(t.amount).toFixed(2),t.currency||'EUR',t.note||'']));
   const b=new Blob(['﻿'+rows.map(r=>r.map(csvQuote).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`axiom-tx-${m}.csv`;a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kazka-tx-${m}.csv`;a.click();
 }
 async function exportPDF(){
   try{await loadJsPDF();}catch(e){toast('Errore caricamento libreria PDF','err');return;}
@@ -3201,7 +3203,7 @@ async function exportAllBackup(){
   if(!confirm('Esportare backup completo del database?'))return;
   const snap=await db.ref().once('value');
   const b=new Blob([JSON.stringify(snap.val(),null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`axiom-full-backup-${today()}.json`;a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kazka-full-backup-${today()}.json`;a.click();
   toast('Backup esportato','ok');
 }
 /* ══ FAB ══ */
@@ -3590,7 +3592,7 @@ function declineAppCookies(){localStorage.setItem('kz_cookies','minimal');docume
 /* BUG-11 FIX: referral code usa hash SHA-256 dei primi 16 byte dello UID
    invece di btoa che espone direttamente lo UID */
 async function genRefCode(uid){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('axiom-ref-'+uid));
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kazka-ref-'+uid));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
 }
 async function initReferral(){
@@ -3625,7 +3627,7 @@ async function loadReferralStats(){
   if(list)list.innerHTML=refs.length?refs.map(([,u])=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--b1)"><div style="width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff">${(u.profile?.name||'?').charAt(0).toUpperCase()}</div><div><div style="font-size:.875rem;font-weight:500">${u.profile?.name||'—'}</div><div style="font-size:.72rem;color:var(--tx3)">${u.profile?.email||'—'} · Registrato ${fd(u.profile?.createdAt)}</div></div><span class="badge bg-gr">+1 mese</span></div>`).join(''):'<div style="color:var(--tx3);font-size:.875rem;padding:1rem 0">Nessun referral ancora</div>';
 }
 function copyRefLink(){const el=document.getElementById('ref-link-display');if(el){navigator.clipboard?.writeText(el.textContent).then(()=>toast('Link copiato!','ok'));}}
-function shareRef(platform){const link=document.getElementById('ref-link-display')?.textContent||'';const text=`Prova Axiom, l'app finanze personali gratis in italiano! ${link}`;if(platform==='whatsapp')window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');else if(platform==='telegram')window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Prova+Axiom!`,'_blank');else window.open(`mailto:?subject=Ti invito su Axiom&body=${encodeURIComponent(text)}`);}
+function shareRef(platform){const link=document.getElementById('ref-link-display')?.textContent||'';const text=`Prova Axiom, l'app finanze personali gratis in italiano! ${link}`;if(platform==='whatsapp')window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');else if(platform==='telegram')window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Prova+KAZKA!`,'_blank');else window.open(`mailto:?subject=Ti invito su KAZKA&body=${encodeURIComponent(text)}`);}
 
 /* ══ PORTFOLIO INVESTIMENTI ══ */
 let liveRates={};
@@ -4020,7 +4022,7 @@ function exportData(format){
   const data={};sections.forEach(s=>{data[s]=S[s]||[];});
   if(format==='json'){
     const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),data},null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`axiom-export-${today()}.json`;a.click();
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`kazka-export-${today()}.json`;a.click();
     toast('JSON esportato','ok');
   }else{
     let csv='';Object.entries(data).forEach(([section,items])=>{
@@ -4033,7 +4035,7 @@ function exportData(format){
       arr.forEach(item=>{csv+=keys.map(k=>String(item[k]||'').replace(/;/g,',')).join(';')+'\n';});
     });
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`axiom-export-${today()}.csv`;a.click();
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`kazka-export-${today()}.csv`;a.click();
     toast('CSV esportato','ok');
   }
   cm('modal-export');

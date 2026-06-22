@@ -108,11 +108,11 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
   // Firebase RTDB = data API, cache with special strategy
-  if (url.hostname.includes('firebaseio.com')) {
+  if (url.hostname.includes('firebasedatabase.app')) {
     e.respondWith(
       fetch(e.request).then(r => {
         const c = r.clone();
-        caches.open(CACHE + '-api').then(ch => ch.put(e.request, c));
+        caches.open(CACHE + '-api').then(ch => ch.put(e.request, c)).catch(() => {});
         return r;
       }).catch(async () => {
         const cached = await caches.match(e.request);
@@ -139,7 +139,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(
       caches.match(e.request).then(cached => {
         const fetchPromise = fetch(e.request).then(r => {
-          try { caches.open(CACHE).then(ch => ch.put(e.request, r.clone())); } catch(e) {}
+          try { caches.open(CACHE).then(ch => ch.put(e.request, r.clone())).catch(() => {}); } catch(e) {}
           return r;
         }).catch(() => cached);
         return cached || fetchPromise;

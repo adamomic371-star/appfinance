@@ -3,7 +3,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Axiom — App Finanze Personali Gratis | Gestione Budget e Spese</title>
 <meta name="description" content="Axiom è l'app gratuita per gestire finanze personali e aziendali. Traccia spese, budget, fatture e obiettivi di risparmio. Prova gratis, senza carta di credito.">
 <meta name="keywords" content="app finanze personali gratis, gestione budget, tracciare spese, app risparmio, fatture online, finanza personale italiana, bilancio familiare">
@@ -594,7 +594,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
       </div>
     </div>
     <div class="footer-bottom">
-      <div>© 2024 Axiom. Tutti i diritti riservati. Made in 🇮🇹</div>
+      <div>© 2024-2026 Axiom. Tutti i diritti riservati. Made in 🇮🇹</div>
       <div>Dati ospitati su Firebase (Google Cloud Europe West)</div>
     </div>
   </div>
@@ -629,7 +629,7 @@ function toggleMobileNav(){const links=document.querySelector('.nav-links');let 
 
 // Referral modal
 function showReferral(){document.getElementById('ref-modal').style.display='flex';}
-function copyRef(){navigator.clipboard?.writeText(window.location.origin+'/appfinance/app/?ref=YOURCODE').then(()=>alert('Link copiato!'));}
+function copyRef(){navigator.clipboard?.writeText(window.location.origin+'/appfinance/app/?ref=YOURCODE').then(()=>alert('Link copiato!')).catch(()=>alert('Impossibile copiare. Copia manualmente il link.'));}
 
 // Scroll reveal
 const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');if(!e.target.closest('.feat-grid')&&!e.target.closest('.pricing-grid')&&!e.target.closest('.test-grid'))observer.unobserve(e.target);}});},{threshold:.15});
@@ -679,12 +679,12 @@ document.querySelectorAll('.feat-card,.price-card').forEach(card=>{
     card.style.transform=`perspective(800px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-4px)`;
   });
   card.addEventListener('mouseleave',()=>{
-    card.style.transform='perspective(800px) rotateY(0deg) rotateX(0deg) translateY(0px)';
+    card.style.transform='';
   });
 });
 
 // Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h==='#'){e.preventDefault();return;}const t=document.querySelector(h);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
 
 // Register service worker per PWABuilder
 if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}

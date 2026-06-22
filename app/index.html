@@ -1319,7 +1319,7 @@ html{transition:background-color .3s,color .3s}
             </label>
           </div>
           <div id="notif-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.75rem">Verifica permessi…</div>
-          <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif">Invia notifica di test</button>
+          <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif-2">Invia notifica di test</button>
         </div>
       </div>
     </div>
@@ -1755,7 +1755,8 @@ async function toggleDeviceNotif(enabled){
 }
 async function sendTestNotif(){
   if(!UID){toast('Effettua il login','err');return;}
-  const btn=document.getElementById('btn-test-notif');
+  var btn=document.getElementById('btn-test-notif');
+  if(!btn||!btn.offsetParent)btn=document.getElementById('btn-test-notif-2');
   if(btn)btn.disabled=true;
   try{
     const body='🕐 Questa è una notifica di test inviata da Axiom. Se vedi questo messaggio, le notifiche funzionano correttamente!';
@@ -1873,7 +1874,7 @@ function scheduleRender(path){
     if(!v)return;
     const n=v.id.replace('view-','');
     try{updateDashWidgets();populateSels();checkNotifAlerts();checkReminders();}catch(e){}
-    if(n==='dashboard'){try{renderDashboard();}catch(e){}}
+    if(n==='dashboard'){try{renderDashboard();}catch(e){}try{renderCalendar();}catch(e){}}
     else if(n==='transactions'){try{renderTransactions();}catch(e){}}
     else if(n==='accounts'){try{renderAccounts();}catch(e){}}
     else if(n==='budget'){try{renderBudget();}catch(e){}}
@@ -1885,7 +1886,7 @@ function scheduleRender(path){
     else if(n==='reports'){try{renderReports();}catch(e){}}
     else if(n==='monthly'){try{renderMonthly();}catch(e){}}
     else if(n==='primanota'){try{renderPrimaNota();}catch(e){}}
-    else if(n==='transfers'){try{renderTransfers();}catch(e){}}
+    else if(n==='transfer'){try{renderTransfers();}catch(e){}}
     else if(n==='invoices'){try{renderInvoices();}catch(e){}}
     else if(n==='travel'){try{renderTravel();}catch(e){}}
     else if(n==='quotes'){try{renderQuotes();}catch(e){}}
@@ -2449,7 +2450,19 @@ async function deleteSelectedTx(){
   if(!selectedTx.size){toast('Nessuna transazione selezionata','err');return;}
   if(!confirm(`Eliminare ${selectedTx.size} transazioni?`))return;
   const ops={};
-  selectedTx.forEach(id=>{ops[`transactions/${id}`]=null;const t=S.transactions.find(tx=>tx.id===id);if(t&&t.account){const a=S.accounts.find(ac=>ac.id===t.account);if(a){const bal=N(a.balance)+(t.type==='income'?-N(t.amount):N(t.amount));ops[`accounts/${t.account}/balance`]=bal;}}});
+  var balDeltas={};
+  selectedTx.forEach(function(id){
+    ops['transactions/'+id]=null;
+    var t=S.transactions.find(function(tx){return tx.id===id});
+    if(t&&t.account){
+      var delta=t.type==='income'?-N(t.amount):N(t.amount);
+      balDeltas[t.account]=(balDeltas[t.account]||0)+delta;
+    }
+  });
+  Object.entries(balDeltas).forEach(function(e){
+    var acc=S.accounts.find(function(a){return a.id===e[0]});
+    if(acc)ops['accounts/'+e[0]+'/balance']=N(acc.balance)+e[1];
+  });
   try{await db.ref(`users/${UID}`).update(ops);selectedTx.clear();toast('Eliminate','ok');}catch(e){toast('Errore','err');}
 }
 function updateMdelBtn(){
@@ -2505,7 +2518,13 @@ async function updateBal(accId,type,amount){
 }
 
 function editTx(id){const t=S.transactions.find(t=>t.id===id);if(!t)return;document.getElementById('tx-id').value=id;document.getElementById('tx-type').value=t.type;setTT(t.type);document.getElementById('tx-amount').value=t.amount;document.getElementById('tx-date').value=t.date;document.getElementById('tx-desc').value=t.description||'';document.getElementById('tx-cat').value=t.category||'altro';document.getElementById('tx-acc').value=t.account||'';document.getElementById('tx-note').value=t.note||'';document.getElementById('tx-cur').value=t.currency||'EUR';document.getElementById('tx-title').textContent='Modifica transazione';if(t.receiptUrl){const img=document.getElementById('tx-rec-prev');img.src=t.receiptUrl;img.style.display='block';}om('modal-tx');}
-async function deleteTx(id){if(!confirm('Eliminare?'))return;await db.ref(`users/${UID}/transactions/${id}`).remove();toast('Eliminata','ok');}
+async function deleteTx(id){
+  if(!confirm('Eliminare?'))return;
+  const t=S.transactions.find(tx=>tx.id===id);
+  if(t&&t.account)await updateBal(t.account,t.type==='income'?'expense':'income',t.amount);
+  await db.ref(`users/${UID}/transactions/${id}`).remove();
+  toast('Eliminata','ok');
+}
 
 /* ─── ACCOUNTS ─── */
 function renderAccounts(){
@@ -2568,7 +2587,21 @@ function calcMainAccFreeMoney(main){
 }
 async function saveAcc(){const id=document.getElementById('acc-id').value;const isMain=document.getElementById('acc-main-check').checked;const a={name:document.getElementById('acc-name').value.trim(),type:document.getElementById('acc-type').value,balance:parseFloat(document.getElementById('acc-bal').value)||0,color:document.getElementById('acc-color').value,updatedAt:new Date().toISOString()};if(!a.name){toast('Inserisci nome','err');return;}if(id){await db.ref(`users/${UID}/accounts/${id}`).update(a);if(isMain){mainAccId=id;localStorage.setItem('kz_mainAcc',id);}}else{const ref=await db.ref(`users/${UID}/accounts`).push(a);if(isMain||!mainAccId){mainAccId=ref.key;localStorage.setItem('kz_mainAcc',ref.key);}}cm('modal-acc');document.getElementById('acc-id').value='';toast(id?'Aggiornato':'Aggiunto','ok');}
 function editAcc(id){const a=S.accounts.find(a=>a.id===id);if(!a)return;document.getElementById('acc-id').value=id;document.getElementById('acc-name').value=a.name;document.getElementById('acc-type').value=a.type;document.getElementById('acc-bal').value=a.balance;document.getElementById('acc-color').value=a.color||'#2563EB';document.getElementById('acc-main-check').checked=id===mainAccId;om('modal-acc');}
-async function deleteAcc(id){if(!confirm('Eliminare?'))return;await db.ref(`users/${UID}/accounts/${id}`).remove();if(id===mainAccId){mainAccId='';localStorage.removeItem('kz_mainAcc');}toast('Eliminato','ok');}
+async function deleteAcc(id){
+  if(!confirm('Eliminare?'))return;
+  await db.ref(`users/${UID}/accounts/${id}`).remove();
+  if(id===mainAccId){
+    const remaining=S.accounts.filter(a=>a.id!==id);
+    if(remaining.length){
+      mainAccId=remaining[0].id;
+      localStorage.setItem('kz_mainAcc',mainAccId);
+    }else{
+      mainAccId='';
+      localStorage.removeItem('kz_mainAcc');
+    }
+  }
+  toast('Eliminato','ok');
+}
 function setMainAcc(){
   const opts=S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   const div=document.createElement('div');
@@ -2643,7 +2676,7 @@ async function doTransfer(){
   renderAccounts();
   updateDashWidgets();
 }
-function renderTransfers(){const list=document.getElementById('transfer-list');if(!list)return;const tr=[...S.transfers].sort((a,b)=>new Date(b.date)-new Date(a.date));list.innerHTML=tr.slice(0,10).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${t.fromName} → ${t.toName}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}${t.note?` · ${t.note}`:''}</div></div><div style="font-weight:700;color:var(--ac)">${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun trasferimento</div>';}
+function renderTransfers(){const list=document.getElementById('transfer-list');if(!list)return;const tr=[...S.transfers].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));list.innerHTML=tr.slice(0,10).map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--b1);font-size:.85rem"><div><div style="font-weight:500">${t.fromName} → ${t.toName}</div><div style="font-size:.72rem;color:var(--tx3)">${fd(t.date)}${t.note?` · ${t.note}`:''}</div></div><div style="font-weight:700;color:var(--ac)">${fmt(t.amount)}</div></div>`).join('')||'<div style="color:var(--tx3);font-size:.8rem;padding:.5rem">Nessun trasferimento</div>';}
 
 /* ─── BUDGET ─── */
 function renderBudget(){
@@ -3050,9 +3083,8 @@ async function fetchRates(){const ls=localStorage.getItem('kz_rates_ts');if(ls&&
 /* ─── BUG-09 FIX: funzioni mancanti referenziate dai test ─── */
 /* Multi-currency conversion */
 function convertCurrency(amount,from,to){
-  const r={EUR:1,USD:1.08,CHF:0.96,GBP:0.86};
-  const base=N(amount)/(r[from]||1);
-  return (base*(r[to]||1)).toFixed(2);
+  const base=N(amount)/(rates[from]||1);
+  return (base*(rates[to]||1)).toFixed(2);
 }
 /* AI category suggestion (keyword-based fallback) */
 function aiSuggestCategory(description){
@@ -3994,9 +4026,11 @@ function exportData(format){
     let csv='';Object.entries(data).forEach(([section,items])=>{
       csv+=`\n=== ${section.toUpperCase()} ===\n`;
       if(!items.length){csv+='(vuoto)\n';return;}
-      const keys=Object.keys(items[0]||{}).filter(k=>!['id','updatedAt','createdAt'].includes(k));
+      const arr=Array.isArray(items)?items:Object.entries(items).flatMap(([k,v])=>typeof v==='object'?[{key:k,...v}]:[{key:k,value:v}]);
+      if(!arr.length){csv+='(vuoto)\n';return;}
+      const keys=Object.keys(arr[0]||{}).filter(k=>!['id','updatedAt','createdAt'].includes(k));
       csv+=keys.join(';')+'\n';
-      items.forEach(item=>{csv+=keys.map(k=>String(item[k]||'').replace(/;/g,',')).join(';')+'\n';});
+      arr.forEach(item=>{csv+=keys.map(k=>String(item[k]||'').replace(/;/g,',')).join(';')+'\n';});
     });
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`axiom-export-${today()}.csv`;a.click();

@@ -35,8 +35,8 @@ p{color:var(--tx2);margin-bottom:2rem;position:relative;z-index:1}
   // Redirect SPA: se è una route dell'app reindirizza
   const path = window.location.pathname;
   if(path.includes('/app/') || path.includes('/admin/')) {
-    const base = path.split('/').slice(0,2).join('/');
-    window.location.replace('/' + base + path);
+    const base = window.location.origin + path.split('/').slice(0,3).join('/');
+    window.location.replace(base + '/');
   }
 </script>
 </body>

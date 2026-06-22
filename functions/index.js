@@ -28,7 +28,9 @@ exports.sendPushOnNotification = functions.database
       return;
     }
 
-    const tokens = Object.values(tokensData).map(t => t.token).filter(Boolean);
+    const tokenEntries = Object.entries(tokensData).filter(([k, v]) => v && v.token);
+    const tokens = tokenEntries.map(([k, v]) => v.token);
+    const tokenKeys = tokenEntries.map(([k, v]) => k);
     if (tokens.length === 0) return;
 
     const payload = {
@@ -52,7 +54,6 @@ exports.sendPushOnNotification = functions.database
       });
 
       // Clean up invalid tokens
-      const tokenKeys = Object.keys(tokensData);
       let removed = 0;
       response.responses.forEach((resp, idx) => {
         if (!resp.success) {

@@ -588,7 +588,7 @@ footer{padding:2rem 0;border-top:1px solid var(--b1)}
         <div class="footer-title">Supporto</div>
         <div class="footer-links">
           <a href="#faq">FAQ</a>
-          <a href="mailto:support@kazka.app">Contattaci</a>
+          <a href="mailto:support@axiom.app">Contattaci</a>
           <a href="#" onclick="showReferral()">Programma referral</a>
         </div>
       </div>
@@ -629,7 +629,7 @@ function toggleMobileNav(){const links=document.querySelector('.nav-links');let 
 
 // Referral modal
 function showReferral(){document.getElementById('ref-modal').style.display='flex';}
-function copyRef(){navigator.clipboard?.writeText(window.location.origin+'/appfinance/app/?ref=YOURCODE').then(()=>alert('Link copiato!')).catch(()=>alert('Impossibile copiare. Copia manualmente il link.'));}
+function copyRef(){if(!navigator.clipboard){alert('Copia manualmente il link.');return;}navigator.clipboard.writeText(window.location.origin+'/appfinance/app/?ref=YOURCODE').then(()=>alert('Link copiato!')).catch(()=>alert('Impossibile copiare. Copia manualmente il link.'));}
 
 // Scroll reveal
 const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');if(!e.target.closest('.feat-grid')&&!e.target.closest('.pricing-grid')&&!e.target.closest('.test-grid'))observer.unobserve(e.target);}});},{threshold:.15});

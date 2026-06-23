@@ -152,7 +152,7 @@ self.addEventListener('fetch', e => {
     fetch(e.request).then(r => {
       try {
         const c = r.clone();
-        caches.open(CACHE).then(ch => ch.put(e.request, c));
+        caches.open(CACHE).then(ch => ch.put(e.request, c)).catch(() => {});
       } catch(e) {}
       return r;
     }).catch(() => caches.match(e.request).then(m => m || caches.match(BASE + '404.html')))

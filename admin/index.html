@@ -873,6 +873,7 @@ tbody tr:hover { background: rgba(255,255,255,0.02); }
   </div>
   <div class='table-container'><table><thead><tr><th data-lang='nameLabel'>Nome</th><th data-lang='endpointLabel'>URL Endpoint</th><th data-lang='eventsLabel'>Eventi</th><th data-lang='secretLabel'>Secret Key</th><th data-lang='statusLabel'>Stato</th><th data-lang='actionsLabel'>Azioni</th></tr></thead><tbody id='webhookBody'></tbody></table></div>
   <div class='pagination' id='webhookPagination'></div>
+  <div id='webhookLogsContainer' style='max-width:600px;margin-top:24px'></div>
 </div>
 <div class='view' id='viewFeatureflags'>
   <h2 class='view-title' data-lang='featureFlagsTitle'>Feature Flags</h2>
@@ -1125,7 +1126,7 @@ function configureFirebase() {
     firestoreDb = firebase.firestore();
     realtimeDb = firebase.database();
     firebaseInitialized = true;
-    document.getElementById("firebaseStatusText").innerHTML = "<span style="color:var(--success)">Configurato e connesso</span>";
+    document.getElementById("firebaseStatusText").innerHTML = '<span style="color:var(--success)">Configurato e connesso</span>';
     toast("Firebase configurato con successo", "success");
     loadFromFirebase();
   } catch(e) {
@@ -1287,7 +1288,8 @@ var langData = {
     maintenanceSaved:"Configurazione manutenzione salvata",
     webhookCreated:"Webhook creato", webhookUpdated:"Webhook aggiornato",
     webhookDeleted:"Webhook eliminato", confirmDeleteWebhook:"Eliminare questo webhook?",
-    noResults:"Nessun risultato trovato", loadingData:"Caricamento dati in corso..."
+    noResults:"Nessun risultato trovato", loadingData:"Caricamento dati in corso...",
+    valueLabel:"Valore"
   },
   en: {
     loginSubtitle:"ADMIN PANEL", emailLabel:"Email", passwordLabel:"Password",
@@ -1415,7 +1417,8 @@ var langData = {
     maintenanceSaved:"Maintenance configuration saved",
     webhookCreated:"Webhook created", webhookUpdated:"Webhook updated",
     webhookDeleted:"Webhook deleted", confirmDeleteWebhook:"Delete this webhook?",
-    noResults:"No results found", loadingData:"Loading data..."
+    noResults:"No results found", loadingData:"Loading data...",
+    valueLabel:"Value"
   }
 };
 
@@ -2037,10 +2040,10 @@ function renderTransazioni() {
   var result = paginate(filtered, currentPage[key], pp);
   var tbody = document.getElementById("transazioniBody");
   tbody.innerHTML = "";
-  result.items.forEach(function(t) {
-    var statoClass = t.stato === "completato" ? "badge-active" : (t.stato === "pending" ? "badge-warning" : "badge-inactive");
-    var tipoClass = t.tipo === "pagamento" ? "badge-info" : (t.tipo === "rimborso" ? "badge-warning" : "badge-inactive");
-    tbody.innerHTML += "<tr><td><code>" + t.id + '</code></td><td>' + t.utente + "</td><td>" + formatCurrency(t.importo) + '</td><td><span class="badge ' + tipoClass + '">' + t.tipo.charAt(0).toUpperCase() + t.tipo.slice(1) + '</span></td><td>' + formatDate(t.data) + '</td><td><span class="badge ' + statoClass + '">' + t.stato.charAt(0).toUpperCase() + t.stato.slice(1) + '</span></td><td><button class="btn btn-secondary btn-xs" onclick="dettaglioTransazione(\'' + t.id + '\')">' + t("detailsLabel") + '</button> <button class="btn btn-danger btn-xs" onclick="reverseTransazione(\'' + t.id + '\')">' + t("reverseBtn") + "</button></td></tr>";
+  result.items.forEach(function(tx) {
+    var statoClass = tx.stato === "completato" ? "badge-active" : (tx.stato === "pending" ? "badge-warning" : "badge-inactive");
+    var tipoClass = tx.tipo === "pagamento" ? "badge-info" : (tx.tipo === "rimborso" ? "badge-warning" : "badge-inactive");
+    tbody.innerHTML += "<tr><td><code>" + tx.id + '</code></td><td>' + tx.utente + "</td><td>" + formatCurrency(tx.importo) + '</td><td><span class="badge ' + tipoClass + '">' + tx.tipo.charAt(0).toUpperCase() + tx.tipo.slice(1) + '</span></td><td>' + formatDate(tx.data) + '</td><td><span class="badge ' + statoClass + '">' + tx.stato.charAt(0).toUpperCase() + tx.stato.slice(1) + '</span></td><td><button class="btn btn-secondary btn-xs" onclick="dettaglioTransazione(\'' + tx.id + '\')">' + t("detailsLabel") + '</button> <button class="btn btn-danger btn-xs" onclick="reverseTransazione(\'' + tx.id + '\')">' + t("reverseBtn") + "</button></td></tr>";
   });
   renderPagination(result.total, currentPage[key], pp, key, "renderTransazioni");
 }
@@ -2054,11 +2057,11 @@ function dettaglioTransazione(id) {
 
 function reverseTransazione(id) {
   if (!confirm(t("reverseTxDesc"))) return;
-  var idx = transazioni.findIndex(function(t){ return t.id === id; });
+  var idx = transazioni.findIndex(function(tx){ return tx.id === id; });
   if (idx === -1) { toast("Transazione non trovata", "error"); return; }
-  var t = transazioni[idx];
-  transazioni.push({id: generateId(), utente: t.utente, importo: t.importo, tipo: "reverse", data: new Date().toISOString().slice(0,10), stato: "completato", dettagli: "Reverse di " + t.id});
-  t.stato = "reverse";
+  var txObj = transazioni[idx];
+  transazioni.push({id: generateId(), utente: txObj.utente, importo: txObj.importo, tipo: "reverse", data: new Date().toISOString().slice(0,10), stato: "completato", dettagli: "Reverse di " + txObj.id});
+  txObj.stato = "reverse";
   logAction("modifica", "Reverse transazione: " + id);
   renderTransazioni(); aggiornaStats();
   toast("Transazione invertita", "success");
@@ -2433,10 +2436,10 @@ function renderTicket() {
   var result = paginate(filtered, currentPage[key], pp);
   var tbody = document.getElementById("ticketBody");
   tbody.innerHTML = "";
-  result.items.forEach(function(t) {
-    var prioritaClass = "badge-" + (t.priorita === "critica" ? "critical" : t.priorita === "alta" ? "high" : t.priorita === "media" ? "medium" : "low");
-    var statoClass = "badge-" + (t.stato === "aperto" ? "open" : t.stato === "in_lavorazione" ? "working" : t.stato === "risolto" ? "resolved" : "closed");
-    tbody.innerHTML += "<tr><td>#" + t.id + '</td><td>' + t.utente + '</td><td>' + t.oggetto + '</td><td><span class="badge ' + prioritaClass + '">' + t.priorita.charAt(0).toUpperCase() + t.priorita.slice(1) + '</span></td><td><span class="badge ' + statoClass + '">' + t.stato.replace("_"," ") + '</span></td><td>' + formatDate(t.data) + '</td><td><button class="btn btn-secondary btn-xs" onclick="apriTicket(' + t.id + ')">' + t("replyLabel") + "</button></td></tr>";
+  result.items.forEach(function(tx) {
+    var prioritaClass = "badge-" + (tx.priorita === "critica" ? "critical" : tx.priorita === "alta" ? "high" : tx.priorita === "media" ? "medium" : "low");
+    var statoClass = "badge-" + (tx.stato === "aperto" ? "open" : tx.stato === "in_lavorazione" ? "working" : tx.stato === "risolto" ? "resolved" : "closed");
+    tbody.innerHTML += "<tr><td>#" + tx.id + '</td><td>' + tx.utente + '</td><td>' + tx.oggetto + '</td><td><span class="badge ' + prioritaClass + '">' + tx.priorita.charAt(0).toUpperCase() + tx.priorita.slice(1) + '</span></td><td><span class="badge ' + statoClass + '">' + tx.stato.replace("_"," ") + '</span></td><td>' + formatDate(tx.data) + '</td><td><button class="btn btn-secondary btn-xs" onclick="apriTicket(' + tx.id + ')">' + t("replyLabel") + "</button></td></tr>";
   });
   renderPagination(result.total, currentPage[key], pp, key, "renderTicket");
   document.getElementById("ticketStatOpen").textContent = ticketList.filter(function(t){ return t.stato === "aperto"; }).length;
@@ -2446,15 +2449,15 @@ function renderTicket() {
 }
 
 function apriTicket(id) {
-  var t = ticketList.find(function(t){ return t.id === id; });
-  if (!t) return;
+  var txObj = ticketList.find(function(t){ return t.id === id; });
+  if (!txObj) return;
   document.getElementById("editTicketId").value = id;
   document.getElementById("formTicketRisposta").value = "";
-  document.getElementById("formTicketStato").value = t.stato;
-  var info = '<div><strong>#' + t.id + "</strong> - " + t.oggetto + '</div><div style="font-size:0.82rem;color:var(--tx2)">' + t("userLabel") + ": " + t.utente + " | " + t("priorityLabel") + ": " + t.priorita + " | " + t("dateLabel") + ": " + formatDate(t.data) + "</div>";
-  if (t.risposte && t.risposte.length > 0) {
+  document.getElementById("formTicketStato").value = txObj.stato;
+  var info = '<div><strong>#' + txObj.id + "</strong> - " + txObj.oggetto + '</div><div style="font-size:0.82rem;color:var(--tx2)">' + t("userLabel") + ": " + txObj.utente + " | " + t("priorityLabel") + ": " + txObj.priorita + " | " + t("dateLabel") + ": " + formatDate(txObj.data) + "</div>";
+  if (txObj.risposte && txObj.risposte.length > 0) {
     info += '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">';
-    t.risposte.forEach(function(r) { info += '<div style="font-size:0.8rem;margin-bottom:4px"><strong>' + r.admin + ":</strong> " + r.testo + ' <span style="color:var(--tx3)">(' + r.data + ")</span></div>"; });
+    txObj.risposte.forEach(function(r) { info += '<div style="font-size:0.8rem;margin-bottom:4px"><strong>' + r.admin + ":</strong> " + r.testo + ' <span style="color:var(--tx3)">(' + r.data + ")</span></div>"; });
     info += "</div>";
   }
   document.getElementById("ticketInfo").innerHTML = info;
@@ -2463,15 +2466,15 @@ function apriTicket(id) {
 
 function salvaRispostaTicket() {
   var id = parseInt(document.getElementById("editTicketId").value);
-  var t = ticketList.find(function(t){ return t.id === id; });
-  if (!t) return;
+  var txObj = ticketList.find(function(t){ return t.id === id; });
+  if (!txObj) return;
   var risposta = document.getElementById("formTicketRisposta").value.trim();
   var nuovoStato = document.getElementById("formTicketStato").value;
   if (risposta) {
-    if (!t.risposte) t.risposte = [];
-    t.risposte.push({admin: "Admin", testo: risposta, data: new Date().toISOString().slice(0,10)});
+    if (!txObj.risposte) txObj.risposte = [];
+    txObj.risposte.push({admin: "Admin", testo: risposta, data: new Date().toISOString().slice(0,10)});
   }
-  t.stato = nuovoStato;
+  txObj.stato = nuovoStato;
   logAction("modifica", "Ticket #" + id + " aggiornato: " + nuovoStato);
   closeModal("modalTicket"); renderTicket();
   toast(t("ticketUpdated"), "success");

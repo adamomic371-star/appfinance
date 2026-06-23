@@ -43,14 +43,14 @@ input,select,textarea{font-family:inherit}
 .auth-tabs{display:flex;border-bottom:1px solid var(--b1);margin:0 2rem}
 .auth-tab{flex:1;padding:0.875rem 0.5rem;text-align:center;font-size:0.85rem;font-weight:600;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.3s}
 .auth-tab:hover{color:var(--tx)}
-.auth-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.auth-tab.active{color:var(--ac);border-bottom-color:var(--ac)}
 .auth-body{padding:1.5rem 2rem 2rem}
 .auth-panel{display:none}
 .auth-panel.active{display:block;animation:slideFadeIn .35s ease both}
 .fg{margin-bottom:1rem}
 .fg label{display:block;font-size:0.78rem;font-weight:600;color:var(--tx2);margin-bottom:6px}
 .fg input{width:100%;padding:12px 16px;background:rgba(24,27,61,0.8);border:1px solid var(--b1);border-radius:10px;color:var(--tx);font-size:0.9rem;transition:border 0.2s,background 0.2s;-webkit-appearance:none}
-.fg input:focus{outline:none;border-color:var(--primary);background:rgba(33,36,80,0.6)}
+.fg input:focus{outline:none;border-color:var(--ac);background:rgba(33,36,80,0.6)}
 .fg input::placeholder{color:var(--tx3)}
 .btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,#EF4444,#06B6D4);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:opacity 0.25s,transform 0.2s,box-shadow 0.25s}
 .btn-auth:hover{opacity:0.92;transform:translateY(-1px);box-shadow:0 4px 20px rgba(239,68,68,0.3)}
@@ -59,12 +59,12 @@ input,select,textarea{font-family:inherit}
 .auth-google:hover{background:rgba(255,255,255,0.1)}
 .auth-sep{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;color:var(--tx3);font-size:0.8rem}
 .auth-sep::before,.auth-sep::after{content:'';flex:1;height:1px;background:var(--b1)}
-.auth-err{color:var(--primary);font-size:0.82rem;margin-top:8px;text-align:center;min-height:20px}
+.auth-err{color:var(--ac);font-size:0.82rem;margin-top:8px;text-align:center;min-height:20px}
 .auth-forgot{text-align:center;margin-top:1rem;font-size:0.85rem}
-.auth-forgot a{color:var(--primary)}
+.auth-forgot a{color:var(--ac)}
 .gdpr-row{display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.75rem;font-size:0.78rem;color:var(--tx2)}
-.gdpr-row input{width:15px;height:15px;accent-color:var(--primary);flex-shrink:0;margin-top:2px}
-.gdpr-row a{color:var(--primary)}
+.gdpr-row input{width:15px;height:15px;accent-color:var(--ac);flex-shrink:0;margin-top:2px}
+.gdpr-row a{color:var(--ac)}
 .reset-desc{font-size:0.85rem;color:var(--tx2);margin-bottom:1rem}
 
 /* APP */
@@ -93,7 +93,7 @@ input,select,textarea{font-family:inherit}
 .ss.coll .ss-chev{transform:rotate(-90deg)}
 .sgp{overflow:hidden;transition:max-height .35s ease}
 .ss.coll+.sgp{max-height:0;overflow:hidden}
-.nfav{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:auto;font-size:.7rem;cursor:pointer;border-radius:4px;transition:all .15s;opacity:0;flex-shrink:0;order:1}.ni:hover .nfav,.ni.nfav-on .nfav{opacity:1}.nfav:hover{background:var(--b1)}.ni.nfav-on .nfav{opacity:1;color:var(--ye)}.ni.nfav-on{color:var(--ye)}#fav-empty{padding:1rem .75rem;font-size:.78rem;color:var(--tx3);text-align:center;display:none}
+.nfav{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:auto;font-size:.7rem;cursor:pointer;border-radius:4px;transition:all .15s;opacity:0;flex-shrink:0;order:1}.ni:hover .nfav,.ni.nfav-on .nfav{opacity:1}.nfav:hover{background:var(--b1)}.ni.nfav-on .nfav{opacity:1;color:var(--ye)}.ni.nfav-on{color:var(--ye)}#fav-empty{padding:1rem .75rem;font-size:.78rem;color:var(--tx3);text-align:center;display:none}.fav-empty-msg{padding:1rem .75rem;font-size:.78rem;color:var(--tx3);text-align:center}
 @media(min-width:769px){.ss{cursor:default}}
 .ni{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;margin:.1rem .5rem;border-radius:var(--rs);color:var(--tx2);font-size:.875rem;font-weight:500;cursor:pointer;transition:all var(--ts2);min-height:42px}
 .ni-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--b1);border-radius:8px;font-size:.85rem;flex-shrink:0;transition:all var(--ts2)}.ni.active .ni-icon{background:rgba(239,68,68,.18)}
@@ -244,7 +244,6 @@ tr:hover td{background:var(--b1)}
   .tpl-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.625rem}
   .auth-box{margin:.5rem}
   .auth-body{padding:1.25rem}
-  .auth-logo{font-size:1.3rem}
   #dash-widgets{gap:.5rem!important}
   [id^=w-]{padding:.875rem!important}
   [id^=w-]>div:first-child{font-size:.6rem!important}
@@ -294,8 +293,7 @@ tr:hover td{background:var(--b1)}
   .bt-label{font-size:.5rem}
   .auth-box{max-width:100%;margin:0}
   .auth-body{padding:1rem}
-  .auth-logo{font-size:1.1rem}
-  .auth-head{padding:1.25rem 1rem}
+
   .auth-tab{font-size:.8rem;padding:.75rem .5rem}
   .fg input{padding:.65rem .75rem;font-size:.85rem}
   .btn-auth{padding:.8rem;font-size:.9rem}
@@ -759,7 +757,7 @@ html{transition:background-color .3s,color .3s}
   <aside id="sidebar">
     <div id="sidebar-groups">
       <div class="ss" onclick="togG(this)">⭐ Preferiti<span class="ss-chev">▼</span></div>
-      <div class="sgp" id="fav-list"><div id="fav-empty">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div></div>
+      <div class="sgp" id="fav-list"><div class="fav-empty-msg">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div></div>
       <div class="ss" onclick="togG(this)">Principale<span class="ss-chev">▼</span></div>
       <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard"><span class="ni-icon">📊</span>Dashboard<span class="nfav" onclick="event.stopPropagation();toggleFav('dashboard')">☆</span></div>
       <div class="ni" onclick="showView('transactions')" id="nav-transactions"><span class="ni-icon">💸</span>Transazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('transactions')">☆</span></div>
@@ -1868,7 +1866,7 @@ async function loadProfile(u){
 }
 
 let _rd=null;
-function scheduleRender(path){
+function scheduleRender(){
   if(_rd)clearTimeout(_rd);
   _rd=setTimeout(()=>{
     _rd=null;
@@ -1913,30 +1911,30 @@ function subscribeData(){
       S[p]=Object.entries(raw).map(([id,v])=>({id,...v}));
       if(p==='transactions')S[p].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
       _dataReady[p]=true;
-      scheduleRender(p);
+      scheduleRender();
     });
   });
-  db.ref(`users/${UID}/budgets`).on('value',snap=>{S.budgets=snap.val()||{};scheduleRender('budgets');});
+  db.ref(`users/${UID}/budgets`).on('value',snap=>{S.budgets=snap.val()||{};scheduleRender();});
   const groupListeners={};
   db.ref(`users/${UID}/groups`).on('value',snap=>{
     const gids=snap.val()?Object.keys(snap.val()):[];
     // Detach listeners for removed groups
     Object.keys(groupListeners).forEach(gid=>{if(!gids.includes(gid)){groupListeners[gid]();delete groupListeners[gid];delete S.groups[gid];}});
-    if(!gids.length){scheduleRender('groups');return;}
+    if(!gids.length){scheduleRender();return;}
     let loaded=0;
     gids.forEach(gid=>{
       if(!groupListeners[gid]){
-        groupListeners[gid]=db.ref(`groups/${gid}`).on('value',s=>{const g=s.val();if(g){S.groups[gid]=g;}else{delete S.groups[gid];}scheduleRender('groups');});
+        groupListeners[gid]=db.ref(`groups/${gid}`).on('value',s=>{const g=s.val();if(g){S.groups[gid]=g;}else{delete S.groups[gid];}scheduleRender();});
       }
-      loaded++;if(loaded===gids.length&&!S.groups)scheduleRender('groups');
+      loaded++;if(loaded===gids.length&&!S.groups)scheduleRender();
     });
   });
   db.ref(`users/${UID}/projects`).on('value',snap=>{
     const raw=snap.val()||{};
     S.projects=Object.entries(raw).map(([id,v])=>({id,...v}));
-    scheduleRender('projects');
+    scheduleRender();
   });
-  db.ref(`users/${UID}/categories`).on('value',snap=>{const raw=snap.val()||{};S.categories=Object.entries(raw).map(([id,v])=>({id,...v}));scheduleRender('categories');});
+  db.ref(`users/${UID}/categories`).on('value',snap=>{const raw=snap.val()||{};S.categories=Object.entries(raw).map(([id,v])=>({id,...v}));scheduleRender();});
   db.ref(`users/${UID}/invoiceTemplates`).on('value',snap=>{const raw=snap.val()||{};S.invoiceTemplates=Object.entries(raw).map(([id,v])=>({id,...v}));});
   const sgListeners={};
   db.ref(`users/${UID}/sharedGoals`).on('value',snap=>{
@@ -1944,10 +1942,10 @@ function subscribeData(){
     const gids=Object.keys(raw);
     // Detach listeners for removed shared goals
     Object.keys(sgListeners).forEach(gid=>{if(!gids.includes(gid)){sgListeners[gid]();delete sgListeners[gid];delete S.sharedGoals[gid];}});
-    if(!gids.length){scheduleRender('sharedGoals');return;}
+    if(!gids.length){scheduleRender();return;}
     gids.forEach(gid=>{
       if(!sgListeners[gid]){
-        sgListeners[gid]=db.ref(`sharedGoals/${gid}`).on('value',s=>{const g=s.val();if(g)S.sharedGoals[gid]=g;else delete S.sharedGoals[gid];scheduleRender('sharedGoals');});
+        sgListeners[gid]=db.ref(`sharedGoals/${gid}`).on('value',s=>{const g=s.val();if(g)S.sharedGoals[gid]=g;else delete S.sharedGoals[gid];scheduleRender();});
       }
     });
   });
@@ -1955,7 +1953,7 @@ function subscribeData(){
     db.ref(`users/${UID}/${p}`).on('value',snap=>{
       const raw=snap.val();
       S[p]=Array.isArray(raw)?raw:(raw?Object.values(raw):[]);
-      scheduleRender(p);
+      scheduleRender();
     });
   });
 }
@@ -1979,18 +1977,7 @@ function authRipple(e){
   btn.appendChild(span);
   setTimeout(()=>span.remove(),600);
 }
-function initAuthParticles(){
-  const c=document.getElementById('auth-particles');
-  if(!c||c.children.length)return;
-  const colors=['rgba(239,68,68,.4)','rgba(6,182,212,.3)','rgba(239,68,68,.2)','rgba(251,191,36,.2)'];
-  for(let i=0;i<30;i++){
-    const s=document.createElement('span');
-    const size=3+Math.random()*5;
-    s.style.cssText=`--s:${size}px;--c:${colors[i%colors.length]};left:${Math.random()*100}%;--d:${8+Math.random()*12}s;--dd:${Math.random()*10}s;--dx:${-40+Math.random()*80}px;--o:${.2+Math.random()*.3}`;
-    c.appendChild(s);
-  }
-}
-setTimeout(initAuthParticles,100);
+
 
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim();
@@ -2192,7 +2179,7 @@ function renderFavs(){
   const c=document.getElementById('fav-list');
   if(!c)return;
   const f=getFavs();
-  if(!f.length){c.innerHTML='<div id="fav-empty">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div>';return;}
+  if(!f.length){c.innerHTML='<div class="fav-empty-msg">Nessun preferito.<br>⭐ clicca la stella accanto a una voce</div>';return;}
   c.innerHTML=f.map(n=>{
     const nav=document.getElementById('nav-'+n);
     if(!nav)return '';
@@ -2461,11 +2448,9 @@ async function deleteSelectedTx(){
       balDeltas[t.account]=(balDeltas[t.account]||0)+delta;
     }
   });
-  Object.entries(balDeltas).forEach(function(e){
-    var acc=S.accounts.find(function(a){return a.id===e[0]});
-    if(acc)ops['accounts/'+e[0]+'/balance']=N(acc.balance)+e[1];
-  });
-  try{await db.ref(`users/${UID}`).update(ops);selectedTx.clear();toast('Eliminate','ok');}catch(e){toast('Errore','err');}
+  try{await db.ref(`users/${UID}`).update(ops);}catch(e){toast('Errore','err');return;}
+  for(const e of Object.entries(balDeltas)){if(e[1])await updateBal(e[0],e[1]>0?'expense':'income',Math.abs(e[1]));}
+  selectedTx.clear();toast('Eliminate','ok');
 }
 function updateMdelBtn(){
   const btn=document.getElementById('btn-mdel');

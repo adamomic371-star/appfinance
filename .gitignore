@@ -3,3 +3,15 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+*.apk
+*.aab
+build/
+.pub-cache/
+.dart_tool/
+.packages
+pubspec.lock
+*.iml
+.idea/
+.vscode/
+*.swp
+*.swo

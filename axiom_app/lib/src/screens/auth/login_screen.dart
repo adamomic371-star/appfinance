@@ -40,6 +40,18 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (mounted) setState(() => _loading = false);
   }
 
+  Future<void> _signInWithGoogle() async {
+    setState(() => _loading = true);
+    final provider = context.read<AuthProvider>();
+    final success = await provider.signInWithGoogle();
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(provider.error ?? 'Errore Google Sign-In')),
+      );
+    }
+    if (mounted) setState(() => _loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,6 +144,34 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                             : const Text('Accedi',
                                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        const Expanded(child: Divider(color: Colors.white12)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text('oppure', style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+                        ),
+                        const Expanded(child: Divider(color: Colors.white12)),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity, height: 50,
+                      child: OutlinedButton.icon(
+                        onPressed: _loading ? null : _signInWithGoogle,
+                        icon: const Icon(Icons.g_mobiledata, size: 24),
+                        label: const Text('Continua con Google',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Colors.grey[600]!),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),

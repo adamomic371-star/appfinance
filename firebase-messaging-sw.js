@@ -1,3 +1,4 @@
+// Sviluppato da Adamo Michele
 importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
 const config={apiKey:"AIzaSyCMPawrAL5tT_bH6YEcNe_UEEyIwLIgHIQ",authDomain:"financeapp-556ae.firebaseapp.com",databaseURL:"https://financeapp-556ae-default-rtdb.europe-west1.firebasedatabase.app",projectId:"financeapp-556ae",storageBucket:"financeapp-556ae.firebasestorage.app",messagingSenderId:"181987533980",appId:"1:181987533980:web:41c5032990ccede17eb959"};

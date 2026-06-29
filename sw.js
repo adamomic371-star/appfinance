@@ -1,4 +1,4 @@
-// Codice sviluppato da Adamo Michele
+// Sviluppato da Adamo Michele
 const CACHE = 'axiom-v11';
 const BASE = self.registration.scope;
 

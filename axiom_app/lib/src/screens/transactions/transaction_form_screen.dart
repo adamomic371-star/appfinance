@@ -10,7 +10,8 @@ import '../../widgets/amount_text.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   final TransactionModel? transaction;
-  const TransactionFormScreen({super.key, this.transaction});
+  final bool fromNotification;
+  const TransactionFormScreen({super.key, this.transaction, this.fromNotification = false});
 
   @override
   State<TransactionFormScreen> createState() => _TransactionFormScreenState();
@@ -101,6 +102,23 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            if (widget.fromNotification)
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.notifications, size: 16, color: AppTheme.primary),
+                    const SizedBox(width: 8),
+                    Text('Rilevata da notifica bancaria',
+                      style: const TextStyle(fontSize: 12, color: AppTheme.primary)),
+                  ],
+                ),
+              ),
             Row(
               children: [
                 Expanded(child: _TypeButton('expense', 'Uscita', Icons.arrow_downward, AppTheme.primary)),

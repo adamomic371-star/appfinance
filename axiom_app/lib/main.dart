@@ -8,6 +8,7 @@ import 'src/providers/account_provider.dart';
 import 'src/providers/category_provider.dart';
 import 'src/providers/budget_provider.dart';
 import 'src/providers/settings_provider.dart';
+import 'src/providers/detected_transaction_provider.dart';
 import 'app.dart';
 
 void main() async {
@@ -30,6 +31,7 @@ class AxiomAppProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => BudgetProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()..load()),
+        ChangeNotifierProvider(create: (_) => DetectedTransactionProvider()),
       ],
       child: AxiomApp(),
     );

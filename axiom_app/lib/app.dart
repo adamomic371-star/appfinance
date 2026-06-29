@@ -16,6 +16,7 @@ import 'src/screens/home/dashboard_screen.dart';
 import 'src/screens/transactions/transaction_list_screen.dart';
 import 'src/screens/transactions/transaction_form_screen.dart';
 import 'src/screens/profile/profile_screen.dart';
+import 'src/screens/notifications/notifications_screen.dart';
 import 'src/models/transaction.dart';
 
 class AxiomApp extends StatelessWidget {
@@ -51,6 +52,7 @@ class AxiomApp extends StatelessWidget {
         routes: [
           GoRoute(path: '/', builder: (_, __) => const DashboardScreen()),
           GoRoute(path: '/transactions', builder: (_, __) => const TransactionListScreen()),
+          GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
         ],
       ),

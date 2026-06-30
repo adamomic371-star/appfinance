@@ -20,44 +20,8 @@ import 'src/screens/notifications/notifications_screen.dart';
 import 'src/models/transaction.dart';
 
 class AxiomApp extends StatelessWidget {
-  AxiomApp({super.key});
-
-  final _router = GoRouter(
-    initialLocation: '/login',
-    redirect: (context, state) {
-      final auth = context.read<AuthProvider>();
-      final loggedIn = auth.isLoggedIn;
-      final path = state.matchedLocation;
-      final onAuthPage = path.startsWith('/login') ||
-          path.startsWith('/register') || path.startsWith('/reset-password');
-
-      if (!loggedIn && !onAuthPage) return '/login';
-      if (loggedIn && onAuthPage) return '/';
-      return null;
-    },
-    routes: [
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-      GoRoute(path: '/reset-password', builder: (_, __) => const ResetPasswordScreen()),
-      GoRoute(
-        path: '/transaction/new',
-        builder: (_, __) => const TransactionFormScreen(),
-      ),
-      GoRoute(
-        path: '/transaction/edit',
-        builder: (_, state) => TransactionFormScreen(transaction: state.extra as TransactionModel?),
-      ),
-      ShellRoute(
-        builder: (_, __, child) => HomeShell(child: child),
-        routes: [
-          GoRoute(path: '/', builder: (_, __) => const DashboardScreen()),
-          GoRoute(path: '/transactions', builder: (_, __) => const TransactionListScreen()),
-          GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
-          GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
-        ],
-      ),
-    ],
-  );
+  final GoRouter router;
+  const AxiomApp({super.key, required this.router});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +32,7 @@ class AxiomApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: settings.themeMode,
-      routerConfig: _router,
+      routerConfig: router,
     );
   }
 }

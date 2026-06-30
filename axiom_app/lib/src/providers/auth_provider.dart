@@ -57,6 +57,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _auth.login(email, password);
+      _loading = false;
+      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
@@ -72,6 +74,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _auth.register(email, password, name);
+      _loading = false;
+      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
@@ -91,6 +95,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _auth.signInWithGoogle();
+      _loading = false;
+      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
@@ -122,7 +128,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   String _mapAuthError(Object e) {
-    final code = (e as FirebaseAuthException).code;
+    if (e is! FirebaseAuthException) return 'Errore di rete o server';
+    final code = e.code;
     switch (code) {
       case 'user-not-found': return 'Utente non trovato';
       case 'wrong-password': return 'Password errata';

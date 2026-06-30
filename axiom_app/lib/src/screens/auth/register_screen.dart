@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 
@@ -44,7 +45,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _passwordController.text,
       _nameController.text.trim(),
     );
-    if (!success && mounted) {
+    if (success && mounted) {
+      context.go('/');
+    } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(provider.error ?? 'Errore registrazione')),
       );

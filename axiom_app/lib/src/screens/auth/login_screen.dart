@@ -4,47 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 
-class _AxiomLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final s = size.width / 108;
-    final bg = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Radius.circular(size.width * 0.22),
-    );
-    canvas.drawRRect(bg, Paint()..color = const Color(0xFF0F172A));
-    final red1 = Paint()
-      ..color = const Color(0xFFEF4444)
-      ..strokeWidth = 6 * s
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final red2 = Paint()
-      ..color = const Color(0xFFDC2626)
-      ..strokeWidth = 6 * s
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final blue1 = Paint()
-      ..color = const Color(0xFF2563EB)
-      ..strokeWidth = 4.5 * s
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final blue2 = Paint()
-      ..color = const Color(0xFF06B6D4)
-      ..strokeWidth = 4.5 * s
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    canvas.drawLine(Offset(cx - 0.24 * size.width, cy + 0.3 * size.height), Offset(cx, cy - 0.3 * size.height), red1);
-    canvas.drawLine(Offset(cx, cy - 0.3 * size.height), Offset(cx + 0.24 * size.width, cy + 0.3 * size.height), red2);
-    canvas.drawLine(Offset(cx - 0.13 * size.width, cy + 0.02 * size.height), Offset(cx + 0.13 * size.width, cy + 0.1 * size.height), blue1);
-    canvas.drawLine(Offset(cx + 0.13 * size.width, cy + 0.02 * size.height), Offset(cx - 0.13 * size.width, cy + 0.1 * size.height), blue2);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -118,11 +77,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    Container(
                       width: 80, height: 80,
-                      child: CustomPaint(
-                        painter: _AxiomLogoPainter(),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.primary, AppTheme.secondary],
+                        ),
                       ),
+                      child: const Icon(Icons.account_balance, color: Colors.white, size: 40),
                     ),
                     const SizedBox(height: 24),
                     Text(

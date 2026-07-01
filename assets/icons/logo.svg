@@ -2,5 +2,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#0F1130"/>
   <circle cx="32" cy="32" r="26" fill="#EF4444"/>
-  <text x="32" y="44" font-family="Arial,sans-serif" font-size="32" font-weight="bold" fill="#FFF" text-anchor="middle">A</text>
+  <path fill="#FFF" fill-rule="evenodd" d="M32,18 L48,54 L16,54 Z M32,32 L38,46 L26,46 Z"/>
 </svg>

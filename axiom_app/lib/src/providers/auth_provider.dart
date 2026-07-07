@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart' as app;
@@ -30,8 +31,13 @@ class AuthProvider extends ChangeNotifier {
       return;
     }
     try {
-      final data = await _db.get('users/${firebaseUser.uid}');
-      if (data != null) {
+      var data = await _db.get('users/${firebaseUser.uid}/profile')
+          .timeout(const Duration(seconds: 10));
+      if (data == null) {
+        data = await _db.get('users/${firebaseUser.uid}')
+            .timeout(const Duration(seconds: 10));
+      }
+      if (data != null && data['email'] != null) {
         _user = app.UserModel.fromMap(firebaseUser.uid, data);
       } else {
         _user = app.UserModel(

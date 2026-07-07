@@ -17,11 +17,12 @@ class AuthService {
   Future<UserCredential> register(String email, String password, String name) async {
     final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     await cred.user?.updateDisplayName(name);
-    await _db.child('users/${cred.user!.uid}').set({
-      'id': cred.user!.uid,
+    await _db.child('users/${cred.user!.uid}/profile').set({
+      'uid': cred.user!.uid,
       'email': email,
       'name': name,
-      'plan': 'Free',
+      'plan': 'free',
+      'role': 'user',
       'currency': 'EUR',
       'theme': 'dark',
       'createdAt': DateTime.now().toIso8601String(),
@@ -39,12 +40,13 @@ class AuthService {
     );
     final userCred = await _auth.signInWithCredential(credential);
     if (userCred.additionalUserInfo?.isNewUser == true) {
-      await _db.child('users/${userCred.user!.uid}').set({
-        'id': userCred.user!.uid,
+      await _db.child('users/${userCred.user!.uid}/profile').set({
+        'uid': userCred.user!.uid,
         'email': userCred.user!.email,
         'name': userCred.user!.displayName ?? 'Utente Google',
         'photoUrl': userCred.user!.photoURL,
-        'plan': 'Free',
+        'plan': 'free',
+        'role': 'user',
         'currency': 'EUR',
         'theme': 'dark',
         'createdAt': DateTime.now().toIso8601String(),

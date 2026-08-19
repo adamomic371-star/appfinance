@@ -1,4 +1,4 @@
-﻿<!-- Codice sviluppato da Adamo Michele Â· v1.0 -->
+﻿<!-- Codice sviluppato da Adamo Michele � v1.0 -->
 <!-- Sviluppato da Adamo Michele -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark" data-mode="personal">
@@ -24,7 +24,7 @@
 
 <!-- COOKIE BANNER -->
 <div id="app-cookie-banner" style="position:fixed;bottom:1rem;left:1rem;right:1rem;max-width:520px;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:1.1rem 1.25rem;z-index:8000;box-shadow:0 8px 40px rgba(0,0,0,.5);display:none;margin-bottom:env(safe-area-inset-bottom,0px)">
-  <div style="font-size:.875rem;font-weight:700;margin-bottom:.35rem">ðŸª Cookie e Privacy</div>
+  <div style="font-size:.875rem;font-weight:700;margin-bottom:.35rem">�� Cookie e Privacy</div>
   <div style="font-size:.78rem;color:var(--tx2);margin-bottom:.875rem">Utilizziamo cookie tecnici essenziali per il funzionamento dell'app. <a href="../privacy.html" target="_blank" style="color:var(--ac)">Privacy Policy</a></div>
   <div style="display:flex;gap:.5rem">
     <button onclick="acceptAppCookies()" style="flex:1;padding:.6rem;background:var(--grad);color:#fff;border:none;border-radius:var(--rs);font-weight:700;font-size:.82rem;cursor:pointer">Accetta</button>
@@ -60,7 +60,7 @@
         </button>
         <div class="auth-sep">oppure</div>
         <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="la.tua@email.com" autocomplete="email"></div>
-        <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="��������" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
         <button class="btn-auth" id="btn-login" onclick="doLogin()">Accedi</button>
         <div class="auth-err" id="login-err"></div>
         <div class="auth-forgot"><a href="#" onclick="switchTab('reset');return false;">Password dimenticata?</a></div>
@@ -89,26 +89,26 @@
 <!-- BOOT LOADER -->
   <div id="boot-loader" style="display:flex;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:1rem">
     <svg width="56" height="56" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#0F1130"/><circle cx="24" cy="24" r="19" fill="#EF4444"/><path fill="#FFF" fill-rule="evenodd" d="M24,14 L36,40 L12,40 Z M24,24 L28,34 L20,34 Z"/></svg>
-    <div style="font-family:'Syne',sans-serif;font-size:.9rem;color:var(--tx2)">Caricamentoâ€¦</div>
+    <div style="font-family:'Syne',sans-serif;font-size:.9rem;color:var(--tx2)">Caricamento�</div>
   </div>
 
 <!-- APP SHELL -->
 <div id="app">
   <nav id="nav">
-    <button class="nav-tog" onclick="toggleSidebar()">â˜°</button>
+    <button class="nav-tog" onclick="toggleSidebar()">☰</button>
     <div class="nav-logo"><svg width="18" height="18" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#0F1130"/><circle cx="24" cy="24" r="19" fill="#EF4444"/><path fill="#FFF" fill-rule="evenodd" d="M24,14 L36,40 L12,40 Z M24,24 L28,34 L20,34 Z"/></svg>Axiom</div>
     <div class="mode-sw">
-      <div class="mode-btn ap" id="mb-p" onclick="setMode('personal')">ðŸ‘¤ Personal</div>
-      <div class="mode-btn" id="mb-b" onclick="setMode('business')">ðŸ’¼ Business</div>
+      <div class="mode-btn ap" id="mb-p" onclick="setMode('personal')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Personal</div>
+      <div class="mode-btn" id="mb-b" onclick="setMode('business')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg> Business</div>
     </div>
     <div class="nav-search">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input type="text" placeholder="Cerca..." id="search-input" oninput="filterTx()">
     </div>
     <div class="nav-acts">
-      <button class="nav-btn mob-srch-btn" onclick="toggleSearch()" title="Cerca">ðŸ”</button>
-      <button class="nav-btn" onclick="toggleTheme()" id="theme-btn">ðŸŒ™</button>
-      <button class="nav-btn" onclick="showView('notifications')">ðŸ””<div class="nb" id="notif-badge">0</div></button>
+      <button class="nav-btn mob-srch-btn" onclick="toggleSearch()" title="Cerca">�</button>
+      <button class="nav-btn" onclick="toggleTheme()" id="theme-btn"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <button class="nav-btn" onclick="showView('notifications')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="nb" id="notif-badge">0</div></button>
       <div class="uav" id="nav-av" onclick="showView('profile')"><svg viewBox="0 0 32 32" width="18" height="18" fill="none"><line x1="5" y1="5" x2="16" y2="16" stroke="#EF4444" stroke-width="3.5" stroke-linecap="round"/><line x1="27" y1="5" x2="16" y2="16" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/><line x1="5" y1="27" x2="27" y2="5" stroke="#2563EB" stroke-width="3.5" stroke-linecap="round"/></svg></div>
       <div id="sync-dot" class="sync-ok" title="Connesso"></div>
     </div>
@@ -125,49 +125,49 @@
   <div class="s-ov" id="s-ov" onclick="toggleSidebar()"></div>
   <aside id="sidebar">
     <div id="sidebar-groups">
-      <div class="ss" onclick="togG(this)">â­ Preferiti<span class="ss-chev">â–¼</span></div>
-      <div class="sgp" id="fav-list"><div class="fav-empty-msg">Nessun preferito.<br>â­ clicca la stella accanto a una voce</div></div>
-      <div class="ss" onclick="togG(this)">Principale<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Dashboard<span class="nfav" onclick="event.stopPropagation();toggleFav('dashboard')">â˜†</span></div>
-      <div class="ni" onclick="showView('transactions')" id="nav-transactions"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Transazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('transactions')">â˜†</span></div>
-      <div class="ni" onclick="showView('accounts')" id="nav-accounts"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Conti & Carte<span class="nfav" onclick="event.stopPropagation();toggleFav('accounts')">â˜†</span></div>
-      <div class="ni" onclick="showView('transfer')" id="nav-transfer"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 2 21 6 17 10"/><polyline points="7 2 7 6 21 6"/><polyline points="7 22 3 18 7 14"/><polyline points="17 22 17 18 3 18"/></svg></span>Trasferimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('transfer')">â˜†</span></div></div>
-      <div class="ss" onclick="togG(this)">Pianificazione<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('budget')" id="nav-budget"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Budget<span class="nfav" onclick="event.stopPropagation();toggleFav('budget')">â˜†</span></div>
-      <div class="ni" onclick="showView('categories')" id="nav-categories"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>Categorie<span class="nfav" onclick="event.stopPropagation();toggleFav('categories')">â˜†</span></div>
-      <div class="ni" onclick="showView('goals')" id="nav-goals"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>Obiettivi<span class="nfav" onclick="event.stopPropagation();toggleFav('goals')">â˜†</span></div>
-      <div class="ni" onclick="showView('calendar')" id="nav-calendar"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Scadenzario<span class="nfav" onclick="event.stopPropagation();toggleFav('calendar')">â˜†</span></div>
-      <div class="ni" onclick="showView('recurring')" id="nav-recurring"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>Ricorrenti<span class="nfav" onclick="event.stopPropagation();toggleFav('recurring')">â˜†</span></div>
-      <div class="ni" onclick="showView('debts')" id="nav-debts"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/><line x1="5" y1="16" x2="9" y2="16"/><line x1="11" y1="16" x2="13" y2="16"/></svg></span>Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debts')">â˜†</span></div>
-      <div class="ni" onclick="showView('freemoney')" id="nav-freemoney"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Soldi Liberi<span class="nfav" onclick="event.stopPropagation();toggleFav('freemoney')">â˜†</span></div></div>
-      <div class="ss" onclick="togG(this)">Social<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('groups')" id="nav-groups"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Gruppi & Chat<span class="nfav" onclick="event.stopPropagation();toggleFav('groups')">â˜†</span></div>
-      <div class="ni" onclick="showView('sharedgoals')" id="nav-sharedgoals"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Obiettivi Condivisi<span class="nfav" onclick="event.stopPropagation();toggleFav('sharedgoals')">â˜†</span></div></div>
-      <div class="ss b-only" onclick="togG(this)">Business<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni b-only" onclick="showView('invoices')" id="nav-invoices"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Fatture<span class="nfav" onclick="event.stopPropagation();toggleFav('invoices')">â˜†</span></div>
-      <div class="ni b-only" onclick="showView('quotes')" id="nav-quotes"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Preventivi<span class="nfav" onclick="event.stopPropagation();toggleFav('quotes')">â˜†</span></div>
-      <div class="ni b-only" onclick="showView('suppliers')" id="nav-suppliers"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="15" y2="18"/></svg></span>Fornitori<span class="nfav" onclick="event.stopPropagation();toggleFav('suppliers')">â˜†</span></div>
-      <div class="ni b-only" onclick="showView('primanota')" id="nav-primanota"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></span>Prima Nota<span class="nfav" onclick="event.stopPropagation();toggleFav('primanota')">â˜†</span></div>
-      <div class="ni b-only" onclick="showView('taxcalc')" id="nav-taxcalc"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>Regime Fiscale<span class="nfav" onclick="event.stopPropagation();toggleFav('taxcalc')">â˜†</span></div>
-      <div class="ni b-only" onclick="showView('travel')" id="nav-travel"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 8h4l1-4 3 3 4 1-1.2-2.8z"/></svg></span>Viaggi<span class="nfav" onclick="event.stopPropagation();toggleFav('travel')">â˜†</span></div></div>
-      <div class="ss coll" onclick="togG(this)">Analisi<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('reports')" id="nav-reports"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>Report<span class="nfav" onclick="event.stopPropagation();toggleFav('reports')">â˜†</span></div>
-      <div class="ni" onclick="showView('score')" id="nav-score"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Score Finanziario<span class="nfav" onclick="event.stopPropagation();toggleFav('score')">â˜†</span></div>
-      <div class="ni" onclick="showView('portfolio')" id="nav-portfolio"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>Portafoglio Investimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('portfolio')">â˜†</span></div>
-      <div class="ni" onclick="showView('networth')" id="nav-networth"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 7l10 15L22 7"/></svg></span>Net Worth<span class="nfav" onclick="event.stopPropagation();toggleFav('networth')">â˜†</span></div>
-      <div class="ni" onclick="showView('cashflow')" id="nav-cashflow"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Cashflow Proiettato<span class="nfav" onclick="event.stopPropagation();toggleFav('cashflow')">â˜†</span></div>
-      <div class="ni" onclick="showView('monthly')" id="nav-monthly"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="8 14 10 16 14 12"/></svg></span>Spese Mensili<span class="nfav" onclick="event.stopPropagation();toggleFav('monthly')">â˜†</span></div></div>
-      <div class="ss coll" onclick="togG(this)">Strategie & Lungo Termine<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('projects')" id="nav-projects"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>Progetti<span class="nfav" onclick="event.stopPropagation();toggleFav('projects')">â˜†</span></div>
-      <div class="ni" onclick="showView('debtstrategy')" id="nav-debtstrategy"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>Strategia Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debtstrategy')">â˜†</span></div>
-      <div class="ni" onclick="showView('pension')" id="nav-pension"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>Pensione<span class="nfav" onclick="event.stopPropagation();toggleFav('pension')">â˜†</span></div>
-      <div class="ni" onclick="showView('insurance')" id="nav-insurance"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Assicurazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('insurance')">â˜†</span></div></div>
-      <div class="ss" onclick="togG(this)">Account<span class="ss-chev">â–¼</span></div>
-      <div class="sgp"><div class="ni" onclick="showView('notifications')" id="nav-notifications"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Notifiche<span class="nfav" onclick="event.stopPropagation();toggleFav('notifications')">â˜†</span></div>
-      <div class="ni" onclick="showView('referral')" id="nav-referral"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C9 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C15 2 12 7 12 7z"/></svg></span>Referral<span class="nfav" onclick="event.stopPropagation();toggleFav('referral')">â˜†</span></div>
-      <div class="ni" onclick="showView('profile')" id="nav-profile"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profilo<span class="nfav" onclick="event.stopPropagation();toggleFav('profile')">â˜†</span></div>
-      <div class="ni" onclick="showView('settings')" id="nav-settings"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Impostazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('settings')">â˜†</span></div>
-      <div class="ni" onclick="showView('admin')" id="nav-admin" style="display:none"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Admin<span class="nfav" onclick="event.stopPropagation();toggleFav('admin')">â˜†</span></div></div>
+      <div class="ss" onclick="togG(this)">� Preferiti<span class="ss-chev">▼</span></div>
+      <div class="sgp" id="fav-list"><div class="fav-empty-msg">Nessun preferito.<br>� clicca la stella accanto a una voce</div></div>
+      <div class="ss" onclick="togG(this)">Principale<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni active" onclick="showView('dashboard')" id="nav-dashboard"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Dashboard<span class="nfav" onclick="event.stopPropagation();toggleFav('dashboard')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('transactions')" id="nav-transactions"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Transazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('transactions')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('accounts')" id="nav-accounts"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Conti & Carte<span class="nfav" onclick="event.stopPropagation();toggleFav('accounts')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('transfer')" id="nav-transfer"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 2 21 6 17 10"/><polyline points="7 2 7 6 21 6"/><polyline points="7 22 3 18 7 14"/><polyline points="17 22 17 18 3 18"/></svg></span>Trasferimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('transfer')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
+      <div class="ss" onclick="togG(this)">Pianificazione<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('budget')" id="nav-budget"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Budget<span class="nfav" onclick="event.stopPropagation();toggleFav('budget')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('categories')" id="nav-categories"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>Categorie<span class="nfav" onclick="event.stopPropagation();toggleFav('categories')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('goals')" id="nav-goals"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>Obiettivi<span class="nfav" onclick="event.stopPropagation();toggleFav('goals')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('calendar')" id="nav-calendar"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Scadenzario<span class="nfav" onclick="event.stopPropagation();toggleFav('calendar')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('recurring')" id="nav-recurring"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>Ricorrenti<span class="nfav" onclick="event.stopPropagation();toggleFav('recurring')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('debts')" id="nav-debts"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/><line x1="5" y1="16" x2="9" y2="16"/><line x1="11" y1="16" x2="13" y2="16"/></svg></span>Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debts')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('freemoney')" id="nav-freemoney"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Soldi Liberi<span class="nfav" onclick="event.stopPropagation();toggleFav('freemoney')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
+      <div class="ss" onclick="togG(this)">Social<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('groups')" id="nav-groups"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Gruppi & Chat<span class="nfav" onclick="event.stopPropagation();toggleFav('groups')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('sharedgoals')" id="nav-sharedgoals"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Obiettivi Condivisi<span class="nfav" onclick="event.stopPropagation();toggleFav('sharedgoals')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
+      <div class="ss b-only" onclick="togG(this)">Business<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni b-only" onclick="showView('invoices')" id="nav-invoices"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Fatture<span class="nfav" onclick="event.stopPropagation();toggleFav('invoices')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni b-only" onclick="showView('quotes')" id="nav-quotes"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Preventivi<span class="nfav" onclick="event.stopPropagation();toggleFav('quotes')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni b-only" onclick="showView('suppliers')" id="nav-suppliers"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="15" y2="18"/></svg></span>Fornitori<span class="nfav" onclick="event.stopPropagation();toggleFav('suppliers')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni b-only" onclick="showView('primanota')" id="nav-primanota"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></span>Prima Nota<span class="nfav" onclick="event.stopPropagation();toggleFav('primanota')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni b-only" onclick="showView('taxcalc')" id="nav-taxcalc"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>Regime Fiscale<span class="nfav" onclick="event.stopPropagation();toggleFav('taxcalc')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni b-only" onclick="showView('travel')" id="nav-travel"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 8h4l1-4 3 3 4 1-1.2-2.8z"/></svg></span>Viaggi<span class="nfav" onclick="event.stopPropagation();toggleFav('travel')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
+      <div class="ss coll" onclick="togG(this)">Analisi<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('reports')" id="nav-reports"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>Report<span class="nfav" onclick="event.stopPropagation();toggleFav('reports')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('score')" id="nav-score"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Score Finanziario<span class="nfav" onclick="event.stopPropagation();toggleFav('score')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('portfolio')" id="nav-portfolio"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>Portafoglio Investimenti<span class="nfav" onclick="event.stopPropagation();toggleFav('portfolio')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('networth')" id="nav-networth"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 7l10 15L22 7"/></svg></span>Net Worth<span class="nfav" onclick="event.stopPropagation();toggleFav('networth')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('cashflow')" id="nav-cashflow"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Cashflow Proiettato<span class="nfav" onclick="event.stopPropagation();toggleFav('cashflow')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('monthly')" id="nav-monthly"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="8 14 10 16 14 12"/></svg></span>Spese Mensili<span class="nfav" onclick="event.stopPropagation();toggleFav('monthly')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
+      <div class="ss coll" onclick="togG(this)">Strategie & Lungo Termine<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('projects')" id="nav-projects"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>Progetti<span class="nfav" onclick="event.stopPropagation();toggleFav('projects')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('debtstrategy')" id="nav-debtstrategy"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>Strategia Debiti<span class="nfav" onclick="event.stopPropagation();toggleFav('debtstrategy')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('pension')" id="nav-pension"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>Pensione<span class="nfav" onclick="event.stopPropagation();toggleFav('pension')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('insurance')" id="nav-insurance"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Assicurazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('insurance')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
+      <div class="ss" onclick="togG(this)">Account<span class="ss-chev">▼</span></div>
+      <div class="sgp"><div class="ni" onclick="showView('notifications')" id="nav-notifications"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Notifiche<span class="nfav" onclick="event.stopPropagation();toggleFav('notifications')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('referral')" id="nav-referral"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C9 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C15 2 12 7 12 7z"/></svg></span>Referral<span class="nfav" onclick="event.stopPropagation();toggleFav('referral')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('profile')" id="nav-profile"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profilo<span class="nfav" onclick="event.stopPropagation();toggleFav('profile')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('settings')" id="nav-settings"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Impostazioni<span class="nfav" onclick="event.stopPropagation();toggleFav('settings')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="ni" onclick="showView('admin')" id="nav-admin" style="display:none"><span class="ni-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Admin<span class="nfav" onclick="event.stopPropagation();toggleFav('admin')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div></div>
     </div>
     <div class="sb-bot">
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
@@ -185,7 +185,7 @@
   <div id="search-overlay">
     <div class="srch-row">
       <input type="text" placeholder="Cerca transazioni, conti..." id="mobile-search-input" oninput="filterTx()" autocomplete="off">
-      <div class="srch-close" onclick="toggleSearch()">âœ•</div>
+      <div class="srch-close" onclick="toggleSearch()">✕</div>
     </div>
   </div>
   <button class="fab" id="fab-btn" onclick="toggleFabMenu()" title="Aggiungi rapido">+</button>
@@ -200,9 +200,9 @@
       <div id="glob-results" style="max-height:60vh;overflow-y:auto"></div>
     </div>
   </div>
-  <div id="pwa-banner"><div style="display:flex;align-items:flex-start;gap:.5rem"><div style="flex:1;font-size:.85rem;font-weight:600">ðŸ“² Installa Axiom sul tuo dispositivo</div><button onclick="dismissPWA()" style="background:none;border:none;color:var(--tx3);font-size:1.2rem;cursor:pointer;padding:2px;line-height:1;flex-shrink:0" aria-label="Chiudi">âœ•</button></div><div class="pwa-btns"><button style="background:var(--grad);color:#fff" onclick="installPWA()" aria-label="Installa app">Installa</button><button style="background:var(--bg3);color:var(--tx2);border:1px solid var(--b2)" onclick="dismissPWA()" aria-label="PiÃ¹ tardi">PiÃ¹ tardi</button></div></div>
+  <div id="pwa-banner"><div style="display:flex;align-items:flex-start;gap:.5rem"><div style="flex:1;font-size:.85rem;font-weight:600"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg> Installa Axiom sul tuo dispositivo</div><button onclick="dismissPWA()" style="background:none;border:none;color:var(--tx3);font-size:1.2rem;cursor:pointer;padding:2px;line-height:1;flex-shrink:0" aria-label="Chiudi">✕</button></div><div class="pwa-btns"><button style="background:var(--grad);color:#fff" onclick="installPWA()" aria-label="Installa app">Installa</button><button style="background:var(--bg3);color:var(--tx2);border:1px solid var(--b2)" onclick="dismissPWA()" aria-label="Pi� tardi">Pi� tardi</button></div></div>
   <main id="mc">
-    <div class="view" id="view-admin"><div class="page-hd"><div><div class="pt">Pannello Admin</div><div class="ps" id="adm-subtitle">Gestione utenti e piattaforma</div></div><button class="btn bp" onclick="exportAllBackup()">ðŸ“¦ Backup DB</button></div><div class="adm-s" id="adm-kpi"></div><input class="adm-srch" id="adm-search" placeholder="Cerca per nome, email, ruolo..." oninput="renderAdmin()"><div id="adm-table-wrap" class="tw" style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Note</th><th></th></tr></thead><tbody id="adm-tbody"></tbody></table></div></div>
+    <div class="view" id="view-admin"><div class="page-hd"><div><div class="pt">Pannello Admin</div><div class="ps" id="adm-subtitle">Gestione utenti e piattaforma</div></div><button class="btn bp" onclick="exportAllBackup()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Backup DB</button></div><div class="adm-s" id="adm-kpi"></div><input class="adm-srch" id="adm-search" placeholder="Cerca per nome, email, ruolo..." oninput="renderAdmin()"><div id="adm-table-wrap" class="tw" style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Email</th><th>Piano</th><th>Ruolo</th><th>Registrato</th><th>Note</th><th></th></tr></thead><tbody id="adm-tbody"></tbody></table></div></div>
     <div class="view active" id="view-dashboard">
       <div class="page-hd"><div><div class="pt" id="dash-greet">Buongiorno!</div><div class="ps" id="dash-date"></div></div><button class="btn bp" onclick="om('modal-tx')">+ Transazione</button></div>
       <!-- SKELETON LOADING -->
@@ -224,13 +224,13 @@
       <!-- WIDGET ROW -->
       <div style="display:none;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem" id="dash-widgets">
         <div class="premium-card glass-card glow-gr" style="padding:1rem;cursor:pointer" onclick="showView('freemoney')">
-          <div class="wig-title" style="color:var(--gr)">ðŸ’° Soldi Liberi</div>
-          <div class="wig-val sv-glow-gr" style="color:var(--gr)" id="w-freemoney">â€”</div>
+          <div class="wig-title" style="color:var(--gr)"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Soldi Liberi</div>
+          <div class="wig-val sv-glow-gr" style="color:var(--gr)" id="w-freemoney">�</div>
           <div class="wig-sub">disponibili questo mese</div>
         </div>
         <div class="card glass-card glow-or" style="padding:1rem;cursor:pointer" onclick="showView('monthly')">
-          <div class="wig-title" style="color:var(--or)">ðŸ“… Spese Future</div>
-          <div class="wig-val" style="color:var(--or)" id="w-next30">â€”</div>
+          <div class="wig-title" style="color:var(--or)"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Spese Future</div>
+          <div class="wig-val" style="color:var(--or)" id="w-next30">�</div>
           <div class="wig-sub" id="w-next30-sub">spese previste in 30gg</div>
         </div>
       </div>
@@ -246,8 +246,8 @@
         <div class="card"><div class="ct">Categorie</div><div style="position:relative;height:210px"><canvas id="ch-cat"></canvas></div></div>
       </div>
       <div class="g2">
-        <div class="card"><div class="ct">Conti</div><div id="dash-acc"></div><button class="btn bs bsm" style="margin-top:.75rem;width:100%" onclick="showView('accounts')">Gestisci â†’</button></div>
-        <div class="card"><div class="ct">Ultime transazioni</div><div id="dash-recent"></div><button class="btn bs bsm" style="margin-top:.75rem;width:100%" onclick="showView('transactions')">Vedi tutte â†’</button></div>
+        <div class="card"><div class="ct">Conti</div><div id="dash-acc"></div><button class="btn bs bsm" style="margin-top:.75rem;width:100%" onclick="showView('accounts')">Gestisci →</button></div>
+        <div class="card"><div class="ct">Ultime transazioni</div><div id="dash-recent"></div><button class="btn bs bsm" style="margin-top:.75rem;width:100%" onclick="showView('transactions')">Vedi tutte →</button></div>
       </div>
     </div>
 
@@ -256,9 +256,9 @@
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
           <select id="f-type" class="btn bs bsm" onchange="filterTx()" style="padding:.5rem .875rem"><option value="">Tutte</option><option value="income">Entrate</option><option value="expense">Uscite</option></select>
           <select id="f-cat" class="btn bs bsm" onchange="filterTx()" style="padding:.5rem .875rem"><option value="">Cat.</option></select>
-          <button class="btn bs bsm" onclick="exportCSV()">ðŸ“¥ CSV</button>
-          <button class="btn bs bsm" onclick="exportCSVmonthly()">ðŸ“… CSV Mese</button>
-          <button class="btn bd bsm" id="btn-mdel" style="display:none" onclick="deleteSelectedTx()">ðŸ—‘ Elimina selez.</button>
+          <button class="btn bs bsm" onclick="exportCSV()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg> CSV</button>
+          <button class="btn bs bsm" onclick="exportCSVmonthly()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> CSV Mese</button>
+          <button class="btn bd bsm" id="btn-mdel" style="display:none" onclick="deleteSelectedTx()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Elimina selez.</button>
           <button class="btn bp" onclick="om('modal-tx')">+ Aggiungi</button>
         </div>
       </div>
@@ -272,15 +272,15 @@
         <div class="card" style="background:linear-gradient(135deg,var(--bg3),var(--bg4));border-color:var(--ac);position:relative;overflow:hidden">
           <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:var(--ac);opacity:.06"></div>
           <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
-            <div style="width:40px;height:40px;border-radius:12px;background:var(--ac)22;display:flex;align-items:center;justify-content:center;font-size:1.2rem">â­</div>
-            <div><div style="font-weight:700;font-size:1rem" id="main-acc-name">â€”</div><div style="font-size:.75rem;color:var(--tx2)">Conto Principale</div></div>
-            <button class="btn bs bsm" style="margin-left:auto" onclick="setMainAcc()">âš™ï¸ Cambia</button>
+            <div style="width:40px;height:40px;border-radius:12px;background:var(--ac)22;display:flex;align-items:center;justify-content:center;font-size:1.2rem">�</div>
+            <div><div style="font-weight:700;font-size:1rem" id="main-acc-name">�</div><div style="font-size:.75rem;color:var(--tx2)">Conto Principale</div></div>
+            <button class="btn bs bsm" style="margin-left:auto" onclick="setMainAcc()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>� Cambia</button>
           </div>
-          <div style="font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--tx)" id="main-acc-bal">â‚¬ â€”</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--tx)" id="main-acc-bal">� �</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.75rem;margin-top:1rem">
-            <div><div class="sl">ðŸ’° Soldi Liberi</div><div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gr)" id="fm-main-free">â€”</div></div>
-            <div><div class="sl">ðŸ“‹ Impegnato</div><div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--ye)" id="fm-main-alloc">â€”</div></div>
-            <div><div class="sl">ðŸ† Obiettivi</div><div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--or)" id="fm-main-goals">â€”</div></div>
+            <div><div class="sl"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Soldi Liberi</div><div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gr)" id="fm-main-free">�</div></div>
+            <div><div class="sl"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Impegnato</div><div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--ye)" id="fm-main-alloc">�</div></div>
+            <div><div class="sl">�� Obiettivi</div><div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--or)" id="fm-main-goals">�</div></div>
           </div>
         </div>
       </div>
@@ -289,7 +289,7 @@
         <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;margin-top:.5rem"><div style="font-size:.85rem;font-weight:700;color:var(--tx2)">Altri Conti</div><div style="flex:1;height:1px;background:var(--b1)"></div><span style="font-size:.75rem;color:var(--tx3)" id="other-acc-count"></span></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem" id="acc-grid"></div>
       </div>
-      <div class="empty-state" id="acc-empty" style="display:none;margin-top:2rem"><div class="empty-icon">ðŸ¦</div><div class="empty-title">Nessun conto</div><div class="empty-desc">Crea il tuo primo conto o carta per iniziare a gestire il tuo denaro.</div><button class="btn bp bsm empty-btn" onclick="om('modal-acc')">+ Nuovo conto</button></div>
+      <div class="empty-state" id="acc-empty" style="display:none;margin-top:2rem"><div class="empty-icon">��</div><div class="empty-title">Nessun conto</div><div class="empty-desc">Crea il tuo primo conto o carta per iniziare a gestire il tuo denaro.</div><button class="btn bp bsm empty-btn" onclick="om('modal-acc')">+ Nuovo conto</button></div>
     </div>
 
     <div class="view" id="view-transfer">
@@ -297,9 +297,9 @@
       <div class="g2">
         <div class="card"><div class="ct">Nuovo trasferimento</div>
           <div class="fg2"><label>Dal conto</label><select id="tr-from"></select></div>
-          <div style="text-align:center;font-size:1.5rem;color:var(--ac);margin:.5rem 0">â†“</div>
+          <div style="text-align:center;font-size:1.5rem;color:var(--ac);margin:.5rem 0">↓</div>
           <div class="fg2"><label>Al conto</label><select id="tr-to"></select></div>
-          <div class="fr"><div class="fg2"><label>Importo (â‚¬)</label><input type="number" id="tr-amount" placeholder="0,00" step="0.01" min="0"></div><div class="fg2"><label>Data</label><input type="date" id="tr-date"></div></div>
+          <div class="fr"><div class="fg2"><label>Importo (�)</label><input type="number" id="tr-amount" placeholder="0,00" step="0.01" min="0"></div><div class="fg2"><label>Data</label><input type="date" id="tr-date"></div></div>
           <div class="fg2"><label>Note</label><input type="text" id="tr-note" placeholder="Opzionale..."></div>
           <button class="btn bp" style="width:100%" onclick="doTransfer()">Esegui trasferimento</button>
         </div>
@@ -322,7 +322,7 @@
     </div>
 
     <div class="view" id="view-calendar">
-      <div class="page-hd"><div><div class="pt">Scadenzario</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="calPrev()">â† Prec.</button><button class="btn bs bsm" onclick="calNext()">Succ. â†’</button></div></div>
+      <div class="page-hd"><div><div class="pt">Scadenzario</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="calPrev()">� Prec.</button><button class="btn bs bsm" onclick="calNext()">Succ. →</button></div></div>
       <div class="g2">
         <div class="card"><div class="ct" id="cal-title"></div>
           <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px" id="cal-heads"></div>
@@ -334,25 +334,25 @@
 
     <div class="view" id="view-recurring">
       <div class="page-hd"><div><div class="pt">Spese Ricorrenti</div></div><button class="btn bp" onclick="om('modal-rec')">+ Aggiungi</button></div>
-      <div class="card"><div class="tw"><table><thead><tr><th>Nome</th><th>Cat.</th><th>Frequenza</th><th>Prossima</th><th>Importo</th><th></th></tr></thead><tbody id="rec-tbody"></tbody></table></div><div class="est" id="rec-empty" style="display:none">ðŸ” Nessuna</div></div>
+      <div class="card"><div class="tw"><table><thead><tr><th>Nome</th><th>Cat.</th><th>Frequenza</th><th>Prossima</th><th>Importo</th><th></th></tr></thead><tbody id="rec-tbody"></tbody></table></div><div class="est" id="rec-empty" style="display:none">� Nessuna</div></div>
     </div>
 
     <div class="view" id="view-debts">
       <div class="page-hd"><div><div class="pt">Debiti & Prestiti</div></div><button class="btn bp" onclick="om('modal-debt')">+ Aggiungi</button></div>
       <div class="sg" id="debt-stats"></div>
       <div class="gg" id="debts-grid"></div>
-      <div class="est" id="debts-empty" style="display:none;margin-top:2rem">ðŸ’³ Nessun debito</div>
+      <div class="est" id="debts-empty" style="display:none;margin-top:2rem"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Nessun debito</div>
     </div>
 
     <div class="view" id="view-freemoney">
-      <div class="page-hd"><div><div class="pt">ðŸ’° Soldi Liberi</div><div class="ps">Quanto rimane dopo tutte le spese fisse</div></div><button class="btn bs bsm" onclick="calcFreeMoney()">ðŸ”„ Ricalcola</button></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Soldi Liberi</div><div class="ps">Quanto rimane dopo tutte le spese fisse</div></div><button class="btn bs bsm" onclick="calcFreeMoney()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Ricalcola</button></div>
       <div class="sg" id="fm-stats"></div>
       <div class="g2">
         <div class="card"><div class="ct">Calcolo dettagliato</div><div id="fm-breakdown"></div></div>
         <div class="card"><div class="ct">Regola 50/30/20</div><div id="fm-dist"></div></div>
       </div>
       <div class="card"><div class="ct">Configura entrate fisse</div>
-        <div class="fr"><div class="fg2"><label>Entrata principale (â‚¬)</label><input type="number" id="fm-income" placeholder="2000" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Altre entrate (â‚¬)</label><input type="number" id="fm-other" placeholder="0" inputmode="decimal" autocomplete="off"></div></div>
+        <div class="fr"><div class="fg2"><label>Entrata principale (�)</label><input type="number" id="fm-income" placeholder="2000" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Altre entrate (�)</label><input type="number" id="fm-other" placeholder="0" inputmode="decimal" autocomplete="off"></div></div>
         <button class="btn bp" style="width:100%" onclick="saveFM()">Salva</button>
       </div>
     </div>
@@ -366,16 +366,16 @@
         </div>
       </div>
       <div id="groups-list"></div>
-      <div class="est" id="groups-empty" style="display:none;margin-top:2rem">ðŸ«‚ Nessun gruppo</div>
+      <div class="est" id="groups-empty" style="display:none;margin-top:2rem"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Nessun gruppo</div>
     </div>
 
     <div class="view" id="view-group-detail">
-      <div class="page-hd"><div><div class="pt" id="gd-title">Gruppo</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="showView('groups')">â† Gruppi</button><button class="btn bp bsm" onclick="om('modal-ge')">+ Spesa</button></div></div>
+      <div class="page-hd"><div><div class="pt" id="gd-title">Gruppo</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="showView('groups')">� Gruppi</button><button class="btn bp bsm" onclick="om('modal-ge')">+ Spesa</button></div></div>
       <div class="g2" style="margin-bottom:1rem">
         <div class="card"><div class="ct">Membri & Saldo</div><div id="gd-members"></div></div>
         <div class="card"><div class="ct">Spese</div><div class="tw"><table><thead><tr><th>Chi</th><th>Descrizione</th><th>Importo</th></tr></thead><tbody id="gd-expenses"></tbody></table></div></div>
       </div>
-      <div class="card"><div class="ct">ðŸ’¬ Chat</div>
+      <div class="card"><div class="ct"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Chat</div>
         <div class="chat-wrap">
           <div class="chat-msgs" id="gd-chat"></div>
           <div class="chat-row"><input class="chat-in" id="chat-msg" placeholder="Scrivi..." onkeydown="if(event.key==='Enter')sendChat()"><button class="btn bp bsm" onclick="sendChat()">Invia</button></div>
@@ -386,24 +386,24 @@
     <div class="view b-only" id="view-invoices">
       <div class="page-hd"><div><div class="pt">Fatture & Clienti</div></div><button class="btn bp2" onclick="om('modal-inv')">+ Nuova</button></div>
       <div id="inv-stats" style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem"></div>
-      <div class="card"><div class="tw"><table><thead><tr><th>NÂ°</th><th>Cliente</th><th>Data</th><th>Scad.</th><th>IVA</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody id="inv-tbody"></tbody></table></div><div class="est" id="inv-empty" style="display:none">ðŸ§¾ Nessuna fattura</div></div>
+      <div class="card"><div class="tw"><table><thead><tr><th>N�</th><th>Cliente</th><th>Data</th><th>Scad.</th><th>IVA</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody id="inv-tbody"></tbody></table></div><div class="est" id="inv-empty" style="display:none"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> Nessuna fattura</div></div>
     </div>
 
     <div class="view b-only" id="view-quotes">
       <div class="page-hd"><div><div class="pt">Preventivi</div></div><button class="btn bp2" onclick="om('modal-quote')">+ Nuovo</button></div>
-      <div class="card"><div class="tw"><table><thead><tr><th>NÂ°</th><th>Cliente</th><th>Data</th><th>ValiditÃ </th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody id="quotes-tbody"></tbody></table></div><div class="est" id="quotes-empty" style="display:none">ðŸ“‹ Nessun preventivo</div></div>
+      <div class="card"><div class="tw"><table><thead><tr><th>N�</th><th>Cliente</th><th>Data</th><th>Validit�</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody id="quotes-tbody"></tbody></table></div><div class="est" id="quotes-empty" style="display:none"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Nessun preventivo</div></div>
     </div>
 
     <div class="view b-only" id="view-suppliers">
       <div class="page-hd"><div><div class="pt">Fornitori</div></div><button class="btn bp2" onclick="om('modal-sup')">+ Nuovo</button></div>
       <div class="gg" id="suppliers-grid"></div>
-      <div class="est" id="suppliers-empty" style="display:none;margin-top:2rem">ðŸ¢ Nessun fornitore</div>
+      <div class="est" id="suppliers-empty" style="display:none;margin-top:2rem">�� Nessun fornitore</div>
     </div>
 
     <div class="view b-only" id="view-primanota">
-      <div class="page-hd"><div><div class="pt">Prima Nota</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="pnPrev()">â† Prec.</button><button class="btn bs bsm" onclick="pnNext()">Succ. â†’</button><button class="btn bp2 bsm" onclick="exportPrimaNota()">ðŸ“„ PDF</button></div></div>
+      <div class="page-hd"><div><div class="pt">Prima Nota</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="pnPrev()">� Prec.</button><button class="btn bs bsm" onclick="pnNext()">Succ. →</button><button class="btn bp2 bsm" onclick="exportPrimaNota()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> PDF</button></div></div>
       <div class="sg" id="pn-stats"></div>
-      <div class="card"><div class="ct" id="pn-title"></div><div class="tw"><table><thead><tr><th>NÂ°</th><th>Data</th><th>Descrizione</th><th>Causale</th><th>Entrata</th><th>Uscita</th><th>Saldo</th></tr></thead><tbody id="pn-tbody"></tbody></table></div></div>
+      <div class="card"><div class="ct" id="pn-title"></div><div class="tw"><table><thead><tr><th>N�</th><th>Data</th><th>Descrizione</th><th>Causale</th><th>Entrata</th><th>Uscita</th><th>Saldo</th></tr></thead><tbody id="pn-tbody"></tbody></table></div></div>
     </div>
 
     <div class="view b-only" id="view-taxcalc">
@@ -412,7 +412,7 @@
         <div class="card"><div class="ct">Configurazione</div>
           <div class="fg2"><label>Regime</label><select id="tax-regime" onchange="calcTax()"><option value="forfettario_15">Forfettario 15%</option><option value="forfettario_5">Forfettario 5% (primi 5 anni)</option><option value="ordinario">Ordinario (IRPEF)</option></select></div>
           <div class="fg2"><label>Coefficiente ATECO</label><select id="tax-ateco" onchange="calcTax()"><option value="0.78">Commercio/Consulenza (78%)</option><option value="0.67">IT/Professioni tecniche (67%)</option><option value="0.40">Professioni sanitarie (40%)</option><option value="0.86">Artigianato (86%)</option></select></div>
-          <div class="fg2"><label>Fatturato annuo lordo (â‚¬)</label><input type="number" id="tax-rev" placeholder="30000" oninput="calcTax()"></div>
+          <div class="fg2"><label>Fatturato annuo lordo (�)</label><input type="number" id="tax-rev" placeholder="30000" oninput="calcTax()"></div>
           <div class="fg2"><label>Gestione INPS</label><select id="tax-inps" onchange="calcTax()"><option value="0.2607">Gestione separata (26.07%)</option><option value="0.24">Artigiani (24%)</option><option value="0.2409">Commercianti (24.09%)</option></select></div>
         </div>
         <div class="card"><div class="ct">Risultato</div><div id="tax-result"></div></div>
@@ -422,25 +422,25 @@
     <div class="view b-only" id="view-travel">
       <div class="page-hd"><div><div class="pt">Viaggi & Trasferte</div></div><button class="btn bp2" onclick="om('modal-travel')">+ Nuovo</button></div>
       <div class="gg" id="travel-grid"></div>
-      <div class="est" id="travel-empty" style="display:none;margin-top:2rem">âœˆï¸ Nessun viaggio</div>
+      <div class="est" id="travel-empty" style="display:none;margin-top:2rem"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>� Nessun viaggio</div>
     </div>
 
     <!-- PROJECTS -->
     <div class="view" id="view-projects">
       <div class="page-hd">
-        <div><div class="pt">ðŸ“ Progetti</div><div class="ps">Traccia ristrutturazioni, nuovi progetti e spese straordinarie</div></div>
+        <div><div class="pt">� Progetti</div><div class="ps">Traccia ristrutturazioni, nuovi progetti e spese straordinarie</div></div>
         <button class="btn bp" onclick="om('modal-project')">+ Nuovo progetto</button>
       </div>
       <div class="gg" id="projects-grid"></div>
-      <div class="est" id="projects-empty" style="display:none;margin-top:2rem">ðŸ“ Nessun progetto</div>
+      <div class="est" id="projects-empty" style="display:none;margin-top:2rem">� Nessun progetto</div>
     </div>
     <div class="view" id="view-project-detail">
       <div class="page-hd">
         <div><div class="pt" id="pd-title">Progetto</div><div class="ps" id="pd-sub"></div></div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn bs bsm" onclick="showView('projects')">â† Progetti</button>
+          <button class="btn bs bsm" onclick="showView('projects')">� Progetti</button>
           <button class="btn bp bsm" onclick="om('modal-proj-tx')">+ Spesa</button>
-          <button class="btn bs bsm" onclick="om('modal-proj-link')">ðŸ”— Importa</button>
+          <button class="btn bs bsm" onclick="om('modal-proj-link')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Importa</button>
         </div>
       </div>
       <div class="sg" id="pd-stats"></div>
@@ -454,8 +454,8 @@
       </div>
     </div>
     <div class="view" id="view-portfolio">
-      <div class="page-hd"><div><div class="pt">ðŸ“ˆ Portafoglio</div><div class="ps">Azioni, ETF e crypto con prezzi live</div></div>
-        <div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="refreshPortfolio()">ðŸ”„ Aggiorna prezzi</button><button class="btn bp" onclick="om('modal-asset')">+ Aggiungi</button></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 8 12 14 9 11 3 17"/><polyline points="22 8 18 8 18 12"/></svg> Portafoglio</div><div class="ps">Azioni, ETF e crypto con prezzi live</div></div>
+        <div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="refreshPortfolio()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Aggiorna prezzi</button><button class="btn bp" onclick="om('modal-asset')">+ Aggiungi</button></div>
       </div>
       <div class="sg" id="port-stats"></div>
       <div class="g2" style="margin-bottom:1rem">
@@ -463,14 +463,14 @@
         <div class="card"><div class="ct">Performance</div><div id="port-perf"></div></div>
       </div>
       <div class="card"><div class="ct">Asset</div>
-        <div class="tw"><table><thead><tr><th>Nome</th><th>Tipo</th><th>QuantitÃ </th><th>P.Carico</th><th>Prezzo live</th><th>Valore</th><th>+/-</th><th></th></tr></thead><tbody id="port-tbody"></tbody></table></div>
-        <div class="est" id="port-empty" style="display:none">ðŸ“ˆ Nessun asset â€” aggiungi azioni, ETF o crypto</div>
+        <div class="tw"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Quantit�</th><th>P.Carico</th><th>Prezzo live</th><th>Valore</th><th>+/-</th><th></th></tr></thead><tbody id="port-tbody"></tbody></table></div>
+        <div class="est" id="port-empty" style="display:none"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 8 12 14 9 11 3 17"/><polyline points="22 8 18 8 18 12"/></svg> Nessun asset � aggiungi azioni, ETF o crypto</div>
       </div>
     </div>
 
     <!-- NET WORTH -->
     <div class="view" id="view-networth">
-      <div class="page-hd"><div><div class="pt">ðŸ’Ž Net Worth</div><div class="ps">Il tuo patrimonio netto totale</div></div></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg> Net Worth</div><div class="ps">Il tuo patrimonio netto totale</div></div></div>
       <div class="sg" id="nw-stats"></div>
       <div class="g2">
         <div class="card"><div class="ct">Attivi</div><div id="nw-assets"></div></div>
@@ -478,14 +478,14 @@
       </div>
       <div class="card" style="text-align:center;padding:2rem">
         <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.5rem">Patrimonio Netto</div>
-        <div style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800" id="nw-total">â€”</div>
+        <div style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800" id="nw-total">�</div>
         <div style="font-size:.875rem;color:var(--tx2);margin-top:.5rem" id="nw-label">Attivi - Passivi</div>
       </div>
     </div>
 
     <!-- CASHFLOW FORECAST -->
     <div class="view" id="view-cashflow">
-      <div class="page-hd"><div><div class="pt">ðŸ”® Cashflow Forecast</div><div class="ps">Previsione saldo a 3, 6 e 12 mesi</div></div></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2l4 10-4 10-4-10 4-10z"/><path d="M2 12h20"/></svg> Cashflow Forecast</div><div class="ps">Previsione saldo a 3, 6 e 12 mesi</div></div></div>
       <div class="sg" id="cf-stats"></div>
       <div class="card"><div class="ct">Proiezione saldo mensile</div><div style="position:relative;height:280px"><canvas id="ch-cashflow"></canvas></div></div>
       <div class="card"><div class="ct">Assunzioni del calcolo</div><div id="cf-assumptions"></div></div>
@@ -493,13 +493,13 @@
 
     <!-- PENSION CALCULATOR -->
     <div class="view" id="view-pension">
-      <div class="page-hd"><div><div class="pt">ðŸ–ï¸ Calcolatore Pensione</div><div class="ps">Proiezione risparmio a lungo termine</div></div></div>
+      <div class="page-hd"><div><div class="pt">��� Calcolatore Pensione</div><div class="ps">Proiezione risparmio a lungo termine</div></div></div>
       <div class="g2">
         <div class="card"><div class="ct">Parametri</div>
-          <div class="fg2"><label>EtÃ  attuale</label><input type="number" id="pen-age" placeholder="30" min="18" max="65" oninput="calcPension()"></div>
-          <div class="fg2"><label>EtÃ  pensione desiderata</label><input type="number" id="pen-ret" placeholder="65" min="50" max="80" oninput="calcPension()"></div>
-          <div class="fg2"><label>Risparmio mensile attuale (â‚¬)</label><input type="number" id="pen-save" placeholder="200" oninput="calcPension()"></div>
-          <div class="fg2"><label>Capitale giÃ  accumulato (â‚¬)</label><input type="number" id="pen-capital" placeholder="0" oninput="calcPension()"></div>
+          <div class="fg2"><label>Et� attuale</label><input type="number" id="pen-age" placeholder="30" min="18" max="65" oninput="calcPension()"></div>
+          <div class="fg2"><label>Et� pensione desiderata</label><input type="number" id="pen-ret" placeholder="65" min="50" max="80" oninput="calcPension()"></div>
+          <div class="fg2"><label>Risparmio mensile attuale (�)</label><input type="number" id="pen-save" placeholder="200" oninput="calcPension()"></div>
+          <div class="fg2"><label>Capitale gi� accumulato (�)</label><input type="number" id="pen-capital" placeholder="0" oninput="calcPension()"></div>
           <div class="fg2"><label>Rendimento annuo atteso (%)</label><input type="number" id="pen-rate" placeholder="5" step="0.5" oninput="calcPension()"></div>
           <div class="fg2"><label>Inflazione annua attesa (%)</label><input type="number" id="pen-inflation" placeholder="2.5" step="0.5" oninput="calcPension()"></div>
         </div>
@@ -509,12 +509,12 @@
 
     <!-- INSURANCE TRACKER -->
     <div class="view" id="view-insurance">
-      <div class="page-hd"><div><div class="pt">ðŸ›¡ï¸ Assicurazioni & Garanzie</div><div class="ps">Scadenze polizze e garanzie prodotti</div></div><button class="btn bp" onclick="om('modal-insurance')">+ Aggiungi</button></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>� Assicurazioni & Garanzie</div><div class="ps">Scadenze polizze e garanzie prodotti</div></div><button class="btn bp" onclick="om('modal-insurance')">+ Aggiungi</button></div>
       <div class="gg" id="ins-grid"></div>
-      <div class="est" id="ins-empty" style="display:none;margin-top:2rem">ðŸ›¡ï¸ Nessuna polizza â€” aggiungi assicurazioni e garanzie</div>
+      <div class="est" id="ins-empty" style="display:none;margin-top:2rem"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>� Nessuna polizza � aggiungi assicurazioni e garanzie</div>
     </div>
     <div class="view" id="view-reports">
-      <div class="page-hd"><div><div class="pt">Report</div></div><button class="btn bs" onclick="exportPDF()">ðŸ“„ PDF</button></div>
+      <div class="page-hd"><div><div class="pt">Report</div></div><button class="btn bs" onclick="exportPDF()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> PDF</button></div>
       <div class="sg" id="rep-stats"></div>
       <div class="g2" style="margin-bottom:1rem">
         <div class="card"><div class="ct">12 mesi</div><div style="position:relative;height:250px"><canvas id="ch-rep"></canvas></div></div>
@@ -527,16 +527,16 @@
       <div class="page-hd"><div><div class="pt">Score Finanziario</div></div></div>
       <div class="g2" style="margin-bottom:1rem">
         <div class="card" style="display:flex;align-items:center;gap:1.5rem">
-          <div class="score-ring"><svg viewBox="0 0 100 100"><circle class="bgc" cx="50" cy="50" r="45"/><circle class="fgc" id="score-arc" cx="50" cy="50" r="45"/></svg><div class="snum"><div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800" id="score-num">â€”</div><div style="font-size:.65rem;color:var(--tx3)">SCORE</div></div></div>
-          <div><div style="font-size:1.1rem;font-weight:700" id="score-label">â€”</div><div style="font-size:.875rem;color:var(--tx2);margin-top:.25rem" id="score-desc"></div></div>
+          <div class="score-ring"><svg viewBox="0 0 100 100"><circle class="bgc" cx="50" cy="50" r="45"/><circle class="fgc" id="score-arc" cx="50" cy="50" r="45"/></svg><div class="snum"><div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800" id="score-num">�</div><div style="font-size:.65rem;color:var(--tx3)">SCORE</div></div></div>
+          <div><div style="font-size:1.1rem;font-weight:700" id="score-label">�</div><div style="font-size:.875rem;color:var(--tx2);margin-top:.25rem" id="score-desc"></div></div>
         </div>
         <div class="card"><div class="ct">Dettaglio</div><div id="score-bar"></div></div>
       </div>
-      <div class="card"><div class="ct">ðŸ’¡ Consigli</div><div id="score-tips"></div></div>
+      <div class="card"><div class="ct"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Consigli</div><div id="score-tips"></div></div>
     </div>
 
     <div class="view" id="view-monthly">
-      <div class="page-hd"><div><div class="pt">Spese Mensili</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="monthPrev()">â† Prec.</button><button class="btn bs bsm" onclick="monthNext()">Succ. â†’</button></div></div>
+      <div class="page-hd"><div><div class="pt">Spese Mensili</div></div><div style="display:flex;gap:.5rem"><button class="btn bs bsm" onclick="monthPrev()">� Prec.</button><button class="btn bs bsm" onclick="monthNext()">Succ. →</button></div></div>
       <div class="sg" id="monthly-stats"></div>
       <div class="g2" style="margin-bottom:1rem">
         <div class="card"><div class="ct" id="monthly-title">Mese corrente</div><div id="monthly-cats"></div></div>
@@ -545,9 +545,9 @@
     </div>
 
     <div class="view" id="view-notifications">
-      <div class="page-hd"><div><div class="pt">ðŸ”” Notifiche</div></div><button class="btn bs bsm" onclick="markAllRead()">âœ“ Tutte lette</button></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifiche</div></div><button class="btn bs bsm" onclick="markAllRead()">✓ Tutte lette</button></div>
       <div class="card" style="margin-bottom:1rem">
-        <div class="ct">ðŸ“± Notifiche Push</div>
+        <div class="ct"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg> Notifiche Push</div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
           <div style="font-size:.85rem;color:var(--tx2)">Ricevi notifiche sul dispositivo</div>
           <label style="position:relative;display:inline-block;width:44px;height:26px;cursor:pointer">
@@ -556,8 +556,8 @@
             <span style="position:absolute;left:3px;bottom:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.2)"></span>
           </label>
         </div>
-        <div id="notif-push-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.5rem">Verifica permessiâ€¦</div>
-        <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif">ðŸ“¨ Invia notifica di test</button>
+        <div id="notif-push-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.5rem">Verifica permessi�</div>
+        <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 10 14 13 12 15 10 13 2 10"/><polyline points="22,6 12,13 2,6"/></svg> Invia notifica di test</button>
       </div>
       <div class="card" id="notif-list"></div>
     </div>
@@ -581,21 +581,21 @@
           <div class="card" style="margin-bottom:1rem"><div class="ct">Backup & Ripristino</div>
             <div style="font-size:.875rem;color:var(--tx2);margin-bottom:.875rem">Esporta tutti i tuoi dati o reimportali.</div>
             <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
-              <button class="btn bp bsm" onclick="exportBackup()">ðŸ“¥ Esporta</button>
-              <button class="btn bs bsm" onclick="document.getElementById('restore-f').click()">ðŸ“¤ Ripristina</button>
+              <button class="btn bp bsm" onclick="exportBackup()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg> Esporta</button>
+              <button class="btn bs bsm" onclick="document.getElementById('restore-f').click()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="12" y1="8" x2="12" y2="2"/><polyline points="9 5 12 2 15 5"/></svg> Ripristina</button>
             </div>
             <input type="file" id="restore-f" accept=".json" style="display:none" onchange="importBackup(event)">
           </div>
           <div class="card"><div class="ct">Impostazioni</div>
-            <div class="fg2"><label>Valuta</label><select id="set-cur" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">ðŸ‡ªðŸ‡º EUR</option><option value="USD">ðŸ‡ºðŸ‡¸ USD</option><option value="CHF">ðŸ‡¨ðŸ‡­ CHF</option><option value="GBP">ðŸ‡¬ðŸ‡§ GBP</option></select></div>
+            <div class="fg2"><label>Valuta</label><select id="set-cur" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">�� EUR</option><option value="USD">�� USD</option><option value="CHF">�� CHF</option><option value="GBP">�� GBP</option></select></div>
             <div style="display:flex;gap:.5rem">
-              <button class="btn bp bsm" onclick="applyTheme('dark')">ðŸŒ™ Dark</button>
-              <button class="btn bs bsm" onclick="applyTheme('light')">â˜€ï¸ Light</button>
+              <button class="btn bp bsm" onclick="applyTheme('dark')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark</button>
+              <button class="btn bs bsm" onclick="applyTheme('light')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>� Light</button>
             </div>
           </div>
           <div class="card"><div class="ct">Esporta dati</div>
             <div style="display:flex;gap:.5rem">
-              <button class="btn bp bsm" onclick="om('modal-export')">ðŸ“¥ Esporta</button>
+              <button class="btn bp bsm" onclick="om('modal-export')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg> Esporta</button>
             </div>
           </div>
         </div>
@@ -617,28 +617,28 @@
 
     <!-- VIEW: CATEGORIES -->
     <div class="view" id="view-categories">
-      <div class="page-hd"><div><div class="pt">ðŸ·ï¸ Categorie</div><div class="ps">Crea e gestisci le tue categorie personalizzate</div></div><button class="btn bp" onclick="om('modal-category')">+ Nuova</button></div>
+      <div class="page-hd"><div><div class="pt">��� Categorie</div><div class="ps">Crea e gestisci le tue categorie personalizzate</div></div><button class="btn bp" onclick="om('modal-category')">+ Nuova</button></div>
       <div class="cat-grid" id="cat-grid"></div>
-      <div class="est" id="cat-empty" style="display:none;margin-top:2rem">ðŸ·ï¸ Nessuna categoria personalizzata</div>
+      <div class="est" id="cat-empty" style="display:none;margin-top:2rem">��� Nessuna categoria personalizzata</div>
     </div>
 
     <!-- VIEW: DEBT STRATEGY -->
     <div class="view" id="view-debtstrategy">
-      <div class="page-hd"><div><div class="pt">ðŸ“Š Strategia Debiti</div><div class="ps">Confronta metodo Valanga (Avalanche) vs Valanga Inversa (Snowball)</div></div></div>
+      <div class="page-hd"><div><div class="pt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Strategia Debiti</div><div class="ps">Confronta metodo Valanga (Avalanche) vs Valanga Inversa (Snowball)</div></div></div>
       <div id="debt-strategy-content"></div>
-      <div class="est" id="debt-strategy-empty" style="display:none;margin-top:2rem">ðŸ’³ Aggiungi debiti per vedere le strategie</div>
+      <div class="est" id="debt-strategy-empty" style="display:none;margin-top:2rem"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Aggiungi debiti per vedere le strategie</div>
     </div>
 
     <!-- VIEW: SHARED GOALS -->
     <div class="view" id="view-sharedgoals">
-      <div class="page-hd"><div><div class="pt">ðŸ¤ Obiettivi Condivisi</div><div class="ps">Obiettivi visibili ad amici e familiari</div></div></div>
+      <div class="page-hd"><div><div class="pt">� Obiettivi Condivisi</div><div class="ps">Obiettivi visibili ad amici e familiari</div></div></div>
       <div class="sg" id="sg-stats"></div>
       <div id="sg-list"></div>
-      <div class="est" id="sg-empty" style="display:none;margin-top:2rem">ðŸ¤ Nessun obiettivo condiviso</div>
+      <div class="est" id="sg-empty" style="display:none;margin-top:2rem">� Nessun obiettivo condiviso</div>
     </div>
 
     <div class="view" id="view-referral">
-      <div class="page-hd"><div><div class="pt">ðŸŽ Programma Referral</div><div class="ps">Invita amici e guadagna mesi gratis</div></div></div>
+      <div class="page-hd"><div><div class="pt">� Programma Referral</div><div class="ps">Invita amici e guadagna mesi gratis</div></div></div>
       <div class="g2">
         <div class="card">
           <div class="ct">Come funziona</div>
@@ -651,7 +651,7 @@
             <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:.5rem">Il tuo link referral</div>
             <div style="display:flex;gap:.5rem">
               <div style="flex:1;padding:.65rem .875rem;background:var(--bg4);border-radius:var(--rs);font-size:.82rem;font-family:monospace;color:var(--ac);word-break:break-all" id="ref-link-display">Caricamento...</div>
-              <button class="btn bp bsm" onclick="copyRefLink()">ðŸ“‹ Copia</button>
+              <button class="btn bp bsm" onclick="copyRefLink()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Copia</button>
             </div>
             <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
               <button class="btn bs bsm" onclick="shareRef('whatsapp')">WhatsApp</button>
@@ -666,19 +666,19 @@
             <div class="sc"><div class="sl">Invitati</div><div class="sv" id="ref-count">0</div></div>
             <div class="sc"><div class="sl">Mesi guadagnati</div><div class="sv" style="color:var(--gr)" id="ref-months">0</div></div>
           </div>
-          <div id="ref-list"><div style="color:var(--tx3);font-size:.875rem;padding:1rem 0">Nessun referral ancora â€” condividi il tuo link!</div></div>
+          <div id="ref-list"><div style="color:var(--tx3);font-size:.875rem;padding:1rem 0">Nessun referral ancora � condividi il tuo link!</div></div>
         </div>
       </div>
     </div>
     <div class="view" id="view-settings">
       <div class="page-hd"><div><div class="pt">Impostazioni</div></div></div>
       <div class="g2">
-        <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR â‚¬</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP Â£</option></select></div>
-        <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')">ðŸŒ™ Dark</button><button class="btn bs bsm" onclick="applyTheme('light')">â˜€ï¸ Light</button><button class="btn bs bsm" onclick="applyTheme('auto')">ðŸ”® Auto</button></div></div>
-        <div class="card"><div class="ct">ðŸ“Š Previsioni</div><div style="font-size:.82rem;color:var(--tx2);margin-bottom:.5rem">Giorni di previsione spese future</div><input type="number" id="set-forecast" class="btn bs" style="width:100%;padding:.7rem .875rem" min="1" max="365" value="30" onchange="forecastDays=Math.max(1,parseInt(this.value)||30);localStorage.setItem('kz_forecast_days',forecastDays);updateDashWidgets();toast('Giorni previsione aggiornati','ok')"></div>
-        <div class="card"><div class="ct">ðŸ“² App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Axiom sul dispositivo</button></div>
+        <div class="card"><div class="ct">Valuta</div><select id="set-cur2" class="btn bs" style="width:100%;padding:.7rem .875rem" onchange="defaultCur=this.value;localStorage.setItem('kz_cur',this.value);toast('Valuta aggiornata','ok')"><option value="EUR">EUR �</option><option value="USD">USD $</option><option value="CHF">CHF Fr</option><option value="GBP">GBP �</option></select></div>
+        <div class="card"><div class="ct">Tema</div><div style="display:flex;gap:.5rem"><button class="btn bp bsm" onclick="applyTheme('dark')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark</button><button class="btn bs bsm" onclick="applyTheme('light')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>� Light</button><button class="btn bs bsm" onclick="applyTheme('auto')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2l4 10-4 10-4-10 4-10z"/><path d="M2 12h20"/></svg> Auto</button></div></div>
+        <div class="card"><div class="ct"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Previsioni</div><div style="font-size:.82rem;color:var(--tx2);margin-bottom:.5rem">Giorni di previsione spese future</div><input type="number" id="set-forecast" class="btn bs" style="width:100%;padding:.7rem .875rem" min="1" max="365" value="30" onchange="forecastDays=Math.max(1,parseInt(this.value)||30);localStorage.setItem('kz_forecast_days',forecastDays);updateDashWidgets();toast('Giorni previsione aggiornati','ok')"></div>
+        <div class="card"><div class="ct"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg> App</div><button class="btn bp" onclick="installPWA()" style="width:100%">Installa Axiom sul dispositivo</button></div>
         <div class="card" id="notif-settings-card">
-          <div class="ct">ðŸ”” Notifiche</div>
+          <div class="ct"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifiche</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
             <div style="font-size:.875rem;font-weight:500">Notifiche sul dispositivo</div>
             <label style="position:relative;display:inline-block;width:44px;height:26px;cursor:pointer">
@@ -687,34 +687,34 @@
               <span style="position:absolute;left:3px;bottom:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.2)"></span>
             </label>
           </div>
-          <div id="notif-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.75rem">Verifica permessiâ€¦</div>
+          <div id="notif-status" style="font-size:.75rem;color:var(--tx3);margin-bottom:.75rem">Verifica permessi�</div>
           <button class="btn bp" onclick="sendTestNotif()" style="width:100%" id="btn-test-notif-2">Invia notifica di test</button>
         </div>
       </div>
     </div>
   </main>
-  <!-- â•â• UPDATE BANNER â•â• -->
+  <!-- �� UPDATE BANNER �� -->
   <div id="update-banner" style="position:fixed;bottom:calc(5rem + env(safe-area-inset-bottom,0px));left:1rem;right:1rem;background:var(--bg2);border:1px solid var(--ac);border-radius:var(--r);padding:1rem 1.25rem;z-index:45;box-shadow:0 8px 40px rgba(0,0,0,.5);display:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
-    <div style="display:flex;align-items:flex-start;gap:.5rem"><div style="flex:1;font-size:.875rem;font-weight:700">ðŸ“¦ Nuova versione disponibile</div><button onclick="document.getElementById('update-banner').style.display='none'" style="background:none;border:none;color:var(--tx3);font-size:1.2rem;cursor:pointer;padding:2px;line-height:1;flex-shrink:0" aria-label="Chiudi">âœ•</button></div>
-    <div style="font-size:.78rem;color:var(--tx2);margin-bottom:.75rem">Aggiorna per avere le ultime funzionalitÃ  e correzioni.</div>
-    <button onclick="applyUpdate()" style="width:100%;padding:.75rem;background:var(--grad);color:#fff;border:none;border-radius:var(--rs);font-weight:700;font-size:.875rem;cursor:pointer">ðŸ”„ Aggiorna ora</button>
+    <div style="display:flex;align-items:flex-start;gap:.5rem"><div style="flex:1;font-size:.875rem;font-weight:700"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Nuova versione disponibile</div><button onclick="document.getElementById('update-banner').style.display='none'" style="background:none;border:none;color:var(--tx3);font-size:1.2rem;cursor:pointer;padding:2px;line-height:1;flex-shrink:0" aria-label="Chiudi">✕</button></div>
+    <div style="font-size:.78rem;color:var(--tx2);margin-bottom:.75rem">Aggiorna per avere le ultime funzionalit� e correzioni.</div>
+    <button onclick="applyUpdate()" style="width:100%;padding:.75rem;background:var(--grad);color:#fff;border:none;border-radius:var(--rs);font-weight:700;font-size:.875rem;cursor:pointer"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Aggiorna ora</button>
   </div>
 </div>
 <!-- MODALS -->
 <div class="mo" id="modal-tx"><div class="md">
-  <div class="mh"><div class="mt" id="tx-title">Nuova transazione</div><div class="mc" onclick="cm('modal-tx')">âœ•</div></div>
+  <div class="mh"><div class="mt" id="tx-title">Nuova transazione</div><div class="mc" onclick="cm('modal-tx')">✕</div></div>
   <div class="mb">
-    <div class="tt"><button class="tb ae" onclick="setTT('expense')" id="btn-exp">â†‘ Uscita</button><button class="tb" onclick="setTT('income')" id="btn-inc">â†“ Entrata</button></div>
+    <div class="tt"><button class="tb ae" onclick="setTT('expense')" id="btn-exp">↑ Uscita</button><button class="tb" onclick="setTT('income')" id="btn-inc">↓ Entrata</button></div>
     <input type="hidden" id="tx-id"><input type="hidden" id="tx-type" value="expense">
     <div class="fr"><div class="fg2"><label>Importo</label><input type="number" id="tx-amount" placeholder="0,00" step="0.01" min="0" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Valuta</label><select id="tx-cur"><option value="EUR">EUR</option><option value="USD">USD</option><option value="CHF">CHF</option><option value="GBP">GBP</option></select></div></div>
     <div class="fg2"><label>Data</label><input type="date" id="tx-date"></div>
     <div class="fg2"><label>Descrizione</label><input type="text" id="tx-desc" placeholder="Es. Spesa supermercato" autocomplete="off" onkeydown="if(event.key==='Enter')saveTx()"></div>
-    <div class="fr"><div class="fg2"><label>Categoria</label><select id="tx-cat"><option value="altro">ðŸ“¦ Altro</option></select></div><div class="fg2"><label>Conto</label><select id="tx-acc"></select></div></div>
+    <div class="fr"><div class="fg2"><label>Categoria</label><select id="tx-cat"><option value="altro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div><div class="fg2"><label>Conto</label><select id="tx-acc"></select></div></div>
     <div class="fg2"><label>Note</label><input type="text" id="tx-note" placeholder="Note..." autocomplete="off" onkeydown="if(event.key==='Enter')saveTx()"></div>
-    <div class="fg2"><label>Foto scontrino</label><div style="display:flex;align-items:center;gap:.75rem"><label style="width:52px;height:52px;border:2px dashed var(--b2);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx3);font-size:1.2rem" for="tx-rec">ðŸ“·</label><input type="file" id="tx-rec" accept="image/*" style="display:none" onchange="previewRec(event)"><img id="tx-rec-prev" style="width:52px;height:52px;border-radius:var(--rs);object-fit:cover;display:none;border:1px solid var(--b2)"></div></div>
-    <button type="button" id="split-toggle" class="btn bs bsm" onclick="toggleSplit()">âœ‚ï¸ Split</button>
+    <div class="fg2"><label>Foto scontrino</label><div style="display:flex;align-items:center;gap:.75rem"><label style="width:52px;height:52px;border:2px dashed var(--b2);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx3);font-size:1.2rem" for="tx-rec"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></label><input type="file" id="tx-rec" accept="image/*" style="display:none" onchange="previewRec(event)"><img id="tx-rec-prev" style="width:52px;height:52px;border-radius:var(--rs);object-fit:cover;display:none;border:1px solid var(--b2)"></div></div>
+    <button type="button" id="split-toggle" class="btn bs bsm" onclick="toggleSplit()"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>� Split</button>
     <div id="split-area" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;margin-top:.5rem"><span style="font-size:.78rem;color:var(--tx2)">Dividi su piÃ¹ categorie</span><button class="btn bs bsm" onclick="addSplitRow()" style="padding:.25rem .6rem;font-size:.72rem">+ Aggiungi</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;margin-top:.5rem"><span style="font-size:.78rem;color:var(--tx2)">Dividi su pi� categorie</span><button class="btn bs bsm" onclick="addSplitRow()" style="padding:.25rem .6rem;font-size:.72rem">+ Aggiungi</button></div>
       <div class="split-rows" id="split-rows"></div>
       <div class="split-total" id="split-total"></div>
     </div>
@@ -723,109 +723,109 @@
 </div></div>
 
 <div class="mo" id="modal-acc"><div class="md" style="max-width:420px">
-  <div class="mh"><div class="mt">Conto</div><div class="mc" onclick="cm('modal-acc')">âœ•</div></div>
+  <div class="mh"><div class="mt">Conto</div><div class="mc" onclick="cm('modal-acc')">✕</div></div>
   <div class="mb"><input type="hidden" id="acc-id">
     <div class="fg2"><label>Nome</label><input type="text" id="acc-name" placeholder="Es. Conto Intesa..." autocomplete="off"></div>
-    <div class="fr"><div class="fg2"><label>Tipo</label><select id="acc-type"><option value="bank">ðŸ¦ Banca</option><option value="card">ðŸ’³ Carta</option><option value="paypal">ðŸŸ¦ PayPal</option><option value="cash">ðŸ’µ Contanti</option><option value="crypto">â‚¿ Crypto</option><option value="investment">ðŸ“ˆ Investimento</option></select></div><div class="fg2"><label>Saldo (â‚¬)</label><input type="number" id="acc-bal" placeholder="0,00" step="0.01" inputmode="decimal" autocomplete="off"></div></div>
+    <div class="fr"><div class="fg2"><label>Tipo</label><select id="acc-type"><option value="bank">�� Banca</option><option value="card"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Carta</option><option value="paypal"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/></svg> PayPal</option><option value="cash"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Contanti</option><option value="crypto">₿ Crypto</option><option value="investment"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 8 12 14 9 11 3 17"/><polyline points="22 8 18 8 18 12"/></svg> Investimento</option></select></div><div class="fg2"><label>Saldo (�)</label><input type="number" id="acc-bal" placeholder="0,00" step="0.01" inputmode="decimal" autocomplete="off"></div></div>
     <div class="fg2"><label>Colore</label><select id="acc-color"><option value="#2563EB">Blu</option><option value="#34D399">Verde</option><option value="#06B6D4">Ciano</option><option value="#FB923C">Arancio</option><option value="#EF4444">Rosso</option><option value="#FBBF24">Giallo</option></select></div>
-    <div style="margin-top:.75rem"><label style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;cursor:pointer"><input type="checkbox" id="acc-main-check"> â­ Imposta come conto principale</label></div>
+    <div style="margin-top:.75rem"><label style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;cursor:pointer"><input type="checkbox" id="acc-main-check"> � Imposta come conto principale</label></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-acc')">Annulla</button><button class="btn bp" onclick="saveAcc()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-budget"><div class="md" style="max-width:400px">
-  <div class="mh"><div class="mt">Budget</div><div class="mc" onclick="cm('modal-budget')">âœ•</div></div>
-  <div class="mb"><div class="fr"><div class="fg2"><label>Categoria</label><select id="bud-cat"><option value="alimentari">ðŸ›’ Alimentari</option><option value="trasporti">ðŸš— Trasporti</option><option value="casa">ðŸ  Casa</option><option value="salute">ðŸ’Š Salute</option><option value="svago">ðŸŽ¬ Svago</option><option value="lavoro">ðŸ’¼ Lavoro</option><option value="abbonamenti">ðŸ“± Abbonamenti</option><option value="viaggi">âœˆï¸ Viaggi</option><option value="altro">ðŸ“¦ Altro</option></select></div><div class="fg2"><label>Limite (â‚¬)</label><input type="number" id="bud-limit" placeholder="200" min="1" inputmode="decimal" autocomplete="off"></div></div></div>
+  <div class="mh"><div class="mt">Budget</div><div class="mc" onclick="cm('modal-budget')">✕</div></div>
+  <div class="mb"><div class="fr"><div class="fg2"><label>Categoria</label><select id="bud-cat"><option value="alimentari"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Alimentari</option><option value="trasporti"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Trasporti</option><option value="casa">�� Casa</option><option value="salute"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg> Salute</option><option value="svago"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="16" y1="10" x2="16" y2="14"/></svg> Svago</option><option value="lavoro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg> Lavoro</option><option value="abbonamenti"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg> Abbonamenti</option><option value="viaggi"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>� Viaggi</option><option value="altro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div><div class="fg2"><label>Limite (�)</label><input type="number" id="bud-limit" placeholder="200" min="1" inputmode="decimal" autocomplete="off"></div></div></div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-budget')">Annulla</button><button class="btn bp" onclick="saveBudget()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-goal"><div class="md">
-  <div class="mh"><div class="mt">Obiettivo</div><div class="mc" onclick="cm('modal-goal')">âœ•</div></div>
+  <div class="mh"><div class="mt">Obiettivo</div><div class="mc" onclick="cm('modal-goal')">✕</div></div>
   <div class="mb"><input type="hidden" id="goal-id">
     <div class="fg2"><label>Nome</label><input type="text" id="goal-name" placeholder="Es. Vacanze, Emergenza..." autocomplete="off"></div>
-    <div class="fr"><div class="fg2"><label>Target (â‚¬)</label><input type="number" id="goal-target" placeholder="5000" step="0.01" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Attuale (â‚¬)</label><input type="number" id="goal-cur" placeholder="0" step="0.01" inputmode="decimal" autocomplete="off"></div></div>
-    <div class="fr"><div class="fg2"><label>Scadenza</label><input type="date" id="goal-dl"></div><div class="fg2"><label>Icona</label><select id="goal-icon"><option value="ðŸ–ï¸">ðŸ–ï¸ Vacanze</option><option value="ðŸš—">ðŸš— Auto</option><option value="ðŸ ">ðŸ  Casa</option><option value="ðŸ’">ðŸ’ Matrimonio</option><option value="ðŸ“±">ðŸ“± Tech</option><option value="ðŸŽ“">ðŸŽ“ Istruzione</option><option value="ðŸ›¡ï¸">ðŸ›¡ï¸ Emergenza</option><option value="ðŸ’¼">ðŸ’¼ Business</option><option value="ðŸŽ¯">ðŸŽ¯ Altro</option></select></div></div>
-    <div class="fg2"><label>Promemoria</label><select id="goal-rem"><option value="">Nessuno</option><option value="start">All'inizio (0%)</option><option value="mid">A metÃ  (50%)</option><option value="end">Quasi raggiunto (90%)</option></select></div>
+    <div class="fr"><div class="fg2"><label>Target (�)</label><input type="number" id="goal-target" placeholder="5000" step="0.01" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Attuale (�)</label><input type="number" id="goal-cur" placeholder="0" step="0.01" inputmode="decimal" autocomplete="off"></div></div>
+    <div class="fr"><div class="fg2"><label>Scadenza</label><input type="date" id="goal-dl"></div><div class="fg2"><label>Icona</label><select id="goal-icon"><option value="���">��� Vacanze</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Auto</option><option value="��">�� Casa</option><option value="�">� Matrimonio</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg> Tech</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Istruzione</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>�"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>� Emergenza</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg> Business</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Altro</option></select></div></div>
+    <div class="fg2"><label>Promemoria</label><select id="goal-rem"><option value="">Nessuno</option><option value="start">All'inizio (0%)</option><option value="mid">A met� (50%)</option><option value="end">Quasi raggiunto (90%)</option></select></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-goal')">Annulla</button><button class="btn bp" onclick="saveGoal()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-rec"><div class="md">
-  <div class="mh"><div class="mt">Spesa Ricorrente</div><div class="mc" onclick="cm('modal-rec')">âœ•</div></div>
+  <div class="mh"><div class="mt">Spesa Ricorrente</div><div class="mc" onclick="cm('modal-rec')">✕</div></div>
   <div class="mb"><input type="hidden" id="rec-id">
     <div class="fg2"><label>Nome</label><input type="text" id="rec-name" placeholder="Es. Netflix, Affitto..." autocomplete="off"></div>
-    <div class="fr"><div class="fg2"><label>Importo (â‚¬)</label><input type="number" id="rec-amount" placeholder="0,00" step="0.01" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Frequenza</label><select id="rec-freq"><option value="weekly">Settimanale</option><option value="monthly" selected>Mensile</option><option value="quarterly">Trimestrale</option><option value="yearly">Annuale</option></select></div></div>
-    <div class="fr"><div class="fg2"><label>Categoria</label><select id="rec-cat"><option value="abbonamenti">ðŸ“± Abbonamenti</option><option value="casa">ðŸ  Casa</option><option value="trasporti">ðŸš— Trasporti</option><option value="altro">ðŸ“¦ Altro</option></select></div><div class="fg2"><label>Prossima data</label><input type="date" id="rec-next"></div></div>
+    <div class="fr"><div class="fg2"><label>Importo (�)</label><input type="number" id="rec-amount" placeholder="0,00" step="0.01" inputmode="decimal" autocomplete="off"></div><div class="fg2"><label>Frequenza</label><select id="rec-freq"><option value="weekly">Settimanale</option><option value="monthly" selected>Mensile</option><option value="quarterly">Trimestrale</option><option value="yearly">Annuale</option></select></div></div>
+    <div class="fr"><div class="fg2"><label>Categoria</label><select id="rec-cat"><option value="abbonamenti"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg> Abbonamenti</option><option value="casa">�� Casa</option><option value="trasporti"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Trasporti</option><option value="altro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div><div class="fg2"><label>Prossima data</label><input type="date" id="rec-next"></div></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-rec')">Annulla</button><button class="btn bp" onclick="saveRec()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-debt"><div class="md">
-  <div class="mh"><div class="mt">Debito / Prestito</div><div class="mc" onclick="cm('modal-debt')">âœ•</div></div>
+  <div class="mh"><div class="mt">Debito / Prestito</div><div class="mc" onclick="cm('modal-debt')">✕</div></div>
   <div class="mb"><input type="hidden" id="debt-id">
     <div class="fg2"><label>Nome</label><input type="text" id="debt-name" placeholder="Es. Mutuo casa..."></div>
-    <div class="fr"><div class="fg2"><label>Totale (â‚¬)</label><input type="number" id="debt-total" placeholder="50000" step="0.01"></div><div class="fg2"><label>Residuo (â‚¬)</label><input type="number" id="debt-rem" placeholder="45000" step="0.01"></div></div>
-    <div class="fr"><div class="fg2"><label>Rata mensile (â‚¬)</label><input type="number" id="debt-rate" placeholder="500" step="0.01"></div><div class="fg2"><label>Tasso (%)</label><input type="number" id="debt-int" placeholder="2.5" step="0.01"></div></div>
+    <div class="fr"><div class="fg2"><label>Totale (�)</label><input type="number" id="debt-total" placeholder="50000" step="0.01"></div><div class="fg2"><label>Residuo (�)</label><input type="number" id="debt-rem" placeholder="45000" step="0.01"></div></div>
+    <div class="fr"><div class="fg2"><label>Rata mensile (�)</label><input type="number" id="debt-rate" placeholder="500" step="0.01"></div><div class="fg2"><label>Tasso (%)</label><input type="number" id="debt-int" placeholder="2.5" step="0.01"></div></div>
     <div class="fr"><div class="fg2"><label>Inizio</label><input type="date" id="debt-start"></div><div class="fg2"><label>Fine prevista</label><input type="date" id="debt-end"></div></div>
-    <div class="fg2"><label>Tipo</label><select id="debt-type"><option value="mortgage">ðŸ  Mutuo</option><option value="personal">ðŸ’° Personale</option><option value="car">ðŸš— Auto</option><option value="credit">ðŸ’³ Carta</option><option value="other">ðŸ“¦ Altro</option></select></div>
+    <div class="fg2"><label>Tipo</label><select id="debt-type"><option value="mortgage">�� Mutuo</option><option value="personal"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Personale</option><option value="car"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Auto</option><option value="credit"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Carta</option><option value="other"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-debt')">Annulla</button><button class="btn bp" onclick="saveDebt()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-group"><div class="md">
-  <div class="mh"><div class="mt">Nuovo gruppo</div><div class="mc" onclick="cm('modal-group')">âœ•</div></div>
+  <div class="mh"><div class="mt">Nuovo gruppo</div><div class="mc" onclick="cm('modal-group')">✕</div></div>
   <div class="mb">
     <div class="fg2"><label>Nome gruppo</label><input type="text" id="grp-name" placeholder="Es. Coinquilini, Vacanza Sardegna..."></div>
     <div class="fg2"><label>Descrizione</label><input type="text" id="grp-desc" placeholder="Opzionale..."></div>
-    <div class="fr"><div class="fg2"><label>Icona</label><select id="grp-icon"><option value="ðŸ ">ðŸ  Casa</option><option value="ðŸ–ï¸">ðŸ–ï¸ Vacanza</option><option value="ðŸ•">ðŸ• Cibo</option><option value="ðŸŽ‰">ðŸŽ‰ Evento</option><option value="ðŸ‘¥">ðŸ‘¥ Generale</option><option value="ðŸ’¼">ðŸ’¼ Lavoro</option><option value="âœˆï¸">âœˆï¸ Viaggio</option></select></div><div class="fg2"><label>Scadenza gruppo</label><input type="date" id="grp-expiry" placeholder="Lascia vuoto = nessuna scadenza"></div></div>
+    <div class="fr"><div class="fg2"><label>Icona</label><select id="grp-icon"><option value="��">�� Casa</option><option value="���">��� Vacanza</option><option value="��">�� Cibo</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 2 12 6"/><polyline points="12 18 12 22"/><polyline points="4.93 4.93 7.76 7.76"/><polyline points="16.24 16.24 19.07 19.07"/><polyline points="2 12 6 12"/><polyline points="18 12 22 12"/><polyline points="4.93 19.07 7.76 16.24"/><polyline points="16.24 7.76 19.07 4.93"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 2 12 6"/><polyline points="12 18 12 22"/><polyline points="4.93 4.93 7.76 7.76"/><polyline points="16.24 16.24 19.07 19.07"/><polyline points="2 12 6 12"/><polyline points="18 12 22 12"/><polyline points="4.93 19.07 7.76 16.24"/><polyline points="16.24 7.76 19.07 4.93"/></svg> Evento</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Generale</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg> Lavoro</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>�"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>� Viaggio</option></select></div><div class="fg2"><label>Scadenza gruppo</label><input type="date" id="grp-expiry" placeholder="Lascia vuoto = nessuna scadenza"></div></div>
     <div class="fg2"><label>Invita membri (email, separate da virgola)</label><input type="text" id="grp-members" placeholder="amico@email.com, altro@email.com"></div>
     <div style="padding:.75rem;background:rgba(6,182,212,.06);border-radius:var(--rs);border:1px solid rgba(6,182,212,.15);font-size:.8rem;color:var(--tx2)">
-      ðŸ’¡ Il gruppo si auto-elimina quando tutti i saldi sono a zero e la scadenza Ã¨ raggiunta.
+      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Il gruppo si auto-elimina quando tutti i saldi sono a zero e la scadenza � raggiunta.
     </div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-group')">Annulla</button><button class="btn bp" onclick="saveGroup()">Crea gruppo</button></div>
 </div></div>
 
 <div class="mo" id="modal-ge"><div class="md" style="max-width:420px">
-  <div class="mh"><div class="mt">Spesa di gruppo</div><div class="mc" onclick="cm('modal-ge')">âœ•</div></div>
+  <div class="mh"><div class="mt">Spesa di gruppo</div><div class="mc" onclick="cm('modal-ge')">✕</div></div>
   <div class="mb">
     <div class="fg2"><label>Descrizione</label><input type="text" id="ge-desc" placeholder="Es. Cena ristorante"></div>
-    <div class="fr"><div class="fg2"><label>Importo (â‚¬)</label><input type="number" id="ge-amount" placeholder="0,00" step="0.01"></div><div class="fg2"><label>Pagato da</label><select id="ge-payer"></select></div></div>
+    <div class="fr"><div class="fg2"><label>Importo (�)</label><input type="number" id="ge-amount" placeholder="0,00" step="0.01"></div><div class="fg2"><label>Pagato da</label><select id="ge-payer"></select></div></div>
     <div class="fr"><div class="fg2"><label>Divisione</label><select id="ge-split"><option value="equal">Uguale</option><option value="custom">Custom</option></select></div><div class="fg2"><label>Data</label><input type="date" id="ge-date"></div></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-ge')">Annulla</button><button class="btn bp" onclick="saveGE()">Aggiungi</button></div>
 </div></div>
 
 <div class="mo" id="modal-inv"><div class="md" style="max-width:540px">
-  <div class="mh"><div class="mt">Fattura</div><div class="mc" onclick="cm('modal-inv')">âœ•</div></div>
+  <div class="mh"><div class="mt">Fattura</div><div class="mc" onclick="cm('modal-inv')">✕</div></div>
   <div class="mb"><input type="hidden" id="inv-id">
-    <div class="fr"><div class="fg2"><label>Cliente</label><input type="text" id="inv-client" placeholder="Nome cliente"></div><div class="fg2"><label>NÂ°</label><input type="text" id="inv-num" placeholder="2024-001"></div></div>
+    <div class="fr"><div class="fg2"><label>Cliente</label><input type="text" id="inv-client" placeholder="Nome cliente"></div><div class="fg2"><label>N�</label><input type="text" id="inv-num" placeholder="2024-001"></div></div>
     <div class="fr"><div class="fg2"><label>Data</label><input type="date" id="inv-date"></div><div class="fg2"><label>Scadenza</label><input type="date" id="inv-due"></div></div>
-    <div class="fr"><div class="fg2"><label>Imponibile (â‚¬)</label><input type="number" id="inv-amount" placeholder="1000" step="0.01"></div><div class="fg2"><label>IVA %</label><select id="inv-vat"><option value="0">0%</option><option value="4">4%</option><option value="10">10%</option><option value="22" selected>22%</option></select></div></div>
+    <div class="fr"><div class="fg2"><label>Imponibile (�)</label><input type="number" id="inv-amount" placeholder="1000" step="0.01"></div><div class="fg2"><label>IVA %</label><select id="inv-vat"><option value="0">0%</option><option value="4">4%</option><option value="10">10%</option><option value="22" selected>22%</option></select></div></div>
     <div class="fg2"><label>Stato</label><select id="inv-status"><option value="draft">Bozza</option><option value="sent">Inviata</option><option value="paid">Pagata</option><option value="overdue">Scaduta</option></select></div>
     <div class="fg2"><label>Note</label><textarea id="inv-notes" rows="2"></textarea></div>
     <div id="inv-modal-templates" style="margin-top:.5rem;padding:.5rem;background:var(--bg3);border-radius:var(--rs);display:none"></div>
   </div>
-  <div class="mf"><button class="btn bs" onclick="cm('modal-inv')">Annulla</button><button class="btn bs bsm" onclick="om('modal-inv-template')">ðŸ“‹ Salva template</button><button class="btn bp2" onclick="saveInv()">Salva</button></div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-inv')">Annulla</button><button class="btn bs bsm" onclick="om('modal-inv-template')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Salva template</button><button class="btn bp2" onclick="saveInv()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-quote"><div class="md" style="max-width:540px">
-  <div class="mh"><div class="mt">Preventivo</div><div class="mc" onclick="cm('modal-quote')">âœ•</div></div>
+  <div class="mh"><div class="mt">Preventivo</div><div class="mc" onclick="cm('modal-quote')">✕</div></div>
   <div class="mb"><input type="hidden" id="qt-id">
-    <div class="fr"><div class="fg2"><label>Cliente</label><input type="text" id="qt-client" placeholder="Nome cliente"></div><div class="fg2"><label>NÂ°</label><input type="text" id="qt-num" placeholder="PREV-001"></div></div>
-    <div class="fr"><div class="fg2"><label>Data</label><input type="date" id="qt-date"></div><div class="fg2"><label>ValiditÃ </label><input type="date" id="qt-valid"></div></div>
-    <div class="fr"><div class="fg2"><label>Imponibile (â‚¬)</label><input type="number" id="qt-amount" placeholder="1000" step="0.01"></div><div class="fg2"><label>IVA %</label><select id="qt-vat"><option value="0">0%</option><option value="4">4%</option><option value="10">10%</option><option value="22" selected>22%</option></select></div></div>
+    <div class="fr"><div class="fg2"><label>Cliente</label><input type="text" id="qt-client" placeholder="Nome cliente"></div><div class="fg2"><label>N�</label><input type="text" id="qt-num" placeholder="PREV-001"></div></div>
+    <div class="fr"><div class="fg2"><label>Data</label><input type="date" id="qt-date"></div><div class="fg2"><label>Validit�</label><input type="date" id="qt-valid"></div></div>
+    <div class="fr"><div class="fg2"><label>Imponibile (�)</label><input type="number" id="qt-amount" placeholder="1000" step="0.01"></div><div class="fg2"><label>IVA %</label><select id="qt-vat"><option value="0">0%</option><option value="4">4%</option><option value="10">10%</option><option value="22" selected>22%</option></select></div></div>
     <div class="fg2"><label>Stato</label><select id="qt-status"><option value="draft">Bozza</option><option value="sent">Inviato</option><option value="accepted">Accettato</option><option value="rejected">Rifiutato</option></select></div>
     <div class="fg2"><label>Note</label><textarea id="qt-notes" rows="2"></textarea></div>
   </div>
-  <div class="mf"><button class="btn bs" onclick="cm('modal-quote')">Annulla</button><button class="btn bs" onclick="qt2Inv()">â†’ Converti in fattura</button><button class="btn bp2" onclick="saveQt()">Salva</button></div>
+  <div class="mf"><button class="btn bs" onclick="cm('modal-quote')">Annulla</button><button class="btn bs" onclick="qt2Inv()">→ Converti in fattura</button><button class="btn bp2" onclick="saveQt()">Salva</button></div>
 </div></div>
 
 <div class="mo" id="modal-sup"><div class="md">
-  <div class="mh"><div class="mt">Fornitore</div><div class="mc" onclick="cm('modal-sup')">âœ•</div></div>
+  <div class="mh"><div class="mt">Fornitore</div><div class="mc" onclick="cm('modal-sup')">✕</div></div>
   <div class="mb"><input type="hidden" id="sup-id">
     <div class="fg2"><label>Nome</label><input type="text" id="sup-name" placeholder="Fornitore SRL"></div>
-    <div class="fr"><div class="fg2"><label>Categoria</label><select id="sup-cat"><option value="software">ðŸ’» Software</option><option value="servizi">ðŸ”§ Servizi</option><option value="materiali">ðŸ“¦ Materiali</option><option value="consulenza">ðŸ’¼ Consulenza</option><option value="utilities">âš¡ Utenze</option><option value="altro">ðŸ“‹ Altro</option></select></div><div class="fg2"><label>Costo/mese (â‚¬)</label><input type="number" id="sup-cost" placeholder="0" step="0.01"></div></div>
+    <div class="fr"><div class="fg2"><label>Categoria</label><select id="sup-cat"><option value="software"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg> Software</option><option value="servizi"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Servizi</option><option value="materiali"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Materiali</option><option value="consulenza"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg> Consulenza</option><option value="utilities">⚡ Utenze</option><option value="altro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Altro</option></select></div><div class="fg2"><label>Costo/mese (�)</label><input type="number" id="sup-cost" placeholder="0" step="0.01"></div></div>
     <div class="fg2"><label>Email</label><input type="email" id="sup-email" placeholder="contatti@fornitore.com"></div>
     <div class="fg2"><label>Note</label><input type="text" id="sup-notes" placeholder="Note..."></div>
   </div>
@@ -833,22 +833,22 @@
 </div></div>
 
 <div class="mo" id="modal-travel"><div class="md" style="max-width:420px">
-  <div class="mh"><div class="mt">Viaggio</div><div class="mc" onclick="cm('modal-travel')">âœ•</div></div>
+  <div class="mh"><div class="mt">Viaggio</div><div class="mc" onclick="cm('modal-travel')">✕</div></div>
   <div class="mb"><input type="hidden" id="trv-id">
     <div class="fg2"><label>Destinazione</label><input type="text" id="trv-dest" placeholder="Es. Roma, Parigi..."></div>
     <div class="fr"><div class="fg2"><label>Partenza</label><input type="date" id="trv-start"></div><div class="fg2"><label>Ritorno</label><input type="date" id="trv-end"></div></div>
-    <div class="fr"><div class="fg2"><label>Budget (â‚¬)</label><input type="number" id="trv-budget" placeholder="500" step="0.01"></div><div class="fg2"><label>Motivo</label><select id="trv-reason"><option value="vacation">ðŸ–ï¸ Vacanza</option><option value="business">ðŸ’¼ Lavoro</option><option value="other">ðŸ“¦ Altro</option></select></div></div>
+    <div class="fr"><div class="fg2"><label>Budget (�)</label><input type="number" id="trv-budget" placeholder="500" step="0.01"></div><div class="fg2"><label>Motivo</label><select id="trv-reason"><option value="vacation">��� Vacanza</option><option value="business"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg> Lavoro</option><option value="other"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-travel')">Annulla</button><button class="btn bp2" onclick="saveTrv()">Salva</button></div>
 </div></div>
 
 <!-- PROJECT MODAL -->
 <div class="mo" id="modal-project"><div class="md">
-  <div class="mh"><div class="mt" id="proj-modal-title">Nuovo progetto</div><div class="mc" onclick="cm('modal-project')">âœ•</div></div>
+  <div class="mh"><div class="mt" id="proj-modal-title">Nuovo progetto</div><div class="mc" onclick="cm('modal-project')">✕</div></div>
   <div class="mb"><input type="hidden" id="proj-id">
     <div class="fg2"><label>Nome progetto</label><input type="text" id="proj-name" placeholder="Es. Ristrutturazione bagno, Nuovo sito web..."></div>
     <div class="fg2"><label>Descrizione</label><input type="text" id="proj-desc" placeholder="Descrizione opzionale..."></div>
-    <div class="fr"><div class="fg2"><label>Budget totale (â‚¬)</label><input type="number" id="proj-budget" placeholder="5000" step="0.01" min="0"></div><div class="fg2"><label>Icona</label><select id="proj-icon"><option value="ðŸ—ï¸">ðŸ—ï¸ Costruzione</option><option value="ðŸ ">ðŸ  Casa</option><option value="ðŸ’»">ðŸ’» Tech</option><option value="ðŸš—">ðŸš— Auto</option><option value="ðŸŒ¿">ðŸŒ¿ Giardino</option><option value="ðŸŽ¨">ðŸŽ¨ Design</option><option value="ðŸ“¦">ðŸ“¦ Altro</option></select></div></div>
+    <div class="fr"><div class="fg2"><label>Budget totale (�)</label><input type="number" id="proj-budget" placeholder="5000" step="0.01" min="0"></div><div class="fg2"><label>Icona</label><select id="proj-icon"><option value="���">��� Costruzione</option><option value="��">�� Casa</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg> Tech</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Auto</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12c2 3 5 5 10 5s8-2 10-5M12 2C8 2 4 5 4 10c0 4 3 7 8 12 5-5 8-8 8-12 0-5-4-8-8-8z"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12c2 3 5 5 10 5s8-2 10-5M12 2C8 2 4 5 4 10c0 4 3 7 8 12 5-5 8-8 8-12 0-5-4-8-8-8z"/></svg> Giardino</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.5-4.5-10-10-10z"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.5-4.5-10-10-10z"/></svg> Design</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div></div>
     <div class="fr"><div class="fg2"><label>Inizio</label><input type="date" id="proj-start"></div><div class="fg2"><label>Fine prevista</label><input type="date" id="proj-end"></div></div>
     <div class="fg2"><label>Colore</label><select id="proj-color"><option value="#2563EB">Blu</option><option value="#34D399">Verde</option><option value="#06B6D4">Ciano</option><option value="#FB923C">Arancio</option><option value="#FBBF24">Giallo</option><option value="#EF4444">Rosso</option></select></div>
   </div>
@@ -857,16 +857,16 @@
 
 <!-- PROJECT EXPENSE MODAL -->
 <div class="mo" id="modal-proj-tx"><div class="md">
-  <div class="mh"><div class="mt">Aggiungi spesa al progetto</div><div class="mc" onclick="cm('modal-proj-tx')">âœ•</div></div>
+  <div class="mh"><div class="mt">Aggiungi spesa al progetto</div><div class="mc" onclick="cm('modal-proj-tx')">✕</div></div>
   <div class="mb">
     <div class="fg2"><label>Descrizione</label><input type="text" id="ptx-desc" placeholder="Es. Piastrelle, Idraulico..."></div>
-    <div class="fr"><div class="fg2"><label>Importo (â‚¬)</label><input type="number" id="ptx-amount" placeholder="0,00" step="0.01" min="0"></div><div class="fg2"><label>Data</label><input type="date" id="ptx-date"></div></div>
-    <div class="fr"><div class="fg2"><label>Categoria</label><select id="ptx-cat"><option value="materiali">ðŸ§± Materiali</option><option value="manodopera">ðŸ”¨ Manodopera</option><option value="trasporti">ðŸš— Trasporti</option><option value="professioni">ðŸ‘· Professionisti</option><option value="permessi">ðŸ“‹ Permessi</option><option value="altro">ðŸ“¦ Altro</option></select></div><div class="fg2"><label>Note</label><input type="text" id="ptx-note" placeholder="Opzionale..."></div></div>
+    <div class="fr"><div class="fg2"><label>Importo (�)</label><input type="number" id="ptx-amount" placeholder="0,00" step="0.01" min="0"></div><div class="fg2"><label>Data</label><input type="date" id="ptx-date"></div></div>
+    <div class="fr"><div class="fg2"><label>Categoria</label><select id="ptx-cat"><option value="materiali"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="4" y1="14" x2="20" y2="14"/></svg> Materiali</option><option value="manodopera"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6v12"/><path d="M8 6v12"/><path d="M16 6v12"/></svg> Manodopera</option><option value="trasporti"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Trasporti</option><option value="professioni"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6v12"/><path d="M8 6v12"/><path d="M16 6v12"/></svg> Professionisti</option><option value="permessi"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Permessi</option><option value="altro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div><div class="fg2"><label>Note</label><input type="text" id="ptx-note" placeholder="Opzionale..."></div></div>
     <div style="padding:.875rem;background:rgba(239,68,68,.08);border-radius:var(--rs);border:1px solid rgba(239,68,68,.2)">
-      <div style="font-size:.8rem;font-weight:600;margin-bottom:.5rem">ðŸ’° Deduci dal saldo?</div>
+      <div style="font-size:.8rem;font-weight:600;margin-bottom:.5rem"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg> Deduci dal saldo?</div>
       <div style="display:flex;gap:.75rem">
-        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer"><input type="radio" name="ptx-deduct" id="ptx-deduct-yes" value="yes" checked> SÃ¬ â€” sottrai dal conto</label>
-        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer"><input type="radio" name="ptx-deduct" id="ptx-deduct-no" value="no"> No â€” solo tracciamento</label>
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer"><input type="radio" name="ptx-deduct" id="ptx-deduct-yes" value="yes" checked> S� � sottrai dal conto</label>
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer"><input type="radio" name="ptx-deduct" id="ptx-deduct-no" value="no"> No � solo tracciamento</label>
       </div>
       <div class="fg2" style="margin-top:.75rem;margin-bottom:0" id="ptx-account-row">
         <label>Dal conto</label><select id="ptx-account"></select>
@@ -878,7 +878,7 @@
 
 <!-- PROJECT LINK TRANSACTIONS -->
 <div class="mo" id="modal-proj-link"><div class="md">
-  <div class="mh"><div class="mt">Importa da transazioni</div><div class="mc" onclick="cm('modal-proj-link')">âœ•</div></div>
+  <div class="mh"><div class="mt">Importa da transazioni</div><div class="mc" onclick="cm('modal-proj-link')">✕</div></div>
   <div class="mb">
     <p style="font-size:.875rem;color:var(--tx2);margin-bottom:1rem">Seleziona le transazioni esistenti da associare a questo progetto.</p>
     <div class="fg2"><label>Cerca transazione</label><input type="text" id="plnk-search" placeholder="Es. piastrelle, idraulico..." oninput="filterProjLink()"></div>
@@ -890,12 +890,12 @@
 
 <!-- ASSET MODAL (Portfolio) -->
 <div class="mo" id="modal-asset"><div class="md" style="max-width:440px">
-  <div class="mh"><div class="mt">Aggiungi asset</div><div class="mc" onclick="cm('modal-asset')">âœ•</div></div>
+  <div class="mh"><div class="mt">Aggiungi asset</div><div class="mc" onclick="cm('modal-asset')">✕</div></div>
   <div class="mb"><input type="hidden" id="ast-id">
     <div class="fg2"><label>Nome / Ticker</label><input type="text" id="ast-name" placeholder="Es. Apple, BTC, IWDA.MI..." oninput="searchAsset(this.value)"></div>
     <div id="ast-suggestions" style="background:var(--bg3);border-radius:var(--rs);margin-top:-.5rem;margin-bottom:.875rem;display:none"></div>
-    <div class="fg2"><label>Tipo</label><select id="ast-type"><option value="stock">ðŸ“Š Azione</option><option value="etf">ðŸ—‚ï¸ ETF</option><option value="crypto">â‚¿ Crypto</option><option value="bond">ðŸ›ï¸ Obbligazione</option><option value="other">ðŸ“¦ Altro</option></select></div>
-    <div class="fr"><div class="fg2"><label>QuantitÃ </label><input type="number" id="ast-qty" placeholder="10" step="0.0001" min="0"></div><div class="fg2"><label>Prezzo di carico (â‚¬)</label><input type="number" id="ast-cost" placeholder="150.00" step="0.01" min="0"></div></div>
+    <div class="fg2"><label>Tipo</label><select id="ast-type"><option value="stock"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Azione</option><option value="etf"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>� ETF</option><option value="crypto">₿ Crypto</option><option value="bond">��� Obbligazione</option><option value="other"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Altro</option></select></div>
+    <div class="fr"><div class="fg2"><label>Quantit�</label><input type="number" id="ast-qty" placeholder="10" step="0.0001" min="0"></div><div class="fg2"><label>Prezzo di carico (�)</label><input type="number" id="ast-cost" placeholder="150.00" step="0.01" min="0"></div></div>
     <div class="fg2"><label>Simbolo (per prezzo live)</label><input type="text" id="ast-symbol" placeholder="Es. AAPL, BTC, IWDA.MI"></div>
     <div class="fg2"><label>Nota</label><input type="text" id="ast-note" placeholder="Opzionale..."></div>
   </div>
@@ -904,13 +904,13 @@
 
 <!-- INSURANCE MODAL -->
 <div class="mo" id="modal-insurance"><div class="md">
-  <div class="mh"><div class="mt">Polizza / Garanzia</div><div class="mc" onclick="cm('modal-insurance')">âœ•</div></div>
+  <div class="mh"><div class="mt">Polizza / Garanzia</div><div class="mc" onclick="cm('modal-insurance')">✕</div></div>
   <div class="mb"><input type="hidden" id="ins-id">
     <div class="fg2"><label>Nome</label><input type="text" id="ins-name" placeholder="Es. RC Auto, Assicurazione vita, Garanzia iPhone..."></div>
-    <div class="fr"><div class="fg2"><label>Tipo</label><select id="ins-type"><option value="auto">ðŸš— Auto/Moto</option><option value="casa">ðŸ  Casa</option><option value="vita">â¤ï¸ Vita</option><option value="salute">ðŸ’Š Salute</option><option value="viaggio">âœˆï¸ Viaggio</option><option value="garanzia">ðŸ“¦ Garanzia prodotto</option><option value="altro">ðŸ“‹ Altro</option></select></div><div class="fg2"><label>Premio annuo (â‚¬)</label><input type="number" id="ins-cost" placeholder="200" step="0.01"></div></div>
+    <div class="fr"><div class="fg2"><label>Tipo</label><select id="ins-type"><option value="auto"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a1 1 0 0 1-1-1v-3l2.7-3.6a1 1 0 0 1 .8-.4h12.9a1 1 0 0 1 .8.4L22 13v3a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><line x1="5" y1="11" x2="19" y2="11"/></svg> Auto/Moto</option><option value="casa">�� Casa</option><option value="vita">��� Vita</option><option value="salute"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg> Salute</option><option value="viaggio"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>� Viaggio</option><option value="garanzia"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Garanzia prodotto</option><option value="altro"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> Altro</option></select></div><div class="fg2"><label>Premio annuo (�)</label><input type="number" id="ins-cost" placeholder="200" step="0.01"></div></div>
     <div class="fr"><div class="fg2"><label>Inizio</label><input type="date" id="ins-start"></div><div class="fg2"><label>Scadenza</label><input type="date" id="ins-end"></div></div>
     <div class="fg2"><label>Compagnia assicurativa</label><input type="text" id="ins-company" placeholder="Es. Generali, UnipolSai..."></div>
-    <div class="fg2"><label>NÂ° polizza</label><input type="text" id="ins-policy" placeholder="Numero polizza o seriale..."></div>
+    <div class="fg2"><label>N� polizza</label><input type="text" id="ins-policy" placeholder="Numero polizza o seriale..."></div>
     <div class="fg2"><label>Note</label><textarea id="ins-notes" rows="2" placeholder="Massimale, franchigia, note..."></textarea></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-insurance')">Annulla</button><button class="btn bp" onclick="saveInsurance()">Salva</button></div>
@@ -918,56 +918,56 @@
 
 <!-- CATEGORY MODAL -->
 <div class="mo" id="modal-category"><div class="md" style="max-width:420px">
-  <div class="mh"><div class="mt">Categoria</div><div class="mc" onclick="cm('modal-category')">âœ•</div></div>
+  <div class="mh"><div class="mt">Categoria</div><div class="mc" onclick="cm('modal-category')">✕</div></div>
   <div class="mb"><input type="hidden" id="cat-id">
     <div class="fg2"><label>Nome</label><input type="text" id="cat-name" placeholder="Es. Ristoranti, Abbigliamento..."></div>
-    <div class="fr"><div class="fg2"><label>Icona</label><select id="cat-icon"><option value="ðŸ›’">ðŸ›’ Spesa</option><option value="ðŸ•">ðŸ• Ristoranti</option><option value="ðŸ‘•">ðŸ‘• Abbigliamento</option><option value="ðŸŽ®">ðŸŽ® Giochi</option><option value="ðŸ‹ï¸">ðŸ‹ï¸ Sport</option><option value="ðŸ’…">ðŸ’… Beauty</option><option value="ðŸ¾">ðŸ¾ Animali</option><option value="ðŸ“¦">ðŸ“¦ Generico</option></select></div><div class="fg2"><label>Tipo</label><select id="cat-type"><option value="expense">Uscita</option><option value="income">Entrata</option><option value="both">Entrambi</option></select></div></div>
+    <div class="fr"><div class="fg2"><label>Icona</label><select id="cat-icon"><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Spesa</option><option value="��">�� Ristoranti</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7l3-4h12l3 4-5 3v9H8v-9L3 7z"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7l3-4h12l3 4-5 3v9H8v-9L3 7z"/></svg> Abbigliamento</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg> Giochi</option><option value="���">��� Sport</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 3h6v6H9z"/><path d="M12 3v2"/><rect x="7" y="9" width="10" height="12" rx="2"/><line x1="10" y1="14" x2="14" y2="14"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 3h6v6H9z"/><path d="M12 3v2"/><rect x="7" y="9" width="10" height="12" rx="2"/><line x1="10" y1="14" x2="14" y2="14"/></svg> Beauty</option><option value="��">�� Animali</option><option value="<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Generico</option></select></div><div class="fg2"><label>Tipo</label><select id="cat-type"><option value="expense">Uscita</option><option value="income">Entrata</option><option value="both">Entrambi</option></select></div></div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-category')">Annulla</button><button class="btn bp" onclick="saveCategory()">Salva</button></div>
 </div></div>
 
 <!-- EXPORT MODAL -->
 <div class="mo" id="modal-export"><div class="md" style="max-width:500px">
-  <div class="mh"><div class="mt">ðŸ“¥ Esporta dati</div><div class="mc" onclick="cm('modal-export')">âœ•</div></div>
+  <div class="mh"><div class="mt"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg> Esporta dati</div><div class="mc" onclick="cm('modal-export')">✕</div></div>
   <div class="mb">
     <p style="font-size:.85rem;color:var(--tx2);margin-bottom:1rem">Seleziona le sezioni da esportare e il formato.</p>
     <div class="export-sections" id="export-sections">
-      <div class="export-section"><input type="checkbox" checked id="exp-tx"><label for="exp-tx">ðŸ’¸ Transazioni</label></div>
-      <div class="export-section"><input type="checkbox" checked id="exp-acc"><label for="exp-acc">ðŸ¦ Conti</label></div>
-      <div class="export-section"><input type="checkbox" id="exp-bud"><label for="exp-bud">ðŸŽ¯ Budget</label></div>
-      <div class="export-section"><input type="checkbox" id="exp-goals"><label for="exp-goals">ðŸ† Obiettivi</label></div>
-      <div class="export-section"><input type="checkbox" id="exp-inv"><label for="exp-inv">ðŸ§¾ Fatture</label></div>
-      <div class="export-section"><input type="checkbox" id="exp-debts"><label for="exp-debts">ðŸ’³ Debiti</label></div>
-      <div class="export-section"><input type="checkbox" id="exp-rec"><label for="exp-rec">ðŸ” Ricorrenti</label></div>
-      <div class="export-section"><input type="checkbox" id="exp-port"><label for="exp-port">ðŸ“ˆ Portafoglio</label></div>
+      <div class="export-section"><input type="checkbox" checked id="exp-tx"><label for="exp-tx"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Transazioni</label></div>
+      <div class="export-section"><input type="checkbox" checked id="exp-acc"><label for="exp-acc">�� Conti</label></div>
+      <div class="export-section"><input type="checkbox" id="exp-bud"><label for="exp-bud"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Budget</label></div>
+      <div class="export-section"><input type="checkbox" id="exp-goals"><label for="exp-goals">�� Obiettivi</label></div>
+      <div class="export-section"><input type="checkbox" id="exp-inv"><label for="exp-inv"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> Fatture</label></div>
+      <div class="export-section"><input type="checkbox" id="exp-debts"><label for="exp-debts"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Debiti</label></div>
+      <div class="export-section"><input type="checkbox" id="exp-rec"><label for="exp-rec">� Ricorrenti</label></div>
+      <div class="export-section"><input type="checkbox" id="exp-port"><label for="exp-port"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 8 12 14 9 11 3 17"/><polyline points="22 8 18 8 18 12"/></svg> Portafoglio</label></div>
     </div>
     <div style="display:flex;gap:.5rem;margin-top:1rem">
-      <button class="btn bp" style="flex:1" onclick="exportData('csv')">ðŸ“„ CSV</button>
-      <button class="btn bp2" style="flex:1" onclick="exportData('json')">ðŸ’¾ JSON (backup)</button>
+      <button class="btn bp" style="flex:1" onclick="exportData('csv')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> CSV</button>
+      <button class="btn bp2" style="flex:1" onclick="exportData('json')"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> JSON (backup)</button>
     </div>
   </div>
 </div></div>
 
 <!-- INVOICE TEMPLATE SAVE MODAL -->
 <div class="mo" id="modal-inv-template"><div class="md" style="max-width:420px">
-  <div class="mh"><div class="mt">Salva come template</div><div class="mc" onclick="cm('modal-inv-template')">âœ•</div></div>
+  <div class="mh"><div class="mt">Salva come template</div><div class="mc" onclick="cm('modal-inv-template')">✕</div></div>
   <div class="mb">
     <div class="fg2"><label>Nome template</label><input type="text" id="tpl-name" placeholder="Es. Consulenza mensile, Fattura standard..."></div>
     <div class="fg2"><label>Frequenza ricorrenza</label><select id="tpl-freq"><option value="none">Una tantum</option><option value="monthly">Mensile</option><option value="quarterly">Trimestrale</option><option value="yearly">Annuale</option></select></div>
-    <div style="padding:.75rem;background:rgba(6,182,212,.06);border-radius:var(--rs);border:1px solid rgba(6,182,212,.15);font-size:.8rem;color:var(--tx2)">ðŸ’¡ I template salvano cliente, importo, IVA e voci. Potrai crearli dalla pagina fatture.</div>
+    <div style="padding:.75rem;background:rgba(6,182,212,.06);border-radius:var(--rs);border:1px solid rgba(6,182,212,.15);font-size:.8rem;color:var(--tx2)"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> I template salvano cliente, importo, IVA e voci. Potrai crearli dalla pagina fatture.</div>
   </div>
   <div class="mf"><button class="btn bs" onclick="cm('modal-inv-template')">Annulla</button><button class="btn bp2" onclick="saveInvoiceTemplate()">Salva</button></div>
 </div></div>
 
 <!-- GOAL SHARE MODAL -->
 <div class="mo" id="modal-goal-share"><div class="md" style="max-width:420px">
-  <div class="mh"><div class="mt">Condividi obiettivo</div><div class="mc" onclick="cm('modal-goal-share')">âœ•</div></div>
+  <div class="mh"><div class="mt">Condividi obiettivo</div><div class="mc" onclick="cm('modal-goal-share')">✕</div></div>
   <div class="mb"><input type="hidden" id="share-goal-id">
     <div class="fg2"><label>Email amico/familiare</label><input type="email" id="share-email" placeholder="amico@email.com"></div>
     <div class="fg2"><label>Messaggio (opzionale)</label><input type="text" id="share-msg" placeholder="Es. Stiamo risparmiando per..."></div>
     <div style="display:flex;gap:.5rem;margin-top:.5rem">
       <button class="btn bp" style="flex:1" onclick="inviteToGoal()">Invia invito</button>
-      <button class="btn bs bsm" onclick="copyGoalLink()" style="flex:1">ðŸ”— Copia link</button>
+      <button class="btn bs bsm" onclick="copyGoalLink()" style="flex:1"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copia link</button>
     </div>
   </div>
 </div></div>

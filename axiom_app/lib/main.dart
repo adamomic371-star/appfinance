@@ -26,6 +26,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await FirebaseConfig.initialize();
+  await GoogleWalletService.initialize();
   runApp(const AxiomAppProvider());
 }
 

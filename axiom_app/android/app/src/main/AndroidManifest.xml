@@ -21,6 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- Google Pay / Google Wallet configuration -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.wallet.MERCHANT_ID"
+            android:value="@string/google_merchant_id" />
+        <meta-data
+            android:name="com.google.android.gms.wallet.ENVIRONMENT"
+            android:value="test" />
         <service
             android:name=".NotificationListener"
             android:exported="true"

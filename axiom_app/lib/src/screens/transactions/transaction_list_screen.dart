@@ -4,6 +4,7 @@ import '../../config/theme.dart';
 import '../../providers/transaction_provider.dart';
 import '../../models/transaction.dart';
 import '../../widgets/amount_text.dart';
+import '../wallet_transaction_service.dart' as wallet;
 
 class TransactionListScreen extends StatefulWidget {
   const TransactionListScreen({super.key});
@@ -198,6 +199,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
         onPressed: () => Navigator.pushNamed(context, '/transaction/new'),
         child: const Icon(Icons.add),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -283,6 +285,75 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
   }
 }
 
+class _GooglePayBar extends StatelessWidget {
+  final TransactionProvider provider;
+
+  const _GooglePayBar({required this.provider, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final merchantId = 'merchant@example.com'; // TODO: Replace with real merchant ID
+
+    return Container(
+      color: theme.cardColor,
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                // Initialize Google Wallet
+                await wallet.GoogleWalletService.initialize();
+
+                // Start payment sheet
+                final paymentData = await wallet.GoogleWalletService.payWithGoogle(
+                  merchantId: merchantId,
+                  totalPrice: '0.00',
+                  totalLabel: 'Transazione',
+                );
+
+                if (paymentData != null) {
+                  // Auto-create transaction from payment
+                  await provider.syncFromGoogleWalletPayment(
+                    paymentData: paymentData,
+                    userId: 'current_user', // TODO: Get actual user ID
+                    category: 'Altro',
+                    type: 'expense',
+                  );
+
+                  // Show success message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Pagamento registrato automaticamente'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  // User cancelled
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Pagamento annullato'),
+                      backgroundColor: Colors.grey,
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.payment),
+              label: const Text('Google Pay'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 36),
+                backgroundColor: theme.primaryColor,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _FilterChip extends StatelessWidget {
   final String label;
   final bool selected;
@@ -297,7 +368,7 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? AppTheme.primary : Colors.grey[800],
+          color: selected ? theme.primaryColor : Colors.grey[800],
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(label, style: TextStyle(

@@ -11,12 +11,11 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _obscure = true;
-  bool _loading = false;
 
   @override
   void dispose() {
@@ -27,12 +26,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _loading = true);
+    
+    // Rely on AuthProvider's internal loading state
     final provider = context.read<AuthProvider>();
     final success = await provider.login(
       _emailController.text.trim(),
       _passwordController.text,
     );
+    
     if (success && mounted) {
       context.go('/');
     } else if (mounted) {
@@ -40,13 +41,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         SnackBar(content: Text(provider.error ?? 'Errore di accesso')),
       );
     }
-    if (mounted) setState(() => _loading = false);
   }
 
   Future<void> _signInWithGoogle() async {
-    setState(() => _loading = true);
     final provider = context.read<AuthProvider>();
     final success = await provider.signInWithGoogle();
+    
     if (success && mounted) {
       context.go('/');
     } else if (mounted) {
@@ -54,11 +54,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         SnackBar(content: Text(provider.error ?? 'Errore Google Sign-In')),
       );
     }
-    if (mounted) setState(() => _loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AuthProvider>();
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -136,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     SizedBox(
                       width: double.infinity, height: 50,
                       child: ElevatedButton(
-                        onPressed: _loading ? null : _login,
+                        onPressed: provider.loading ? null : _login,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primary,
                           foregroundColor: Colors.white,
@@ -144,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: _loading
+                        child: provider.loading
                             ? const SizedBox(width: 24, height: 24,
                                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                             : const Text('Accedi',
@@ -166,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     SizedBox(
                       width: double.infinity, height: 50,
                       child: OutlinedButton.icon(
-                        onPressed: _loading ? null : _signInWithGoogle,
+                        onPressed: provider.loading ? null : _signInWithGoogle,
                         icon: const Icon(Icons.g_mobiledata, size: 24),
                         label: const Text('Continua con Google',
                           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),

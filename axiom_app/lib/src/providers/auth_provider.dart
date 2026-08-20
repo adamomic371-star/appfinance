@@ -10,7 +10,7 @@ class AuthProvider extends ChangeNotifier {
   final FirebaseDbService _db = FirebaseDbService();
 
   app.UserModel? _user;
-  bool _loading = true;
+  bool _loading = false;
   String? _error;
 
   app.UserModel? get user => _user;
@@ -64,14 +64,13 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _auth.login(email, password);
-      _loading = false;
-      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
+      return false;
+    } finally {
       _loading = false;
       notifyListeners();
-      return false;
     }
   }
 
@@ -81,19 +80,20 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _auth.register(email, password, name);
-      _loading = false;
-      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
+      return false;
+    } finally {
       _loading = false;
       notifyListeners();
-      return false;
     }
   }
 
   Future<void> logout() async {
     await _auth.logout();
+    _loading = false;
+    notifyListeners();
   }
 
   Future<bool> signInWithGoogle() async {
@@ -102,14 +102,13 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _auth.signInWithGoogle();
-      _loading = false;
-      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
+      return false;
+    } finally {
       _loading = false;
       notifyListeners();
-      return false;
     }
   }
 

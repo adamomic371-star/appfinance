@@ -28,10 +28,13 @@ class TransactionProvider extends ChangeNotifier {
   bool get loading => _loading;
 
   List<TransactionModel> get _filtered {
-    // Check if filters match cached values
-    if (_filterType == _lastFilterType &&
-        _filterCategory == _lastFilterCategory &&
-        _searchQuery == _lastSearchQuery) {
+    // Check if cache is valid (has data and filters match)
+    final cacheValid = _cachedFiltered.isNotEmpty &&
+        _lastFilterType == _filterType &&
+        _lastFilterCategory == _filterCategory &&
+        _lastSearchQuery == _searchQuery;
+
+    if (cacheValid) {
       // Return cached result
       return _cachedFiltered;
     }
@@ -198,7 +201,8 @@ class TransactionProvider extends ChangeNotifier {
       ),
     );
 
-    if (existing.id.isNotEmpty && existing.id != '') {
+    // If transaction has a valid ID (not the default empty one) and matches, it's a duplicate
+    if (existing.id.isNotEmpty) {
       // Already synced, do nothing
       return;
     }

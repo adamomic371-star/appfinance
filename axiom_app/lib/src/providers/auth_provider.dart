@@ -52,9 +52,10 @@ class AuthProvider extends ChangeNotifier {
         email: firebaseUser.email,
         name: firebaseUser.displayName,
       );
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
-    _loading = false;
-    notifyListeners();
   }
 
   Future<bool> login(String email, String password) async {

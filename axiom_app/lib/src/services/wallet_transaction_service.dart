@@ -48,22 +48,22 @@ class WalletTransactionService {
 
   /// Saves a Google Pay transaction result and creates the database entry
   Future<TransactionModel> savePaymentResult({
-    required PaymentData paymentData,
+    required PaymentData? paymentData,
     required String userId,
     required String category,
     String type = 'expense',
   }) async {
-    // Extract payment details
-    final amount = paymentData.transactionSummary.price;
-    final currency = paymentData.transactionSummary.currencyCode ?? 'EUR';
+    // CRITICAL: Null check on paymentData - if user cancels, return null-like handling
+    if (paymentData == null) {
+      // Return a dummy transaction or throw; here we throw to let caller handle
+      throw ArgumentError('paymentData cannot be null - user cancelled or error');
+    }
+
+    // Extract payment details with null-safe access
+    final amount = paymentData.transactionSummary?.price ?? '0.00';
+    final currency = paymentData.transactionSummary?.currencyCode ?? 'EUR';
     final description = paymentData.merchantName ?? 'Google Pay';
     final date = DateTime.now();
-
-    // Parse date from payment if available, otherwise use now
-    DateTime transactionDate = date;
-    if (paymentData.paymentMethodName != null) {
-      // Could parse additional date info if needed
-    }
 
     final tx = TransactionModel(
       id: _uuid.v4(),
@@ -72,7 +72,7 @@ class WalletTransactionService {
       type: type,
       category: category,
       note: description,
-      date: transactionDate,
+      date: date,
       currency: currency,
       isRecurring: false,
       receiptUrl: paymentData.transactionId,

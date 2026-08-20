@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../providers/transaction_provider.dart';
 import '../../models/transaction.dart';
 import '../../widgets/amount_text.dart';
-import '../wallet_transaction_service.dart' as wallet;
 
 class TransactionListScreen extends StatefulWidget {
   const TransactionListScreen({super.key});
@@ -26,14 +26,92 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
     super.dispose();
   }
 
-  IconData _getIcon(String category) {
-    const icons = {
-      'Casa': Icons.home, 'Cibo': Icons.restaurant, 'Trasporti': Icons.directions_car,
-      'Bollette': Icons.receipt, 'Salute': Icons.local_hospital, 'Stipendio': Icons.work,
-      'Freelance': Icons.brush, 'Investimenti': Icons.trending_up, 'Vendite': Icons.sell,
-      'Altro': Icons.more_horiz,
-    };
-    return icons[category] ?? Icons.more_horiz;
+  Future<void> _login() async {
+    // This method is kept for compatibility; login flow now uses AuthProvider
+    // and navigation is handled via go_router.
+    // Navigate to login screen if needed.
+    context.go('/');
+  }
+
+  Future<void> _showSearch(BuildContext context, TransactionProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).cardTheme.color,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          left: 16, right: 16, top: 16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: 'Cerca transazioni...',
+                prefixIcon: Icon(Icons.search),
+              ),
+              onChanged: (v) {
+                provider.setSearchQuery(v);
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showFilters(BuildContext context, TransactionProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).cardTheme.color,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Filtri', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 16),
+            const Text('Tipo'),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: [
+                _FilterChip('Tutti', _filterType == null, () {
+                  provider.setFilterType(null);
+                  Navigator.pop(ctx);
+                }),
+                _FilterChip('Entrate', _filterType == 'income', () {
+                  provider.setFilterType('income');
+                  Navigator.pop(ctx);
+                }),
+                _FilterChip('Uscite', _filterType == 'expense', () {
+                  provider.setFilterType('expense');
+                  Navigator.pop(ctx);
+                }),
+              ],
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                provider.clearFilters();
+                Navigator.pop(ctx);
+              },
+              child: const Text('Cancella filtri'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -62,16 +140,20 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                 );
                 if (confirm == true) {
                   provider.bulkDelete(_selectedIds.toList());
-                  _selectedIds.clear();
-                  _selectionMode = false;
+                  if (mounted) setState(() {
+                    _selectionMode = false;
+                    _selectedIds.clear();
+                  });
                 }
               },
             ),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                _selectedIds.clear();
-                setState(() => _selectionMode = false);
+                if (mounted) setState(() {
+                  _selectionMode = false;
+                  _selectedIds.clear();
+                });
               },
             ),
           ] else ...[
@@ -101,8 +183,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                         onPressed: () => Navigator.pushNamed(context, '/transaction/new'),
                         child: const Text('Aggiungi transazione'),
                       ),
-                    ],
-                  ),
+                    ]
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -139,7 +220,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                               else _selectedIds.add(tx.id);
                               if (_selectedIds.isEmpty) _selectionMode = false;
                             })
-                          : () => Navigator.pushNamed(context, '/transaction/edit', arguments: tx),
+                          : () => context.go('/transaction/edit', arguments: tx),
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 6),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -196,186 +277,20 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                   },
                 ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/transaction/new'),
+        onPressed: () => context.go('/transaction/new'),
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
-  void _showSearch(BuildContext context, TransactionProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).cardTheme.color,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-          left: 16, right: 16, top: 16,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Cerca transazioni...',
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: (v) {
-                provider.setSearchQuery(v);
-              },
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showFilters(BuildContext context, TransactionProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).cardTheme.color,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Filtri', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 16),
-            const Text('Tipo'),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: [
-                _FilterChip('Tutti', _filterType == null, () {
-                  provider.setFilterType(null);
-                  Navigator.pop(ctx);
-                }),
-                _FilterChip('Entrate', _filterType == 'income', () {
-                  provider.setFilterType('income');
-                  Navigator.pop(ctx);
-                }),
-                _FilterChip('Uscite', _filterType == 'expense', () {
-                  provider.setFilterType('expense');
-                  Navigator.pop(ctx);
-                }),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                provider.clearFilters();
-                Navigator.pop(ctx);
-              },
-              child: const Text('Cancella filtri'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _GooglePayBar extends StatelessWidget {
-  final TransactionProvider provider;
-
-  const _GooglePayBar({required this.provider, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final merchantId = 'merchant@example.com'; // TODO: Replace with real merchant ID
-
-    return Container(
-      color: theme.cardColor,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                // Initialize Google Wallet
-                await wallet.GoogleWalletService.initialize();
-
-                // Start payment sheet
-                final paymentData = await wallet.GoogleWalletService.payWithGoogle(
-                  merchantId: merchantId,
-                  totalPrice: '0.00',
-                  totalLabel: 'Transazione',
-                );
-
-                if (paymentData != null) {
-                  // Auto-create transaction from payment
-                  await provider.syncFromGoogleWalletPayment(
-                    paymentData: paymentData,
-                    userId: 'current_user', // TODO: Get actual user ID
-                    category: 'Altro',
-                    type: 'expense',
-                  );
-
-                  // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Pagamento registrato automaticamente'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } else {
-                  // User cancelled
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Pagamento annullato'),
-                      backgroundColor: Colors.grey,
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.payment),
-              label: const Text('Google Pay'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 36),
-                backgroundColor: theme.primaryColor,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _FilterChip(this.label, this.selected, this.onTap);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? theme.primaryColor : Colors.grey[800],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(label, style: TextStyle(
-          color: selected ? Colors.white : Colors.grey[300],
-          fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-        )),
-      ),
-    );
+  IconData _getIcon(String category) {
+    const icons = {
+      'Casa': Icons.home, 'Cibo': Icons.restaurant, 'Trasporti': Icons.directions_car,
+      'Bollette': Icons.receipt, 'Salute': Icons.local_hospital, 'Stipendio': Icons.work,
+      'Freelance': Icons.brush, 'Investimenti': Icons.trending_up, 'Vendite': Icons.sell,
+      'Altro': Icons.more_horiz,
+    };
+    return icons[category] ?? Icons.more_horiz;
   }
 }

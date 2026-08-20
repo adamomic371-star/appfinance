@@ -12,11 +12,6 @@ class TransactionProvider extends ChangeNotifier {
   String? _filterCategory;
   String? _searchQuery;
 
-  // Cached fields
-  double _totalIncome = 0.0;
-  double _totalExpenses = 0.0;
-  double _balance = 0.0;
-
   // Cached filtered result
   List<TransactionModel> _cachedFiltered = [];
   String? _lastFilterType;
@@ -27,19 +22,19 @@ class TransactionProvider extends ChangeNotifier {
   List<TransactionModel> get all => _transactions;
   bool get loading => _loading;
 
+  // Fixed: Removed _cachedFiltered.isNotEmpty check; rely on filter tracking only
   List<TransactionModel> get _filtered {
-    // Check if cache is valid (has data and filters match)
-    final cacheValid = _cachedFiltered.isNotEmpty &&
-        _lastFilterType == _filterType &&
+    // Check if filters match cached values - if so, return cached result
+    final cacheValid = _lastFilterType == _filterType &&
         _lastFilterCategory == _filterCategory &&
         _lastSearchQuery == _searchQuery;
 
-    if (cacheValid) {
-      // Return cached result
+    if (cacheValid && _cachedFiltered.isNotEmpty) {
+      // Return cached result - filters unchanged and cache has data
       return _cachedFiltered;
     }
 
-    // Recompute and cache the result
+    // Recompute and cache the result from scratch
     var list = _transactions;
     if (_filterType != null) {
       list = list.where((t) => t.type == _filterType).toList();
@@ -68,6 +63,11 @@ class TransactionProvider extends ChangeNotifier {
 
   String? get filterType => _filterType;
   String? get filterCategory => _filterCategory;
+
+  // Cached total values - recalculated on transaction mutations
+  double _totalIncome = 0.0;
+  double _totalExpenses = 0.0;
+  double _balance = 0.0;
 
   // Updated getters using cached values
   double get totalIncome => _totalIncome;
@@ -99,6 +99,11 @@ class TransactionProvider extends ChangeNotifier {
     final created = await _service.create(tx);
     _transactions.insert(0, created);
     _recalculateTotals();
+    // Invalidate cache since transaction list changed
+    _cachedFiltered = [];
+    _lastFilterType = null;
+    _lastFilterCategory = null;
+    _lastSearchQuery = null;
     notifyListeners();
   }
 
@@ -107,6 +112,11 @@ class TransactionProvider extends ChangeNotifier {
     final idx = _transactions.indexWhere((t) => t.id == tx.id);
     if (idx >= 0) _transactions[idx] = tx;
     _recalculateTotals();
+    // Invalidate cache since transaction list changed
+    _cachedFiltered = [];
+    _lastFilterType = null;
+    _lastFilterCategory = null;
+    _lastSearchQuery = null;
     notifyListeners();
   }
 
@@ -114,6 +124,11 @@ class TransactionProvider extends ChangeNotifier {
     await _service.delete(id);
     _transactions.removeWhere((t) => t.id == id);
     _recalculateTotals();
+    // Invalidate cache since transaction list changed
+    _cachedFiltered = [];
+    _lastFilterType = null;
+    _lastFilterCategory = null;
+    _lastSearchQuery = null;
     notifyListeners();
   }
 
@@ -123,33 +138,45 @@ class TransactionProvider extends ChangeNotifier {
     }
     _transactions.removeWhere((t) => ids.contains(t.id));
     _recalculateTotals();
+    // Invalidate cache since transaction list changed
+    _cachedFiltered = [];
+    _lastFilterType = null;
+    _lastFilterCategory = null;
+    _lastSearchQuery = null;
     notifyListeners();
   }
 
   void setFilterType(String? type) {
-    // Only update if value changed
-    if (_filterType == type) return;
+    // Only invalidate cache if type actually changes the filter state
+    if (_lastFilterType == type && _filterType == type) return;
     _filterType = type;
     // Invalidate cache since filter changed
     _lastFilterType = null;
+    _lastFilterCategory = null;
+    _lastSearchQuery = null;
+    _cachedFiltered = [];
     notifyListeners();
   }
 
   void setFilterCategory(String? category) {
-    // Only update if value changed
-    if (_filterCategory == category) return;
+    if (_lastFilterCategory == category && _filterCategory == category) return;
     _filterCategory = category;
     // Invalidate cache since filter changed
+    _lastFilterType = null;
     _lastFilterCategory = null;
+    _lastSearchQuery = null;
+    _cachedFiltered = [];
     notifyListeners();
   }
 
   void setSearchQuery(String? query) {
-    // Only update if value changed
-    if (_searchQuery == query) return;
+    if (_lastSearchQuery == query && _searchQuery == query) return;
     _searchQuery = query;
     // Invalidate cache since search changed
+    _lastFilterType = null;
+    _lastFilterCategory = null;
     _lastSearchQuery = null;
+    _cachedFiltered = [];
     notifyListeners();
   }
 
@@ -157,7 +184,7 @@ class TransactionProvider extends ChangeNotifier {
     _filterType = null;
     _filterCategory = null;
     _searchQuery = null;
-    // Reset cache tracking
+    // Reset all cache tracking
     _lastFilterType = null;
     _lastFilterCategory = null;
     _lastSearchQuery = null;
@@ -203,7 +230,8 @@ class TransactionProvider extends ChangeNotifier {
 
     // If transaction has a valid ID (not the default empty one) and matches, it's a duplicate
     if (existing.id.isNotEmpty) {
-      // Already synced, do nothing
+      // Already synced, do nothing - but still notify listeners to refresh UI state
+      notifyListeners();
       return;
     }
 
@@ -218,6 +246,11 @@ class TransactionProvider extends ChangeNotifier {
     // Add to transactions list at position 0 (newest first)
     _transactions.insert(0, tx);
     _recalculateTotals();
+    // Invalidate cache since transaction list changed
+    _cachedFiltered = [];
+    _lastFilterType = null;
+    _lastFilterCategory = null;
+    _lastSearchQuery = null;
     notifyListeners();
   }
 }

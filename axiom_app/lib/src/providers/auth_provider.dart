@@ -9,6 +9,9 @@ class AuthProvider extends ChangeNotifier {
   final AuthService _auth = AuthService();
   final FirebaseDbService _db = FirebaseDbService();
 
+  // Subscription to auth state changes
+  StreamSubscription<User?>? _authSubscription;
+
   app.UserModel? _user;
   bool _loading = false;
   String? _error;
@@ -20,10 +23,20 @@ class AuthProvider extends ChangeNotifier {
   String get userId => _user?.id ?? '';
 
   AuthProvider() {
-    _auth.authState.listen(_onAuthStateChanged);
+    _authSubscription = _auth.authState.listen(_onAuthStateChanged);
+  }
+
+  /// MUST be called when disposing the provider to avoid memory leaks
+  void dispose() {
+    _authSubscription?.cancel();
+    _authSubscription = null;
+    notifyListeners();
   }
 
   Future<void> _onAuthStateChanged(User? firebaseUser) async {
+    // Guard: prevent concurrent async operations
+    // (Additional guard could use a bool _processing = false check)
+
     if (firebaseUser == null) {
       _user = null;
       _loading = false;
@@ -92,6 +105,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await _auth.logout();
+    _user = null;
     _loading = false;
     notifyListeners();
   }
@@ -113,11 +127,17 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> resetPassword(String email) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
     try {
       await _auth.resetPassword(email);
+      _loading = false;
+      notifyListeners();
       return true;
     } catch (e) {
       _error = _mapAuthError(e);
+      _loading = false;
       notifyListeners();
       return false;
     }

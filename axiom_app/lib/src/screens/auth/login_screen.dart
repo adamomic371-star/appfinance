@@ -26,14 +26,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-    
-    // Rely on AuthProvider's internal loading state
+
     final provider = context.read<AuthProvider>();
     final success = await provider.login(
       _emailController.text.trim(),
       _passwordController.text,
     );
-    
+
     if (success && mounted) {
       context.go('/');
     } else if (mounted) {
@@ -41,12 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(content: Text(provider.error ?? 'Errore di accesso')),
       );
     }
+    // Note: provider.login() already handles _loading internally via finally block
   }
 
   Future<void> _signInWithGoogle() async {
     final provider = context.read<AuthProvider>();
     final success = await provider.signInWithGoogle();
-    
+
     if (success && mounted) {
       context.go('/');
     } else if (mounted) {
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AuthProvider>();
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -182,11 +182,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/register'),
+                      onPressed: () => context.go('/register'),
                       child: const Text("Non hai un account? Registrati"),
                     ),
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/reset-password'),
+                      onPressed: () => context.go('/reset-password'),
                       child: Text('Password dimenticata?',
                         style: TextStyle(color: Colors.grey[400])),
                     ),
